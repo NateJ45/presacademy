@@ -1,0 +1,162 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// About page. The church's story and its historic building. Sanity-aware
+// (aboutPage singleton drives the hero when present) with church fallbacks.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAboutPage, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import { Image } from 'astro:assets';
+import Hero from '@/components/Hero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import angelMurals from '@/assets/angel-murals.jpg';
+import sanctuaryInterior from '@/assets/sanctuary-interior.webp';
+
+const [page, siteSettings] = await Promise.all([
+  getAboutPage().catch(() => null),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `About · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'A historic sanctuary and a living congregation in downtown Springfield. The story of First Church of Springfield.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'About First Church';
+const heroHeadline = page?.heroHeadline ?? 'A historic church with an open door';
+const heroSubhead =
+  page?.heroSubhead ??
+  'A historic downtown congregation, First Church has worshipped on Main Street for generations. The building is extraordinary. The people are the point.';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'About', url: `${site.url}/about` },
+  ]),
+];
+
+const pillOutline =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-primary text-link hover:bg-accent transition-colors';
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <Hero
+    eyebrow={heroEyebrow}
+    headline={heroHeadline}
+    subhead={heroSubhead}
+    keyword={page?.heroKeyword}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={angelMurals}
+    localImageAlt="The historic sanctuary ceiling at First Church"
+    headingId="about-hero"
+    size="short"
+  />
+
+  {/* Feature: the historic sanctuary */}
+  <figure class="mx-auto max-w-content px-m pt-section-lg">
+    {page?.featureImage?.asset ? (
+      <SanityImage
+        source={page.featureImage}
+        width={1000}
+        sizes="(min-width: 1280px) 1216px, 100vw"
+        alt={page.featureImage.alt || 'The interior of our historic sanctuary'}
+        class="w-full h-auto rounded-md shadow-sm"
+      />
+    ) : (
+      <Image
+        src={angelMurals}
+        alt="The interior of our historic sanctuary"
+        widths={[768, 1280, 1500]}
+        sizes="(min-width: 1280px) 1216px, 100vw"
+        class="w-full h-auto rounded-md shadow-sm"
+      />
+    )}
+    <figcaption class="mt-s text-sm text-foreground/70 italic text-center">
+      {page?.muralCaption ?? 'Our historic sanctuary, the heart of our life together.'}
+    </figcaption>
+  </figure>
+
+  {/* The building */}
+  <section class="bg-background" aria-labelledby="about-building">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-center">
+      <div>
+        <SectionHeading
+          eyebrow={page?.buildingEyebrow ?? 'Our Building'}
+          headline={page?.buildingHeadline ?? 'A sanctuary with a story'}
+          headingId="about-building"
+        />
+        <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
+          <p>
+            {page?.buildingBodyP1 ??
+              'Our historic sanctuary is filled with stained-glass windows and craftsmanship from another era. Visitors travel from near and far to see it.'}
+          </p>
+          <p>
+            {page?.buildingBodyP2 ??
+              'It is a beautiful room, and it is still, first and last, a room built for worship.'}
+          </p>
+          <div class="pt-xs">
+            <a href={page?.buildingCta?.externalUrl || '/use-our-space'} class={pillOutline}>{page?.buildingCta?.label || 'Visit or Use the Space'}</a>
+          </div>
+        </div>
+      </div>
+      {page?.buildingImage?.asset ? (
+        <SanityImage
+          source={page.buildingImage}
+          width={1000}
+          sizes="(min-width: 768px) 45vw, 100vw"
+          alt={page.buildingImage.alt || 'The nave of First Church, lined with stained-glass windows'}
+          class="w-full h-auto rounded-md shadow-sm"
+        />
+      ) : (
+        <Image
+          src={sanctuaryInterior}
+          alt="The nave of First Church, lined with stained-glass windows"
+          widths={[600, 900, 1197]}
+          sizes="(min-width: 768px) 45vw, 100vw"
+          class="w-full h-auto rounded-md shadow-sm"
+        />
+      )}
+    </div>
+  </section>
+
+  {/* Who we are */}
+  <section class="surface-warm bg-muted" aria-labelledby="about-who">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-start">
+      <SectionHeading
+        eyebrow={page?.whoEyebrow ?? 'Who we are'}
+        headline={page?.whoHeadline ?? 'A living congregation in downtown Springfield'}
+        headingId="about-who"
+      />
+      <div class="text-foreground/85 text-lg leading-relaxed space-y-m">
+        <p>
+          {page?.whoBodyP1 ??
+            'We are a congregation in the mainline Protestant tradition, gathering each week to worship, love, serve, pray, and share the gospel in word and deed.'}
+        </p>
+        <p>
+          {page?.whoBodyP2 ??
+            'We welcome everyone: women and men, gay and straight, lifelong believers and the simply curious. Whoever you are, you are welcome here.'}
+        </p>
+        <div class="flex flex-wrap gap-s pt-xs">
+          <a href={page?.whoCtaPrimary?.externalUrl || '/what-we-believe'} class={pillOutline}>{page?.whoCtaPrimary?.label || 'What We Believe'}</a>
+          <a href={page?.whoCtaSecondary?.externalUrl || '/pastor-staff'} class={pillOutline}>{page?.whoCtaSecondary?.label || 'Meet Our Pastors'}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
+    headline={page?.finalCtaHeadline ?? "There is room for you here"}
+    subhead={page?.finalCtaSubhead ?? "Join us for worship this Sunday, and see our historic sanctuary for yourself."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
+    backgroundImage={page?.finalCtaBackgroundImage}
+  />
+</BaseLayout>

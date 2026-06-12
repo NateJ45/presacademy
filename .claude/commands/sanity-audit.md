@@ -1,0 +1,32 @@
+---
+description: Audit the live Sanity dataset — counts, missing docs, empty fields, drafts
+argument-hint: "[--fields | --doc <id>]"
+---
+
+Run the read-only dataset audit and interpret the results for the user.
+
+1. Run `node scripts/sanity-audit.mjs $ARGUMENTS` (from the repo root). With no
+   arguments it prints the summary: document counts by type, missing expected
+   singletons/collections, and unpublished drafts. `--fields` adds the
+   per-document empty/absent field diff. `--doc <id>` dumps one document
+   (e.g. `--doc siteSettings`).
+
+2. Interpret, don't just paste. The summary alone answers most questions:
+   - **Unpublished drafts > 0** means an editor has Studio changes that are NOT
+     on the live site. List them; this is the usual cause of "I changed it in
+     Studio but the site didn't update" (the other cause is no rebuild since
+     publish — see /rebuild).
+   - **A missing singleton** means a page renders entirely from code fallbacks.
+   - In `--fields` output, most "absent" fields are intentional optionals
+     (`seoImage`, `flexibleSections`, `heroScriptAccent`, integration URLs,
+     `favicon`). Check the schema description in `studio/schemaTypes/` before
+     calling a gap a problem. Starter-dataset documents (`*-starter-*` ids and
+     the seeded singletons) intentionally fill only the core fields.
+
+3. If the user asks to fix a gap, patch Sanity with a script per the
+   "Patch Sanity content programmatically" section in OPERATIONS.md (use
+   `setIfMissing`, never clobber populated fields). Never invent church facts
+   (schedules, names, prices): ask the client for the source material.
+
+Remember: content edits land in the dataset instantly but the live site only
+changes after a rebuild (static build). Suggest /rebuild when content was patched.

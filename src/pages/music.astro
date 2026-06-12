@@ -1,0 +1,126 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Music page. The musical life of the church: the choir and the pipe organ.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPageHero, getSiteSettings } from '@/lib/queries';
+import heroMusic from '@/assets/hero-music.webp';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import { Image } from 'astro:assets';
+import Hero from '@/components/Hero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import muralAngels from '@/assets/mural-angels.jpg';
+
+const siteSettings = await getSiteSettings().catch(() => null);
+const page = await getPageHero('musicPage').catch(() => null);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Music · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Hymns, spirituals, and anthems led by our choir and pipe organ. The musical life of First Church of Springfield.';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Music', url: `${site.url}/music` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <Hero
+    eyebrow={page?.heroEyebrow ?? 'Music'}
+    headline={page?.heroHeadline ?? 'Our musical life at First Church'}
+    subhead={page?.heroSubhead ?? 'I will sing of your strength, in the morning I will sing of your love. (Psalm 59:16)'}
+    keyword={page?.heroKeyword}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={heroMusic}
+    localImageAlt="The pipe organ in the First Church sanctuary"
+    headingId="music-hero"
+    size="short"
+  />
+
+  <section class="bg-background" aria-labelledby="music-intro">
+    <div class="mx-auto max-w-3xl px-m py-section-lg text-lg text-foreground/85 leading-relaxed space-y-m">
+      <h2 id="music-intro" class="sr-only">{page?.introHeading ?? 'About our music'}</h2>
+      <p>
+        {page?.introBodyP1 ?? 'Sunday worship at First Church is sung. Hymns, spirituals, and anthems, accompanied by organ, carry the congregation through the liturgy week by week. Music is not a performance here. It is how we pray together.'}
+      </p>
+    </div>
+  </section>
+
+  {/* The choir */}
+  <section class="surface-warm bg-muted" aria-labelledby="quartette-heading">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-start">
+      <SectionHeading
+        eyebrow={page?.choirEyebrow ?? 'The Choir'}
+        headline={page?.choirHeadline ?? 'A choir at the heart of worship'}
+        headingId="quartette-heading"
+      />
+      <div class="text-foreground/85 text-lg leading-relaxed space-y-m">
+        <p>
+          {page?.choirBodyP1 ?? "Our choir leads the congregation in song every Sunday, carrying on a long tradition of sung worship in this sanctuary."}
+        </p>
+        <p>
+          {page?.choirBodyP2 ?? 'Today our choir is made up of dedicated singers who lead the congregation in hymns, anthems, and service music, week in and week out.'}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* The organ */}
+  <section class="bg-background" aria-labelledby="organ-heading">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-center">
+      {page?.organImage?.asset ? (
+        <SanityImage
+          source={page.organImage}
+          width={1000}
+          sizes="(min-width: 768px) 45vw, 100vw"
+          alt={page.organImage.alt || "Painted detail in our historic sanctuary"}
+          class="w-full h-auto rounded-md shadow-sm order-last md:order-first"
+        />
+      ) : (
+        <Image
+          src={muralAngels}
+          alt="Painted detail in our historic sanctuary"
+          widths={[480, 768, 800]}
+          sizes="(min-width: 768px) 45vw, 100vw"
+          class="w-full h-auto rounded-md shadow-sm order-last md:order-first"
+        />
+      )}
+      <div class="text-foreground/85 text-lg leading-relaxed space-y-m">
+        <SectionHeading
+          eyebrow={page?.organEyebrow ?? 'The Organ'}
+          headline={page?.organHeadline ?? 'Generations of song'}
+          headingId="organ-heading"
+        />
+        <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
+        <p>
+          {page?.organBodyP1 ?? 'Our pipe organ accompanies worship every Sunday, filling the sanctuary with everything from the gentlest hymn to a thundering postlude.'}
+        </p>
+        <p>
+          {page?.organBodyP2 ?? "From quiet preludes to festival Sundays, the organ helps carry the congregation through the church year."}
+        </p>
+        <p class="text-base">
+          {page?.organCreditLead ?? 'Our music is led by'} <a href={page?.organCreditCta?.externalUrl || '/pastor-staff'} class="text-link underline underline-offset-2 hover:text-primary-dark transition-colors">{page?.organCreditCta?.label || 'Alex Johnson, Music Director'}</a>.
+        </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? "Come and Hear"}
+    headline={page?.finalCtaHeadline ?? "Hear it for yourself on Sunday"}
+    subhead={page?.finalCtaSubhead ?? "Worship with us on Sunday, or watch the livestream online."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
+  />
+</BaseLayout>

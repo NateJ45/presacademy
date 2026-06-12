@@ -1,0 +1,100 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Give. Online giving portal, plus by-mail and designated-gift options.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPageHero, getSiteSettings } from '@/lib/queries';
+import heroGive from '@/assets/mural-angels.jpg';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import Hero from '@/components/Hero.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const siteSettings = await getSiteSettings().catch(() => null);
+const page = await getPageHero('givePage').catch(() => null);
+
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Give · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Support the ministry of First Church of Springfield. Give online, by mail, or designate your gift to the food ministry. Thank you for your generosity.';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Give', url: `${site.url}/give` },
+  ]),
+];
+
+// Online giving portal. Prefer the editor-managed siteSettings.giveUrl (same
+// link Header/Footer use); fall back to a placeholder giving link so the
+// page works before the field is set.
+const giveUrl =
+  siteSettings?.giveUrl ??
+  'https://example.org/give';
+
+const pillPrimary =
+  'press-tactile inline-flex items-center justify-center min-h-[48px] px-l py-s rounded-full text-sm font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <Hero
+    eyebrow={page?.heroEyebrow ?? 'Give'}
+    headline={page?.heroHeadline ?? 'Thank you'}
+    subhead={page?.heroSubhead ?? 'For entrusting your tithes and offerings to First Church. Your generosity sustains worship, music, and a food ministry that feeds our neighbors.'}
+    keyword={page?.heroKeyword}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={heroGive}
+    localImageAlt="The historic sanctuary ceiling at First Church"
+    headingId="give-hero"
+    size="short"
+  />
+
+  {/* Online giving */}
+  <section class="bg-background" aria-labelledby="give-online">
+    <div class="mx-auto max-w-3xl px-m py-section-lg text-center">
+      <h2 id="give-online" class="font-display text-h2 text-foreground">{page?.onlineHeadline ?? 'Give online'}</h2>
+      <p class="mt-m text-lg text-foreground/85 leading-relaxed">
+        {page?.onlineBodyP1 ?? 'Make a one-time or recurring gift through our secure giving portal. It takes just a minute.'}
+      </p>
+      <div class="mt-l flex justify-center">
+        <a href={giveUrl} target="_blank" rel="noopener noreferrer" class={pillPrimary}>Give Now</a>
+      </div>
+    </div>
+  </section>
+
+  {/* Other ways to give */}
+  <section class="surface-warm bg-muted" aria-labelledby="give-ways">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <h2 id="give-ways" class="sr-only">{page?.waysHeadline ?? 'Other ways to give'}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-m">
+        <article class="card-lift rounded-md border border-border-soft bg-card p-l">
+          <h3 class="font-display text-h4 text-foreground">{page?.mailHeadline ?? 'By mail'}</h3>
+          <p class="mt-s text-foreground/85 leading-relaxed">
+            {page?.mailBodyP1 ?? 'Prefer to send a check? Make it out to First Church of Springfield and mail it to:'}
+          </p>
+          <p class="mt-s text-foreground/80">{site.name}<br />{settings.addressLine}<br />{settings.cityStateZip}</p>
+        </article>
+        <article class="card-lift rounded-md border border-border-soft bg-card p-l">
+          <h3 class="font-display text-h4 text-foreground">{page?.foodHeadline ?? 'Support the food ministry'}</h3>
+          <p class="mt-s text-foreground/85 leading-relaxed">
+            {page?.foodBodyP1 ?? 'Want your gift to go directly to feeding our neighbors? You can designate it for Lunch Bag or the Main Street Community Table.'}
+          </p>
+          <a href="/food" class="mt-m inline-flex items-center gap-xs text-xs uppercase tracking-eyebrow font-semibold text-link">{page?.foodLinkLabel ?? 'About the food ministry'} <span aria-hidden="true">&rarr;</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? "With Gratitude"}
+    headline={page?.finalCtaHeadline ?? "Every gift is a part of the work"}
+    subhead={page?.finalCtaSubhead ?? "Thank you for helping First Church serve and celebrate Jesus for the good of the world."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Give Now', linkType: 'external', externalUrl: giveUrl, openInNewTab: true }}
+  />
+</BaseLayout>

@@ -1,0 +1,84 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Food ministry. Lunch Bag and the Main Street Community Table.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPageHero, getSiteSettings } from '@/lib/queries';
+import heroFood from '@/assets/hero-food.webp';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import Hero from '@/components/Hero.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const siteSettings = await getSiteSettings().catch(() => null);
+const page = await getPageHero('foodPage').catch(() => null);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Food Ministry · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Free food for all in need, no questions asked, at our Main Street door. Lunch Bag runs Tuesday through Thursday, and the Main Street Community Table gathers on Sunday evenings.';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Food Ministry', url: `${site.url}/food` },
+  ]),
+];
+
+const pillPrimary =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <Hero
+    eyebrow={page?.heroEyebrow ?? 'Food Ministry'}
+    headline={page?.heroHeadline ?? 'Food for all in need, no questions asked'}
+    subhead={page?.heroSubhead ?? 'Find us at our Main Street door on Tuesday, Wednesday, Thursday, and Sunday.'}
+    keyword={page?.heroKeyword}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={heroFood}
+    localImageAlt="Neighbors sharing a meal at the Main Street Community Table at First Church"
+    headingId="food-hero"
+    size="short"
+  />
+
+  <section class="bg-background" aria-label="Food programs">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l">
+      {/* Lunch Bag */}
+      <article class="card-lift rounded-md border border-border-soft bg-card p-l flex flex-col">
+        <h2 class="font-display text-h3 text-foreground">{page?.lunchBagHeadline ?? 'Lunch Bag'}</h2>
+        <p class="mt-xs text-xs uppercase tracking-eyebrow text-foreground/80">{page?.lunchBagSchedule ?? 'Tuesday to Thursday · 11am to 1pm'}</p>
+        <p class="mt-s text-foreground/85 leading-relaxed flex-1">
+          {page?.lunchBagBodyP1 ?? 'A grab-and-go lunch for anyone who needs one. Pantry staples, produce, clothing, and hygiene items are offered occasionally as they are available.'}
+        </p>
+        <div class="mt-l">
+          <a href={page?.lunchBagCta?.externalUrl || '/give'} class={pillPrimary}>{page?.lunchBagCta?.label || 'Support Lunch Bag'}</a>
+        </div>
+      </article>
+
+      {/* Main Street Community Table */}
+      <article class="card-lift rounded-md border border-border-soft bg-card p-l flex flex-col">
+        <h2 class="font-display text-h3 text-foreground">{page?.tableHeadline ?? 'Main Street Community Table'}</h2>
+        <p class="mt-xs text-xs uppercase tracking-eyebrow text-foreground/80">{page?.tableSchedule ?? 'Sundays · 6:45pm to 8:30pm'}</p>
+        <p class="mt-s text-foreground/85 leading-relaxed flex-1">
+          {page?.tableBodyP1 ?? 'A free, sit-down meal for all. Come play games, listen to music, and share a table with neighbors. Medical and social work services, occupational therapy, and clothing are available, hosted with neighborhood partners. The Table pauses for the summer.'}
+        </p>
+        <div class="mt-l">
+          <a href={page?.tableCta?.externalUrl || '/give'} class={pillPrimary}>{page?.tableCta?.label || 'Support the Table'}</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? "Lend a Hand"}
+    headline={page?.finalCtaHeadline ?? "Everyone is welcome at the table"}
+    subhead={page?.finalCtaSubhead ?? "Come to eat, come to serve, or help keep the door open with a gift. All are needed."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get Involved', linkType: 'external', externalUrl: '/serve' }}
+  />
+</BaseLayout>

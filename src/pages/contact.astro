@@ -1,0 +1,157 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Contact page. Address, phone, email, office hours, who-to-contact, a map,
+// and getting-here notes. (A Web3Forms contact form can be added later; for now
+// the page surfaces direct contact paths, which is how most visitors reach a church.)
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getContactPage, getSiteSettings } from '@/lib/queries';
+import heroContact from '@/assets/hero-sanctuary.webp';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { telHref } from '@/lib/phone';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import Hero from '@/components/Hero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import FormBlock from '@/components/FormBlock.astro';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const siteSettings = await getSiteSettings().catch(() => null);
+const page = await getContactPage().catch(() => null);
+
+// One resolved settings object; every contact value below comes from Sanity via
+// this helper, with no hardcoded site.ts fallbacks.
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Contact · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Reach First Church of Springfield. Address, phone, email, office hours, and how to find us in downtown Springfield.';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Contact', url: `${site.url}/contact` },
+  ]),
+];
+
+// Address comes from Sanity (siteSettings), resolved into consts so the embedded
+// map query and the visible address read the same values.
+const addressLine = settings.addressLine;
+const cityStateZip = settings.cityStateZip;
+
+const mapQuery = encodeURIComponent(`${addressLine}, ${cityStateZip}`);
+
+// Inline fallback. The who-to-reach rows are editable in Sanity
+// (contactPage.contactReasons); this const renders when that field is empty, so
+// the page is identical until an editor overrides it. The default emails come
+// from Sanity siteSettings (public + pastoral) via the resolver.
+const FALLBACK_REASONS = [
+  { label: 'General questions', value: settings.email, href: `mailto:${settings.email}` },
+  { label: 'Pastoral care', value: settings.pastorEmail, href: `mailto:${settings.pastorEmail}` },
+  { label: 'Weddings', value: 'See wedding details', href: '/weddings' },
+  { label: 'Use our space', value: 'Inquire about the building', href: '/use-our-space' },
+];
+
+const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_REASONS;
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <Hero
+    eyebrow={page?.heroEyebrow ?? 'Contact'}
+    headline={page?.heroHeadline ?? 'Get in touch'}
+    subhead={page?.heroSubhead ?? 'The best way to meet us is on a Sunday morning. Until then, here is how to reach the church office.'}
+    keyword={page?.heroKeyword}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={heroContact}
+    localImageAlt="First Church of Springfield on Main Street"
+    headingId="contact-hero"
+    size="short"
+  />
+
+  <section class="bg-background" aria-label="Contact details">
+    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 lg:grid-cols-2 gap-l lg:gap-section-md items-start">
+      {/* Details */}
+      <div class="space-y-l">
+        <ul class="space-y-m list-none p-0 text-lg">
+          <li class="flex items-start gap-s">
+            <MapPin size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <span>{addressLine}<br />{cityStateZip}</span>
+          </li>
+          <li class="flex items-start gap-s">
+            <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <a href={telHref(settings.phone)} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors">{settings.phone}</a>
+          </li>
+          <li class="flex items-start gap-s">
+            <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <a href={`mailto:${settings.email}`} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors break-all">{settings.email}</a>
+          </li>
+          <li class="flex items-start gap-s">
+            <Clock size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <span>Office hours: {settings.officeHours}</span>
+          </li>
+        </ul>
+
+        <div class="border-t border-border-soft pt-l">
+          <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.whoToReachLabel ?? 'Who to reach'}</p>
+          <ul class="space-y-2 list-none p-0">
+            {reasons.map((r) => (
+              <li class="flex flex-wrap justify-between gap-m border-b border-border-soft pb-2 last:border-b-0">
+                <span class="text-foreground">{r.label}</span>
+                <a href={r.href} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors break-all">{r.value}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="border-t border-border-soft pt-l text-foreground/80 leading-relaxed">
+          <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.gettingHereLabel ?? 'Getting here'}</p>
+          <p>
+            {page?.gettingHereBody ?? 'We sit on Main Street in downtown Springfield, close to public transit, with first-come, first-served free parking. Looking for our food ministry? Find us at the Main Street door.'}
+          </p>
+        </div>
+      </div>
+
+      {/* Map */}
+      <div class="rounded-md overflow-hidden border border-border-soft min-h-[320px] h-full">
+        <iframe
+          title="Map to First Church of Springfield"
+          src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+          width="100%"
+          height="100%"
+          style="min-height: 360px; border: 0;"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  {/* Contact form (configurable in Sanity; falls back to a mailto when none is set) */}
+  <section class="surface-warm bg-muted" aria-labelledby="contact-form">
+    <div class="mx-auto max-w-3xl px-m py-section-lg">
+      <SectionHeading
+        eyebrow={page?.whatToExpectEyebrow ?? 'Send a Note'}
+        headline={page?.formSectionHeadline ?? 'Start the conversation'}
+        headingId="contact-form"
+      />
+      {page?.formIntroNote && (
+        <p class="mt-m text-lg text-foreground/85 leading-relaxed">{page.formIntroNote}</p>
+      )}
+      <div class="mt-l">
+        <FormBlock form={page?.contactForm} fallbackEmail={settings.email} fallbackLabel="Email the Office" />
+      </div>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
+    headline={page?.finalCtaHeadline ?? "We hope to see you Sunday"}
+    subhead={page?.finalCtaSubhead ?? "We gather for worship every Sunday. Whoever you are, you are welcome here."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
+  />
+</BaseLayout>
