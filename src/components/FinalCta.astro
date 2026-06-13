@@ -12,7 +12,6 @@
 
 import CtaLink from '@/components/CtaLink.astro';
 import SanityImage from '@/components/SanityImage.astro';
-import ArchOrnament from '@/components/ArchOrnament.astro';
 import { splitScriptAccent } from '@/lib/scriptAccent';
 
 interface CtaBlock {
@@ -61,12 +60,12 @@ interface Props {
 
 const {
   eyebrow,
-  headline = 'Ready to Love Your Space?',
-  subhead = "Let's start with a conversation.",
+  headline = 'Tell us what you want to learn',
+  subhead = 'We will help you find the right course and answer any question.',
   cta,
   secondaryCta,
   headingId = 'final-cta',
-  fallbackCtaLabel = 'Book a Consultation',
+  fallbackCtaLabel = 'Request information',
   scriptAccent,
   backgroundImage,
 } = Astro.props as Props;
@@ -107,18 +106,16 @@ const { found: scriptFound, before: scriptBefore, word: scriptWord, after: scrip
       site header, mobile menu, footer, and every marketing card. Softens the
       transition from the previous (usually light) section into this dark
       panel and ties the close-of-page back into the brand vocabulary. */}
-  <div class:list={['h-0.5 bg-primary', hasBackground && 'relative z-10']} aria-hidden="true"></div>
+  <div class:list={['h-0.5 bg-gold', hasBackground && 'relative z-10']} aria-hidden="true"></div>
 
   <div class:list={['mx-auto max-w-content px-m py-section-lg text-center', hasBackground && 'relative z-10']}>
     {eyebrow && (
       <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/75">{eyebrow}</p>
     )}
-    {/* Triple-arch ornament beneath the eyebrow. Section headings carry the
-        gold hairline; the page-closing band gets the arch mark instead, so the
-        close of every page ends on the building's own shape (the HPP
-        ornamental-divider pattern, in our architectural vocabulary). */}
+    {/* A short brass rule beneath the eyebrow — the Rule & Ledger close mark
+        that replaces the church's triple-arch ornament. */}
     {eyebrow && (
-      <ArchOrnament class="mt-s mb-m mx-auto text-[#C7A875]/80" />
+      <div class="mt-s mb-m mx-auto h-px w-12 bg-[#C7A875]/70" aria-hidden="true"></div>
     )}
     <h2 id={headingId} class="font-display text-h1 leading-headline-tight tracking-[-0.02em] text-chapel-foreground">
       {scriptFound
@@ -133,7 +130,7 @@ const { found: scriptFound, before: scriptBefore, word: scriptWord, after: scrip
         cta={cta}
         variant="primary"
         onDark
-        fallbackHref="/contact"
+        fallbackHref="/get-started"
         fallbackLabel={fallbackCtaLabel}
       />
       {secondaryCta && (
