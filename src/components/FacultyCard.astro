@@ -1,0 +1,41 @@
+---
+// Safe to edit by hand.
+// Faculty directory card: a uniform squared portrait beside the credential
+// stack, with the degree-with-institution line set directly under the name (the
+// faculty signature) and an ordination tag. Text-forward, ledger-like. Used on
+// the faculty directory and the home faculty strip. Carries data-areas so the
+// directory's teaching-area filter can show/hide it.
+
+import SanityImage from '@/components/SanityImage.astro';
+
+interface Props {
+  person: any;
+}
+const { person } = Astro.props;
+
+const name = `${person.honorific ? person.honorific + ' ' : ''}${person.name}`;
+const deg = person.topDegree;
+const degLine = deg
+  ? `${deg.degree}${deg.field ? ` ${deg.field}` : ''}${deg.institution ? `, ${deg.institution}` : ''}`
+  : '';
+const credential = [person.denomination, person.ordination ? 'ordained' : null].filter(Boolean).join(', ');
+const areaSlugs = (person.teachingAreas ?? []).map((t: any) => t.slug).filter(Boolean).join(' ');
+---
+
+<li data-faculty-card data-areas={areaSlugs} class="list-none">
+  <a href={`/faculty/${person.slug}`} class="card-lift group grid grid-cols-[96px_1fr] gap-4 no-underline">
+    <div class="image-well aspect-[4/5] overflow-hidden">
+      {person.photo?.asset && (
+        <SanityImage source={person.photo} width={240} sizes="96px" class="h-full w-full object-cover" />
+      )}
+    </div>
+    <div>
+      <h3 class="font-display text-h5 text-foreground transition-colors group-hover:text-link">{name}</h3>
+      {degLine && <p class="mt-1 text-xs text-gold-ink">{degLine}</p>}
+      {person.title && <p class="mt-1 text-sm text-foreground/70">{person.title}</p>}
+      {credential && (
+        <span class="mt-2 inline-block rounded-[2px] border border-border px-2 py-0.5 text-[11px] uppercase tracking-[0.08em] text-foreground/70">{credential}</span>
+      )}
+    </div>
+  </a>
+</li>
