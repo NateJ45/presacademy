@@ -113,6 +113,6 @@ The rebrand identity stamp needs these facts before `npm run rebrand` can run. T
 - Worker name (already set: `presacademy`)
 - Studio host (a globally unique `*.sanity.studio` subdomain, e.g. `presbyterian-academy`)
 
-## 8. Open decision flagged for review
+## 8. Resolved decisions
 
-Structural band color (footer, utility bar, closing CTA): deep oxblood (`#5E2122`, recommended, gives the brand its big moments) versus Walnut Ink (`#2A2521`, more neutral, keeps oxblood as a pure accent). Confirm at spec review.
+Structural band color (footer, utility bar, closing CTA): **deep oxblood** (`#5E2122`), confirmed at spec review. The brand's signature color carries the big structural moments, the way RTS and Calvin do. Walnut Ink was the considered alternative.
