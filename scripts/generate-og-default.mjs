@@ -11,7 +11,7 @@ const root = resolve(__dirname, '..');
 
 const result = await renderOg({
   wordmark: 'The Presbyterian Academy',
-  tagline: ['Academy'],
+  tagline: ["Equipping tomorrow's church"],
   outPath: resolve(root, 'public/og-default.png'),
 });
 

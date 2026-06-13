@@ -1,37 +1,36 @@
 <!--
-  Studio Starter favicon. A Slate (#586577) circle with paper (#FBFBFA)
-  "S" initial set in a serif stack.
+  The Presbyterian Academy favicon. A Geneva Oxblood (#7A2A2C) rounded square
+  with a warm cream (#F1EAD9) "PA" monogram in a serif stack.
 
   Theme behavior:
-    - Light mode: slate disc on light tab background.
-    - Dark mode: disc lifts slightly so it reads against dark tab strips.
+    - Light mode: oxblood square on a light tab background.
+    - Dark mode: square lifts slightly so it reads against dark tab strips.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <style>
-    .disc { fill: #586577; }
-    .mark { fill: #FBFBFA; }
+    .disc { fill: #7A2A2C; }
+    .mark { fill: #F1EAD9; }
     @media (prefers-color-scheme: dark) {
-      .disc { fill: #6B7A8D; }
-      .mark { fill: #F0F0EE; }
+      .disc { fill: #9A3A3C; }
+      .mark { fill: #F5EEDF; }
     }
   </style>
 
-  <!-- Slate disc — the brand mark. -->
-  <circle class="disc" cx="32" cy="32" r="30" />
+  <!-- Oxblood rounded square — the brand mark. -->
+  <rect class="disc" x="2" y="2" width="60" height="60" rx="14" />
 
   <!--
-    "S" monogram. Serif stack gives a refined feel without embedding a webfont.
-    text-anchor + dominant-baseline keep the letterform optically centered.
-    font-weight 700 gives stems enough body to read at 16px.
+    "PA" monogram. Serif stack gives a refined feel without embedding a webfont.
+    text-anchor + dominant-baseline keep the letterforms optically centered.
   -->
   <text
     class="mark"
     x="32"
-    y="32"
-    font-family="Libre Baskerville, Georgia, Cambria, 'Times New Roman', serif"
-    font-size="34"
-    font-weight="700"
+    y="33"
+    font-family="Fraunces, Georgia, Cambria, 'Times New Roman', serif"
+    font-size="30"
+    font-weight="600"
     text-anchor="middle"
     dominant-baseline="central"
-  >S</text>
+  >PA</text>
 </svg>
