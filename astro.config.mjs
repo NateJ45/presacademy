@@ -10,7 +10,7 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   // REPLACE before launch (rebrand.mjs stamps this): the canonical production URL.
-  site: 'https://www.example-church.org',
+  site: 'https://www.presbyterianacademy.org',
   output: 'static',
   // `imageService: 'compile'` tells @astrojs/cloudflare to process images
   // with Sharp at build time and ship plain static files — no Cloudflare

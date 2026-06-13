@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings } from '@/lib/queries';
-import heroGive from '@/assets/mural-angels.jpg';
+import heroGive from '@/assets/placeholders/community-welcome-pair.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -20,7 +20,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Give · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Support the ministry of First Church of Springfield. Give online, by mail, or designate your gift to the food ministry. Thank you for your generosity.';
+  'Support the ministry of The Presbyterian Academy. Give online, by mail, or designate your gift to the food ministry. Thank you for your generosity.';
 
 const schemas = [
   breadcrumbSchema([
@@ -44,11 +44,11 @@ const pillPrimary =
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Give'}
     headline={page?.heroHeadline ?? 'Thank you'}
-    subhead={page?.heroSubhead ?? 'For entrusting your tithes and offerings to First Church. Your generosity sustains worship, music, and a food ministry that feeds our neighbors.'}
+    subhead={page?.heroSubhead ?? 'For entrusting your tithes and offerings to The Presbyterian Academy. Your generosity sustains worship, music, and a food ministry that feeds our neighbors.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroGive}
-    localImageAlt="The historic sanctuary ceiling at First Church"
+    localImageAlt="Two people sharing a warm welcome"
     headingId="give-hero"
     size="short"
   />
@@ -95,7 +95,7 @@ const pillPrimary =
         <article class="card-lift rounded-md border border-border-soft bg-card p-l">
           <h3 class="font-display text-h4 text-foreground">{page?.mailHeadline ?? 'By mail'}</h3>
           <p class="mt-s text-foreground/85 leading-relaxed">
-            {page?.mailBodyP1 ?? 'Prefer to send a check? Make it out to First Church of Springfield and mail it to:'}
+            {page?.mailBodyP1 ?? 'Prefer to send a check? Make it out to The Presbyterian Academy and mail it to:'}
           </p>
           <p class="mt-s text-foreground/80">{site.name}<br />{settings.addressLine}<br />{settings.cityStateZip}</p>
         </article>
@@ -115,7 +115,7 @@ const pillPrimary =
   <FinalCta
     eyebrow={page?.finalCtaEyebrow ?? "With Gratitude"}
     headline={page?.finalCtaHeadline ?? "Every gift is a part of the work"}
-    subhead={page?.finalCtaSubhead ?? "Thank you for helping First Church serve and celebrate Jesus for the good of the world."}
+    subhead={page?.finalCtaSubhead ?? "Thank you for helping The Presbyterian Academy serve and celebrate Jesus for the good of the world."}
     cta={page?.finalCta?.label ? page.finalCta : { label: 'Give Now', linkType: 'external', externalUrl: giveUrl, openInNewTab: true }}
   />
 </BaseLayout>

@@ -141,7 +141,7 @@ export const worshipPage = definePageSingleton('worshipPage', "Worship (I'm New)
   heroEyebrow: 'Sunday Worship',
   heroHeadline: "There's a place for you here.",
   heroSubhead:
-    "Whether you're a weekly churchgoer, haven't been in ages, or don't know anything about Christianity, you are welcome at First Church.",
+    "Whether you're a weekly churchgoer, haven't been in ages, or don't know anything about Christianity, you are welcome at The Presbyterian Academy.",
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
@@ -251,7 +251,7 @@ export const beliefsPage = definePageSingleton('beliefsPage', 'What We Believe',
 
 export const musicPage = definePageSingleton('musicPage', 'Music', {
   heroEyebrow: 'Music',
-  heroHeadline: 'Our musical life at First Church',
+  heroHeadline: 'Our musical life at The Presbyterian Academy',
   heroSubhead: 'I will sing of your strength, in the morning I will sing of your love. (Psalm 59:16)',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
@@ -287,8 +287,8 @@ export const musicPage = definePageSingleton('musicPage', 'Music', {
 
 export const staffPage = definePageSingleton('staffPage', 'Pastors & Staff', {
   heroEyebrow: 'Pastors & Staff',
-  heroHeadline: "The people you'll meet at First Church",
-  heroSubhead: 'A small, dedicated team serving a historic congregation in downtown Springfield.',
+  heroHeadline: "The people you'll meet at The Presbyterian Academy",
+  heroSubhead: 'A small, dedicated team serving a historic congregation in downtown West Chester Township.',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
@@ -300,7 +300,7 @@ export const staffPage = definePageSingleton('staffPage', 'Pastors & Staff', {
 
 export const growPage = definePageSingleton('growPage', 'Grow', {
   heroEyebrow: 'Get Involved',
-  heroHeadline: 'Community Groups at First Church',
+  heroHeadline: 'Community Groups at The Presbyterian Academy',
   heroSubhead: 'Drop in and walk with others on the Way of Jesus.',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
@@ -336,7 +336,7 @@ export const servePage = definePageSingleton('servePage', 'Serve', {
   heroEyebrow: 'Get Involved',
   heroHeadline: 'Love our neighbors',
   heroSubhead:
-    'We are called to serve and celebrate Jesus for the good of the world. Much of that happens right here in downtown Springfield.',
+    'We are called to serve and celebrate Jesus for the good of the world. Much of that happens right here in downtown West Chester Township.',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
@@ -373,7 +373,7 @@ export const kidsPage = definePageSingleton('kidsPage', 'Kids', {
   heroEyebrow: 'Get Involved',
   heroHeadline: 'Children are welcome here',
   heroSubhead:
-    'At First Church, little ones are part of the worshipping congregation, and we welcome their noise and their needs.',
+    'At The Presbyterian Academy, little ones are part of the worshipping congregation, and we welcome their noise and their needs.',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
@@ -418,9 +418,9 @@ export const useOurSpacePage = definePageSingleton(
   'Use Our Space',
   {
     heroEyebrow: 'Use Our Space',
-    heroHeadline: 'Interested in using space at First Church?',
+    heroHeadline: 'Interested in using space at The Presbyterian Academy?',
     heroSubhead:
-      'A historic, welcoming building in the heart of downtown Springfield, open to the wider community throughout the week.',
+      'A historic, welcoming building in the heart of downtown West Chester Township, open to the wider community throughout the week.',
   },
   {
     groups: [
@@ -538,7 +538,7 @@ export const givePage = definePageSingleton('givePage', 'Give', {
   heroEyebrow: 'Give',
   heroHeadline: 'Thank you',
   heroSubhead:
-    'For entrusting your tithes and offerings to First Church. Your generosity sustains worship, music, and a food ministry that feeds our neighbors.',
+    'For entrusting your tithes and offerings to The Presbyterian Academy. Your generosity sustains worship, music, and a food ministry that feeds our neighbors.',
 }, {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [

@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getUseOurSpacePage, getSiteSettings } from '@/lib/queries';
-import heroSpace from '@/assets/hero-space.webp';
+import heroSpace from '@/assets/placeholders/place-sanctuary-wooden-pews.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -22,7 +22,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Use Our Space · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Host your event at a historic church in downtown Springfield. First Church offers competitive rates, a premium location near transit, and free parking.';
+  'Host your event at a historic church in downtown West Chester Township. The Presbyterian Academy offers competitive rates, a premium location near transit, and free parking.';
 
 const schemas = [
   breadcrumbSchema([
@@ -46,12 +46,12 @@ const uses = page?.uses?.length ? page.uses : FALLBACK_USES;
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Use Our Space'}
-    headline={page?.heroHeadline ?? 'Interested in using space at First Church?'}
-    subhead={page?.heroSubhead ?? 'A historic, welcoming building in the heart of downtown Springfield, open to the wider community throughout the week.'}
+    headline={page?.heroHeadline ?? 'Interested in using space at The Presbyterian Academy?'}
+    subhead={page?.heroSubhead ?? 'A historic, welcoming building in the heart of downtown West Chester Township, open to the wider community throughout the week.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroSpace}
-    localImageAlt="The historic sanctuary interior available to rent at First Church"
+    localImageAlt="A sanctuary interior with wooden pews"
     headingId="space-hero"
     size="short"
   />
@@ -68,7 +68,7 @@ const uses = page?.uses?.length ? page.uses : FALLBACK_USES;
           {page?.introBodyP1 ?? 'We host all sorts of gatherings throughout the week, from youth sports and board meetings to concerts, rehearsals, social services, and 12-step groups.'}
         </p>
         <p>
-          {page?.introBodyP2 ?? 'You get a premium downtown Springfield location close to public transit, competitive rates, friendly support, and first-come, first-served free parking.'}
+          {page?.introBodyP2 ?? 'You get a premium downtown West Chester Township location close to public transit, competitive rates, friendly support, and first-come, first-served free parking.'}
         </p>
         <ul class="flex flex-wrap gap-xs pt-xs list-none p-0">
           {uses.map((u) => (

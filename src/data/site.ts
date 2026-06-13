@@ -6,7 +6,7 @@
 
 /**
  * Derive a localStorage key prefix from the church name.
- * "First Church of Springfield" -> "first-church-of-springfield"
+ * "The Presbyterian Academy" -> "first-church-of-springfield"
  *
  * This keeps storageKeyPrefix and themeStorageKey in sync with the name
  * automatically. rebrand.mjs does not need to stamp these fields separately
@@ -23,8 +23,8 @@ function slugifyName(s: string): string {
 // All derived fields (studio, url, storageKeyPrefix, themeStorageKey) are
 // computed from those two values at module load time and are never rewritten
 // by the script.
-const _name   = "First Church of Springfield";
-const _domain = "example-church.org";
+const _name   = "The Presbyterian Academy";
+const _domain = "presbyterianacademy.org";
 const _slug   = slugifyName(_name);
 
 export const site = {
@@ -50,11 +50,11 @@ export const site = {
   lang: "en",
 
   // The text wordmark rendered in the header, footer, and mobile menu.
-  // Two stacked lines (e.g. "First Presbyterian" / "Church of Springfield").
+  // Two stacked lines (e.g. "The Presbyterian" / "Academy").
   // Set line2 to an empty string for a single-line wordmark.
   wordmark: {
-    line1: "First Church",
-    line2: "of Springfield",
+    line1: "The Presbyterian",
+    line2: "Academy",
   },
 
   // NOTE: contact details (email, pastoral email, phone, address, office hours)

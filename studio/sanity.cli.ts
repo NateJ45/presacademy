@@ -11,7 +11,7 @@ export default defineCliConfig({
   // The studio will be published at <studioHost>.sanity.studio after `npm run studio:deploy`.
   // studioHost must be globally unique across *.sanity.studio. REPLACE before
   // the first studio deploy (rebrand.mjs stamps this).
-  studioHost: 'example-church',
+  studioHost: 'presbyterian-academy',
   deployment: {
     // After your FIRST `npm run studio:deploy`, Sanity prints the new app's id.
     // Pin it here (appId: '...') to keep later deploys non-interactive.

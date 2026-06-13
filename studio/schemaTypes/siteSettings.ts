@@ -29,7 +29,7 @@ export const siteSettings = defineType({
       title: 'Church name',
       type: 'string',
       description: 'Used in the browser tab and search results.',
-      initialValue: 'First Church of Springfield',
+      initialValue: 'The Presbyterian Academy',
       group: 'identity',
       validation: (Rule) => Rule.required(),
     }),
@@ -95,14 +95,14 @@ export const siteSettings = defineType({
       type: 'string',
       group: 'identity',
       description:
-        'Street line, e.g. "123 Main Street". Shown in the header bar, footer, contact + give pages, and the map links.',
+        'Street line, e.g. "9463 Cincinnati Columbus Rd". Shown in the header bar, footer, contact + give pages, and the map links.',
     }),
     defineField({
       name: 'cityStateZip',
       title: 'City, state, ZIP',
       type: 'string',
       group: 'identity',
-      description: 'e.g. "Springfield, IL 62701".',
+      description: 'e.g. "West Chester Township, OH 45069".',
     }),
     defineField({
       name: 'geoLat',

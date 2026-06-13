@@ -1,6 +1,6 @@
 ---
 // Safe to edit by hand for copy + structure changes.
-// Home page for First Church of Springfield.
+// Home page for The Presbyterian Academy.
 //
 // Remodel note: this page is the portfolio showcase, so it carries the church's
 // distinctive structure (different from the base template):
@@ -29,8 +29,8 @@ import SanityImage from '@/components/SanityImage.astro';
 import ArchMedia from '@/components/ArchMedia.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
-import heroSanctuary from '@/assets/hero-sanctuary.webp';
-import sanctuaryInterior from '@/assets/sanctuary-interior.webp';
+import heroSanctuary from '@/assets/placeholders/teach-bible-study-group.jpg';
+import sanctuaryInterior from '@/assets/placeholders/place-sanctuary-interior-light.jpg';
 
 const [page, siteSettings, featuredMinistries] = await Promise.all([
   getHomePage().catch(() => null),
@@ -44,7 +44,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? site.name;
 const description =
   page?.seoDescription ??
-  'A historic, welcoming church in downtown Springfield. Join us for worship this Sunday. Whoever you are, you are welcome here.';
+  'A historic, welcoming church in downtown West Chester Township. Join us for worship this Sunday. Whoever you are, you are welcome here.';
 
 const youtube = settings.social.youtube;
 
@@ -57,7 +57,7 @@ const heroImg = (page?.heroImages?.length ? page.heroImages[0] : page?.heroImage
 // editor changes a field. A dated seasonal hero (Holy Week, Christmas) takes
 // over when enabled and today falls within its window.
 const HERO_DEFAULTS = {
-  eyebrow: 'A Historic Congregation · Downtown Springfield',
+  eyebrow: 'A Historic Congregation · Downtown West Chester Township',
   headline: 'Serving and celebrating Jesus for the good of the world.',
   keyword: 'Jesus',
   subhead:
@@ -135,7 +135,7 @@ const pillOnChapel =
 // in Sanity, so the home next-step row is never empty.
 const ministries = [
   { title: 'Grow', href: '/grow', body: 'Walk with others on the Way of Jesus through Bible study and good conversation.' },
-  { title: 'Serve', href: '/serve', body: 'Love our neighbors in downtown Springfield through hands-on, practical ministry.' },
+  { title: 'Serve', href: '/serve', body: 'Love our neighbors in downtown West Chester Township through hands-on, practical ministry.' },
   { title: 'Kids', href: '/kids', body: 'Children are part of the worshipping congregation, noise and needs and all.' },
   { title: 'Food', href: '/food', body: 'Free food for all in need, no questions asked, at our Main Street door.' },
 ];
@@ -229,7 +229,7 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
               videoType={heroVideoType}
               poster={page?.heroVideoPoster}
               eager
-              fallbackAlt="First Church of Springfield"
+              fallbackAlt="The Presbyterian Academy"
               sizes="(min-width: 768px) 45vw, 90vw"
             />
           ) : hasSanityHero ? (
@@ -239,13 +239,13 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
               sizes="(min-width: 768px) 45vw, 90vw"
               loading="eager"
               fetchpriority="high"
-              alt={heroImgEffective?.alt || 'First Church of Springfield'}
+              alt={heroImgEffective?.alt || 'The Presbyterian Academy'}
               class="h-full w-full object-cover"
             />
           ) : (
             <Image
               src={heroSanctuary}
-              alt="The historic stone sanctuary of First Church on Main Street"
+              alt="Adults gathered with open Bibles for study"
               widths={[480, 768, 900]}
               sizes="(min-width: 768px) 45vw, 90vw"
               loading="eager"
@@ -294,7 +294,7 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
         <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
           <p>
             {page?.welcomeBodyP1 ??
-              'First Church has stood on Main Street for generations, home to stained-glass windows and a sanctuary built for worship. The building is remarkable. The people are the point.'}
+              'The Presbyterian Academy has stood on Main Street for generations, home to stained-glass windows and a sanctuary built for worship. The building is remarkable. The people are the point.'}
           </p>
           <p>
             {page?.welcomeBodyP2 ??
@@ -312,13 +312,13 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
             source={page.welcomeImage}
             width={1000}
             sizes="(min-width: 768px) 45vw, 100vw"
-            alt={page.welcomeImage.alt || 'Inside the historic sanctuary at First Church, with its stained-glass windows'}
+            alt={page.welcomeImage.alt || 'Inside the historic sanctuary at The Presbyterian Academy, with its stained-glass windows'}
             class="h-full w-full object-cover"
           />
         ) : (
           <Image
             src={sanctuaryInterior}
-            alt="Inside the historic sanctuary at First Church, with its stained-glass windows"
+            alt="Light falling through a quiet church sanctuary"
             widths={[600, 900, 1197]}
             sizes="(min-width: 768px) 45vw, 100vw"
             class="h-full w-full object-cover"
@@ -383,7 +383,7 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
     <div data-reveal class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-l md:gap-section-md items-center">
       <SectionHeading
         eyebrow={page?.eventsEyebrow ?? "What's On"}
-        headline={page?.eventsHeadline ?? "There is always something happening at First Church"}
+        headline={page?.eventsHeadline ?? "There is always something happening at The Presbyterian Academy"}
         headingId="events-heading"
       />
       <div class="text-foreground/85 text-lg leading-relaxed space-y-s">
@@ -411,10 +411,10 @@ const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBAC
       <div class="mt-s mb-m h-px w-12 bg-gold/70 mx-auto" aria-hidden="true"></div>
       <h2 id="record-heading" class="font-display text-h2 text-foreground">{page?.recordHeadline ?? 'Stay connected'}</h2>
       <p class="mt-m text-lg text-foreground/85 leading-relaxed">
-        {page?.recordBody ?? 'News, reflections, and what is coming up at First Church, in your inbox.'}
+        {page?.recordBody ?? 'News, reflections, and what is coming up at The Presbyterian Academy, in your inbox.'}
       </p>
       <div class="mt-l flex justify-center">
-        <a href="mailto:hello@example-church.org?subject=Subscribe%20to%20our%20newsletter" class={pillPrimary}>{page?.recordCtaLabel ?? 'Subscribe to our newsletter'}</a>
+        <a href="mailto:info@presbyterianacademy.org?subject=Subscribe%20to%20our%20newsletter" class={pillPrimary}>{page?.recordCtaLabel ?? 'Subscribe to our newsletter'}</a>
       </div>
     </div>
   </section>

@@ -23,7 +23,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Music · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Hymns, spirituals, and anthems led by our choir and pipe organ. The musical life of First Church of Springfield.';
+  'Hymns, spirituals, and anthems led by our choir and pipe organ. The musical life of The Presbyterian Academy.';
 
 const schemas = [
   breadcrumbSchema([
@@ -36,12 +36,12 @@ const schemas = [
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Music'}
-    headline={page?.heroHeadline ?? 'Our musical life at First Church'}
+    headline={page?.heroHeadline ?? 'Our musical life at The Presbyterian Academy'}
     subhead={page?.heroSubhead ?? 'I will sing of your strength, in the morning I will sing of your love. (Psalm 59:16)'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroMusic}
-    localImageAlt="The pipe organ in the First Church sanctuary"
+    localImageAlt="The pipe organ in the The Presbyterian Academy sanctuary"
     headingId="music-hero"
     size="short"
   />
@@ -50,7 +50,7 @@ const schemas = [
     <div class="mx-auto max-w-3xl px-m py-section-lg text-lg text-foreground/85 leading-relaxed space-y-m">
       <h2 id="music-intro" class="sr-only">{page?.introHeading ?? 'About our music'}</h2>
       <p>
-        {page?.introBodyP1 ?? 'Sunday worship at First Church is sung. Hymns, spirituals, and anthems, accompanied by organ, carry the congregation through the liturgy week by week. Music is not a performance here. It is how we pray together.'}
+        {page?.introBodyP1 ?? 'Sunday worship at The Presbyterian Academy is sung. Hymns, spirituals, and anthems, accompanied by organ, carry the congregation through the liturgy week by week. Music is not a performance here. It is how we pray together.'}
       </p>
     </div>
   </section>

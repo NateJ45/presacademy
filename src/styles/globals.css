@@ -1038,7 +1038,7 @@ body::before {
 
   /* Print-only header + footer injected into every page. */
   body::after {
-    content: "First Church of Springfield · example-church.org";
+    content: "The Presbyterian Academy · presbyterianacademy.org";
     display: block;
     margin-top: 0.5in;
     padding-top: 0.25in;

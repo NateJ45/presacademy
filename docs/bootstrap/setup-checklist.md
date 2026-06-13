@@ -7,7 +7,7 @@ cutover.
 ## Identity & code
 - [ ] `bootstrap.config.json` filled; `npm run rebrand` (check mode) reviewed; `npm run rebrand -- --apply` run; diff reviewed
 - [ ] `npm run typegen` after rebrand (and after any schema change)
-- [ ] Grep for leftover placeholders: `First Church`, `Springfield`, `example-church`, `555-0100` → zero hits outside docs examples
+- [ ] Grep for leftover placeholders: `The Presbyterian Academy`, `West Chester Township`, `presbyterian-academy`, `555-0100` → zero hits outside docs examples
 - [ ] Palette tokens reskinned in `globals.css` + mirrored in `site.ts` (or the reference palette consciously kept)
 - [ ] Fonts confirmed (or swapped + tokens updated)
 - [ ] Favicon + apple-touch-icon replaced; `npm run og` rerun; OG card checked
