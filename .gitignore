@@ -20,6 +20,9 @@ pnpm-debug.log*
 # wrangler local cache (Cloudflare adapter)
 .wrangler/
 
+# Playwright MCP artifacts (screenshots/snapshots from visual verification)
+.playwright-mcp/
+
 # generated artifacts
 tmp/
 studio/schema.json
