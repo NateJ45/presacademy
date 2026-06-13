@@ -8,7 +8,6 @@
 // https://search.google.com/test/rich-results
 
 import { site } from '@/data/site';
-import { serviceTime } from './serviceTime';
 import { resolveSiteSettings, type RawSiteSettings } from './siteSettings';
 
 // ---------- Types (loose — Sanity provides the actual document shapes) ----
@@ -32,12 +31,10 @@ interface Breadcrumb {
 
 // ---------- LocalBusiness (site-wide, BaseLayout injects on every page) ----
 
-export function churchSchema(settings: RawSiteSettings | null | undefined): string {
+export function organizationSchema(settings: RawSiteSettings | null | undefined): string {
   // Resolve through the shared helper so the JSON-LD identity matches what the
-  // header and footer render. (This previously hardcoded the YouTube URL and
-  // read email/phone/address from site.ts, so Sanity edits never reached it.)
+  // header and footer render.
   const s = resolveSiteSettings(settings);
-  const st = serviceTime(s.worshipService);
 
   // Build the address object only with fields that are actually known.
   // Omit addressLocality / addressRegion / postalCode when cityStateZip cannot
@@ -51,8 +48,8 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
 
   const schema: Record<string, any> = {
     '@context': 'https://schema.org',
-    '@type': 'Church',
-    '@id': `${site.url}/#church`,
+    '@type': 'EducationalOrganization',
+    '@id': `${site.url}/#organization`,
     name: s.brandName,
     url: site.url,
     image: `${site.url}${site.assets.ogDefault}`,
@@ -71,13 +68,6 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
           },
         }
       : {}),
-    // Sunday worship service.
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: st.day,
-      opens: st.opens,
-      closes: st.closes,
-    },
     sameAs: [
       s.social.instagram,
       s.social.facebook,

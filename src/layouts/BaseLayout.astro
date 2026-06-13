@@ -14,7 +14,7 @@ import { ClientRouter } from 'astro:transitions';
 import { site } from '@/data/site';
 import { urlFor } from '@/lib/sanity';
 import { getActiveAnnouncement } from '@/lib/queries';
-import { churchSchema } from '@/lib/schemas';
+import { organizationSchema } from '@/lib/schemas';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import BackToTop from '@/components/BackToTop';
@@ -101,10 +101,10 @@ const fullTitle = cleanTitle === site.name || hasBrandInline
   ? cleanTitle
   : `${cleanTitle} — ${site.name}`;
 
-// Auto-inject the Church schema on every page (uses site constants as
-// fallbacks, so it renders even before Sanity siteSettings is wired).
+// Auto-inject the EducationalOrganization schema on every page (uses site
+// constants as fallbacks, so it renders even before Sanity siteSettings is wired).
 // Pages can still pass their own additional schemas (FAQPage, BreadcrumbList).
-const allSchemas = [churchSchema(siteSettings), ...schemas];
+const allSchemas = [organizationSchema(siteSettings), ...schemas];
 
 // Cloudflare Web Analytics token — only render the beacon when present.
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
