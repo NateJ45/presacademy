@@ -12,17 +12,11 @@ import heroStaff from '@/assets/placeholders/teach-group-reading-bibles.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import { Image } from 'astro:assets';
 import Hero from '@/components/Hero.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
-
-import chesnaPhoto from '@/assets/chesna-hinkley.webp';
-import judyPhoto from '@/assets/judy-landt.webp';
-import michaelPhoto from '@/assets/michael-shawgo.webp';
-import ashleyPhoto from '@/assets/ashley-mclean.webp';
 
 const siteSettings = await getSiteSettings().catch(() => null);
 const page = await getPageHero('staffPage').catch(() => null);
@@ -52,7 +46,6 @@ const staff = [
     name: 'Rev. Jane Smith',
     role: 'Pastor',
     email: settings.pastorEmail,
-    photo: chesnaPhoto,
     bio: [
       `Rev. Jane Smith has served as Pastor since 2020 and loves helping people find their place in the church family.`,
     ],
@@ -65,7 +58,6 @@ const staff = [
   {
     name: 'Rev. Chris Brown',
     role: 'Parish Associate',
-    photo: judyPhoto,
     bio: [
       `Rev. Chris Brown serves as Parish Associate and has spent many years walking alongside congregations and families in every season of life.`,
     ],
@@ -73,7 +65,6 @@ const staff = [
   {
     name: 'Alex Johnson',
     role: 'Music Director',
-    photo: michaelPhoto,
     bio: [
       `Alex Johnson leads music at the church and loves helping the choir and congregation lift their voices together on Sunday mornings.`,
     ],
@@ -87,7 +78,6 @@ const staff = [
     name: 'Sam Lee',
     role: 'Office Administrator',
     email: settings.email,
-    photo: ashleyPhoto,
     bio: [
       `Sam Lee keeps the church office running smoothly and is usually the first friendly face you will meet when you stop by during the week.`,
     ],
@@ -109,7 +99,6 @@ const people = useSanityStaff
       role: p.role,
       email: p.email,
       sanityPhoto: p.photo?.asset ? p.photo : null,
-      localPhoto: null as null,
       bioBlocks: p.bio,
       bioStrings: null as string[] | null,
       favorites: (p.favorites ?? []).map((f: any) => ({ label: f.label, value: f.value })),
@@ -119,7 +108,6 @@ const people = useSanityStaff
       role: p.role,
       email: (p as any).email as string | undefined,
       sanityPhoto: null,
-      localPhoto: p.photo,
       bioBlocks: null,
       bioStrings: p.bio,
       favorites: ((p as any).favorites ?? []).map((f: any) => ({ label: f.label, value: f.items })),
@@ -146,20 +134,14 @@ const people = useSanityStaff
           <div class="md:sticky md:top-28">
             {/* Arched headshot — carries the building's arch motif onto the staff. */}
             <div class="w-44 sm:w-52 aspect-[4/5] overflow-hidden arch-top-sm ring-1 ring-primary/40 dark:ring-[#C7A875]/40 bg-muted shadow-sm">
-              {person.sanityPhoto ? (
+              {/* Sanity headshot when uploaded; otherwise the arched frame
+                  stays empty as a deliberate "headshot pending" placeholder. */}
+              {person.sanityPhoto && (
                 <SanityImage
                   source={person.sanityPhoto}
                   width={420}
                   sizes="(min-width: 640px) 208px, 176px"
                   alt={person.sanityPhoto.alt || `${person.name}, ${person.role} at The Presbyterian Academy`}
-                  class="h-full w-full object-cover"
-                />
-              ) : (
-                <Image
-                  src={person.localPhoto}
-                  alt={`${person.name}, ${person.role} at The Presbyterian Academy`}
-                  widths={[176, 208, 352, 416]}
-                  sizes="(min-width: 640px) 208px, 176px"
                   class="h-full w-full object-cover"
                 />
               )}
