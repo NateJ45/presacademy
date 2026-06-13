@@ -490,14 +490,12 @@ export const sectionDynamicList = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Latest sermons', value: 'latestSermons' },
+          { title: 'Featured courses', value: 'featuredCourses' },
           { title: 'Upcoming events', value: 'upcomingEvents' },
-          { title: 'Ministries', value: 'ministries' },
-          { title: 'Pastors & staff', value: 'staff' },
-          { title: 'Worship resources', value: 'worshipResources' },
+          { title: 'Faculty', value: 'faculty' },
         ],
       },
-      initialValue: 'upcomingEvents',
+      initialValue: 'featuredCourses',
       validation: (R) => R.required(),
     }),
     defineField({ name: 'count', title: 'How many', type: 'number', initialValue: 3, validation: (R) => R.min(1).max(12) }),
