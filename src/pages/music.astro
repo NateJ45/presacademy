@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings } from '@/lib/queries';
-import heroMusic from '@/assets/hero-music.webp';
+import heroMusic from '@/assets/placeholders/place-sanctuary-interior-light.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -14,7 +14,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
 import SanityImage from '@/components/SanityImage.astro';
-import muralAngels from '@/assets/mural-angels.jpg';
+import muralAngels from '@/assets/placeholders/place-church-aisle.jpg';
 
 const siteSettings = await getSiteSettings().catch(() => null);
 const page = await getPageHero('musicPage').catch(() => null);
@@ -41,7 +41,7 @@ const schemas = [
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroMusic}
-    localImageAlt="The pipe organ in the The Presbyterian Academy sanctuary"
+    localImageAlt="Light in a church sanctuary"
     headingId="music-hero"
     size="short"
   />
@@ -88,7 +88,7 @@ const schemas = [
       ) : (
         <Image
           src={muralAngels}
-          alt="Painted detail in our historic sanctuary"
+          alt="Looking down a church aisle"
           widths={[480, 768, 800]}
           sizes="(min-width: 768px) 45vw, 100vw"
           class="w-full h-auto rounded-md shadow-sm order-last md:order-first"
