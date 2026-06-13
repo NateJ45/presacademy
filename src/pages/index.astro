@@ -1,433 +1,220 @@
 ---
 // Safe to edit by hand for copy + structure changes.
-// Home page for The Presbyterian Academy.
+// Home page for The Presbyterian Academy (lay school) in the Rule & Ledger
+// design language. Section order: split hero with a "next cohort" ledger line ->
+// wayfinding ledger -> "Start here" course rail -> stat/heritage band -> course
+// catalog preview -> faculty strip -> testimonials -> closing colophon CTA.
 //
-// Remodel note: this page is the portfolio showcase, so it carries the church's
-// distinctive structure (different from the base template):
-//   1. SPLIT hero on cream — oversized serif headline with a keyword set in
-//      Chapel green, two pills, and an ARCHED photo (the building's signature).
-//   2. Service-times band — the authoritative "when + where" (Highland Park's
-//      service band pattern).
-//   3. Welcome — asymmetric, arched feature image.
-//   4. Inclusive welcome — a solid Chapel-green band foregrounding the
-//      congregation's affirming identity.
-//   5. Get involved — next-step ministry cards.
-//   6. Events rhythms + the newsletter + a Chapel-green closing CTA.
-//
-// STRUCTURE: layout + section order is code. Editor-facing copy can flow from
-// the homePage singleton (getHomePage) as fields are wired; today the section
-// copy is inline with Sanity driving SEO + the hero image override.
+// Hero/SEO/finalCta copy flows from the homePage singleton with school
+// fallbacks; the rails populate from the catalog collections. The hero text
+// shows the homePage singleton's current value, so it flips to school copy once
+// homePage is reseeded.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import { getHomePage, getSiteSettings, getFeaturedMinistries } from '@/lib/queries';
+import {
+  getHomePage,
+  getSiteSettings,
+  getFeaturedCourses,
+  getStartHereCourses,
+  getFeaturedFaculty,
+  getFeaturedTestimonials,
+  getNextTerm,
+} from '@/lib/queries';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import { serviceTime } from '@/lib/serviceTime';
-import SectionHeading from '@/components/SectionHeading.astro';
 import SanityImage from '@/components/SanityImage.astro';
-import ArchMedia from '@/components/ArchMedia.astro';
+import CourseCard from '@/components/CourseCard.astro';
+import FacultyCard from '@/components/FacultyCard.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
-import heroSanctuary from '@/assets/placeholders/teach-bible-study-group.jpg';
-import sanctuaryInterior from '@/assets/placeholders/place-sanctuary-interior-light.jpg';
 
-const [page, siteSettings, featuredMinistries] = await Promise.all([
+const [page, siteSettings, featuredCourses, startHere, featuredFaculty, testimonials, nextTerm] = await Promise.all([
   getHomePage().catch(() => null),
   getSiteSettings().catch(() => null),
-  getFeaturedMinistries().catch(() => []),
+  getFeaturedCourses(6).catch(() => []),
+  getStartHereCourses().catch(() => []),
+  getFeaturedFaculty(3).catch(() => []),
+  getFeaturedTestimonials(3).catch(() => []),
+  getNextTerm().catch(() => null),
 ]);
-
-// Resolve identity / contact / social once for the whole page (src/lib/siteSettings.ts).
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? site.name;
 const description =
   page?.seoDescription ??
-  'A historic, welcoming church in downtown West Chester Township. Join us for worship this Sunday. Whoever you are, you are welcome here.';
+  'Reformed formation taught in person, in cohorts, for the people who lead the church: elders, teachers, small-group hosts, and the lifelong curious.';
 
-const youtube = settings.social.youtube;
-
-// Editor-managed hero photo when set in the Home singleton, else the built-in
-// sanctuary photo. Rendered inside the arched frame below.
+const heroEyebrow = page?.heroEyebrow ?? 'The Presbyterian Academy';
+const heroHeadline = page?.heroHeadline ?? 'Theological depth, taught for ordinary believers.';
+const heroSubhead =
+  page?.heroSubhead ??
+  'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
 const heroImg = (page?.heroImages?.length ? page.heroImages[0] : page?.heroImage) ?? null;
 
-// ---- Hero content: default (Sanity-overridable) + optional seasonal override ----
-// The current inline copy is the fallback, so the page is identical until an
-// editor changes a field. A dated seasonal hero (Holy Week, Christmas) takes
-// over when enabled and today falls within its window.
-const HERO_DEFAULTS = {
-  eyebrow: 'A Historic Congregation · Downtown West Chester Township',
-  headline: 'Serving and celebrating Jesus for the good of the world.',
-  keyword: 'Jesus',
-  subhead:
-    'We gather in the abundant life of Jesus to worship, love, serve, pray, and share the gospel in word and deed. Whoever you are, you are welcome here.',
-};
-
-const seasonal: any = page?.seasonalHero ?? null;
-const nowMs = Date.now();
-const seasonalActive = !!(
-  seasonal?.enabled &&
-  seasonal?.headline &&
-  (!seasonal.startDate || new Date(seasonal.startDate).getTime() <= nowMs) &&
-  (!seasonal.endDate || new Date(seasonal.endDate).getTime() >= nowMs)
-);
-
-const heroEyebrow = (seasonalActive ? seasonal.eyebrow : page?.heroEyebrow) ?? HERO_DEFAULTS.eyebrow;
-const heroHeadline = (seasonalActive ? seasonal.headline : page?.heroHeadline) ?? HERO_DEFAULTS.headline;
-const heroKeyword = seasonalActive ? (seasonal.keyword ?? '') : (page?.heroKeyword ?? HERO_DEFAULTS.keyword);
-const heroSubhead = (seasonalActive ? seasonal.subhead : page?.heroSubhead) ?? HERO_DEFAULTS.subhead;
-
-// Hero image: seasonal image > Home hero image(s) > built-in sanctuary photo.
-const seasonalImg = seasonalActive ? seasonal.image : null;
-const heroImgEffective = (seasonalImg?.asset ? seasonalImg : heroImg) ?? null;
-const hasSanityHero = !!heroImgEffective?.asset;
-
-// Arched-frame hero media (when no seasonal override is active):
-//   video  > slideshow (2+ images) > single image.
-// A hero video (uploaded file, or a direct .mp4/.webm link) loops quietly in the
-// arch; 2+ images cross-fade with a slow Ken Burns zoom; one image stays static.
-const heroSlides = (page?.heroImages ?? []).filter((img: any) => !!img?.asset);
-const heroVideoSrc = !seasonalActive ? (page?.heroVideo?.asset?.url ?? page?.heroVideoUrl ?? null) : null;
-const heroVideoType = page?.heroVideo?.asset?.mimeType ?? null;
-const isHeroVideo = !!heroVideoSrc;
-const isHeroSlideshow = !seasonalActive && !isHeroVideo && heroSlides.length >= 2;
-// True whenever the arch holds animated media (video or slideshow); the frame
-// then needs position:relative (and skips the single-image hover zoom).
-const isHeroArchMedia = isHeroVideo || isHeroSlideshow;
-
-// Hero buttons. Order of preference: seasonal override > the editable
-// heroPrimaryCta / heroSecondaryCta (Home singleton, external link/label) >
-// built-in default. Watch prefers the configured livestream URL.
-const hpc: any = !seasonalActive ? page?.heroPrimaryCta : null;
-const hsc: any = !seasonalActive ? page?.heroSecondaryCta : null;
-const heroPrimaryLabel = (seasonalActive && seasonal.primaryCtaLabel) || hpc?.label || 'Plan a Visit';
-const heroPrimaryUrl = (seasonalActive && seasonal.primaryCtaUrl) || hpc?.externalUrl || '/worship';
-const watchHref = siteSettings?.watchUrl || youtube;
-const heroSecondaryLabel = hsc?.label || 'Watch Online';
-const heroSecondaryUrl = hsc?.externalUrl || watchHref;
-
-// Split the headline around the keyword so the first occurrence renders in
-// chapel green. Returns null when there's no keyword or no match (plain render).
-function splitHeadline(headline: string, keyword: string) {
-  if (!keyword) return null;
-  const idx = headline.indexOf(keyword);
-  if (idx === -1) return null;
-  return { before: headline.slice(0, idx), word: keyword, after: headline.slice(idx + keyword.length) };
+function fmtDate(d?: string): string {
+  if (!d) return '';
+  return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
-const headlineParts = splitHeadline(heroHeadline, heroKeyword);
+const cityLine = settings.addressLocality ?? 'West Chester, Ohio';
 
-// "This Sunday" at-a-glance card (replaces the small static line when enabled).
-const thisSunday: any = page?.thisSunday?.enabled ? page.thisSunday : null;
+const wayfinding = [
+  { n: '01', title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
+  { n: '02', title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
+  { n: '03', title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
+  { n: '04', title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
+];
 
-// Pill CTAs. On the cream hero/sections, primary is the bronze pill and the
-// outline pill reads in deep bronze. (No on-dark variant needed here anymore;
-// the hero is light now.)
+const stats = [
+  { value: '1998', label: 'Established' },
+  { value: '1,200+', label: 'Learners formed' },
+  { value: '100%', label: 'Ordained or credentialed faculty' },
+  { value: '3', label: 'Denominations served' },
+];
+
 const pillPrimary =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
-const pillOutline =
-  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-primary text-link hover:bg-accent transition-colors';
-// Outline pill that reads on the Chapel-green band (cream border + text).
-const pillOnChapel =
-  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-chapel-foreground/60 text-chapel-foreground hover:bg-white/10 hover:border-white transition-colors';
-
-// Inline fallback ministries. Used when no ministry docs are flagged "featured"
-// in Sanity, so the home next-step row is never empty.
-const ministries = [
-  { title: 'Grow', href: '/grow', body: 'Walk with others on the Way of Jesus through Bible study and good conversation.' },
-  { title: 'Serve', href: '/serve', body: 'Love our neighbors in downtown West Chester Township through hands-on, practical ministry.' },
-  { title: 'Kids', href: '/kids', body: 'Children are part of the worshipping congregation, noise and needs and all.' },
-  { title: 'Food', href: '/food', body: 'Free food for all in need, no questions asked, at our Main Street door.' },
-];
-
-// Prefer featured ministries from Sanity; fall back to the inline list.
-const ministryCards =
-  Array.isArray(featuredMinistries) && featuredMinistries.length > 0
-    ? featuredMinistries.map((m: any) => ({ title: m.title, href: m.link || '#', body: m.summary || '' }))
-    : ministries;
-
-// ---- Service-times band (section 2) -------------------------------------
-// The "when + where" green band. Each label/line is editable in the Home
-// singleton (homePage.serviceBand); these defaults render when a field is
-// empty, so the band is unchanged until an editor overrides it. The "Where"
-// address is editable in Sanity (siteSettings), falling back to site.ts.
-const addressLine = settings.addressLine;
-const cityStateZip = settings.cityStateZip;
-// Service time derives from the single canonical source (siteSettings.worshipService).
-const st = serviceTime(siteSettings?.worshipService);
-const sb: any = page?.serviceBand ?? null;
-const serviceBand = {
-  worshipLabel: sb?.worshipLabel ?? 'Sunday Worship',
-  worshipTime: st.bandTime,
-  joinLabel: sb?.joinLabel ?? 'How to join',
-  joinNote: sb?.joinNote ?? 'In person and online. Communion the first Sunday of each month.',
-  whereLabel: sb?.whereLabel ?? 'Where',
-};
-
-// ---- Weekly rhythms teaser list (section 6) -----------------------------
-// Inline fallback. The list is editable in Sanity (homePage.weeklyRhythms);
-// this const renders when that field is empty, so the page is identical until
-// an editor overrides it. (The en dashes below are display punctuation in
-// schedule ranges, not sentence em-dashes.)
-const FALLBACK_RHYTHMS = [
-  { label: 'Sunday Worship', time: 'Sundays, 11am' },
-  { label: 'Lunch Bag', time: 'Tue–Thu, 11am–1pm' },
-  { label: 'Main Street Community Table', time: 'Sundays, 6:45pm' },
-  { label: 'Mid-Morning Bible Study', time: 'Thursdays, 10am' },
-];
-
-const weeklyRhythms = page?.weeklyRhythms?.length ? page.weeklyRhythms : FALLBACK_RHYTHMS;
+const pillGhost =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-foreground text-foreground hover:bg-accent transition-colors';
 ---
 
 <BaseLayout {title} {description} {siteSettings}>
-  {/* ===== 1. Split hero — headline + arched photo (the church signature) ===== */}
-  <section class="bg-background" aria-labelledby="hero-heading">
-    <div class="mx-auto max-w-content px-m py-section-md md:py-section-lg grid items-center gap-l md:gap-section-md md:grid-cols-[1.05fr_0.95fr]">
-      {/* Left: editorial headline column. */}
-      <div class="hero-entry-stagger order-2 md:order-1 text-center md:text-left">
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <div class="mt-s mb-m h-px w-12 bg-gold/70 mx-auto md:mx-0" aria-hidden="true"></div>
-        <h1 id="hero-heading" class="font-display text-h1 leading-headline-tight tracking-[-0.02em] text-foreground">
-          {headlineParts ? (
-            <Fragment>{headlineParts.before}<span class="text-chapel-ink">{headlineParts.word}</span>{headlineParts.after}</Fragment>
-          ) : (
-            heroHeadline
-          )}
-        </h1>
-        <p class="mt-m max-w-xl mx-auto md:mx-0 text-lg text-foreground/80 leading-relaxed">
-          {heroSubhead}
-        </p>
-        <div class="mt-l flex flex-wrap justify-center md:justify-start gap-s">
-          <a href={heroPrimaryUrl} class={pillPrimary}>{heroPrimaryLabel}</a>
-          <a href={heroSecondaryUrl} target="_blank" rel="noopener noreferrer" class={pillOutline}>{heroSecondaryLabel}</a>
-        </div>
-        {thisSunday ? (
-          <div class="mt-m text-sm text-foreground/70">
-            <span class="text-xs uppercase tracking-eyebrow text-muted-foreground">{thisSunday.dateLabel || 'This Sunday'}</span>
-            {thisSunday.sermonTitle && <p class="mt-1 font-display text-h4 text-foreground">{thisSunday.sermonTitle}</p>}
-            {(thisSunday.scripture || thisSunday.preacher) && (
-              <p class="mt-1">{[thisSunday.scripture, thisSunday.preacher].filter(Boolean).join(' · ')}</p>
-            )}
-            {thisSunday.note && <p class="mt-1 text-muted-foreground">{thisSunday.note}</p>}
-          </div>
-        ) : (
-          <p class="mt-m text-sm text-muted-foreground">
-            This Sunday: <span class="font-semibold text-foreground/80">{st.thisSunday}</span>, in person and online.
-          </p>
-        )}
-      </div>
-
-      {/* Right: arched photo — a quiet nod to the building's arches.
-          The arch + bronze frame is repeated on the Welcome image + staff
-          headshots so it reads as the site's signature shape. */}
-      <div class="order-1 md:order-2 mx-auto w-full max-w-md md:max-w-none">
-        <div class:list={['group arch-top overflow-hidden ring-1 ring-primary/40 dark:ring-[#C7A875]/40 shadow-sm aspect-[4/5] sm:aspect-[5/6]', isHeroArchMedia ? 'relative' : 'img-zoom']}>
-          {isHeroArchMedia ? (
-            <ArchMedia
-              images={heroSlides}
-              videoSrc={heroVideoSrc}
-              videoType={heroVideoType}
-              poster={page?.heroVideoPoster}
-              eager
-              fallbackAlt="The Presbyterian Academy"
-              sizes="(min-width: 768px) 45vw, 90vw"
-            />
-          ) : hasSanityHero ? (
-            <SanityImage
-              source={heroImgEffective}
-              width={900}
-              sizes="(min-width: 768px) 45vw, 90vw"
-              loading="eager"
-              fetchpriority="high"
-              alt={heroImgEffective?.alt || 'The Presbyterian Academy'}
-              class="h-full w-full object-cover"
-            />
-          ) : (
-            <Image
-              src={heroSanctuary}
-              alt="Adults gathered with open Bibles for study"
-              widths={[480, 768, 900]}
-              sizes="(min-width: 768px) 45vw, 90vw"
-              loading="eager"
-              fetchpriority="high"
-              class="h-full w-full object-cover"
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ===== 2. Service-times band — the authoritative when + where =========== */}
-  <section class="bg-chapel text-chapel-foreground" aria-label="Sunday worship times">
-    <div class="mx-auto max-w-content px-m py-l grid gap-m md:grid-cols-[1fr_auto] items-center">
-      <div class="grid gap-m sm:grid-cols-3 text-center sm:text-left">
-        <div>
-          <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/70">{serviceBand.worshipLabel}</p>
-          <p class="mt-1 font-display text-h4 text-chapel-foreground">{serviceBand.worshipTime}</p>
-        </div>
-        <div>
-          <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/70">{serviceBand.joinLabel}</p>
-          <p class="mt-1 text-chapel-foreground/85">{serviceBand.joinNote}</p>
-        </div>
-        <div>
-          <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/70">{serviceBand.whereLabel}</p>
-          <p class="mt-1 text-chapel-foreground/85">{addressLine}, {cityStateZip}</p>
-        </div>
-      </div>
-      <div class="flex flex-wrap justify-center md:justify-end gap-s">
-        <a href={page?.serviceBandVisitCta?.externalUrl || '/worship'} class={pillPrimary}>{page?.serviceBandVisitCta?.label || 'Plan a Visit'}</a>
-        <a href={page?.serviceBandWatchCta?.externalUrl || youtube} target="_blank" rel="noopener noreferrer" class={pillOnChapel}>{page?.serviceBandWatchCta?.label || 'Watch'}</a>
-      </div>
-    </div>
-  </section>
-
-  {/* ===== 3. Welcome — asymmetric, arched feature image ==================== */}
-  <section class="bg-background" aria-labelledby="welcome-heading">
-    <div data-reveal class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-center">
+  {/* Split hero */}
+  <section class="bg-background" aria-labelledby="home-hero">
+    <div class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]">
       <div>
-        <SectionHeading
-          eyebrow={page?.welcomeEyebrow ?? 'Welcome'}
-          headline={page?.welcomeHeadline ?? 'A historic church with an open door'}
-          headingId="welcome-heading"
-        />
-        <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
-          <p>
-            {page?.welcomeBodyP1 ??
-              'The Presbyterian Academy has stood on Main Street for generations, home to stained-glass windows and a sanctuary built for worship. The building is remarkable. The people are the point.'}
-          </p>
-          <p>
-            {page?.welcomeBodyP2 ??
-              'We are a congregation in the mainline Protestant tradition, and we welcome everyone: women and men, gay and straight, lifelong believers and the simply curious. Come as you are.'}
-          </p>
-          <div class="flex flex-wrap gap-s pt-xs">
-            <a href={page?.welcomeCtaPrimary?.externalUrl || '/what-we-believe'} class={pillOutline}>{page?.welcomeCtaPrimary?.label || 'What We Believe'}</a>
-            <a href={page?.welcomeCtaSecondary?.externalUrl || '/pastor-staff'} class={pillOutline}>{page?.welcomeCtaSecondary?.label || 'Meet Our Pastors'}</a>
-          </div>
+        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+        <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
+        <div class="mt-l flex flex-wrap gap-3">
+          <a href="/courses" class={pillPrimary}>Browse courses</a>
+          <a href="/get-started" class={pillGhost}>Book a free intro</a>
         </div>
-      </div>
-      <div class="group arch-top overflow-hidden ring-1 ring-primary/40 dark:ring-[#C7A875]/40 shadow-sm img-zoom aspect-[5/6] md:aspect-[4/5]">
-        {page?.welcomeImage?.asset ? (
-          <SanityImage
-            source={page.welcomeImage}
-            width={1000}
-            sizes="(min-width: 768px) 45vw, 100vw"
-            alt={page.welcomeImage.alt || 'Inside the historic sanctuary at The Presbyterian Academy, with its stained-glass windows'}
-            class="h-full w-full object-cover"
-          />
-        ) : (
-          <Image
-            src={sanctuaryInterior}
-            alt="Light falling through a quiet church sanctuary"
-            widths={[600, 900, 1197]}
-            sizes="(min-width: 768px) 45vw, 100vw"
-            class="h-full w-full object-cover"
-          />
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        {nextTerm && (
+          <p class="mt-4 text-sm text-foreground/75">
+            <span class="font-display tabular-nums uppercase tracking-[0.12em] text-gold-ink">Next cohort begins</span>
+            &nbsp; {fmtDate(nextTerm.startDate)} &nbsp;·&nbsp; {nextTerm.title} &nbsp;·&nbsp; {cityLine}
+          </p>
         )}
       </div>
-    </div>
-  </section>
-
-  {/* ===== 4. Inclusive welcome — a solid Chapel-green band ================= */}
-  {/* Template note: this affirming statement is a self-contained section; a
-      congregation that is not affirming can edit or remove it without touching
-      anything else. The green band foregrounds it (the research flags an
-      affirming identity as a real differentiator). */}
-  <section class="bg-chapel surface-chapel text-chapel-foreground" aria-label="Our welcome">
-    <div data-reveal class="mx-auto max-w-3xl px-m py-section-lg text-center">
-      <div class="mb-m h-px w-12 bg-gold/70 mx-auto" aria-hidden="true"></div>
-      <p class="font-display text-h3 leading-snug">
-        {page?.inclusiveStatement ??
-          'Whoever you are, wherever you are on your journey of faith, you are welcome here.'}
-      </p>
-      <p class="mt-m text-chapel-foreground/80 leading-relaxed">
-        {page?.inclusiveBody ??
-          'We are an inclusive congregation, and we welcome the full participation of women and LGBTQ people in the life and leadership of the church.'}
-      </p>
-    </div>
-  </section>
-
-  {/* ===== 5. Get involved — next-step ministry cards ====================== */}
-  <section class="bg-background" aria-labelledby="involved-heading">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <SectionHeading
-        eyebrow={page?.involvedEyebrow ?? 'Get Involved'}
-        headline={page?.involvedHeadline ?? 'We are formed in community'}
-        subhead={page?.involvedSubhead ?? 'Join us for worship, fellowship, study, art, and food. There is a place for you here.'}
-        headingId="involved-heading"
-        align="center"
-        class="mx-auto"
-      />
-      <div class="mt-l grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-m" data-stagger-grid>
-        {ministryCards.map((m) => (
-          <a
-            href={m.href}
-            class="card-lift group block rounded-lg border border-border-soft bg-card p-l no-underline"
-          >
-            {/* Small arched gold cap — carries the building's arch motif onto
-                the cards without needing a photo per ministry. */}
-            <span class="block h-1.5 w-10 rounded-t-full bg-gold/70 mb-m" aria-hidden="true"></span>
-            <h3 class="font-display text-h4 text-foreground group-hover:text-link transition-colors">{m.title}</h3>
-            <p class="mt-s text-foreground/80 leading-relaxed">{m.body}</p>
-            <span class="mt-m inline-flex items-center gap-xs text-xs uppercase tracking-eyebrow font-semibold text-link">
-              Learn more <span aria-hidden="true">&rarr;</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  {/* ===== 6. Events rhythms teaser ======================================== */}
-  <section class="surface-warm bg-muted" aria-labelledby="events-heading">
-    <div data-reveal class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-l md:gap-section-md items-center">
-      <SectionHeading
-        eyebrow={page?.eventsEyebrow ?? "What's On"}
-        headline={page?.eventsHeadline ?? "There is always something happening at The Presbyterian Academy"}
-        headingId="events-heading"
-      />
-      <div class="text-foreground/85 text-lg leading-relaxed space-y-s">
-        <p>{page?.eventsIntro ?? 'Worship, study, shared meals, music, and fellowship fill the week. A few of our weekly rhythms:'}</p>
-        <ul class="space-y-2 list-none p-0 text-base">
-          {weeklyRhythms.map((r, i) => (
-            <li class={`flex justify-between gap-m ${i < weeklyRhythms.length - 1 ? 'border-b border-border-soft pb-2' : ''}`}>
-              <span>{r.label}</span><span class="text-foreground/80">{r.time}</span>
-            </li>
-          ))}
-        </ul>
-        <div class="pt-s">
-          <a href={page?.eventsCalendarCta?.externalUrl || '/events'} class={pillOutline}>{page?.eventsCalendarCta?.label || 'See the Full Calendar'}</a>
+      <div>
+        <div class="h-0.5 w-full bg-gold"></div>
+        <div class="img-zoom relative aspect-[4/5] overflow-hidden bg-muted">
+          {heroImg?.asset ? (
+            <SanityImage source={heroImg} width={900} loading="eager" fetchpriority="high" sizes="(min-width: 1024px) 520px, 90vw" class="h-full w-full object-cover" />
+          ) : (
+            <div class="image-well h-full w-full"></div>
+          )}
         </div>
       </div>
     </div>
   </section>
 
-  {/* ===== 7. Newsletter =================================================== */}
-  {/* Works today via a mailto subscribe; swap the button for the
-      NewsletterSignup island once an email provider is configured in Sanity. */}
-  <section class="bg-background" aria-labelledby="record-heading">
-    <div data-reveal class="mx-auto max-w-2xl px-m py-section-lg text-center">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{page?.recordEyebrow ?? 'Our Newsletter'}</p>
-      <div class="mt-s mb-m h-px w-12 bg-gold/70 mx-auto" aria-hidden="true"></div>
-      <h2 id="record-heading" class="font-display text-h2 text-foreground">{page?.recordHeadline ?? 'Stay connected'}</h2>
-      <p class="mt-m text-lg text-foreground/85 leading-relaxed">
-        {page?.recordBody ?? 'News, reflections, and what is coming up at The Presbyterian Academy, in your inbox.'}
-      </p>
-      <div class="mt-l flex justify-center">
-        <a href="mailto:info@presbyterianacademy.org?subject=Subscribe%20to%20our%20newsletter" class={pillPrimary}>{page?.recordCtaLabel ?? 'Subscribe to our newsletter'}</a>
-      </div>
+  {/* Wayfinding ledger */}
+  <section class="border-y border-border-soft bg-background" aria-label="Where to begin">
+    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      {wayfinding.map((w, i) => (
+        <a href={w.href} class:list={['group block px-m py-l no-underline', i < wayfinding.length - 1 && 'lg:border-r border-border-soft']}>
+          <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{w.n}</span>
+          <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{w.title}</h2>
+          <p class="mt-1 text-sm text-foreground/70">{w.body}</p>
+        </a>
+      ))}
     </div>
   </section>
 
-  {/* Editor-added sections (page builder) */}
+  {/* Start here */}
+  {startHere.length > 0 && (
+    <section class="bg-bg-soft" aria-labelledby="home-start">
+      <div class="mx-auto max-w-content px-m py-section-md">
+        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
+        <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">A few courses to begin with</h2>
+        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+          {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Stat / heritage band */}
+  <section class="border-b border-border-soft bg-background" aria-label="The Academy in numbers">
+    <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4">
+      {stats.map((s, i) => (
+        <div class:list={['px-m py-l', i < stats.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
+          <p class="font-display text-h2 text-primary">{s.value}</p>
+          <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Course catalog preview */}
+  {featuredCourses.length > 0 && (
+    <section class="bg-background" aria-labelledby="home-courses">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
+            <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">Learn something worth knowing</h2>
+          </div>
+          <a href="/courses" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">See all courses</a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+          {featuredCourses.map((c: any) => <CourseCard course={c} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Faculty strip */}
+  {featuredFaculty.length > 0 && (
+    <section class="surface-warm bg-muted" aria-labelledby="home-faculty">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
+            <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">Taught by ministers and scholars</h2>
+          </div>
+          <a href="/faculty" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">Meet the faculty</a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {featuredFaculty.map((f: any) => <FacultyCard person={f} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Testimonials */}
+  {testimonials.length > 0 && (
+    <section class="bg-background" aria-labelledby="home-stories">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
+        <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">From the people we serve</h2>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {testimonials.map((t: any) => (
+            <figure class="flex h-full flex-col">
+              <blockquote class="font-display text-xl italic leading-relaxed text-foreground/90">{t.quote}</blockquote>
+              <figcaption class="mt-auto pt-l">
+                <div class="h-px w-full bg-border-soft"></div>
+                <p class="mt-3 text-sm font-medium text-foreground">{t.name}</p>
+                <p class="text-sm text-foreground/70">{[t.role, t.city].filter(Boolean).join(', ')}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
 
-  {/* ===== 8. Welcoming close (Chapel-green) =============================== */}
   <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
-    headline={page?.finalCtaHeadline ?? "Whoever you are, you are welcome here."}
-    subhead={page?.finalCtaSubhead ?? "Plan your first visit, or simply show up on Sunday. We will be glad you came."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
-    backgroundImage={page?.finalCtaBackgroundImage}
+    eyebrow={page?.finalCtaEyebrow ?? 'Begin your formation'}
+    headline={page?.finalCtaHeadline ?? 'Tell us what you want to learn'}
+    subhead={page?.finalCtaSubhead ?? 'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
   />
 </BaseLayout>
