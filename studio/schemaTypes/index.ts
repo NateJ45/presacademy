@@ -10,10 +10,12 @@ import { announcement } from './announcement';
 import { sectionBlocks } from './blocks';
 import { churchPageSingletons } from './churchPages';
 import { contactPage } from './contactPage';
+import { course } from './course';
 import { ctaBlock } from './ctaBlock';
 import { embed } from './embed';
 import { event } from './event';
 import { eventsPage } from './eventsPage';
+import { facultyMember } from './facultyMember';
 import { faqCategory } from './faqCategory';
 import { faqItem } from './faqItem';
 import { faqPage } from './faqPage';
@@ -22,11 +24,16 @@ import { homePage } from './homePage';
 import { ministry } from './ministry';
 import { notFoundPage } from './notFoundPage';
 import { page } from './page';
+import { pricingTier } from './pricingTier';
 import { privacyPage } from './privacyPage';
+import { schoolPageSingletons } from './schoolPages';
 import { sermon } from './sermon';
 import { sermonsPage } from './sermonsPage';
 import { siteSettings } from './siteSettings';
 import { staffMember } from './staffMember';
+import { teachingArea } from './teachingArea';
+import { term } from './term';
+import { testimonial } from './testimonial';
 import { worshipResource } from './worshipResource';
 
 export const schemaTypes = [
@@ -52,6 +59,8 @@ export const schemaTypes = [
   // Per-page church singletons (worship, what-we-believe, music, pastors & staff,
   // grow, serve, kids, food, use-our-space, weddings, give).
   ...churchPageSingletons,
+  // School page singletons (courses, faculty, pricing, get-started, for-you, resources).
+  ...schoolPageSingletons,
 
   // Reusable content collections
   faqCategory,
@@ -62,6 +71,14 @@ export const schemaTypes = [
   sermon,
   announcement,
   worshipResource,
+
+  // School catalog (courses, faculty, terms, pricing, testimonials)
+  teachingArea,
+  term,
+  course,
+  facultyMember,
+  pricingTier,
+  testimonial,
 
   // Generic page (build new pages at /<slug> with the block library)
   page,
