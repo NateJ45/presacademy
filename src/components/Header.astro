@@ -20,7 +20,6 @@ import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { ChevronDown } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
-import { serviceTime } from '@/lib/serviceTime';
 
 // The church brand is a text wordmark (Instrument Serif), not an image logo,
 // so there are no logo assets to pipe through getImage here.
@@ -70,12 +69,9 @@ const line1Words = site.wordmark.line1.trim().split(/\s+/);
 const line1Key = line1Words.pop() ?? site.wordmark.line1;
 const line1Lead = line1Words.join(' ');
 
-// Utility-bar content. Service time + address read top-left; Watch + Give read
-// top-right.
-const serviceTimes = serviceTime(settings.worshipService).line;
-const addressShort = settings.addressLine; // "9463 Cincinnati Columbus Rd"
-const giveHref = settings.giveHref;
-const watchHref = settings.watchHref;
+// Utility-bar content (school). Left: identity line; right: a request-info
+// link, social, and the theme toggle.
+const cityLine = settings.addressLocality ?? settings.cityStateZip ?? '';
 
 const ig = settings.social.instagram;
 const fb = settings.social.facebook;
@@ -128,26 +124,11 @@ type SettingsNavItem = {
 // header is never broken or bare and a fresh clone of the template still renders
 // a sensible menu before anyone touches Sanity.
 const FALLBACK_NAV_ITEMS: NavItem[] = [
-  { kind: 'flat', label: "I'm New", href: '/worship' },
-  { kind: 'dropdown', label: 'About Us', items: [
-    { label: 'What We Believe', href: '/what-we-believe' },
-    { label: 'Music', href: '/music' },
-    { label: 'Pastors & Staff', href: '/pastor-staff' },
-  ] },
-  { kind: 'dropdown', label: 'Get Involved', items: [
-    { label: 'Grow', href: '/grow' },
-    { label: 'Serve', href: '/serve' },
-    { label: 'Kids', href: '/kids' },
-    { label: 'Food Ministry', href: '/food' },
-  ] },
-  { kind: 'flat', label: 'Watch', href: '/sermons' },
+  { kind: 'flat', label: 'Courses', href: '/courses' },
+  { kind: 'flat', label: 'Faculty', href: '/faculty' },
+  { kind: 'flat', label: 'About', href: '/about' },
   { kind: 'flat', label: 'Events', href: '/events' },
-  { kind: 'dropdown', label: 'Space', items: [
-    { label: 'Use Our Space', href: '/use-our-space' },
-    { label: 'Weddings', href: '/weddings' },
-    { label: 'Friends of the Church', href: 'https://example.org' },
-  ] },
-  { kind: 'flat', label: 'Contact', href: '/contact' },
+  { kind: 'flat', label: 'Resources', href: '/resources' },
 ];
 
 // Map the editor-managed nav (Site Settings -> Navigation) into the {kind} shape
@@ -204,32 +185,21 @@ function isGroupActive(items: { href: string }[]) {
   <div class="bg-chapel text-chapel-foreground">
     <div class="mx-auto flex max-w-content items-center justify-between gap-m px-m sm:px-l py-1.5">
       <p class="flex min-w-0 items-center gap-2 text-[0.7rem] sm:text-xs">
-        <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">{serviceTimes}</span>
-        <span class="hidden sm:inline text-chapel-foreground/50" aria-hidden="true">·</span>
-        <span class="hidden sm:inline truncate text-chapel-foreground/80">{addressShort}</span>
+        <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Reformed lay formation</span>
+        {cityLine && (
+          <>
+            <span class="hidden sm:inline text-chapel-foreground/50" aria-hidden="true">·</span>
+            <span class="hidden sm:inline truncate text-chapel-foreground/80">{cityLine}</span>
+          </>
+        )}
       </p>
 
       <div class="flex items-center gap-3 sm:gap-m">
-        {/* Watch Live — a gold pulse dot signals the livestream. */}
         <a
-          href={watchHref}
-          class="inline-flex items-center gap-1.5 text-[0.7rem] sm:text-xs uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
-        >
-          <span class="relative flex w-2 h-2 shrink-0" aria-hidden="true">
-            <span class="absolute inline-flex h-full w-full rounded-full bg-gold opacity-70 animate-ping"></span>
-            <span class="relative inline-flex w-2 h-2 rounded-full bg-gold"></span>
-          </span>
-          <span class="hidden min-[400px]:inline">Watch Live</span>
-          <span class="min-[400px]:hidden">Live</span>
-        </a>
-
-        <span class="h-3 w-px bg-chapel-foreground/25" aria-hidden="true"></span>
-
-        <a
-          href={giveHref}
+          href="/get-started"
           class="text-[0.7rem] sm:text-xs uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
         >
-          Give
+          Request info
         </a>
 
         {(ig || fb) && (
@@ -367,17 +337,20 @@ function isGroupActive(items: { href: string }[]) {
         )}
       </nav>
       <span class="h-6 w-px bg-border-soft" aria-hidden="true"></span>
-      <a
-        href="/worship"
-        class:list={[
-          'press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold',
-          isActive('/worship')
-            ? 'bg-accent-dark text-white'
-            : 'bg-primary text-primary-foreground hover:bg-primary-dark',
-        ]}
-      >
-        Plan a Visit
-      </a>
+      <div class="flex items-center gap-2">
+        <a
+          href="/get-started"
+          class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold border border-foreground text-foreground hover:bg-accent"
+        >
+          Free intro
+        </a>
+        <a
+          href="/get-started"
+          class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold bg-primary text-primary-foreground hover:bg-primary-dark"
+        >
+          Request info
+        </a>
+      </div>
     </div>
 
     <MobileNav

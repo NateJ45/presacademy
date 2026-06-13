@@ -116,7 +116,7 @@ export interface ResolvedSiteSettings {
   };
 }
 
-const DEFAULT_TAGLINE = 'Loving God and loving our neighbors in the heart Academy.';
+const DEFAULT_TAGLINE = 'Reformed theological formation for everyday leaders.';
 
 /** Trim a Sanity string; treat blank/whitespace-only/missing as "unset". */
 function clean(value?: string | null): string | undefined {
