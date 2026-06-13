@@ -131,7 +131,7 @@ function howThisWorks(S: StructureBuilder) {
 
 export const deskStructure = (S: StructureBuilder, _context: StructureResolverContext) =>
   S.list()
-    .title('First Church')
+    .title('The Presbyterian Academy')
     .items([
       // How This Works — pinned help center (first thing editors see).
       howThisWorks(S),

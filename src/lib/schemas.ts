@@ -41,7 +41,7 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
 
   // Build the address object only with fields that are actually known.
   // Omit addressLocality / addressRegion / postalCode when cityStateZip cannot
-  // be parsed (rather than emitting placeholder Springfield values).
+  // be parsed (rather than emitting placeholder West Chester Township values).
   const address: Record<string, string> = { '@type': 'PostalAddress' };
   if (s.addressLine) address.streetAddress = s.addressLine;
   if (s.addressLocality) address.addressLocality = s.addressLocality;

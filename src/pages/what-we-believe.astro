@@ -5,7 +5,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getBeliefsPage, getSiteSettings } from '@/lib/queries';
-import heroBeliefs from '@/assets/tiffany-windows.webp';
+import heroBeliefs from '@/assets/placeholders/study-bible-open-outdoor.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -21,7 +21,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `What We Believe · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'What First Church of Springfield believes about humanity, God, and the good news of Jesus Christ, and where we fit and are going as a church.';
+  'What The Presbyterian Academy believes about humanity, God, and the good news of Jesus Christ, and where we fit and are going as a church.';
 
 const schemas = [
   breadcrumbSchema([
@@ -77,7 +77,7 @@ const whereWeFit = [
 const whereWeGoing = [
   {
     title: page?.goingCard1Title ?? `Neighborhood ministry`,
-    body: page?.goingCard1Body ?? `It matters that we were called to be the Church on Main Street, and we are committed to loving our neighbors and preaching the gospel here in downtown Springfield.`,
+    body: page?.goingCard1Body ?? `It matters that we were called to be the Church on Main Street, and we are committed to loving our neighbors and preaching the gospel here in downtown West Chester Township.`,
   },
   {
     title: page?.goingCard2Title ?? `Authentic & joyful worship`,
@@ -93,7 +93,7 @@ const whereWeGoing = [
 // (beliefsPage.resources); this const renders when that field is empty, so the
 // page is identical until an editor overrides it.
 const FALLBACK_RESOURCES = [
-  { label: 'Community groups at First Church', href: '/grow', external: false },
+  { label: 'Community groups at The Presbyterian Academy', href: '/grow', external: false },
   { label: 'Lectio 365', href: 'https://www.24-7prayer.com/resource/lectio-365/', external: true },
   { label: 'BibleProject', href: 'https://bibleproject.com/', external: true },
   { label: 'Practicing the Way', href: 'https://practicingtheway.org/', external: true },
@@ -110,7 +110,7 @@ const resources = page?.resources?.length ? page.resources : FALLBACK_RESOURCES;
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroBeliefs}
-    localImageAlt="A stained-glass window at First Church"
+    localImageAlt="An open Bible resting outdoors"
     headingId="believe-hero"
     size="short"
   />
@@ -184,7 +184,7 @@ const resources = page?.resources?.length ? page.resources : FALLBACK_RESOURCES;
   <section class="surface-warm bg-muted" aria-labelledby="deeper-heading">
     <div class="mx-auto max-w-content px-m py-section-md text-center">
       <h2 id="deeper-heading" class="font-display text-h4 text-foreground">{page?.deeperHeadline ?? 'Want to dig deeper?'}</h2>
-      <p class="mt-s text-foreground/80">{page?.deeperIntro ?? 'Explore these resources, and join a community group at First Church.'}</p>
+      <p class="mt-s text-foreground/80">{page?.deeperIntro ?? 'Explore these resources, and join a community group at The Presbyterian Academy.'}</p>
       <ul class="mt-l flex flex-wrap justify-center gap-x-l gap-y-s">
         {resources.map((r) => (
           <li>
@@ -204,7 +204,7 @@ const resources = page?.resources?.length ? page.resources : FALLBACK_RESOURCES;
   <FinalCta
     eyebrow={page?.finalCtaEyebrow ?? 'Come and See'}
     headline={page?.finalCtaHeadline ?? 'The best way to know us is to worship with us'}
-    subhead={page?.finalCtaSubhead ?? 'Join us this Sunday, or reach out with any question about faith and life at First Church.'}
+    subhead={page?.finalCtaSubhead ?? 'Join us this Sunday, or reach out with any question about faith and life at The Presbyterian Academy.'}
     cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
   />
 </BaseLayout>

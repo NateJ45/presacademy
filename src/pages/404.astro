@@ -11,7 +11,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
 import SanityImage from '@/components/SanityImage.astro';
-import notFoundPhoto from '@/assets/sanctuary-interior.webp';
+import notFoundPhoto from '@/assets/placeholders/place-church-aisle.jpg';
 
 const [notFoundPage, siteSettings] = await Promise.all([
   getNotFoundPage().catch(() => null),
@@ -36,7 +36,7 @@ const tertiaryHref    = notFoundPage?.tertiaryCtaHref    ?? '/contact';
 // Sanity image wins when set; otherwise a bundled sanctuary photo (no dead
 // template asset _ref). Rendered in the site's signature arched frame.
 const sanityPhoto = notFoundPage?.heroImage?.asset ? notFoundPage.heroImage : null;
-const caption = notFoundPage?.heroImage?.caption ?? 'First Church of Springfield';
+const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
 ---
 
 <BaseLayout
@@ -94,13 +94,13 @@ const caption = notFoundPage?.heroImage?.caption ?? 'First Church of Springfield
             width={1000}
             sizes="(min-width: 768px) 50vw, 100vw"
             quality={75}
-            alt={sanityPhoto.alt || 'First Church of Springfield'}
+            alt={sanityPhoto.alt || 'The Presbyterian Academy'}
             class="w-full h-full object-cover"
           />
         ) : (
           <Image
             src={notFoundPhoto}
-            alt="Inside the sanctuary at First Church, with its stained-glass windows"
+            alt="Looking down a quiet church aisle"
             widths={[480, 768, 1000]}
             sizes="(min-width: 768px) 50vw, 100vw"
             class="w-full h-full object-cover"

@@ -48,9 +48,9 @@ docs.push({
   _type: 'eventsPage',
   seoTitle: 'Events',
   seoDescription:
-    'Worship, study, shared meals, music, and fellowship at First Church of Springfield. See what is coming up and the rhythms of our week.',
+    'Worship, study, shared meals, music, and fellowship at The Presbyterian Academy. See what is coming up and the rhythms of our week.',
   heroEyebrow: 'Events',
-  heroHeadline: 'Upcoming at First Church',
+  heroHeadline: 'Upcoming at The Presbyterian Academy',
   heroSubhead: "There is always something happening here. We're formed in community: worship, fellowship, study, art, and food.",
 });
 
@@ -62,7 +62,7 @@ const recurring = [
   { id: 'event-bible-study', title: 'Mid-Morning Bible Study', category: 'Study', when: 'First and third Thursdays, 10am', summary: 'Reading through books of the Bible together over coffee in the pastor\'s office.' },
   { id: 'event-theology-on-tap', title: 'Theology on Tap', category: 'Study', when: 'Third Thursdays, 7pm', summary: 'Short theological readings and conversation at rotating neighborhood pubs.' },
   { id: 'event-alpha-omega', title: 'Alpha to Omega Bible Reading Group', category: 'Study', when: 'Thursdays, 5pm to 6pm', summary: 'Reading through the whole Bible together by conference call.' },
-  { id: 'event-book-group', title: 'First Church Book Group', category: 'Study', when: 'Select Sundays, 9:30am', summary: 'Reading and discussing a book together before worship.' },
+  { id: 'event-book-group', title: 'The Presbyterian Academy Book Group', category: 'Study', when: 'Select Sundays, 9:30am', summary: 'Reading and discussing a book together before worship.' },
 ];
 
 for (const r of recurring) {

@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings } from '@/lib/queries';
-import heroFood from '@/assets/hero-food.webp';
+import heroFood from '@/assets/placeholders/community-shared-meal.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -40,7 +40,7 @@ const pillPrimary =
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroFood}
-    localImageAlt="Neighbors sharing a meal at the Main Street Community Table at First Church"
+    localImageAlt="People sharing a meal around a table"
     headingId="food-hero"
     size="short"
   />

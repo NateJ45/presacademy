@@ -8,7 +8,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings, getStaffMembers } from '@/lib/queries';
-import heroStaff from '@/assets/hero-staff.webp';
+import heroStaff from '@/assets/placeholders/teach-group-reading-bibles.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -38,7 +38,7 @@ const sanityStaff = await getStaffMembers().catch(() => []);
 const title = page?.seoTitle ?? `Pastors & Staff · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Meet the pastors and staff of First Church of Springfield: Rev. Jane Smith, Rev. Chris Brown, Alex Johnson, and Sam Lee.';
+  'Meet the pastors and staff of The Presbyterian Academy: Rev. Jane Smith, Rev. Chris Brown, Alex Johnson, and Sam Lee.';
 
 const schemas = [
   breadcrumbSchema([
@@ -129,12 +129,12 @@ const people = useSanityStaff
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Pastors & Staff'}
-    headline={page?.heroHeadline ?? "The people you'll meet at First Church"}
-    subhead={page?.heroSubhead ?? 'A small, dedicated team serving a historic congregation in downtown Springfield.'}
+    headline={page?.heroHeadline ?? "The people you'll meet at The Presbyterian Academy"}
+    subhead={page?.heroSubhead ?? 'A small, dedicated team serving a historic congregation in downtown West Chester Township.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroStaff}
-    localImageAlt="The sanctuary of First Church of Springfield"
+    localImageAlt="People reading together in a study group"
     headingId="staff-hero"
     size="short"
   />
@@ -151,13 +151,13 @@ const people = useSanityStaff
                   source={person.sanityPhoto}
                   width={420}
                   sizes="(min-width: 640px) 208px, 176px"
-                  alt={person.sanityPhoto.alt || `${person.name}, ${person.role} at First Church of Springfield`}
+                  alt={person.sanityPhoto.alt || `${person.name}, ${person.role} at The Presbyterian Academy`}
                   class="h-full w-full object-cover"
                 />
               ) : (
                 <Image
                   src={person.localPhoto}
-                  alt={`${person.name}, ${person.role} at First Church of Springfield`}
+                  alt={`${person.name}, ${person.role} at The Presbyterian Academy`}
                   widths={[176, 208, 352, 416]}
                   sizes="(min-width: 640px) 208px, 176px"
                   class="h-full w-full object-cover"

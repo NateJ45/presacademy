@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getWeddingsPage, getSiteSettings } from '@/lib/queries';
-import heroWeddings from '@/assets/hero-weddings.webp';
+import heroWeddings from '@/assets/placeholders/place-church-aisle.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -34,7 +34,7 @@ const schemas = [
 // (weddingsPage.weddingFaqs / weddingPricing); these consts render when those
 // fields are empty, so the page is identical until an editor overrides them.
 const FALLBACK_FAQS = [
-  { q: 'Who can get married at First Church?', a: 'We welcome gay and straight couples. Because the sanctuary is a consecrated space, religious ceremonies must be Christian. Nonreligious ceremonies are welcome as long as they are respectful of the space and its purpose. There is no dress code.' },
+  { q: 'Who can get married at The Presbyterian Academy?', a: 'We welcome gay and straight couples. Because the sanctuary is a consecrated space, religious ceremonies must be Christian. Nonreligious ceremonies are welcome as long as they are respectful of the space and its purpose. There is no dress code.' },
   { q: 'What about music?', a: 'Our Music Director\'s services are built into a typical wedding package, which may include our pipe organ and a piano. Recorded music is available too, and our Music Director is glad to help you plan music that fits the space.' },
   { q: 'Can we use our own officiant?', a: 'Yes. We require premarital counseling for couples married in our sanctuary. Our pastor is glad to officiate Christian weddings, and that fee is waived for members of the congregation.' },
   { q: 'Can we celebrate communion?', a: 'Ordained clergy from our tradition and similar church bodies may preside at communion with the special permission of the church leadership. Ask us early and we will help you plan.' },
@@ -63,7 +63,7 @@ const pricing = page?.weddingPricing?.length ? page.weddingPricing : FALLBACK_PR
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroWeddings}
-    localImageAlt="The sanctuary aisle beneath the stained-glass windows at First Church"
+    localImageAlt="A church aisle leading toward the front"
     headingId="weddings-hero"
     size="short"
   />
@@ -126,7 +126,7 @@ const pricing = page?.weddingPricing?.length ? page.weddingPricing : FALLBACK_PR
   <FinalCta
     eyebrow={page?.finalCtaEyebrow ?? "Say Hello"}
     headline={page?.finalCtaHeadline ?? "Let's talk about your wedding"}
-    subhead={page?.finalCtaSubhead ?? "Reach out to the office to check availability and start planning your day at First Church."}
+    subhead={page?.finalCtaSubhead ?? "Reach out to the office to check availability and start planning your day at The Presbyterian Academy."}
     cta={page?.finalCta?.label ? page.finalCta : { label: 'Contact the Office', linkType: 'external', externalUrl: '/contact' }}
   />
 </BaseLayout>

@@ -46,9 +46,9 @@ docs.push({
   _id: 'sermonsPage',
   _type: 'sermonsPage',
   seoTitle: 'Sermons',
-  seoDescription: 'Watch and listen to messages from First Church of Springfield, and join Sunday worship online.',
+  seoDescription: 'Watch and listen to messages from The Presbyterian Academy, and join Sunday worship online.',
   heroEyebrow: 'Sermons',
-  heroHeadline: 'Messages from First Church',
+  heroHeadline: 'Messages from The Presbyterian Academy',
   heroSubhead: 'Sunday worship is preached from the Word and shared online. Catch up on a recent message or join us live.',
   livestreamUrl: 'https://www.youtube.com/@yourchurch',
 });

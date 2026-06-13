@@ -41,8 +41,8 @@ git diff                     # the diff IS the rebrand; review it
 npm run typegen
 ```
 
-`rebrand.mjs` replaces the template's exact placeholder strings ("First Church
-of Springfield", "123 Main Street", "example-church.org"...) across the code,
+`rebrand.mjs` replaces the template's exact placeholder strings ("The Presbyterian Academy
+Academy", "9463 Cincinnati Columbus Rd", "presbyterianacademy.org"...) across the code,
 schemas, and docs. Anything it can't know (photos, colors, denomination
 wording) is in the checklist.
 

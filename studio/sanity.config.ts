@@ -132,7 +132,7 @@ export default defineConfig({
   name: 'churchstarter',
   // Short title shown in the browser tab when editing. REPLACE with the
   // church's name (rebrand.mjs stamps this).
-  title: 'First Church of Springfield',
+  title: 'The Presbyterian Academy',
 
   // Set SANITY_STUDIO_PROJECT_ID and SANITY_STUDIO_DATASET in studio/.env
   // (or as env vars) after creating your Sanity project at sanity.io/manage.

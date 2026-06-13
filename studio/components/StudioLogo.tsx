@@ -41,7 +41,7 @@ export default function StudioLogo() {
           letterSpacing: '0.01em',
         }}
       >
-        First Church
+        The Presbyterian Academy
       </span>
     </span>
   );

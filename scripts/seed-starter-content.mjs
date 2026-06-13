@@ -7,7 +7,7 @@
 // at the project root (see scripts/rebrand.mjs), applies the SAME placeholder
 // replacements to the content first, so the dataset arrives already carrying
 // the new church's name, address, and contact details. Without a config, the
-// generic "First Church of Springfield" placeholders import as-is (fine for
+// generic "The Presbyterian Academy" placeholders import as-is (fine for
 // trying the Studio; editors replace them later).
 //
 // Idempotent: import runs with --replace, so re-running overwrites the same
@@ -28,15 +28,15 @@ const configPath = resolve(root, 'bootstrap.config.json');
 if (existsSync(configPath)) {
   const cfg = JSON.parse(readFileSync(configPath, 'utf-8'));
   const REPLACEMENTS = [
-    ['First Church of Springfield', cfg.churchName],
-    ['downtown Springfield', `downtown ${cfg.city}`],
-    ['Springfield, IL 62701', cfg.cityStateZip],
-    ['123 Main Street', cfg.addressLine],
-    ['hello@example-church.org', cfg.email],
-    ['pastor@example-church.org', cfg.pastorEmail],
-    ['(555) 555-0100', cfg.phone],
-    ['First Church', cfg.shortName],
-    ['Springfield', cfg.city],
+    ['The Presbyterian Academy', cfg.churchName],
+    ['downtown West Chester Township', `downtown ${cfg.city}`],
+    ['West Chester Township, OH 45069', cfg.cityStateZip],
+    ['9463 Cincinnati Columbus Rd', cfg.addressLine],
+    ['info@presbyterianacademy.org', cfg.email],
+    ['sarajane@crestviewchurch.com', cfg.pastorEmail],
+    ['(513) 555-0100', cfg.phone],
+    ['The Presbyterian Academy', cfg.shortName],
+    ['West Chester Township', cfg.city],
   ];
   for (const [from, to] of REPLACEMENTS) {
     if (typeof to === 'string' && to.trim()) ndjson = ndjson.split(from).join(to);
