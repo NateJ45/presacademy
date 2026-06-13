@@ -1,27 +1,22 @@
 ---
 // Safe to edit by hand for copy + structure changes.
-// Events index. Two groups: upcoming one-time events (future-dated, from Sanity)
-// and the weekly/recurring rhythms of the church. The recurring rhythms fall
-// back to a known list so the page is complete before Sanity is connected.
-// Fallback rhythms have no slug, so they render as plain rows (no detail link);
-// once events are seeded in Sanity, each links to its /events/[slug] page.
+// Events index. Two groups: upcoming one-time events (info sessions, lectures,
+// workshops, term starts, deadlines, from Sanity) and the recurring rhythms of
+// the Academy. The recurring rhythms fall back to a known list so the page is
+// complete before Sanity is connected. Rule & Ledger layout.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getEventsPage, getRecurringEvents, getUpcomingEvents, getSpecialServices, getSiteSettings } from '@/lib/queries';
+import { getEventsPage, getRecurringEvents, getUpcomingEvents, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import Hero from '@/components/Hero.astro';
-import heroEvents from '@/assets/placeholders/teach-intergenerational-study.jpg';
-import SectionHeading from '@/components/SectionHeading.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
 
-const [page, recurring, upcoming, specialServices, siteSettings] = await Promise.all([
+const [page, recurring, upcoming, siteSettings] = await Promise.all([
   getEventsPage().catch(() => null),
   getRecurringEvents().catch(() => []),
   getUpcomingEvents().catch(() => []),
-  getSpecialServices().catch(() => []),
   getSiteSettings().catch(() => null),
 ]);
 const settings = resolveSiteSettings(siteSettings);
@@ -29,13 +24,29 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Events · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Worship, study, shared meals, music, and fellowship at The Presbyterian Academy. See what is coming up and the rhythms of our week.';
+  'Info sessions, open lectures, workshops, and term start dates at The Presbyterian Academy. See what is coming up.';
 
 const heroEyebrow = page?.heroEyebrow ?? 'Events';
-const heroHeadline = page?.heroHeadline ?? 'Upcoming at The Presbyterian Academy';
+const heroHeadline = page?.heroHeadline ?? 'Come and see what we do';
 const heroSubhead =
   page?.heroSubhead ??
-  "There is always something happening here. We're formed in community: worship, fellowship, study, art, and food.";
+  'Free info sessions, open lectures, and workshops, plus the term dates and deadlines you need to plan ahead.';
+
+// Known recurring rhythms — used when no recurring events exist in Sanity yet.
+const RECURRING_FALLBACK = [
+  { title: 'Monthly info session', scheduleLabel: 'First Tuesday, 7pm', summary: 'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.' },
+  { title: 'Open lecture series', scheduleLabel: 'Third Thursday, 7pm', summary: 'A single public lecture from one of our faculty, no registration required.' },
+  { title: 'Visit a class', scheduleLabel: 'During each term', summary: 'Sit in on the first session of any course, free, before you enroll.' },
+];
+const displayRecurring = recurring.length > 0 ? recurring : RECURRING_FALLBACK;
+
+function whenLabel(ev: any): string {
+  if (ev.scheduleLabel) return ev.scheduleLabel;
+  if (ev.start) {
+    return new Date(ev.start).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  }
+  return '';
+}
 
 const schemas = [
   breadcrumbSchema([
@@ -43,106 +54,43 @@ const schemas = [
     { name: 'Events', url: `${site.url}/events` },
   ]),
 ];
-
-// Known weekly rhythms — used when no recurring events exist in Sanity yet.
-const RECURRING_FALLBACK = [
-  { title: 'Sunday Worship', scheduleLabel: 'Sundays, 11am to 12:15pm', summary: 'A service of word and sacrament. Whoever you are, you are welcome here.' },
-  { title: 'Lunch Bag', scheduleLabel: 'Tuesday to Thursday, 11am to 1pm', summary: 'Grab-and-go food for all in need, no questions asked, at our Main Street door.' },
-  { title: 'Main Street Community Table', scheduleLabel: 'Sundays, 6:45pm to 8:30pm', summary: 'A free, sit-down meal hosted with neighborhood partners. Pauses for the summer.' },
-  { title: 'Mid-Morning Bible Study', scheduleLabel: 'First and third Thursdays, 10am', summary: 'Reading through books of the Bible together over coffee.' },
-  { title: 'Theology on Tap', scheduleLabel: 'Third Thursdays, 7pm', summary: 'Short theological readings and conversation at rotating pubs.' },
-  { title: 'Alpha to Omega Bible Reading Group', scheduleLabel: 'Thursdays, 5pm', summary: 'Reading through the whole Bible together by conference call.' },
-  { title: 'The Presbyterian Academy Book Group', scheduleLabel: 'Select Sundays, 9:30am', summary: 'Reading and discussing a book together before worship.' },
-];
-
-const displayRecurring = recurring.length > 0 ? recurring : RECURRING_FALLBACK;
-
-function whenLabel(ev: any): string {
-  if (ev.scheduleLabel) return ev.scheduleLabel;
-  if (ev.start) {
-    return new Date(ev.start).toLocaleDateString('en-US', {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-    });
-  }
-  return '';
-}
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  <Hero
-    eyebrow={heroEyebrow}
-    headline={heroHeadline}
-    subhead={heroSubhead}
-    keyword={page?.heroKeyword}
-    backgroundImage={page?.heroImage ?? null}
-    localImage={heroEvents}
-    localImageAlt="An intergenerational group gathered for study"
-    headingId="events-hero"
-    size="short"
-  />
-
-  {/* Special services — Christmas Eve, Ash Wednesday, Holy Week, Easter (Sanity-driven) */}
-  {specialServices.length > 0 && (
-    <section class="bg-chapel text-chapel-foreground" aria-labelledby="special-services">
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <p class="text-xs uppercase tracking-eyebrow text-[#C7A875]">{page?.specialEyebrow ?? 'Mark the season'}</p>
-        <h2 id="special-services" class="mt-s font-display text-h2">{page?.specialHeadline ?? 'Special services'}</h2>
-        <ul
-          class:list={[
-            'mt-l grid grid-cols-1 gap-m list-none p-0',
-            // Same single-item treatment as the upcoming grid below.
-            specialServices.length === 1 ? 'max-w-3xl' : 'md:grid-cols-2',
-          ]}
-        >
-          {specialServices.map((ev: any) => (
-            <li>
-              <a
-                href={`/events/${ev.slug?.current ?? ''}`}
-                class="group block h-full rounded-md border border-chapel-foreground/20 bg-chapel-deep/40 p-l no-underline"
-              >
-                {ev.liturgicalSeason && (
-                  <span class="text-xs uppercase tracking-eyebrow text-[#C7A875]">{ev.liturgicalSeason}</span>
-                )}
-                <h3 class="mt-xs font-display text-h4 group-hover:text-[#C7A875] transition-colors">{ev.title}</h3>
-                <p class="mt-xs text-sm text-chapel-foreground/80">{whenLabel(ev)}</p>
-                {ev.summary && <p class="mt-s text-chapel-foreground/85 leading-relaxed">{ev.summary}</p>}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )}
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+    </div>
+  </section>
 
   {/* Upcoming one-time events */}
   <section class="bg-background" aria-labelledby="upcoming-heading">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <SectionHeading eyebrow={page?.upcomingEyebrow ?? 'Mark your calendar'} headline={page?.upcomingHeadline ?? 'Upcoming events'} headingId="upcoming-heading" />
+    <div class="mx-auto max-w-content px-m pb-section-md">
+      <p class="text-xs uppercase tracking-eyebrow text-gold-ink">{page?.upcomingEyebrow ?? 'Mark your calendar'}</p>
+      <h2 id="upcoming-heading" class="mt-2 font-display text-h2 text-foreground">{page?.upcomingHeadline ?? 'Upcoming'}</h2>
       {upcoming.length > 0 ? (
-        <ul
-          class:list={[
-            'mt-l grid grid-cols-1 gap-m list-none p-0',
-            // A single event reads as a centered feature at comfortable width
-            // instead of one lonely card in a half-empty two-column grid.
-            upcoming.length === 1 ? 'max-w-3xl mx-auto' : 'md:grid-cols-2',
-          ]}
-          data-stagger-grid
-        >
+        <ul class:list={['mt-l grid grid-cols-1 gap-l list-none p-0', upcoming.length === 1 ? 'max-w-3xl' : 'md:grid-cols-2 lg:grid-cols-3']} data-stagger-grid>
           {upcoming.map((ev: any) => (
             <li>
-              <a href={`/events/${ev.slug?.current ?? ''}`} class="card-lift group block h-full rounded-md border border-border-soft bg-card p-l no-underline">
-                {ev.category && <span class="text-xs uppercase tracking-eyebrow text-link">{ev.category}</span>}
-                <h3 class="mt-xs font-display text-h4 text-foreground group-hover:text-link transition-colors">{ev.title}</h3>
-                <p class="mt-xs text-sm text-foreground/80">{whenLabel(ev)}</p>
-                {ev.summary && <p class="mt-s text-foreground/80 leading-relaxed">{ev.summary}</p>}
+              <a href={`/events/${ev.slug?.current ?? ''}`} class="card-lift group block h-full no-underline">
+                <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary"></div>
+                <div class="border border-t-0 border-border-soft p-l">
+                  {ev.category && <span class="text-xs uppercase tracking-eyebrow text-gold-ink">{ev.category}</span>}
+                  <h3 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{ev.title}</h3>
+                  <p class="mt-1 text-sm text-foreground/70">{whenLabel(ev)}</p>
+                  {ev.summary && <p class="mt-3 text-foreground/80 leading-relaxed">{ev.summary}</p>}
+                </div>
               </a>
             </li>
           ))}
         </ul>
       ) : (
         <p class="mt-l text-foreground/80 italic">
-          {page?.upcomingEmpty ?? 'No special events on the calendar right now. Our weekly rhythms below never stop, and the best place to start is'}{' '}
-          <a href="/worship" class="text-link underline underline-offset-2">Sunday worship</a>.
+          {page?.upcomingEmpty ?? 'Nothing dated on the calendar right now. The recurring rhythms below never stop, and the best place to start is a'}{' '}
+          <a href="/courses" class="text-link underline underline-offset-2">course</a>.
         </p>
       )}
     </div>
@@ -150,23 +98,17 @@ function whenLabel(ev: any): string {
 
   {/* Recurring rhythms */}
   <section class="surface-warm bg-muted" aria-labelledby="recurring-heading">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <SectionHeading eyebrow={page?.rhythmsEyebrow ?? 'Every week'} headline={page?.rhythmsHeadline ?? 'Our weekly rhythms'} headingId="recurring-heading" align="center" class="mx-auto" />
-      <ul class="mt-l max-w-3xl mx-auto list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft">
+    <div class="mx-auto max-w-content px-m py-section-md">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{page?.rhythmsEyebrow ?? 'Every month'}</p>
+      <h2 id="recurring-heading" class="mt-2 font-display text-h2 text-foreground">{page?.rhythmsHeadline ?? 'Ways to get a feel for the Academy'}</h2>
+      <ul class="mt-l max-w-3xl list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft">
         {displayRecurring.map((ev: any) => (
           <li class="py-m">
-            {ev.slug?.current ? (
-              <a href={`/events/${ev.slug.current}`} class="group flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-xs no-underline">
-                <span class="font-display text-h4 text-foreground group-hover:text-link transition-colors">{ev.title}</span>
-                <span class="text-sm text-foreground/80 shrink-0">{whenLabel(ev)}</span>
-              </a>
-            ) : (
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-xs">
-                <span class="font-display text-h4 text-foreground">{ev.title}</span>
-                <span class="text-sm text-foreground/80 shrink-0">{whenLabel(ev)}</span>
-              </div>
-            )}
-            {ev.summary && <p class="mt-xs text-foreground/75">{ev.summary}</p>}
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <span class="font-display text-h4 text-foreground">{ev.title}</span>
+              <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
+            </div>
+            {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
           </li>
         ))}
       </ul>
@@ -176,9 +118,9 @@ function whenLabel(ev: any): string {
   <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
 
   <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
-    headline={page?.finalCtaHeadline ?? "Join us this week"}
-    subhead={page?.finalCtaSubhead ?? "Worship is the heart of our week, and everyone is welcome at every gathering."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
+    eyebrow={page?.finalCtaEyebrow ?? 'Want a closer look?'}
+    headline={page?.finalCtaHeadline ?? 'Book a free intro'}
+    subhead={page?.finalCtaSubhead ?? 'A short, no-pressure conversation about where you are and what fits.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get started', linkType: 'external', externalUrl: '/get-started' }}
   />
 </BaseLayout>

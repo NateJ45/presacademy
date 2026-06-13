@@ -103,11 +103,11 @@ export default function MobileNav({ links, siteSettings }: Props) {
           {/* Primary CTA — main conversion action surfaced before the nav list. */}
           <div className="px-l pb-l">
             <a
-              href="/worship"
+              href="/get-started"
               onClick={close}
               className="block w-full px-m py-m text-center rounded-full bg-primary text-primary-foreground text-xs uppercase tracking-eyebrow font-semibold hover:bg-primary-dark transition-colors"
             >
-              Plan a Visit
+              Request info
             </a>
           </div>
 

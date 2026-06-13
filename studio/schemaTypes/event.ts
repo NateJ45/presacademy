@@ -1,5 +1,5 @@
-// Events collection. Supports both recurring rhythms (weekly worship, Bible
-// study) and one-time dated events (a block fest, a special service).
+// Events collection. Supports both recurring rhythms (info sessions, open
+// lectures) and one-time dated events (a workshop, a term start, a deadline).
 // Recurring events always show on /events; one-time events drop off the
 // "upcoming" list once their date passes (on the next build).
 
@@ -45,16 +45,14 @@ export const event = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Worship', value: 'Worship' },
-          { title: 'Study', value: 'Study' },
-          { title: 'Meals', value: 'Meals' },
-          { title: 'Music', value: 'Music' },
-          { title: 'Fellowship', value: 'Fellowship' },
-          { title: 'Service', value: 'Service' },
-          { title: 'Youth', value: 'Youth' },
-          { title: 'Kids', value: 'Kids' },
-          { title: 'Outreach', value: 'Outreach' },
-          { title: 'Special', value: 'Special' },
+          { title: 'Info session', value: 'Info session' },
+          { title: 'Open lecture', value: 'Open lecture' },
+          { title: 'Workshop', value: 'Workshop' },
+          { title: 'Webinar / Online', value: 'Webinar' },
+          { title: 'Term start', value: 'Term start' },
+          { title: 'Application deadline', value: 'Application deadline' },
+          { title: 'Community', value: 'Community' },
+          { title: 'Other', value: 'Other' },
         ],
       },
     }),
@@ -66,36 +64,10 @@ export const event = defineType({
       options: {
         list: [
           { title: 'Everyone', value: 'Everyone' },
-          { title: 'Families', value: 'Families' },
-          { title: 'Kids', value: 'Kids' },
-          { title: 'Youth', value: 'Youth' },
-          { title: 'Adults', value: 'Adults' },
-          { title: 'Seniors', value: 'Seniors' },
-        ],
-        layout: 'dropdown',
-      },
-    }),
-    defineField({
-      name: 'specialService',
-      title: 'Special service',
-      type: 'boolean',
-      description: 'A holy-day or special worship service (Christmas Eve, Ash Wednesday, Maundy Thursday, Easter). Shows in the "Special services" band.',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'liturgicalSeason',
-      title: 'Liturgical season (optional)',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Advent', value: 'Advent' },
-          { title: 'Christmas', value: 'Christmas' },
-          { title: 'Epiphany', value: 'Epiphany' },
-          { title: 'Lent', value: 'Lent' },
-          { title: 'Holy Week', value: 'Holy Week' },
-          { title: 'Easter', value: 'Easter' },
-          { title: 'Pentecost', value: 'Pentecost' },
-          { title: 'Ordinary Time', value: 'Ordinary' },
+          { title: 'Lay leaders', value: 'Lay leaders' },
+          { title: 'Newcomers', value: 'Newcomers' },
+          { title: 'Prospective students', value: 'Prospective students' },
+          { title: 'Clergy', value: 'Clergy' },
         ],
         layout: 'dropdown',
       },
@@ -129,7 +101,7 @@ export const event = defineType({
       name: 'location',
       title: 'Location',
       type: 'string',
-      description: 'Leave blank to use the church address.',
+      description: 'Leave blank to use the campus address.',
     }),
     defineField({
       name: 'summary',
