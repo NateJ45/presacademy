@@ -1,0 +1,180 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Faculty bio — the credibility instrument. A CV layout, not a "meet the team"
+// card: degree-with-institution line under the name, ordination + denomination,
+// a scholarly-but-warm bio with one human line, ruled Degrees / Publications /
+// Affiliations ledgers, and the courses-taught tiles (derived by GROQ from
+// course.instructors). Built for each faculty slug in Sanity.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAllFacultySlugs, getFacultyBySlug, getFacultyPage, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import SanityImage from '@/components/SanityImage.astro';
+import PortableText from '@/components/PortableText';
+import FinalCta from '@/components/FinalCta.astro';
+
+export async function getStaticPaths() {
+  const slugs = await getAllFacultySlugs().catch(() => []);
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const [person, facultyPage, siteSettings] = await Promise.all([
+  getFacultyBySlug(slug as string),
+  getFacultyPage().catch(() => null),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+if (!person) {
+  return Astro.redirect('/404');
+}
+
+const name = `${person.honorific ? person.honorific + ' ' : ''}${person.name}`;
+const title = person.seoTitle ?? `${name} · ${site.name}`;
+const description =
+  person.seoDescription ?? `${person.title ?? 'Faculty'} at ${site.name}.`;
+
+function degLabel(d: any): string {
+  return `${d.degree}${d.field ? ` ${d.field}` : ''}${d.institution ? `, ${d.institution}` : ''}`;
+}
+const degreeLine = (person.degrees ?? []).map(degLabel).join(' · ');
+const credential = [person.denomination, person.ordination].filter(Boolean).join(' · ');
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Faculty', url: `${site.url}/faculty` },
+    { name: name, url: `${site.url}/faculty/${slug}` },
+  ]),
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name,
+    jobTitle: person.title ?? undefined,
+    worksFor: { '@type': 'Organization', name: site.name, url: site.url },
+  }),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-section-lg">
+      <p class="mb-l text-xs uppercase tracking-[0.12em] text-foreground/70">
+        <a href="/faculty" class="hover:text-primary-dark transition-colors">Faculty</a>
+        <span class="mx-2">/</span><span>{person.name}</span>
+      </p>
+
+      <div class="grid grid-cols-1 gap-x-12 gap-y-l lg:grid-cols-[300px_1fr]">
+        {/* Left rail: portrait + credentials */}
+        <aside>
+          <div class="h-0.5 w-full bg-gold"></div>
+          <div class="image-well aspect-[4/5] overflow-hidden">
+            {person.photo?.asset && (
+              <SanityImage source={person.photo} width={600} loading="eager" sizes="(min-width:1024px) 300px, 90vw" class="h-full w-full object-cover" />
+            )}
+          </div>
+          {credential && (
+            <span class="mt-l inline-block rounded-[2px] border border-border px-2 py-0.5 text-[11px] uppercase tracking-[0.08em] text-foreground/70">{credential}</span>
+          )}
+          {person.teachingAreas?.length > 0 && (
+            <div class="mt-l">
+              <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Teaching areas</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {person.teachingAreas.map((a: any) => (
+                  <span class="rounded-[2px] border border-border-soft px-2 py-0.5 text-xs text-foreground/75">{a.title}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+
+        {/* Main: name + bio + ledgers */}
+        <div>
+          <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Faculty</p>
+          <h1 class="mt-2 font-display text-h1 leading-headline-tight text-foreground">{name}</h1>
+          {person.title && <p class="mt-2 text-lg text-foreground/75">{person.title}</p>}
+          {degreeLine && <p class="mt-1 text-sm text-gold-ink">{degreeLine}</p>}
+
+          {person.bio && (
+            <div class="mt-l max-w-prose">
+              <PortableText value={person.bio} className="text-lg leading-relaxed text-foreground/85" />
+            </div>
+          )}
+          {person.humanLine && (
+            <p class="mt-m max-w-prose font-display text-xl italic text-foreground/85">{person.humanLine}</p>
+          )}
+
+          <div class="mt-l grid grid-cols-1 gap-x-10 gap-y-l sm:grid-cols-2">
+            {person.degrees?.length > 0 && (
+              <div>
+                <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Degrees</p>
+                <div class="mt-3 border-t border-gold/40">
+                  {person.degrees.map((d: any) => (
+                    <div class="border-b border-border-soft py-3 text-sm">
+                      <p class="font-medium text-foreground">{d.degree}{d.field ? `, ${d.field}` : ''}</p>
+                      <p class="text-foreground/70">{d.institution}{d.year ? `, ${d.year}` : ''}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              {person.publications?.length > 0 && (
+                <>
+                  <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Selected publications</p>
+                  <div class="mt-3 border-t border-gold/40">
+                    {person.publications.map((p: any) => (
+                      <div class="border-b border-border-soft py-3 text-sm">
+                        {p.url ? (
+                          <a href={p.url} target="_blank" rel="noopener noreferrer" class="text-link underline underline-offset-2 hover:text-primary-dark">{p.title}</a>
+                        ) : (
+                          <span class="text-foreground">{p.title}</span>
+                        )}
+                        {(p.publisher || p.year) && <span class="text-foreground/70"> · {[p.publisher, p.year].filter(Boolean).join(', ')}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {person.affiliations?.length > 0 && (
+                <div class={person.publications?.length > 0 ? 'mt-l' : ''}>
+                  <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Affiliations</p>
+                  <ul class="mt-3 list-none space-y-1 p-0 text-sm text-foreground/75">
+                    {person.affiliations.map((a: any) => (
+                      <li>{[a.role, a.organization].filter(Boolean).join(', ')}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {person.coursesTaught?.length > 0 && (
+            <div class="mt-l">
+              <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Courses taught</p>
+              <div class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {person.coursesTaught.map((c: any) => (
+                  <a href={`/courses/${c.slug}`} class="card-lift group block border border-t-2 border-border-soft border-t-gold p-4 no-underline">
+                    {c.teachingArea && <span class="text-xs uppercase tracking-eyebrow text-gold-ink">{c.teachingArea}</span>}
+                    <p class="mt-1 font-display text-h5 text-foreground transition-colors group-hover:text-link">{c.title}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FinalCta
+    eyebrow={facultyPage?.finalCtaEyebrow ?? 'Learn with us'}
+    headline={facultyPage?.finalCtaHeadline ?? 'Take a course with our faculty'}
+    subhead={facultyPage?.finalCtaSubhead ?? 'Browse the catalog and find a place to begin.'}
+    cta={{ label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
+  />
+</BaseLayout>
