@@ -602,7 +602,7 @@ const TODAY = () => new Date().toISOString().slice(0, 10);
 // One offering resolved to its term's dates. Reused by card + detail.
 const OFFERING_PROJECTION = `{
   schedule, sessions, seatsNote, status,
-  "term": term->{ _id, title, startDate, endDate, registrationDeadline, status }
+  "term": term->{ _id, title, "slug": slug.current, startDate, endDate, registrationDeadline, status }
 }`;
 
 // The soonest cohort that begins today or later (the "next offering").

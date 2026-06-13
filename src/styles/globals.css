@@ -230,6 +230,27 @@
   border-top-right-radius: calc(var(--arch-radius) * 0.5);
 }
 
+/* Rule & Ledger placeholder image well — a faint diagonal-hatch stone panel
+   that stands in for documentary photography before real images load. Squared,
+   reading as a printed catalog's photo well rather than a broken image. Used by
+   course cards, faculty portraits, and hero media wells when no Sanity image
+   is set. Replace with real licensed photography before launch. */
+.image-well {
+  background-color: var(--muted);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(168, 124, 62, 0.09) 0 1px,
+    transparent 1px 10px
+  );
+}
+.dark .image-well {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(201, 160, 106, 0.08) 0 1px,
+    transparent 1px 10px
+  );
+}
+
 /* ---------- Light mode (overrides shadcn defaults) -------------------- */
 
 :root {
