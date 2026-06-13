@@ -1,0 +1,137 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Course catalog. Server-renders every course card (good for SEO + no-JS) plus
+// a "Start here" rail, with a progressive-enhancement filter island over the
+// top. Rule & Ledger layout: a ruled section header, a left filter rail, and a
+// squared card grid. Falls back to an empty-state line before Sanity is seeded.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  getCoursesPage,
+  getCourses,
+  getStartHereCourses,
+  getTeachingAreas,
+  getFaculty,
+  getTerms,
+  getSiteSettings,
+} from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import CourseCard from '@/components/CourseCard.astro';
+import CourseFilters from '@/components/CourseFilters';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const [page, courses, startHere, areas, faculty, terms, siteSettings] = await Promise.all([
+  getCoursesPage().catch(() => null),
+  getCourses().catch(() => []),
+  getStartHereCourses().catch(() => []),
+  getTeachingAreas().catch(() => []),
+  getFaculty().catch(() => []),
+  getTerms().catch(() => []),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Courses · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Reformed formation taught in person, in cohorts. Browse the catalog by topic or teacher.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'Catalog';
+const heroHeadline = page?.heroHeadline ?? 'Courses';
+const heroSubhead =
+  page?.heroSubhead ??
+  'Reformed formation taught in person, in cohorts. Browse by topic or teacher, and find a place to begin.';
+
+// Filter options, counted against the catalog so empty facets never show.
+const topicOptions = (areas ?? [])
+  .map((a: any) => ({
+    slug: a.slug,
+    label: a.title,
+    count: courses.filter((c: any) => (c.teachingAreas ?? []).some((t: any) => t.slug === a.slug)).length,
+  }))
+  .filter((o: any) => o.count > 0);
+
+const teacherOptions = (faculty ?? [])
+  .map((f: any) => ({
+    slug: f.slug,
+    label: `${f.honorific ? f.honorific + ' ' : ''}${f.name}`,
+    count: courses.filter((c: any) => (c.instructors ?? []).some((i: any) => i.slug === f.slug)).length,
+  }))
+  .filter((o: any) => o.count > 0);
+
+const usedTermSlugs = new Set(courses.map((c: any) => c.nextOffering?.term?.slug).filter(Boolean));
+const termOptions = (terms ?? [])
+  .filter((t: any) => usedTermSlugs.has(t.slug))
+  .map((t: any) => ({ slug: t.slug, label: t.title }));
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Courses', url: `${site.url}/courses` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  {/* Ruled section header */}
+  <section class="bg-background" aria-labelledby="courses-hero">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 id="courses-hero" class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+    </div>
+  </section>
+
+  {/* Start here rail */}
+  {startHere.length > 0 && (
+    <section class="bg-bg-soft" aria-labelledby="start-here">
+      <div class="mx-auto max-w-content px-m py-section-md">
+        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">{page?.startHereEyebrow ?? 'Start here'}</p>
+        <h2 id="start-here" class="mt-2 font-display text-h3 text-foreground">{page?.startHereHeadline ?? 'New to the Academy? Begin with these.'}</h2>
+        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+          {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Catalog: filter rail + grid */}
+  <section class="bg-background" aria-labelledby="catalog">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <h2 id="catalog" class="sr-only">All courses</h2>
+      <div class="grid grid-cols-1 gap-l lg:grid-cols-[230px_1fr] lg:gap-x-12">
+        <CourseFilters client:load topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
+
+        <div>
+          {courses.length > 0 ? (
+            <ul class="grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+              {courses.map((c: any) => <CourseCard course={c} />)}
+            </ul>
+          ) : (
+            <p class="text-foreground/80 italic">
+              The catalog is being prepared. In the meantime,{' '}
+              <a href="/get-started" class="text-link underline underline-offset-2">request information</a> and we will be in touch.
+            </p>
+          )}
+          <p data-course-empty hidden class="mt-l text-foreground/80 italic">
+            {page?.emptyState ?? 'No courses match those filters yet. Try clearing one, or'}{' '}
+            <a href="/get-started" class="text-link underline underline-offset-2">ask us what is coming next</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Not sure where to start?'}
+    headline={page?.finalCtaHeadline ?? 'Tell us what you want to learn'}
+    subhead={page?.finalCtaSubhead ?? 'We will help you find the right course and point you to a free intro session.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+  />
+</BaseLayout>
