@@ -227,7 +227,90 @@ const testimonials = [
   { _id: 'testimonial.maria', quote: 'My small group prays differently now. That alone was worth the whole term.', name: 'Maria Alvarez', role: 'Small-group leader', city: 'West Chester, Ohio', course: 'course.prayer-psalms', order: 3 },
 ].map((t) => ({ _id: t._id, _type: 'testimonial', quote: t.quote, name: t.name, role: t.role, city: t.city, courseCompleted: t.course ? ref(t.course) : undefined, featured: true, displayOrder: t.order }));
 
-const docs = [...areas, ...terms, ...tiers, ...faculty, ...courses, ...testimonials];
+// ---- Express-interest form ------------------------------------------------
+const field = (label, name, type, opts = {}) => ({ _key: key(), _type: 'formField', label, name, type, ...opts });
+const form = {
+  _id: 'form.express-interest', _type: 'form',
+  title: 'Express interest', slug: slug('express-interest'),
+  heading: 'Request information', intro: 'Tell us what you are hoping to learn and we will help you find the right course.',
+  mode: 'native',
+  fields: [
+    field('First name', 'firstName', 'text', { required: true, width: 'half' }),
+    field('Last name', 'lastName', 'text', { required: true, width: 'half' }),
+    field('Email', 'email', 'email', { required: true, width: 'full' }),
+    field('Phone (optional)', 'phone', 'tel', { width: 'full' }),
+    field('Course or topic of interest', 'courseInterest', 'select', { width: 'full', options: ['Scripture', 'Reformed Theology', 'Prayer & the Spiritual Life', 'Church History', 'Leading a Group', 'Preaching & Teaching', 'Not sure yet'] }),
+    field('Preferred term', 'term', 'select', { width: 'half', options: ['Fall 2026', 'Spring 2027', 'Summer 2027', 'Whenever works'] }),
+    field('Where are you in deciding?', 'decision', 'select', { width: 'half', options: ['Just exploring', 'Planning to enroll', 'Ready now'] }),
+    field('How did you hear about us?', 'heardAbout', 'select', { width: 'full', options: ['A pastor or church', 'A friend or family member', 'Social media', 'An event', 'Search', 'Other'] }),
+    field('What are you hoping to learn?', 'message', 'textarea', { width: 'full' }),
+  ],
+  submitLabel: 'Send', successMessage: 'Thank you. We will be in touch within a few days.',
+  consentNote: 'We will only use your details to answer your inquiry.',
+  provider: { service: 'web3forms', notifyEmail: 'info@presbyterianacademy.org' },
+};
+
+// ---- Page singletons ------------------------------------------------------
+const cta = (label, href) => ({ _type: 'ctaBlock', label, linkType: 'external', externalUrl: href });
+const step = (title, body) => ({ _key: key(), _type: 'getStartedStep', title, body });
+const persona = (label, promise, c) => ({ _key: key(), _type: 'persona', label, promise, cta: c });
+
+const coursesPage = {
+  _id: 'coursesPage', _type: 'coursesPage',
+  heroEyebrow: 'Catalog', heroHeadline: 'Courses',
+  heroSubhead: 'Reformed formation taught in person, in cohorts. Browse by topic or teacher, and find a place to begin.',
+  startHereEyebrow: 'Start here', startHereHeadline: 'New to the Academy? Begin with these.',
+};
+const facultyPage = {
+  _id: 'facultyPage', _type: 'facultyPage',
+  heroEyebrow: 'The faculty', heroHeadline: 'Taught by ministers and scholars',
+  heroSubhead: 'The teachers are the heart of the Academy. Get to know them.',
+  aggregateTrustLine: 'Every teacher is an ordained minister or a credentialed Reformed scholar.',
+};
+const pricingPage = {
+  _id: 'pricingPage', _type: 'pricingPage',
+  heroEyebrow: 'Tuition', heroHeadline: 'Pricing and scholarships',
+  heroSubhead: 'What a course costs, said plainly, and how we keep formation within reach.',
+  scholarshipEyebrow: 'Scholarships', scholarshipHeadline: 'No one is turned away for cost',
+  scholarshipBody: 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.',
+};
+const getStartedPage = {
+  _id: 'getStartedPage', _type: 'getStartedPage',
+  heroEyebrow: 'Get started', heroHeadline: 'Tell us what you want to learn',
+  heroSubhead: 'Request information, book a free intro session, or download a course syllabus. No application fee, no pressure.',
+  requestForm: ref('form.express-interest'),
+  calendlyEyebrow: 'Or talk to us first', calendlyHeadline: 'Book a free intro session',
+  calendlyBody: 'A short, no-pressure conversation about where you are and what fits.',
+  visitClassBody: 'You are welcome to sit in on the first session of any course, free, before you decide.',
+  syllabusBody: 'Every course page has a downloadable syllabus, so you can see exactly what a term covers.',
+  stepsHeadline: 'What happens next',
+  steps: [
+    step('You tell us a little', 'A short form, just enough for us to point you in the right direction.'),
+    step('We reply, person to person', 'A real teacher or staff member answers your questions within a few days.'),
+    step('You try before you decide', 'Sit in on a class or book a free intro. Enroll only when you are ready.'),
+  ],
+};
+const forYouPage = {
+  _id: 'forYouPage', _type: 'forYouPage',
+  heroEyebrow: 'Find your path', heroHeadline: 'Formation for where you are',
+  heroSubhead: 'However you lead or learn, there is a starting point here for you.',
+  personas: [
+    persona('The small-group leader', 'Lead a study with more depth and less guesswork.', cta('Courses for leaders', '/courses')),
+    persona('The lifelong learner', 'Finally read the whole Bible as one story.', cta('Start with Scripture', '/courses')),
+    persona('New to Reformed thought', 'Understand what we believe, in plain words.', cta('Explore the confessions', '/courses')),
+    persona('Discerning a call', 'Test the waters before seminary, in good company.', cta('Book a free intro', '/get-started')),
+  ],
+};
+const resourcesPage = {
+  _id: 'resourcesPage', _type: 'resourcesPage',
+  heroEyebrow: 'Resources', heroHeadline: 'Teaching and formation essays',
+  heroSubhead: 'Short reads from our faculty, free to everyone.',
+  listIntro: 'Plainspoken essays on Scripture, theology, and the life of faith.',
+};
+
+const singletons = [form, coursesPage, facultyPage, pricingPage, getStartedPage, forYouPage, resourcesPage];
+
+const docs = [...areas, ...terms, ...tiers, ...faculty, ...courses, ...testimonials, ...singletons];
 
 console.log(`School placeholder content (${docs.length} docs):`);
 const counts = docs.reduce((a, d) => ((a[d._type] = (a[d._type] || 0) + 1), a), {});
