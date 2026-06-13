@@ -67,18 +67,18 @@ export const site = {
   // Mirrored here for scripts that need them outside CSS (OG generator,
   // structured data). Keep the two in sync when you reskin.
   brandColors: {
-    primary: "#8A6A43",       // Bronze
-    primaryDark: "#6B4F2E",   // Bronze Dark
-    accent: "#36302A",        // Espresso Ink
-    accentDark: "#241F1A",    // Espresso Dark
-    secondary: "#B9A590",     // Clay
-    tertiary: "#A89A86",      // Warm Stone
-    bg: "#ECE4DA",            // Paper (warm cream)
-    bgSoft: "#F6F3EC",        // Paper Soft
-    border: "#DED6C8",        // Warm Border
-    chapel: "#1E423B",        // Chapel green — utility bar, footer, CTA
-    chapelDeep: "#16322C",    // Chapel green, deepest base
-    gold: "#A07D45",          // Liturgical gold accent
+    primary: "#7A2A2C",       // Geneva Oxblood
+    primaryDark: "#5E2122",   // Oxblood Deep
+    accent: "#2A2521",        // Walnut Ink
+    accentDark: "#1E1A17",    // Walnut Deep
+    secondary: "#B7A99B",     // Cloister Stone
+    tertiary: "#9C8E7E",      // Stone Deep
+    bg: "#F4EEE6",            // Stone Cream (warm page)
+    bgSoft: "#FCF9F4",        // Chalk
+    border: "#E0D6C7",        // Warm Stone border
+    chapel: "#5E2122",        // Oxblood Deep — utility bar, footer, CTA band
+    chapelDeep: "#4A1B1C",    // Oxblood Deepest — band base
+    gold: "#A87C3E",          // Aged Brass accent
   },
 
   // Static asset paths under public/

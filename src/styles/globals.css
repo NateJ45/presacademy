@@ -18,32 +18,31 @@
    font-display, text-h1, p-l, max-w-content. */
 
 @theme {
-  /* Brand palette — neutral Slate default. Swap per project. */
-  --color-primary:      #8A6A43; /* Bronze — interactive accent */
-  --color-primary-dark: #6B4F2E; /* Bronze Dark — anchor/link text */
-  --color-accent:       #36302A; /* Espresso Ink — headings + body */
-  --color-accent-dark:  #241F1A; /* Espresso Dark — dark surfaces */
-  --color-secondary:    #B9A590; /* Clay — borders, eyebrows */
-  --color-tertiary:     #A89A86; /* Warm Stone — sparingly */
-  --color-bg:           #ECE4DA; /* Paper — warm cream surface */
-  --color-bg-soft:      #F6F3EC; /* Soft Paper — alternating surface */
+  /* Brand palette — Oxblood & Stone. */
+  --color-primary:      #7A2A2C; /* Geneva Oxblood — interactive accent */
+  --color-primary-dark: #5E2122; /* Oxblood Deep — anchor/link text */
+  --color-accent:       #2A2521; /* Walnut Ink — headings + body */
+  --color-accent-dark:  #1E1A17; /* Walnut Deep — dark surfaces */
+  --color-secondary:    #B7A99B; /* Cloister Stone — borders, eyebrows */
+  --color-tertiary:     #9C8E7E; /* Stone Deep — sparingly */
+  --color-bg:           #F4EEE6; /* Stone Cream — warm page surface */
+  --color-bg-soft:      #FCF9F4; /* Chalk — alternating surface */
   /* border-soft is theme-aware (declared in the @theme inline map below, with
      per-theme values in :root / .dark). It used to be a static #DED6C8 here,
      which made every faint divider GLOW at ~12:1 on the dark page. */
   --color-white-pure:   #FFFFFF;
 
-  /* Chapel accent — deep Tiffany-glass green drawn from the church's own
-     stained glass (the reference build was a historic sanctuary full of it).
-     The liturgical cool counterpoint to warm bronze; together they read as a
-     historic church rather than the warm-mono template. Static in BOTH themes
-     (like --color-primary) because the utility bar, footer, and closing CTA are
-     intentionally the same deep green on a light or dark page — text on them is
-     always cream (--color-chapel-foreground). Reachable as bg-chapel,
+  /* Structural band — deep oxblood for the utility bar, footer, and closing CTA.
+     The brand's signature color carrying the big structural moments (the way RTS
+     and Calvin lead with oxblood). Static in BOTH themes because these bands are
+     intentionally the same deep oxblood on a light or dark page; text on them is
+     always cream (--color-chapel-foreground). The token keeps its legacy `chapel`
+     name; only the value changed to oxblood. Reachable as bg-chapel,
      bg-chapel-deep, text-chapel-foreground. */
-  --color-chapel:            #1E423B; /* deep fir/Tiffany green — utility bar, footer, CTA */
-  --color-chapel-deep:       #16322C; /* deepest green base */
-  --color-chapel-foreground: #F1EAD9; /* warm cream text on chapel surfaces */
-  --color-gold:              #A07D45; /* liturgical gold — hairline rules, small accents */
+  --color-chapel:            #5E2122; /* Oxblood Deep — utility bar, footer, CTA band */
+  --color-chapel-deep:       #4A1B1C; /* Oxblood Deepest — deepest band base */
+  --color-chapel-foreground: #F1EAD9; /* warm cream text on band surfaces */
+  --color-gold:              #A87C3E; /* Aged Brass — hairline rules, small accents */
 
   /* Arched-top crown radius — the building's architectural signature, applied to
      hero / feature / staff images via the .arch-top utility (a Romanesque
@@ -235,36 +234,36 @@
 
 :root {
     /* Surfaces */
-    --background: #ECE4DA;
-    --foreground: #36302A;
-    --card: #FBF8F2;
-    --card-foreground: #36302A;
-    --popover: #FBF8F2;
-    --popover-foreground: #36302A;
+    --background: #F4EEE6;
+    --foreground: #2A2521;
+    --card: #FCF9F4;
+    --card-foreground: #2A2521;
+    --popover: #FCF9F4;
+    --popover-foreground: #2A2521;
 
     /* Brand */
-    --primary: #8A6A43;
+    --primary: #7A2A2C;
     --primary-foreground: #FFFFFF;
-    --secondary: #B9A590;
-    --secondary-foreground: #36302A;
+    --secondary: #B7A99B;
+    --secondary-foreground: #2A2521;
 
     /* Quiet surfaces / muted text */
-    --muted: #F1EBE0;
-    --muted-foreground: #635849;    /* warm gray on cream — verify AA */
+    --muted: #EDE5D9;
+    --muted-foreground: #5C5046;    /* warm gray on cream — verify AA */
 
     /* Accent */
-    --accent: #E3D9CB;
-    --accent-foreground: #36302A;
+    --accent: #E7DDCF;
+    --accent-foreground: #2A2521;
 
     /* States */
     --destructive: oklch(0.577 0.245 27.325);
-    --border: #DED6C8;
-    --input: #DED6C8;
-    --ring: #8A6A43;
-    --link: #6B4F2E;                /* deep bronze on cream — verify AA */
-    --chapel-ink: #1E423B;          /* deep Tiffany green keyword emphasis on cream (~9:1) */
-    --gold-ink: #7A5E33;            /* deepened gold as TEXT on cream (4.8:1, AA) */
-    --border-soft: #DED6C8;         /* faint warm divider (same value the old static token had) */
+    --border: #E0D6C7;
+    --input: #E0D6C7;
+    --ring: #7A2A2C;
+    --link: #5E2122;                /* deep oxblood on cream — verify AA */
+    --chapel-ink: #7A2A2C;          /* oxblood keyword emphasis on cream (~7:1) */
+    --gold-ink: #6E5128;            /* deepened brass as TEXT on cream (~4.8:1, AA) */
+    --border-soft: #E0D6C7;         /* faint warm divider */
 
     /* Charts (kept neutral, not used at launch) */
     --chart-1: oklch(0.87 0 0);
@@ -276,16 +275,16 @@
     --radius: 0.5rem;
 
     /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
-    --sidebar: #ECE4DA;
-    --sidebar-foreground: #36302A;
-    --sidebar-primary: #8A6A43;
+    --sidebar: #F4EEE6;
+    --sidebar-foreground: #2A2521;
+    --sidebar-primary: #7A2A2C;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #F1EBE0;
-    --sidebar-accent-foreground: #36302A;
-    --sidebar-border: #DED6C8;
-    --sidebar-ring: #8A6A43;
+    --sidebar-accent: #EDE5D9;
+    --sidebar-accent-foreground: #2A2521;
+    --sidebar-border: #E0D6C7;
+    --sidebar-ring: #7A2A2C;
 
-    --tint-rgb: 138, 106, 67;
+    --tint-rgb: 168, 124, 62;
 }
 
 /* ---------- Dark mode --------------------------------------------------
@@ -293,37 +292,37 @@
    Slate and Ink hold their identity; surfaces flip to deep cool grays. */
 
 .dark {
-    --background: #1C1813;
-    --foreground: #ECE4DA;
+    --background: #1E1A17;
+    --foreground: #F1EAD9;
     /* Card sits one step ABOVE muted (#262019) so the bg -> muted -> card
        ladder light mode has also exists in dark. They used to share one hex,
        which collapsed cards on muted bands into a single flat slab. */
-    --card: #2A231B;
-    --card-foreground: #ECE4DA;
-    --popover: #2A231B;
-    --popover-foreground: #ECE4DA;
+    --card: #2A2420;
+    --card-foreground: #F1EAD9;
+    --popover: #2A2420;
+    --popover-foreground: #F1EAD9;
 
-    --primary: #C7A875;
-    /* White (not ink) on the bronze pill background: bg-primary stays the
-       static #8A6A43 in both themes, so dark-mode dark text dropped contrast to
-       3.55:1. White keeps every primary CTA at ~5:1 in dark mode too. */
+    --primary: #C16A5A;
+    /* White (not ink) on the oxblood pill background: bg-primary stays the
+       static #7A2A2C in both themes; white keeps every primary CTA at ~7:1 in
+       both light and dark mode. */
     --primary-foreground: #FFFFFF;
-    --secondary: #8A7A64;
-    --secondary-foreground: #ECE4DA;
+    --secondary: #8C7E70;
+    --secondary-foreground: #F1EAD9;
 
     --muted: #262019;
     --muted-foreground: #B7AC9A;
 
     --accent: #2E2820;
-    --accent-foreground: #ECE4DA;
+    --accent-foreground: #F1EAD9;
 
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 12%);
     --input: oklch(1 0 0 / 15%);
-    --ring: #C7A875;
-    --link: #D8BD8C;
-    --chapel-ink: #6FA99A;          /* lifted Tiffany green keyword emphasis on dark */
-    --gold-ink: #C7A875;            /* lifted gold as TEXT on dark surfaces (AA) */
+    --ring: #C16A5A;
+    --link: #E0998C;
+    --chapel-ink: #E0998C;          /* lifted oxblood keyword emphasis on dark */
+    --gold-ink: #C9A06A;            /* lifted brass as TEXT on dark surfaces (AA) */
     --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
 
     --chart-1: oklch(0.87 0 0);
@@ -332,16 +331,16 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
 
-    --sidebar: #2A231B;
-    --sidebar-foreground: #ECE4DA;
-    --sidebar-primary: #C7A875;
-    --sidebar-primary-foreground: #1C1813;
+    --sidebar: #2A2420;
+    --sidebar-foreground: #F1EAD9;
+    --sidebar-primary: #C16A5A;
+    --sidebar-primary-foreground: #1E1A17;
     --sidebar-accent: #2E2820;
-    --sidebar-accent-foreground: #ECE4DA;
+    --sidebar-accent-foreground: #F1EAD9;
     --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: #C7A875;
+    --sidebar-ring: #C16A5A;
 
-    --tint-rgb: 199, 168, 117;
+    --tint-rgb: 198, 160, 106;
 }
 
 /* ---------- Base resets and defaults ---------------------------------- */
