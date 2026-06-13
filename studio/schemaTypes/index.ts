@@ -1,14 +1,14 @@
 // Registers every schema type with the Studio.
 // Order doesn't affect runtime; grouped here for readability.
 //
-// Remodel note: the interior-designer types (service, servicesPage, testimonial,
-// philosophyPoint, journal*, studio* "Start Here" helpers) were removed. The
-// church collections staffMember + ministry were added.
+// History: the interior-designer types (service, testimonial, journal*) were
+// removed in the church remodel; the church types (staffMember, ministry,
+// sermon, worshipResource, and the per-page church singletons) were retired in
+// the lay-school revamp and replaced by the catalog types below.
 
 import { aboutPage } from './aboutPage';
 import { announcement } from './announcement';
 import { sectionBlocks } from './blocks';
-import { churchPageSingletons } from './churchPages';
 import { contactPage } from './contactPage';
 import { course } from './course';
 import { ctaBlock } from './ctaBlock';
@@ -21,20 +21,15 @@ import { faqItem } from './faqItem';
 import { faqPage } from './faqPage';
 import { form } from './form';
 import { homePage } from './homePage';
-import { ministry } from './ministry';
 import { notFoundPage } from './notFoundPage';
 import { page } from './page';
 import { pricingTier } from './pricingTier';
 import { privacyPage } from './privacyPage';
 import { schoolPageSingletons } from './schoolPages';
-import { sermon } from './sermon';
-import { sermonsPage } from './sermonsPage';
 import { siteSettings } from './siteSettings';
-import { staffMember } from './staffMember';
 import { teachingArea } from './teachingArea';
 import { term } from './term';
 import { testimonial } from './testimonial';
-import { worshipResource } from './worshipResource';
 
 export const schemaTypes = [
   // Object types (embedded) first so they're defined before docs that reference them
@@ -53,24 +48,16 @@ export const schemaTypes = [
   faqPage,
   contactPage,
   eventsPage,
-  sermonsPage,
   notFoundPage,
   privacyPage,
-  // Per-page church singletons (worship, what-we-believe, music, pastors & staff,
-  // grow, serve, kids, food, use-our-space, weddings, give).
-  ...churchPageSingletons,
   // School page singletons (courses, faculty, pricing, get-started, for-you, resources).
   ...schoolPageSingletons,
 
   // Reusable content collections
   faqCategory,
   faqItem,
-  staffMember,
-  ministry,
   event,
-  sermon,
   announcement,
-  worshipResource,
 
   // School catalog (courses, faculty, terms, pricing, testimonials)
   teachingArea,
