@@ -34,9 +34,9 @@ empty-state content. If it doesn't, stop and fix before customizing
 ```bash
 cp bootstrap.config.example.json bootstrap.config.json
 # fill in: church name, short name, wordmark line 2, domain, city, address,
-# emails, phone, storage prefix, worker name, studio host
-npm run rebrand              # dry run: see what will change
-npm run rebrand -- --apply
+# emails, phone, worker name, studio host
+npm run rebrand              # CHECK mode: see what would change (nothing written)
+npm run rebrand -- --apply   # APPLY mode: writes all replacements
 git diff                     # the diff IS the rebrand; review it
 npm run typegen
 ```
@@ -45,6 +45,10 @@ npm run typegen
 of Springfield", "123 Main Street", "example-church.org"...) across the code,
 schemas, and docs. Anything it can't know (photos, colors, denomination
 wording) is in the checklist.
+
+Note: `storageKeyPrefix` is NOT in bootstrap.config.json — `src/data/site.ts`
+derives it automatically from the church name via `slugifyName()`, so it stays
+in sync without a separate config field.
 
 ## 3. Design seam (optional but probably yes)
 

@@ -118,7 +118,8 @@ const schemas = [
 
     <div class="mx-auto max-w-3xl px-m py-section-lg">
       {sermon.description && (
-        <PortableText client:visible value={sermon.description} className="text-foreground/85 text-lg leading-relaxed" />
+        /* Plain rich text — no interactive blocks, so server-rendered with no client JS. */
+        <PortableText value={sermon.description} className="text-foreground/85 text-lg leading-relaxed" />
       )}
       {sermon.audioUrl && (
         <p class="mt-l">

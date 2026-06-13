@@ -11,16 +11,25 @@ The starter has two parallel content sources:
 Hardcoded constants that don't change between deploys: domain name, GitHub repo URL, Web3Forms access key reference, Calendly URL template, brand asset paths, the `localStorage` key prefix for the theme system. A developer edits these in code when something structural shifts.
 
 ```ts
+// rebrand.mjs stamps `_name` and `_domain`; derived fields auto-update.
+const _name   = "First Church of Springfield";
+const _domain = "example-church.org";
+const _slug   = slugifyName(_name); // "first-church-of-springfield"
+
 export const site = {
-  name: "Studio Starter",
-  studio: "Studio Starter",
-  domain: "example.com",
-  storageKeyPrefix: "studio-starter",
+  name: _name,
+  domain: _domain,
+  url: `https://www.${_domain}`,
+  storageKeyPrefix: _slug,        // derived — never needs manual editing
+  themeStorageKey: _slug + '-theme',
   // ... etc
 } as const;
 ```
 
-Replace all placeholder values in `site.ts` before launch. The domain feeds the canonical URL, OG tags, and the sitemap reference in `robots.txt`.
+`rebrand.mjs` only needs to stamp the two quoted `_name` and `_domain` literals.
+`storageKeyPrefix` and `themeStorageKey` are derived from `_name` at module load
+time, so they are always in sync and do not appear in `bootstrap.config.json`.
+The domain feeds the canonical URL, OG tags, and the sitemap reference in `robots.txt`.
 
 ### Sanity — the single source of truth for all content
 

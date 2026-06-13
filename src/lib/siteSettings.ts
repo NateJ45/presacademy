@@ -45,6 +45,10 @@ export interface RawSiteSettings {
   officeHours?: string | null;
   addressLine?: string | null;
   cityStateZip?: string | null;
+  /** Decimal latitude of the building. Set in Studio via right-click on Google Maps. */
+  geoLat?: number | null;
+  /** Decimal longitude of the building. Set in Studio via right-click on Google Maps. */
+  geoLng?: number | null;
   worshipService?: WorshipService | null;
   giveUrl?: string | null;
   watchUrl?: string | null;
@@ -73,6 +77,32 @@ export interface ResolvedSiteSettings {
   fullAddress: string;
   /** Google Maps directions link built from the resolved address. */
   mapHref: string;
+  /**
+   * Parsed city from cityStateZip (format "City, ST 12345"). undefined when
+   * the string is absent or does not match the expected format. Used only for
+   * structured data; callers should handle undefined gracefully.
+   */
+  addressLocality?: string;
+  /**
+   * Parsed two-letter state code from cityStateZip. undefined when absent or
+   * unparseable.
+   */
+  addressRegion?: string;
+  /**
+   * Parsed ZIP/postal code from cityStateZip. undefined when absent or
+   * unparseable.
+   */
+  postalCode?: string;
+  /**
+   * Latitude from Sanity siteSettings.geoLat. undefined when not set.
+   * The structured-data builder omits the geo block entirely when this is absent.
+   */
+  geoLat?: number;
+  /**
+   * Longitude from Sanity siteSettings.geoLng. undefined when not set.
+   * The structured-data builder omits the geo block entirely when this is absent.
+   */
+  geoLng?: number;
   /** Passed straight through to serviceTime() for the display strings. */
   worshipService: WorshipService | null;
   /** Where the "Give" button points: the giving portal, else the /give page. */
@@ -95,6 +125,27 @@ function clean(value?: string | null): string | undefined {
   return trimmed === '' ? undefined : trimmed;
 }
 
+/**
+ * Parse a "City, ST 12345" string into its three parts.
+ * The expected format is: one or more words, a comma, a space, exactly two
+ * uppercase letters, a space, and five (or five-plus-four) digits.
+ * Returns undefined for each part that cannot be reliably derived.
+ *
+ * Examples:
+ *   "Springfield, IL 62701"  → { locality: "Springfield", region: "IL", postal: "62701" }
+ *   "New York, NY 10001-0001"→ { locality: "New York",    region: "NY", postal: "10001-0001" }
+ *   "Downtown"               → { locality: undefined,     region: undefined, postal: undefined }
+ */
+function parseCityStateZip(
+  raw?: string,
+): { locality?: string; region?: string; postal?: string } {
+  if (!raw) return {};
+  // Accepts "City Name, XX 12345" or "City Name, XX 12345-6789"
+  const match = raw.match(/^(.+?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/);
+  if (!match) return {};
+  return { locality: match[1].trim(), region: match[2], postal: match[3] };
+}
+
 export function resolveSiteSettings(raw?: RawSiteSettings | null): ResolvedSiteSettings {
   const s = raw ?? {};
 
@@ -103,6 +154,16 @@ export function resolveSiteSettings(raw?: RawSiteSettings | null): ResolvedSiteS
   const addressLine = clean(s.addressLine) ?? '';
   const cityStateZip = clean(s.cityStateZip) ?? '';
   const fullAddress = [addressLine, cityStateZip].filter(Boolean).join(', ');
+
+  // Parse city/state/ZIP for structured data. Omit fields that cannot be parsed
+  // rather than emitting placeholder values.
+  const parsed = parseCityStateZip(cityStateZip || undefined);
+
+  // Geo coordinates: only include when both lat and lng are finite numbers.
+  const geoLat =
+    typeof s.geoLat === 'number' && isFinite(s.geoLat) ? s.geoLat : undefined;
+  const geoLng =
+    typeof s.geoLng === 'number' && isFinite(s.geoLng) ? s.geoLng : undefined;
 
   return {
     brandName: clean(s.title) ?? site.name,
@@ -116,6 +177,11 @@ export function resolveSiteSettings(raw?: RawSiteSettings | null): ResolvedSiteS
     cityStateZip,
     fullAddress,
     mapHref: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`,
+    addressLocality: parsed.locality,
+    addressRegion: parsed.region,
+    postalCode: parsed.postal,
+    geoLat,
+    geoLng,
     worshipService: s.worshipService ?? null,
     giveHref: clean(s.giveUrl) ?? '/give',
     watchHref: clean(s.watchUrl) ?? '/sermons',

@@ -1,8 +1,14 @@
 // Rebrand the starter for a new church in one command.
 //
+// Usage:
+//   npm run rebrand              -- CHECK mode (default): prints a per-file
+//                                   WOULD-CHANGE report. Nothing is written.
+//   npm run rebrand -- --apply   -- APPLY mode: writes all replacements.
+//
+// Workflow:
 //   1. Copy bootstrap.config.example.json -> bootstrap.config.json and fill it in.
-//   2. node scripts/rebrand.mjs            (dry run: shows per-file replacement counts)
-//   3. node scripts/rebrand.mjs --apply    (writes)
+//   2. npm run rebrand              (check: see what will change)
+//   3. npm run rebrand -- --apply   (write)
 //   4. Review `git diff`, then run `npm run typegen` and `npm run og`.
 //
 // How it works: the template ships with EXACT, unique placeholder strings
@@ -11,6 +17,10 @@
 // project. It is intentionally dumb and reviewable: after --apply, the git
 // diff IS the rebrand. Anything the mapping misses (a photo, a color) is in
 // docs/bootstrap/setup-checklist.md.
+//
+// Idempotency: this is a one-shot bootstrap tool. Running it twice will not
+// double-replace anything, because the placeholder strings are no longer
+// present after the first --apply run.
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, resolve, join, extname } from 'node:path';
@@ -28,11 +38,47 @@ if (!existsSync(configPath)) {
 }
 const cfg = JSON.parse(readFileSync(configPath, 'utf-8'));
 
-for (const key of ['churchName', 'shortName', 'wordmarkLine2', 'domain', 'storageKeyPrefix', 'workerName', 'studioHost', 'city', 'addressLine', 'cityStateZip', 'email', 'pastorEmail', 'phone']) {
+// ── Required-field presence check ──────────────────────────────────────────
+// storageKeyPrefix is no longer required here: site.ts derives it from
+// churchName via slugify(), so it never needs to be manually set.
+for (const key of ['churchName', 'shortName', 'wordmarkLine2', 'domain', 'workerName', 'studioHost', 'city', 'addressLine', 'cityStateZip', 'email', 'pastorEmail', 'phone']) {
   if (typeof cfg[key] !== 'string' || cfg[key].trim() === '') {
-    console.error(`bootstrap.config.json is missing "${key}".`);
+    console.error(`bootstrap.config.json is missing or empty: "${key}".`);
     process.exit(1);
   }
+}
+
+// ── Config value validation ─────────────────────────────────────────────────
+// Exit with a clear message on format violations so the script never writes
+// invalid values into the codebase.
+const validationErrors = [];
+
+// domain: no protocol prefix, must contain at least one dot
+if (/^https?:\/\//i.test(cfg.domain)) {
+  validationErrors.push(`"domain" must not include a protocol — remove the "https://" prefix. Got: ${cfg.domain}`);
+} else if (!cfg.domain.includes('.')) {
+  validationErrors.push(`"domain" must include a dot (e.g. "mychurch.org"). Got: ${cfg.domain}`);
+}
+
+// workerName: valid Cloudflare Worker name (lowercase letters, digits, hyphens; no leading/trailing hyphens)
+if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(cfg.workerName)) {
+  validationErrors.push(`"workerName" must be a valid Cloudflare Worker name: lowercase letters, digits, and hyphens only, no leading/trailing hyphens. Got: ${cfg.workerName}`);
+}
+
+// email fields must contain @
+for (const key of ['email', 'pastorEmail']) {
+  if (!cfg[key].includes('@')) {
+    validationErrors.push(`"${key}" must be a valid email address (contains "@"). Got: ${cfg[key]}`);
+  }
+}
+
+if (validationErrors.length > 0) {
+  console.error('\nbootstrap.config.json validation failed:\n');
+  for (const msg of validationErrors) {
+    console.error(`  ✗ ${msg}`);
+  }
+  console.error('\nFix these values and re-run.');
+  process.exit(1);
 }
 
 // Ordered longest-first so overlapping placeholders resolve correctly.
@@ -51,7 +97,8 @@ const REPLACEMENTS = [
   ['of Springfield', cfg.wordmarkLine2],
   ['First Church', cfg.shortName],
   ['Springfield', cfg.city],
-  ['firstchurch', cfg.storageKeyPrefix],
+  // storageKeyPrefix pair removed: site.ts now derives it from churchName via
+  // slugify(), so it is always in sync and never needs to be stamped separately.
   ['church-starter', cfg.workerName],
 ];
 
@@ -59,7 +106,13 @@ const REPLACEMENTS = [
 const INCLUDE_DIRS = ['src', 'studio/schemaTypes', 'studio/components', 'studio/guides', 'modules', 'docs/bootstrap', 'scripts'];
 const INCLUDE_FILES = [
   'astro.config.mjs', 'wrangler.jsonc', 'package.json', 'README.md', 'CLAUDE.md',
-  'public/robots.txt', 'public/llms.txt',
+  // robots.txt is now a build-time endpoint at src/pages/robots.txt.ts and is
+  // swept as part of INCLUDE_DIRS (src/). public/robots.txt no longer exists.
+  'public/llms.txt',
+  // globals.css is swept so the @media print footer ("First Church of Springfield ·
+  // example-church.org") is replaced. All replacement pairs have been audited against
+  // the CSS: they match only inside string literals and pose no syntax risk.
+  'src/styles/globals.css',
   'studio/structure.ts', 'studio/sanity.cli.ts', 'studio/sanity.config.ts', 'studio/package.json',
 ];
 const TEXT_EXT = new Set(['.ts', '.tsx', '.astro', '.mjs', '.js', '.json', '.jsonc', '.txt', '.md', '.xml', '.css', '.ndjson']);
@@ -85,6 +138,17 @@ for (const f of INCLUDE_FILES) {
   if (existsSync(p)) files.add(p);
 }
 
+if (!APPLY) {
+  console.log('\n── CHECK MODE ─────────────────────────────────────────────────────────');
+  console.log('Nothing will be written. Re-run with --apply to stamp the changes.');
+  console.log('────────────────────────────────────────────────────────────────────────\n');
+}
+
+// Per-pattern hit counters — used in check mode to assert every find-pattern
+// appears at least once across all files so a silently-renamed placeholder
+// cannot go undetected.
+const patternHits = new Map(REPLACEMENTS.map(([from]) => [from, 0]));
+
 let totalFiles = 0;
 let totalHits = 0;
 for (const file of files) {
@@ -95,18 +159,42 @@ for (const file of files) {
     if (from === to) continue;
     const parts = text.split(from);
     if (parts.length > 1) {
-      hits += parts.length - 1;
+      const count = parts.length - 1;
+      hits += count;
+      patternHits.set(from, (patternHits.get(from) ?? 0) + count);
       text = parts.join(to);
     }
   }
   if (hits > 0) {
     totalFiles += 1;
     totalHits += hits;
-    console.log(`${APPLY ? 'STAMPED' : 'would stamp'}  ${file.slice(root.length + 1)}  (${hits})`);
+    console.log(`${APPLY ? 'STAMPED' : 'WOULD CHANGE'}  ${file.slice(root.length + 1)}  (${hits} replacement${hits === 1 ? '' : 's'})`);
     if (APPLY) writeFileSync(file, text, 'utf-8');
   }
 }
 
-console.log(`\n${APPLY ? 'Done' : 'Dry run'}: ${totalHits} replacements across ${totalFiles} files.`);
-if (!APPLY) console.log('Re-run with --apply to write.');
-else console.log('Now: review `git diff`, then `npm run typegen` and `npm run og`, and finish docs/bootstrap/setup-checklist.md.');
+if (!APPLY) {
+  console.log(`\nCheck mode: ${totalHits} replacement${totalHits === 1 ? '' : 's'} across ${totalFiles} file${totalFiles === 1 ? '' : 's'} would be made.`);
+
+  // Assert every find-pattern matched at least once across the scanned files.
+  // A pattern with zero hits means the placeholder has already been renamed or
+  // removed, which would make --apply a no-op for that token. That is usually a
+  // mistake (e.g. a placeholder was edited directly instead of via rebrand).
+  const missing = REPLACEMENTS
+    .filter(([from, to]) => from !== to && (patternHits.get(from) ?? 0) === 0)
+    .map(([from]) => from);
+
+  if (missing.length > 0) {
+    console.error('\n✗ CHECK FAILED: the following placeholder patterns were not found in any file.');
+    console.error('  This means --apply would silently skip them. Investigate before proceeding.\n');
+    for (const m of missing) {
+      console.error(`  Missing: "${m}"`);
+    }
+    process.exit(1);
+  } else {
+    console.log('✓ All placeholder patterns found. Run `npm run rebrand -- --apply` to write the changes.');
+  }
+} else {
+  console.log(`\nDone: ${totalHits} replacements across ${totalFiles} files.`);
+  console.log('Now: review `git diff`, then `npm run typegen` and `npm run og`, and finish docs/bootstrap/setup-checklist.md.');
+}

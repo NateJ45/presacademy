@@ -2,6 +2,11 @@
 // Photo gallery block. Responsive grid of images with optional captions. Turns
 // "a single photo" into a gallery with one editor control. Captions/headings
 // inherit the SectionShell tone color.
+//
+// A11y: when no heading is present we still need an accessible name on the
+// landmark so assistive technology can distinguish this region from others on
+// the page. We use aria-label="Photo gallery" as a fallback; when a heading IS
+// present we use aria-labelledby so the heading text doubles as the label.
 import SanityImage from '@/components/SanityImage.astro';
 
 const { block } = Astro.props as { block: any };
@@ -12,15 +17,24 @@ const COLS: Record<string, string> = {
   '4': 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
 };
 const colClass = COLS[block?.columns ?? '3'] ?? COLS['3'];
+
+// Stable heading ID for aria-labelledby when a heading is present.
+const headingId = block?.heading
+  ? `gallery-heading-${Math.random().toString(36).slice(2, 8)}`
+  : null;
 ---
 
 {
   block && images.length > 0 && (
-    <div class="mx-auto max-w-content px-m">
+    <section
+      class="mx-auto max-w-content px-m"
+      aria-labelledby={headingId ?? undefined}
+      aria-label={!headingId ? 'Photo gallery' : undefined}
+    >
       {(block.eyebrow || block.heading || block.intro) && (
         <div class="max-w-2xl mb-l">
           {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
-          {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
+          {block.heading && <h2 id={headingId ?? undefined} class="mt-s font-display text-h2">{block.heading}</h2>}
           {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
         </div>
       )}
@@ -40,6 +54,6 @@ const colClass = COLS[block?.columns ?? '3'] ?? COLS['3'];
           </figure>
         ))}
       </div>
-    </div>
+    </section>
   )
 }

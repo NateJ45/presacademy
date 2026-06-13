@@ -38,6 +38,17 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
   // read email/phone/address from site.ts, so Sanity edits never reached it.)
   const s = resolveSiteSettings(settings);
   const st = serviceTime(s.worshipService);
+
+  // Build the address object only with fields that are actually known.
+  // Omit addressLocality / addressRegion / postalCode when cityStateZip cannot
+  // be parsed (rather than emitting placeholder Springfield values).
+  const address: Record<string, string> = { '@type': 'PostalAddress' };
+  if (s.addressLine) address.streetAddress = s.addressLine;
+  if (s.addressLocality) address.addressLocality = s.addressLocality;
+  if (s.addressRegion) address.addressRegion = s.addressRegion;
+  if (s.postalCode) address.postalCode = s.postalCode;
+  address.addressCountry = 'US';
+
   const schema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'Church',
@@ -45,22 +56,21 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
     name: s.brandName,
     url: site.url,
     image: `${site.url}${site.assets.ogDefault}`,
-    email: s.email,
-    telephone: s.phone,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: s.addressLine,
-      addressLocality: 'Springfield',
-      addressRegion: 'IL',
-      postalCode: '62701',
-      addressCountry: 'US',
-    },
-    // REPLACE with your church's coordinates (rebrand checklist).
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 39.7817,
-      longitude: -89.6501,
-    },
+    email: s.email || undefined,
+    telephone: s.phone || undefined,
+    address: Object.keys(address).length > 2 ? address : undefined,
+    // Geo block is emitted only when both lat and lng are set in Sanity
+    // (Studio: right-click your building in Google Maps → copy the coordinates).
+    // When absent, the field is omitted rather than emitting placeholder coords.
+    ...(s.geoLat !== undefined && s.geoLng !== undefined
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: s.geoLat,
+            longitude: s.geoLng,
+          },
+        }
+      : {}),
     // Sunday worship service.
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
@@ -74,7 +84,9 @@ export function churchSchema(settings: RawSiteSettings | null | undefined): stri
       s.social.youtube,
     ].filter(Boolean),
   };
-  return JSON.stringify(schema);
+
+  // Strip top-level undefined values so the emitted JSON is clean.
+  return JSON.stringify(schema, (_key, value) => (value === undefined ? undefined : value));
 }
 
 // ---------- Service list (for /services) -----------------------------------

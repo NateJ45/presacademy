@@ -1,5 +1,9 @@
 // Reusable object type: a CTA button + link.
 // Embedded by page singletons wherever a primary/secondary CTA appears.
+//
+// Internal link targets: every document type listed in `internalLink.to[]`
+// must have a corresponding entry in CtaLink.astro's TYPE_TO_PATH table, or
+// the link will fall back to the fallbackHref. Keep the two in sync.
 
 import { defineType, defineField } from 'sanity';
 
@@ -34,13 +38,27 @@ export const ctaBlock = defineType({
       title: 'Page to link to',
       type: 'reference',
       to: [
+        // Core singletons (always present)
         { type: 'homePage' },
         { type: 'aboutPage' },
         { type: 'faqPage' },
         { type: 'contactPage' },
         { type: 'eventsPage' },
         { type: 'sermonsPage' },
-        // removed journalPage and journalEntry targets during church remodel (those types are being deleted)
+        // Church page singletons — each resolves to a fixed route in CtaLink.astro.
+        { type: 'worshipPage' },
+        { type: 'beliefsPage' },
+        { type: 'musicPage' },
+        { type: 'staffPage' },
+        { type: 'growPage' },
+        { type: 'servePage' },
+        { type: 'kidsPage' },
+        { type: 'foodPage' },
+        { type: 'useOurSpacePage' },
+        { type: 'weddingsPage' },
+        { type: 'givePage' },
+        // Generic pages created by the editor (slug-based route /[slug]).
+        { type: 'page' },
       ],
       hidden: ({ parent }) => parent?.linkType !== 'internal',
     }),

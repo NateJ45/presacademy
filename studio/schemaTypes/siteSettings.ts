@@ -104,6 +104,22 @@ export const siteSettings = defineType({
       group: 'identity',
       description: 'e.g. "Springfield, IL 62701".',
     }),
+    defineField({
+      name: 'geoLat',
+      title: 'Latitude (optional)',
+      type: 'number',
+      group: 'identity',
+      description:
+        'Decimal latitude of your building. Right-click your building in Google Maps and click the coordinates at the top of the context menu to copy them. Example: 39.7817. Leave blank to omit the geo block from structured data.',
+    }),
+    defineField({
+      name: 'geoLng',
+      title: 'Longitude (optional)',
+      type: 'number',
+      group: 'identity',
+      description:
+        'Decimal longitude of your building. Right-click your building in Google Maps and click the coordinates at the top of the context menu to copy them. Example: -89.6501. Leave blank to omit the geo block from structured data.',
+    }),
 
     // ── Navigation (top menu) ─────────────────────────────────────────────────
     // The website header menu. When this is empty the header renders its

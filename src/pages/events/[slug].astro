@@ -68,14 +68,17 @@ if (event.start) {
       location: {
         '@type': 'Place',
         name: event.location ?? site.name,
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: settings.addressLine,
-          addressLocality: 'Springfield',
-          addressRegion: 'IL',
-          postalCode: '62701',
-          addressCountry: 'US',
-        },
+        // Build address only from resolved Sanity values; omit fields that
+        // are not yet populated rather than emitting placeholder Springfield data.
+        address: (() => {
+          const addr: Record<string, string> = { '@type': 'PostalAddress' };
+          if (settings.addressLine) addr.streetAddress = settings.addressLine;
+          if (settings.addressLocality) addr.addressLocality = settings.addressLocality;
+          if (settings.addressRegion) addr.addressRegion = settings.addressRegion;
+          if (settings.postalCode) addr.postalCode = settings.postalCode;
+          addr.addressCountry = 'US';
+          return addr;
+        })(),
       },
       organizer: { '@type': 'Organization', name: site.name, url: site.url },
     }),
@@ -123,7 +126,8 @@ const pillPrimary =
 
     {event.description && (
       <div class="mx-auto max-w-3xl px-m py-section-lg">
-        <PortableText client:visible value={event.description} className="text-foreground/85 text-lg leading-relaxed" />
+        {/* Plain rich text — no interactive blocks, so server-rendered with no client JS. */}
+        <PortableText value={event.description} className="text-foreground/85 text-lg leading-relaxed" />
       </div>
     )}
   </article>

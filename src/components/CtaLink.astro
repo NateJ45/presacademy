@@ -52,9 +52,14 @@ const {
 } = Astro.props as Props;
 
 // Map Sanity document _type to its route. Mirrors the routes in src/pages/.
-// Singletons go to a fixed path; journalEntry uses {slug} for the dynamic
-// /journal/[slug] route.
+// Singletons go to a fixed path; slug-based types (page, journalEntry) are
+// handled in the switch below with the slug appended.
+//
+// Keep this table in sync with ctaBlock.ts `internalLink.to[]` — every type
+// listed there must have an entry here (or a slug-based case in the switch)
+// or the link silently falls back to fallbackHref.
 const TYPE_TO_PATH: Record<string, string> = {
+  // Core singletons
   homePage: '/',
   aboutPage: '/about',
   faqPage: '/faq',
@@ -62,6 +67,18 @@ const TYPE_TO_PATH: Record<string, string> = {
   journalPage: '/journal',
   eventsPage: '/events',
   sermonsPage: '/sermons',
+  // Church page singletons
+  worshipPage: '/worship',
+  beliefsPage: '/what-we-believe',
+  musicPage: '/music',
+  staffPage: '/pastor-staff',
+  growPage: '/grow',
+  servePage: '/serve',
+  kidsPage: '/kids',
+  foodPage: '/food',
+  useOurSpacePage: '/use-our-space',
+  weddingsPage: '/weddings',
+  givePage: '/give',
 };
 
 function resolveHref(c?: CtaBlock | null): string {
@@ -70,9 +87,13 @@ function resolveHref(c?: CtaBlock | null): string {
     case 'internal': {
       const t = c.internalLink?._type;
       if (!t) return fallbackHref;
-      // Slug-based types need the slug appended. Singletons use a fixed path.
+      // Slug-based types need the slug appended. Singletons use the fixed path
+      // table above. The generic `page` type resolves to /[slug].
       if (t === 'journalEntry' && c.internalLink?.slug) {
         return `/journal/${c.internalLink.slug}`;
+      }
+      if (t === 'page' && c.internalLink?.slug) {
+        return `/${c.internalLink.slug}`;
       }
       return TYPE_TO_PATH[t] ?? fallbackHref;
     }

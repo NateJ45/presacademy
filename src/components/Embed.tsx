@@ -51,6 +51,8 @@ export default function Embed({ mode, url, html, title, aspect }: EmbedProps) {
           className="w-full"
           style={{ border: 0, minHeight: aspect ? undefined : 480, height: aspect ? '100%' : undefined }}
           referrerPolicy="no-referrer-when-downgrade"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
+          allowFullScreen
         />
       </div>
     );

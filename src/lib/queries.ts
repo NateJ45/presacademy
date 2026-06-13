@@ -51,17 +51,27 @@ const SECTION_MEMBERS = `{
 
 // ---- Site settings (used in BaseLayout / Header / Footer) -----------------
 
+// Module-level memoized promise. The first call in a given build process fires
+// the actual Sanity fetch; every subsequent call (BaseLayout, Header, Footer,
+// JSON-LD schema, each page that needs the address) returns the same promise,
+// collapsing N per-page calls into a single network request.
+let _siteSettingsPromise: Promise<any> | null = null;
+
 export async function getSiteSettings() {
-  return sanityFetch(`*[_type == "siteSettings"][0]{
+  if (_siteSettingsPromise) return _siteSettingsPromise;
+  _siteSettingsPromise = sanityFetch(`*[_type == "siteSettings"][0]{
     title,
     tagline,
     mission,
     email,
+    pastorEmail,
     phone,
     officeHours,
     favicon${IMAGE_PROJECTION},
     addressLine,
     cityStateZip,
+    geoLat,
+    geoLng,
     worshipService,
     watchUrl,
     giveUrl,
@@ -89,6 +99,7 @@ export async function getSiteSettings() {
       links[]{ _key, label, href }
     }
   }`, {}, null);
+  return _siteSettingsPromise;
 }
 
 // ---- Announcement (site-wide banner; collection) --------------------------

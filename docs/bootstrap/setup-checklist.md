@@ -5,7 +5,7 @@ client. Every item checked or explicitly deferred with a reason before DNS
 cutover.
 
 ## Identity & code
-- [ ] `bootstrap.config.json` filled; `npm run rebrand -- --apply` run; diff reviewed
+- [ ] `bootstrap.config.json` filled; `npm run rebrand` (check mode) reviewed; `npm run rebrand -- --apply` run; diff reviewed
 - [ ] `npm run typegen` after rebrand (and after any schema change)
 - [ ] Grep for leftover placeholders: `First Church`, `Springfield`, `example-church`, `555-0100` → zero hits outside docs examples
 - [ ] Palette tokens reskinned in `globals.css` + mirrored in `site.ts` (or the reference palette consciously kept)
@@ -18,6 +18,7 @@ cutover.
 - [ ] Project created; `.env` + `studio/.env` filled; tokens marked Secret in Cloudflare
 - [ ] `npm run seed -- --apply` imported the starter content
 - [ ] Site Settings fully populated (identity, socials, give/watch URLs, worship time, nav, footer)
+- [ ] Geo coordinates set in Site Settings (Latitude + Longitude): right-click the building in Google Maps and copy the coordinates from the context menu. These power the `geo` block in the Church structured-data schema (JSON-LD). Leave blank to omit the geo block rather than shipping wrong coordinates.
 - [ ] Real page copy in (home, visit, believe, staff bios, ministries)
 - [ ] Forms: Web3Forms key set; contact + connect card + prayer request tested end-to-end
 - [ ] Studio deployed (`npm run studio:deploy`); appId pinned in `sanity.cli.ts`
@@ -28,7 +29,7 @@ cutover.
 - [ ] Repo on GitHub; Workers build from repo green
 - [ ] Env vars set in Cloudflare (build section)
 - [ ] Sanity publish → Cloudflare rebuild webhook wired AND tested (edit, publish, watch the deploy)
-- [ ] Custom domain + DNS cutover plan; `astro.config.mjs` site URL + `public/robots.txt` sitemap URL correct
+- [ ] Custom domain + DNS cutover plan; `astro.config.mjs` site URL correct (robots.txt is auto-generated from `site.url` at build time)
 - [ ] Lighthouse 100/100/100/100 on `/` and one content page (defend per `docs/agent/performance.md`)
 - [ ] Both themes × both viewports eyeballed on home, visit, sermons, events, contact (`/visual-verify`)
 - [ ] Privacy page reviewed against actual data practices; analytics token set (or consciously omitted)

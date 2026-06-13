@@ -1,10 +1,9 @@
 {
-  "_comment": "Copy to bootstrap.config.json, fill in, then run: node scripts/rebrand.mjs --apply",
+  "_comment": "Copy to bootstrap.config.json, fill in, then run: npm run rebrand (check) then npm run rebrand -- --apply (write).",
   "churchName": "Grace Community Church of Dayton",
   "shortName": "Grace Community",
   "wordmarkLine2": "Church of Dayton",
   "domain": "gracedayton.org",
-  "storageKeyPrefix": "gracedayton",
   "workerName": "gracedayton",
   "studioHost": "gracedayton",
   "city": "Dayton",
