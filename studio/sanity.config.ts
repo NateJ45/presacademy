@@ -28,46 +28,46 @@ import { documentBadges } from './components/documentBadges';
 // utility bar, footer, and closing CTA. The fonts are patched on below.
 const studioThemeProps = {
   // Foundation — neutrals everything else derives from.
-  '--black': '#36302A',   // Espresso Ink — darkest text
-  '--white': '#FBF8F2',   // Soft Paper — lightest surface
-  '--gray-base': '#6E6354', // Warm taupe — tints every neutral warm, not cool
+  '--black': '#2A2521',   // Walnut Ink — darkest text
+  '--white': '#FCF9F4',   // Chalk — lightest surface
+  '--gray-base': '#6E6357', // Warm taupe — tints every neutral warm, not cool
 
-  // Brand accent — Warm Bronze.
-  '--brand-primary': '#8A6A43',
+  // Brand accent — Geneva Oxblood.
+  '--brand-primary': '#7A2A2C',
   '--brand-primary--inverted': '#ffffff',
-  '--focus-color': '#8A6A43',
+  '--focus-color': '#7A2A2C',
 
-  // Paper surfaces for inputs and components.
-  '--input-bg': '#F1EBE0',
-  '--component-bg': '#FBF8F2',
-  '--component-text-color': '#36302A',
+  // Stone surfaces for inputs and components.
+  '--input-bg': '#F1E9DD',
+  '--component-bg': '#FCF9F4',
+  '--component-text-color': '#2A2521',
 
   // Buttons.
-  '--default-button-color': '#8A6A43',
-  '--default-button-primary-color': '#8A6A43',
+  '--default-button-color': '#7A2A2C',
+  '--default-button-primary-color': '#7A2A2C',
   '--default-button-success-color': '#3E7C66',
-  '--default-button-warning-color': '#A07D45',
+  '--default-button-warning-color': '#A87C3E',
   '--default-button-danger-color': '#C0392B',
 
   // Validation + status states.
   '--state-success-color': '#3E7C66',
-  '--state-warning-color': '#A07D45',
+  '--state-warning-color': '#A87C3E',
   '--state-danger-color': '#C0392B',
 
-  // Top navigation bar — deep Chapel green with cream text, echoing the site's
+  // Top navigation bar — deep oxblood with cream text, echoing the site's
   // utility bar and footer.
-  '--main-navigation-color': '#1E423B',
+  '--main-navigation-color': '#4A1B1C',
   '--main-navigation-color--inverted': '#F1EAD9',
 };
 
 // Patch the brand fonts onto the legacy theme. buildLegacyTheme returns a full
 // theme object whose `fonts` map (@sanity/ui) carries a `family` per role; we
-// override the heading + text families with the site's faces (Instrument Serif
-// for display, Newsreader for body). The font files themselves are injected via
+// override the heading + text families with the site's faces (Fraunces for
+// display, Source Sans 3 for body). The font files themselves are injected via
 // the StudioLayout component (a Google Fonts <link>), so these names resolve.
 // Optional chaining keeps a future @sanity/ui shape change from throwing.
-const DISPLAY_STACK = "'Instrument Serif', Georgia, 'Times New Roman', serif";
-const BODY_STACK = "'Newsreader', Georgia, 'Times New Roman', serif";
+const DISPLAY_STACK = "'Fraunces', Georgia, 'Times New Roman', serif";
+const BODY_STACK = "'Source Sans 3', system-ui, -apple-system, sans-serif";
 
 const baseTheme = buildLegacyTheme(studioThemeProps);
 const studioTheme = {
@@ -132,7 +132,7 @@ export default defineConfig({
   name: 'churchstarter',
   // Short title shown in the browser tab when editing. REPLACE with the
   // church's name (rebrand.mjs stamps this).
-  title: 'First Church of Springfield',
+  title: 'The Presbyterian Academy',
 
   // Set SANITY_STUDIO_PROJECT_ID and SANITY_STUDIO_DATASET in studio/.env
   // (or as env vars) after creating your Sanity project at sanity.io/manage.

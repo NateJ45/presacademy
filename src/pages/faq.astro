@@ -10,7 +10,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getFaqPage, getSiteSettings } from '@/lib/queries';
-import heroFaq from '@/assets/sanctuary-interior.webp';
+import heroFaq from '@/assets/placeholders/place-sanctuary-interior-light.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -28,20 +28,20 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Frequently Asked Questions · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Everything a first-time visitor wants to know about worship, parking, kids, giving, weddings, and our food ministry at First Church of Springfield.';
+  'Everything a first-time visitor wants to know about worship, parking, kids, giving, weddings, and our food ministry at The Presbyterian Academy.';
 
 // Built-in starter questions. Used only when the faqItem collection is empty.
 // Mirrors scripts/seed-faq-items.mjs (same categories + order). Answers here are
 // plain strings; collection answers are Portable Text.
 const fallbackFaqs = [
-  { category: 'Visiting', question: 'What time is worship?', answer: 'Worship is every Sunday at 11am, and it usually runs about an hour and fifteen minutes. We are at 123 Main Street in downtown Springfield.' },
+  { category: 'Visiting', question: 'What time is worship?', answer: 'Worship is every Sunday at 11am, and it usually runs about an hour and fifteen minutes. We are at 9463 Cincinnati Columbus Rd in downtown West Chester Township.' },
   { category: 'Visiting', question: 'Where do I park?', answer: 'We sit on Main Street close to public transit, with first-come, first-served free parking. There are additional public parking options nearby.' },
   { category: 'Visiting', question: 'Do I have to be a member, or a Christian, to come?', answer: 'Not at all. Whether you are a weekly churchgoer, have not been in ages, or do not know anything about Christianity, there is a place for you here. Everyone is welcome.' },
   { category: 'Worship', question: 'I have never been here. What should I expect?', answer: 'Our service is traditional and liturgical, with hymns, spirituals, and anthems led by organ and choir. We share communion on the first Sunday of each month. Casual attire is always welcome.' },
   { category: 'Worship', question: 'Can I watch online?', answer: 'Yes. We livestream worship on our YouTube channel, so you can join from anywhere.' },
   { category: 'Kids & Family', question: 'Can I bring my kids?', answer: 'Please do. Little ones are part of the worshipping congregation, and we welcome their noise and their needs. There is a children\'s message during the service, plus books and quiet toys, and a cry room with an audio stream if you need it.' },
   { category: 'Giving', question: 'How do I give?', answer: 'You can give online through our secure giving portal, by mail with a check, or designate your gift to the food ministry. Visit the Give page to get started.' },
-  { category: 'Weddings & Space', question: 'Can I get married at First Church?', answer: 'Yes. We welcome gay and straight couples to marry in our historic sanctuary. See the Weddings page for details, pricing, and how to inquire about your date.' },
+  { category: 'Weddings & Space', question: 'Can I get married at The Presbyterian Academy?', answer: 'Yes. We welcome gay and straight couples to marry in our historic sanctuary. See the Weddings page for details, pricing, and how to inquire about your date.' },
   { category: 'Weddings & Space', question: 'Can my group use the building?', answer: 'Often, yes. We host all sorts of gatherings throughout the week. See the Use Our Space page and get in touch about fees and availability.' },
   { category: 'Food Ministry', question: 'I need food. How does that work?', answer: 'Find free food for all in need, no questions asked, at our Main Street door. Lunch Bag runs Tuesday through Thursday from 11am to 1pm, and the Main Street Community Table gathers on Sunday evenings.' },
 ];
@@ -104,7 +104,7 @@ const schemas = [
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroFaq}
-    localImageAlt="Inside the sanctuary at First Church"
+    localImageAlt="Light falling through a church interior"
     headingId="faq-hero"
     size="short"
   />

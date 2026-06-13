@@ -24,10 +24,10 @@ const [page, recurring, upcoming, siteSettings] = await Promise.all([
 const title = page?.seoTitle ?? `Events · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Worship, study, shared meals, music, and fellowship at First Church of Springfield. See what is coming up and the rhythms of our week.';
+  'Worship, study, shared meals, music, and fellowship at The Presbyterian Academy. See what is coming up and the rhythms of our week.';
 
 const heroEyebrow = page?.heroEyebrow ?? 'Events';
-const heroHeadline = page?.heroHeadline ?? 'Upcoming at First Church';
+const heroHeadline = page?.heroHeadline ?? 'Upcoming at The Presbyterian Academy';
 const heroSubhead =
   page?.heroSubhead ??
   "There is always something happening here. We're formed in community: worship, fellowship, study, art, and food.";
@@ -47,7 +47,7 @@ const RECURRING_FALLBACK = [
   { title: 'Mid-Morning Bible Study', scheduleLabel: 'First and third Thursdays, 10am', summary: 'Reading through books of the Bible together over coffee.' },
   { title: 'Theology on Tap', scheduleLabel: 'Third Thursdays, 7pm', summary: 'Short theological readings and conversation at rotating pubs.' },
   { title: 'Alpha to Omega Bible Reading Group', scheduleLabel: 'Thursdays, 5pm', summary: 'Reading through the whole Bible together by conference call.' },
-  { title: 'First Church Book Group', scheduleLabel: 'Select Sundays, 9:30am', summary: 'Reading and discussing a book together before worship.' },
+  { title: 'The Presbyterian Academy Book Group', scheduleLabel: 'Select Sundays, 9:30am', summary: 'Reading and discussing a book together before worship.' },
 ];
 
 const displayRecurring = recurring.length > 0 ? recurring : RECURRING_FALLBACK;

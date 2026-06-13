@@ -5,7 +5,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings, getWorshipResources } from '@/lib/queries';
-import heroWorship from '@/assets/hero-worship.webp';
+import heroWorship from '@/assets/placeholders/place-sanctuary-wooden-pews.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -16,7 +16,7 @@ import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import ArchOrnament from '@/components/ArchOrnament.astro';
-import tiffanyWindows from '@/assets/tiffany-windows.webp';
+import tiffanyWindows from '@/assets/placeholders/community-welcome-pair.jpg';
 import { serviceTime } from '@/lib/serviceTime';
 
 const siteSettings = await getSiteSettings().catch(() => null);
@@ -51,11 +51,11 @@ const pillOutline =
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Sunday Worship'}
     headline={page?.heroHeadline ?? "There's a place for you here."}
-    subhead={page?.heroSubhead ?? "Whether you're a weekly churchgoer, haven't been in ages, or don't know anything about Christianity, you are welcome at First Church."}
+    subhead={page?.heroSubhead ?? "Whether you're a weekly churchgoer, haven't been in ages, or don't know anything about Christianity, you are welcome at The Presbyterian Academy."}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroWorship}
-    localImageAlt="The sanctuary of First Church set for Sunday worship"
+    localImageAlt="A simple sanctuary with wooden pews set for worship"
     headingId="worship-hero"
     size="short"
   />
@@ -98,7 +98,7 @@ const pillOutline =
       <div class="mt-l grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-m" data-stagger-grid>
         <article class="card-lift rounded-md border border-border-soft bg-card p-l">
           <h3 class="font-display text-h4 text-foreground">{page?.planCard1Title ?? 'Getting here'}</h3>
-          <p class="mt-s text-foreground/80 leading-relaxed">{page?.planCard1Body ?? 'We are at 123 Main Street in downtown Springfield, close to public transit, with first-come, first-served free parking.'}</p>
+          <p class="mt-s text-foreground/80 leading-relaxed">{page?.planCard1Body ?? 'We are at 9463 Cincinnati Columbus Rd in downtown West Chester Township, close to public transit, with first-come, first-served free parking.'}</p>
         </article>
         <article class="card-lift rounded-md border border-border-soft bg-card p-l">
           <h3 class="font-display text-h4 text-foreground">{page?.planCard2Title ?? 'What to wear'}</h3>
@@ -127,7 +127,7 @@ const pillOutline =
         />
         <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
           <p>
-            {page?.kidsBodyP1 ?? "Little ones are part of the worshipping congregation at First Church, and we welcome their noise and their needs. We keep books, coloring materials, and fidget toys on hand, and there is a children's message during the service."}
+            {page?.kidsBodyP1 ?? "Little ones are part of the worshipping congregation at The Presbyterian Academy, and we welcome their noise and their needs. We keep books, coloring materials, and fidget toys on hand, and there is a children's message during the service."}
           </p>
           <p>
             {page?.kidsBodyP2 ?? 'Need a quieter moment? A cry room with an audio stream of the service is always available.'}
@@ -145,7 +145,7 @@ const pillOutline =
       ) : (
         <Image
           src={tiffanyWindows}
-          alt="Stained-glass windows in the sanctuary"
+          alt="A warm welcome between two people"
           widths={[480, 768, 968]}
           sizes="(min-width: 768px) 45vw, 100vw"
           class="w-full h-auto rounded-md shadow-sm"

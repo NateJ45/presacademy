@@ -66,7 +66,7 @@ const outDir = resolve(root, 'public/og');
 // override without touching source; falls back to the value in src/data/site.ts
 // (hard-coded here to avoid a TypeScript import from a plain .mjs script).
 // Update this default when you replace the starter identity in src/data/site.ts.
-const WORDMARK = env.SITE_NAME ?? 'First Church';
+const WORDMARK = env.SITE_NAME ?? 'The Presbyterian Academy';
 
 let count = 0;
 async function render(slug, tagline) {
@@ -86,17 +86,17 @@ const SINGLETONS = [
   { type: 'worshipPage',     slug: 'worship',         defaultTitle: "There's a place for you here." },
   { type: 'aboutPage',       slug: 'about',           defaultTitle: 'A historic church with an open door' },
   { type: 'beliefsPage',     slug: 'what-we-believe', defaultTitle: 'The faith we share' },
-  { type: 'musicPage',       slug: 'music',           defaultTitle: 'Our musical life at First Church' },
+  { type: 'musicPage',       slug: 'music',           defaultTitle: 'Our musical life at The Presbyterian Academy' },
   { type: 'staffPage',       slug: 'pastor-staff',    defaultTitle: 'Pastors & Staff' },
-  { type: 'growPage',        slug: 'grow',            defaultTitle: 'Community Groups at First Church' },
+  { type: 'growPage',        slug: 'grow',            defaultTitle: 'Community Groups at The Presbyterian Academy' },
   { type: 'servePage',       slug: 'serve',           defaultTitle: 'Love our neighbors' },
   { type: 'kidsPage',        slug: 'kids',            defaultTitle: 'Children are welcome here' },
   { type: 'foodPage',        slug: 'food',            defaultTitle: 'Food for all in need, no questions asked' },
   { type: 'useOurSpacePage', slug: 'use-our-space',   defaultTitle: 'Use our historic space' },
   { type: 'weddingsPage',    slug: 'weddings',        defaultTitle: 'Weddings in our historic sanctuary' },
-  { type: 'givePage',        slug: 'give',            defaultTitle: 'Give to First Church' },
-  { type: 'eventsPage',      slug: 'events',          defaultTitle: 'Upcoming at First Church' },
-  { type: 'sermonsPage',     slug: 'sermons',         defaultTitle: 'Messages from First Church' },
+  { type: 'givePage',        slug: 'give',            defaultTitle: 'Give to The Presbyterian Academy' },
+  { type: 'eventsPage',      slug: 'events',          defaultTitle: 'Upcoming at The Presbyterian Academy' },
+  { type: 'sermonsPage',     slug: 'sermons',         defaultTitle: 'Messages from The Presbyterian Academy' },
   { type: 'faqPage',         slug: 'faq',             defaultTitle: 'Questions, answered' },
   { type: 'contactPage',     slug: 'contact',         defaultTitle: 'Get in touch' },
   { type: 'privacyPage',     slug: 'privacy',         defaultTitle: 'Privacy policy' },

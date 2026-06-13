@@ -13,7 +13,7 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 import SanityImage from '@/components/SanityImage.astro';
 import Hero from '@/components/Hero.astro';
 import ArchOrnament from '@/components/ArchOrnament.astro';
-import heroSermons from '@/assets/hero-worship.webp';
+import heroSermons from '@/assets/placeholders/teach-lecture-hall.jpg';
 import SectionHeading from '@/components/SectionHeading.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
@@ -29,10 +29,10 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Sermons · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Watch and listen to messages from First Church of Springfield, and join Sunday worship online.';
+  'Watch and listen to messages from The Presbyterian Academy, and join Sunday worship online.';
 
 const heroEyebrow = page?.heroEyebrow ?? 'Sermons';
-const heroHeadline = page?.heroHeadline ?? 'Messages from First Church';
+const heroHeadline = page?.heroHeadline ?? 'Messages from The Presbyterian Academy';
 const heroSubhead =
   page?.heroSubhead ??
   'Sunday worship is preached from the Word and shared online. Catch up on a recent message or join us live.';
@@ -70,7 +70,7 @@ function meta(s: any): string {
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroSermons}
-    localImageAlt="The sanctuary at First Church set for worship"
+    localImageAlt="A teacher addressing a room of learners"
     headingId="sermons-hero"
     size="short"
   />

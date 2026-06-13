@@ -73,7 +73,7 @@ export interface ResolvedSiteSettings {
   officeHours?: string;
   addressLine: string;
   cityStateZip: string;
-  /** "123 Main Street, Springfield, IL 62701" for maps + structured data. */
+  /** "9463 Cincinnati Columbus Rd, West Chester Township, OH 45069" for maps + structured data. */
   fullAddress: string;
   /** Google Maps directions link built from the resolved address. */
   mapHref: string;
@@ -116,7 +116,7 @@ export interface ResolvedSiteSettings {
   };
 }
 
-const DEFAULT_TAGLINE = 'Loving God and loving our neighbors in the heart of Springfield.';
+const DEFAULT_TAGLINE = 'Loving God and loving our neighbors in the heart Academy.';
 
 /** Trim a Sanity string; treat blank/whitespace-only/missing as "unset". */
 function clean(value?: string | null): string | undefined {
@@ -132,7 +132,7 @@ function clean(value?: string | null): string | undefined {
  * Returns undefined for each part that cannot be reliably derived.
  *
  * Examples:
- *   "Springfield, IL 62701"  → { locality: "Springfield", region: "IL", postal: "62701" }
+ *   "West Chester Township, OH 45069"  → { locality: "West Chester Township", region: "IL", postal: "62701" }
  *   "New York, NY 10001-0001"→ { locality: "New York",    region: "NY", postal: "10001-0001" }
  *   "Downtown"               → { locality: undefined,     region: undefined, postal: undefined }
  */
