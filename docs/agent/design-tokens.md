@@ -4,8 +4,8 @@
 
 ## Typography
 
-- Headings (h1 through h6): **Libre Baskerville**. Self-hosted via `@fontsource/libre-baskerville`. Editorial serif that reads as premium without narrowing the brand voice to any specific style.
-- Body, UI, buttons: **Inter** (variable). Self-hosted via `@fontsource-variable/inter`. Single file covers all weights.
+- Headings (h1 through h6): **Fraunces** (variable). Self-hosted via `@fontsource-variable/fraunces`. Editorial serif display that reads as premium without narrowing the brand voice to any specific style.
+- Body, UI, buttons: **Source Sans 3** (variable, humanist sans). Self-hosted via `@fontsource-variable/source-sans-3`. Single file covers all weights.
 - Script accent (opt-in): no script font is loaded by default. The `@utility font-script` declaration and `--font-script` token exist in `globals.css`, but the font file is only fetched when you add a `@fontsource` import for a script typeface and point `--font-script` at it. See `animation.md` for the full opt-in steps and usage discipline.
 - Labels, eyebrows, monospace numerals: `ui-monospace, 'SF Mono', monospace` (system, no file).
 
@@ -16,7 +16,7 @@ Font families are declared in the `@theme` block in `src/styles/globals.css` as 
 Two utility classes layered on top of the families. Use them instead of ad-hoc arbitrary values so the system stays consistent across components.
 
 - `tracking-eyebrow` (`0.18em`) -- applied to every uppercase eyebrow label above a heading. Token: `--tracking-eyebrow`.
-- `leading-headline-tight` (`1.05`) -- applied to hero-scale H1s. Combined with `tracking-[-0.02em]` it gives Libre Baskerville editorial display proportions at the 40px to 80px hero range. Token: `--leading-headline-tight`.
+- `leading-headline-tight` (`1.05`) -- applied to hero-scale H1s. Combined with `tracking-[-0.02em]` it gives Fraunces editorial display proportions at the 40px to 80px hero range. Token: `--leading-headline-tight`.
 
 Both are declared in `src/styles/globals.css` via `@utility`. Don't replace with arbitrary values (`leading-[1.05]`, `tracking-[0.18em]`) in new code; use the named utilities so a future scale change is one edit.
 

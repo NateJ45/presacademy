@@ -44,8 +44,8 @@ Our warm-editorial design sits in the same tier; the gaps Highland Park exposes 
 
 | Dimension | Strong peers | Our site today | Verdict |
 |---|---|---|---|
-| Typography | Mixed; serif is valid (Village) | Instrument Serif + Newsreader, editorial | **Ahead** — more distinctive than most |
-| Color / palette | Single brand color + white | Warm cream / espresso / bronze, light+dark | **Ahead** — cohesive, on-theme |
+| Typography | Mixed; serif is valid (Village) | Fraunces serif display over a Source Sans 3 humanist sans body, editorial | **Ahead** — more distinctive than most |
+| Color / palette | Single brand color + white | Stone Cream / Walnut Ink / Geneva Oxblood, light+dark | **Ahead** — cohesive, on-theme |
 | Motion / polish | Restrained fades/carousels | Scroll reveals, Lenis, card-lift, view transitions | **Ahead** |
 | Buttons / components | Pills common | Pill CTAs, card system | **On par** |
 | Nav / IA | 5-7 verb/audience items | About Us / Get Involved / Events / Food / Space / Give | **On par** (slightly deep; "Space/Food" are unusual top-level) |

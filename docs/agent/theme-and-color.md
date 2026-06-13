@@ -4,17 +4,17 @@
 
 ## Default palette
 
-The starter ships a neutral Slate/Ink/Paper palette. These are the defaults to build on and test against; a consuming project re-skins by editing the design seam described at the end of this document.
+The starter ships the "Oxblood & Stone" palette (Geneva Oxblood / Walnut Ink / Stone Cream). These are the defaults to build on and test against; a consuming project re-skins by editing the design seam described at the end of this document.
 
 Declared in the `@theme` block inside `src/styles/globals.css`. Reference via utility classes (`bg-primary`, `text-foreground`, `border-border`) rather than hardcoded hex anywhere in component code.
 
 | Role | Hex | Name | Notes |
 |---|---|---|---|
-| Primary (action) | `#586577` | Slate | Buttons, primary CTAs, focus rings |
-| Foreground / headings | `#2A2D31` | Ink | Primary text and headings on light surfaces |
-| Background | `#FBFBFA` | Paper | Primary page surface |
-| Tint (light mode) | `88, 101, 119` | -- | `--tint-rgb` for polish overlays (see below) |
-| Tint (dark mode) | `138, 150, 166` | -- | `--tint-rgb` lifted for dark surfaces |
+| Primary (action) | `#7A2A2C` | Geneva Oxblood | Buttons, primary CTAs, focus rings |
+| Foreground / headings | `#2A2521` | Walnut Ink | Primary text and headings on light surfaces |
+| Background | `#F4EEE6` | Stone Cream | Primary page surface |
+| Tint (light mode) | `122, 42, 44` | -- | `--tint-rgb` for polish overlays (see below) |
+| Tint (dark mode) | `183, 169, 155` | -- | `--tint-rgb` lifted for dark surfaces |
 
 Every token must clear WCAG AA against every surface it appears on. Body text needs 4.5:1, large text and UI components need 3:1. Run the math in both light and dark before introducing a new token.
 
@@ -24,10 +24,10 @@ The `--tint-rgb` CSS custom property holds the brand tint color as a bare RGB tr
 
 ```css
 :root {
-  --tint-rgb: 88, 101, 119;   /* Slate */
+  --tint-rgb: 122, 42, 44;    /* Geneva Oxblood */
 }
 .dark {
-  --tint-rgb: 138, 150, 166;  /* lighter Slate for dark surfaces */
+  --tint-rgb: 183, 169, 155;  /* lifted Cloister Stone for dark surfaces */
 }
 ```
 
@@ -37,11 +37,11 @@ When you re-skin the project, update `--tint-rgb` to match your new primary colo
 
 shadcn's CLI defines its own `@theme inline` block that points `--color-primary`, `--color-secondary`, `--color-accent`, `--color-background`, `--color-foreground` at semantic tokens (`--primary`, `--secondary`, etc.) declared further down in `:root`. Without intervention, `bg-primary` would produce shadcn's default grayscale.
 
-The `:root` block in `globals.css` overrides shadcn's defaults so `--primary` is Slate, `--foreground` is Ink, and so on. This means:
+The `:root` block in `globals.css` overrides shadcn's defaults so `--primary` is Geneva Oxblood, `--foreground` is Walnut Ink, and so on. This means:
 
-- `bg-primary` on a marketing surface and shadcn's Button default variant both produce Slate.
-- `text-foreground` produces Ink everywhere, including shadcn primitives.
-- `--ring` points at Slate so focus rings stay on-brand.
+- `bg-primary` on a marketing surface and shadcn's Button default variant both produce Geneva Oxblood.
+- `text-foreground` produces Walnut Ink everywhere, including shadcn primitives.
+- `--ring` points at Geneva Oxblood so focus rings stay on-brand.
 
 If a new shadcn primitive ever looks off-brand, the fix is almost always in that `:root` block, not in the primitive's source.
 
@@ -58,7 +58,7 @@ The wiring, in order of execution:
    - Applies the `.dark` class on `<html>` plus an inline `color-scheme` style so native widgets (scrollbars, form controls) follow
    - Walks every `<img data-theme-logo>` and assigns the matching variant's `src` + `srcset` (theme-aware logo, see below)
 2. **`ThemeToggle.tsx`** (React island, single instance in the Header) cycles light -> dark -> system on click, writes to the same localStorage key, and re-binds the matchMedia listener whenever the chosen theme changes. Its `applyTheme()` function also walks the `[data-theme-logo]` images and swaps their srcs, so toggling the theme doesn't leave a dark-ink logo on a dark background.
-3. **`globals.css`** defines color tokens for both modes. `:root` carries light; `.dark` carries the overrides. The Slate primary keeps its visual identity in both modes; only surface and muted-text tokens flip.
+3. **`globals.css`** defines color tokens for both modes. `:root` carries light; `.dark` carries the overrides. The Geneva Oxblood primary keeps its visual identity in both modes; only surface and muted-text tokens flip.
 
 ### View Transitions persistence (the gotcha)
 
@@ -101,7 +101,7 @@ The site is designed and tested first in light mode. Don't optimize dark mode at
 
 ### Light/dark discipline (build with both in mind)
 
-Every new component renders correctly in BOTH modes. This is a foundation rule, not a "we'll get to it." The bug it prevents is real: using a static color (e.g. Ink `#2A2D31`) for body copy without a dark-mode override produces Ink-on-near-black at low contrast ratios. Lighthouse catches it; the rule below prevents it from recurring.
+Every new component renders correctly in BOTH modes. This is a foundation rule, not a "we'll get to it." The bug it prevents is real: using a static color (e.g. Walnut Ink `#2A2521`) for body copy without a dark-mode override produces ink-on-near-black at low contrast ratios. Lighthouse catches it; the rule below prevents it from recurring.
 
 **Dynamic tokens (flip with theme -- use these for text and surfaces):**
 - `bg-background`, `text-foreground` -- body text + page background
@@ -116,7 +116,7 @@ Every new component renders correctly in BOTH modes. This is a foundation rule, 
 These are shadcn's semantic tokens, defined in `:root` for light and overridden in `.dark` for dark. Always use these for anything that should adapt to mode.
 
 **Static brand tokens (do NOT flip -- use only where the brand color must hold in both modes):**
-- `bg-primary`, `text-primary-foreground` -- CTA buttons (Slate stays Slate)
+- `bg-primary`, `text-primary-foreground` -- CTA buttons (Geneva Oxblood stays Geneva Oxblood)
 - `bg-primary/90` (or a dedicated darker variant) -- CTA hover state
 
 **`text-accent` and `bg-accent` are theme-aware via shadcn's `--accent` token.** The `@theme inline` block remaps `--color-accent -> var(--accent)` so `bg-accent` works as a hover surface that flips with theme. **Don't use `text-accent` for body text** -- its color mirrors `--accent` which is meant for hover surfaces, not text. Always use `text-foreground` for headings and body copy.
@@ -135,7 +135,7 @@ Muted colors at small sizes fail WCAG AA easily. The pattern for eyebrow labels 
 <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Eyebrow text</p>
 ```
 
-`text-foreground/80` reaches ~5.4:1 on the Paper background, passing AA. Do not use `text-muted-foreground` or a raw brand color for small uppercase labels -- verify the contrast ratio first.
+`text-foreground/80` reaches ~5.4:1 on the Stone Cream background, passing AA. Do not use `text-muted-foreground` or a raw brand color for small uppercase labels -- verify the contrast ratio first.
 
 If you spot any `text-foreground/65` or `/70` on `bg-muted`/`bg-background` surfaces, bump them to `/80` or `/85`.
 
@@ -172,10 +172,10 @@ if (import.meta.env.SSR) {
 Changing the visual identity of a project built on this starter requires touching exactly four areas. Everything else (components, layout, spacing, animation) inherits from these.
 
 1. **`src/styles/globals.css` -- `@theme` block and `:root` / `.dark`**
-   Replace the Slate/Ink/Paper hex values and `--tint-rgb` triplets with your palette. Update the shadcn semantic overrides in `:root` and `.dark` so `bg-primary`, `text-foreground`, `bg-background`, etc. resolve to your colors. Keep the token structure; only change the values.
+   Replace the Geneva Oxblood / Walnut Ink / Stone Cream hex values and `--tint-rgb` triplets with your palette. Update the shadcn semantic overrides in `:root` and `.dark` so `bg-primary`, `text-foreground`, `bg-background`, etc. resolve to your colors. Keep the token structure; only change the values.
 
 2. **Font imports and `--font-*` tokens**
-   Replace the `@fontsource/libre-baskerville` and `@fontsource-variable/inter` imports at the top of `globals.css` with your chosen typefaces. Update `--font-display` and `--font-body` in the `@theme` block to match. To enable the optional script accent, add a `@fontsource` import for a script font and point `--font-script` at it (see `animation.md`).
+   Replace the `@fontsource-variable/fraunces` and `@fontsource-variable/source-sans-3` imports at the top of `globals.css` with your chosen typefaces. Update `--font-display` (the serif display face) and `--font-body` (the humanist sans body face) in the `@theme` block to match. To enable the optional script accent, add a `@fontsource` import for a script font and point `--font-script` at it (see `animation.md`).
 
 3. **`src/data/site.ts`**
    Update the brand name, domain, tagline, social URLs, and any other hardcoded identity strings the build needs at compile time.

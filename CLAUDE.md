@@ -18,7 +18,7 @@ Project slash commands (in `.claude/commands/`): `/sanity-audit` (ground truth o
 
 This starter is not a minimal scaffold. It ships with real patterns and real gotchas documented from production. The point is to skip the month of discovering them.
 
-_Provenance: Reid Design build → ncs-astro-sanity-starter → Second Presbyterian Church of Chicago build (2026-06) → this church starter. Reference-build photography in `src/assets/` is placeholder-only: replace before any client launch._
+_Provenance: Reid Design build → ncs-astro-sanity-starter → Second Presbyterian Church of Chicago build (2026-06) → this church starter → The Presbyterian Academy build. Reference-build photography in `src/assets/` is placeholder-only: replace before any client launch._
 
 ---
 
@@ -110,7 +110,7 @@ These are the files where a project maintainer can make changes without risk of 
 - `src/data/site.ts` — static identity constants (site name, domain, brand color mirrors for scripts, asset paths). Replace all placeholder values before launch.
 - The design seam — files that define the visual identity of the project:
   - `src/styles/globals.css` `@theme` block: palette tokens (`--color-primary`, `--color-ink`, `--color-paper`, etc.), the `--tint-rgb` token (controls polish-layer tint color across card-lift, surface-warm, and branded overlays), and font-family tokens
-  - Font imports at the top of `src/styles/globals.css` (swap `@fontsource/libre-baskerville` and `@fontsource-variable/inter` for a project's chosen fonts; update `--font-display` and `--font-body` tokens accordingly)
+  - Font imports at the top of `src/styles/globals.css` (swap `@fontsource-variable/fraunces` and `@fontsource-variable/source-sans-3` for a project's chosen fonts; update `--font-display` and `--font-body` tokens accordingly)
   - `src/data/site.ts` brand color mirrors and identity values
   - `public/favicon.png` + `public/apple-touch-icon.png` (the church mark; also overridable per-site via `siteSettings.favicon`), `public/og-default.png` (regenerate OG via `npm run og` after changing brand inputs in `scripts/generate-og-default.mjs`)
   - Logo files in `src/assets/` (imported by `Header.astro` / `Footer.astro` via `getImage()`)

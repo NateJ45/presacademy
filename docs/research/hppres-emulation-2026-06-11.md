@@ -38,7 +38,7 @@ divider; texture overlays between sections; category tag chips on event cards;
 1. **Keyword color emphasis on interior heroes** — their "Find & Follow"
    second-color device, already on our home hero, extended to every interior
    page: `heroKeyword` field on all page singletons (factory + about/faq/
-   contact/events/sermons), rendered by Hero.astro in lifted gold (#C7A875)
+   contact/events/sermons), rendered by Hero.astro in lifted brass (#C9A06A)
    on the photo scrim. Seeded on 12 pages (verified against live headlines;
    `scripts/seed-hero-keywords.mjs`).
 2. **Ornamental divider** — their stained-glass candle, translated into our
