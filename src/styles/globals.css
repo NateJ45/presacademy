@@ -6,10 +6,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource/instrument-serif/400.css";
-@import "@fontsource/instrument-serif/400-italic.css";
-@import "@fontsource-variable/newsreader";
-@import "@fontsource-variable/newsreader/standard-italic.css";
+@import "@fontsource-variable/fraunces/standard.css";
+@import "@fontsource-variable/fraunces/standard-italic.css";
+@import "@fontsource-variable/source-sans-3/index.css";
+@import "@fontsource-variable/source-sans-3/wght-italic.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -51,8 +51,8 @@
   --arch-radius: clamp(3.5rem, 14vw, 9rem);
 
   /* Fonts */
-  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --font-body:    "Newsreader Variable", Georgia, "Times New Roman", serif;
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-body:    "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono:    ui-monospace, "SF Mono", Consolas, monospace;
   --font-script:  "Snell Roundhand", "Apple Chancery", cursive;
 
