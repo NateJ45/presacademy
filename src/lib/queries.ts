@@ -588,3 +588,281 @@ export async function getAllSermonSlugs(): Promise<string[]> {
   );
   return list.map((s) => s.slug?.current).filter(Boolean);
 }
+
+// ===========================================================================
+// School catalog — courses, faculty, terms, pricing, testimonials.
+// The course/faculty link is one-directional (course.instructors); a faculty
+// member's "courses taught" is derived by GROQ back-query (references(^._id)).
+// "Next offering" is the soonest cohort whose term begins today or later; the
+// catalog card and the course-detail facts ledger both read from it.
+// ===========================================================================
+
+const TODAY = () => new Date().toISOString().slice(0, 10);
+
+// One offering resolved to its term's dates. Reused by card + detail.
+const OFFERING_PROJECTION = `{
+  schedule, sessions, seatsNote, status,
+  "term": term->{ _id, title, startDate, endDate, registrationDeadline, status }
+}`;
+
+// The soonest cohort that begins today or later (the "next offering").
+const NEXT_OFFERING = `"nextOffering": (
+  offerings[defined(term->startDate) && term->startDate >= $today]
+  | order(term->startDate asc))[0]${OFFERING_PROJECTION}`;
+
+const COURSE_CARD = `{
+  _id, title, "slug": slug.current, summary, level, format, startHere, featured, displayOrder,
+  coverImage${IMAGE_PROJECTION},
+  "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
+  "instructors": instructors[]->{ _id, name, honorific, title, "slug": slug.current },
+  priceNote, "priceTier": priceTier->{ name, amount, unit, isAudit },
+  ${NEXT_OFFERING}
+}`;
+
+// ---- Courses page singleton + course collection ---------------------------
+
+export async function getCoursesPage() {
+  return sanityFetch(`*[_type == "coursesPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
+export async function getCourses() {
+  return sanityFetch(
+    `*[_type == "course"] | order(startHere desc, featured desc, displayOrder asc, title asc) ${COURSE_CARD}`,
+    { today: TODAY() },
+    [],
+  );
+}
+
+// Featured courses for the home catalog preview.
+export async function getFeaturedCourses(limit = 6) {
+  return sanityFetch(
+    `*[_type == "course" && featured == true] | order(displayOrder asc, title asc)[0...$limit] ${COURSE_CARD}`,
+    { today: TODAY(), limit },
+    [],
+  );
+}
+
+// The recommended starting courses (the "Start here" rail).
+export async function getStartHereCourses() {
+  return sanityFetch(
+    `*[_type == "course" && startHere == true] | order(displayOrder asc, title asc) ${COURSE_CARD}`,
+    { today: TODAY() },
+    [],
+  );
+}
+
+export async function getCourseBySlug(slug: string) {
+  return sanityFetch(
+    `*[_type == "course" && slug.current == $slug][0]{
+      _id, title, "slug": slug.current, summary, level, format, location, whoFor,
+      coverImage${IMAGE_PROJECTION},
+      seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
+      "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
+      "instructors": instructors[]->{
+        _id, name, honorific, title, "slug": slug.current,
+        photo${IMAGE_PROJECTION},
+        "degrees": degrees[]{ degree, field, institution, year },
+        ordination, denomination
+      },
+      sessionOutline[]{ _key, title, focus },
+      priceNote, "priceTier": priceTier->{ name, amount, unit, isAudit, summary },
+      "syllabusUrl": syllabusFile.asset->url,
+      "offerings": offerings[]${OFFERING_PROJECTION},
+      ${NEXT_OFFERING}
+    }`,
+    { slug, today: TODAY() },
+    null,
+  );
+}
+
+export async function getAllCourseSlugs(): Promise<string[]> {
+  const list: Array<{ slug: string }> = await sanityFetch(
+    `*[_type == "course" && defined(slug.current)]{ "slug": slug.current }`,
+    {},
+    [],
+  );
+  return list.map((c) => c.slug).filter(Boolean);
+}
+
+// ---- Faculty page singleton + faculty collection --------------------------
+
+const FACULTY_CARD = `{
+  _id, name, honorific, title, "slug": slug.current, ordination, denomination, displayOrder,
+  photo${IMAGE_PROJECTION},
+  "topDegree": degrees[0]{ degree, field, institution },
+  "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current }
+}`;
+
+export async function getFacultyPage() {
+  return sanityFetch(`*[_type == "facultyPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
+export async function getFaculty() {
+  return sanityFetch(
+    `*[_type == "facultyMember"] | order(displayOrder asc, name asc) ${FACULTY_CARD}`,
+    {},
+    [],
+  );
+}
+
+// A few faculty for the home faculty strip.
+export async function getFeaturedFaculty(limit = 4) {
+  return sanityFetch(
+    `*[_type == "facultyMember"] | order(displayOrder asc, name asc)[0...$limit] ${FACULTY_CARD}`,
+    { limit },
+    [],
+  );
+}
+
+export async function getFacultyBySlug(slug: string) {
+  return sanityFetch(
+    `*[_type == "facultyMember" && slug.current == $slug][0]{
+      _id, name, honorific, title, "slug": slug.current,
+      ordination, denomination, yearsTeaching, humanLine, bio, email, specializations,
+      photo${IMAGE_PROJECTION},
+      seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
+      "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
+      degrees[]{ _key, degree, field, institution, year },
+      affiliations[]{ _key, role, organization },
+      publications[]{ _key, title, publisher, year, url },
+      "coursesTaught": *[_type == "course" && references(^._id)] | order(displayOrder asc, title asc){
+        _id, title, "slug": slug.current,
+        "teachingArea": teachingAreas[0]->title
+      }
+    }`,
+    { slug },
+    null,
+  );
+}
+
+export async function getAllFacultySlugs(): Promise<string[]> {
+  const list: Array<{ slug: string }> = await sanityFetch(
+    `*[_type == "facultyMember" && defined(slug.current)]{ "slug": slug.current }`,
+    {},
+    [],
+  );
+  return list.map((f) => f.slug).filter(Boolean);
+}
+
+// ---- Teaching areas (shared taxonomy; filter chips) -----------------------
+
+export async function getTeachingAreas() {
+  return sanityFetch(
+    `*[_type == "teachingArea"] | order(displayOrder asc, title asc){ _id, title, "slug": slug.current, description }`,
+    {},
+    [],
+  );
+}
+
+// ---- Terms (cohort calendar) ----------------------------------------------
+
+// The soonest term that begins today or later — the global "next cohort begins"
+// cue (derived, not stored on siteSettings).
+export async function getNextTerm() {
+  return sanityFetch(
+    `*[_type == "term" && startDate >= $today] | order(startDate asc)[0]{
+      _id, title, startDate, registrationDeadline, note
+    }`,
+    { today: TODAY() },
+    null,
+  );
+}
+
+export async function getTerms() {
+  return sanityFetch(
+    `*[_type == "term"] | order(startDate asc){ _id, title, startDate, endDate, registrationDeadline, status, note }`,
+    {},
+    [],
+  );
+}
+
+// ---- Pricing page + tiers -------------------------------------------------
+
+export async function getPricingPage() {
+  return sanityFetch(`*[_type == "pricingPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
+export async function getPricingTiers() {
+  return sanityFetch(
+    `*[_type == "pricingTier"] | order(displayOrder asc){ _id, name, amount, unit, summary, includes, isAudit, featured }`,
+    {},
+    [],
+  );
+}
+
+// ---- Testimonials ---------------------------------------------------------
+
+const TESTIMONIAL_CARD = `{
+  _id, quote, name, role, city, featured, displayOrder,
+  photo${IMAGE_PROJECTION},
+  "course": courseCompleted->{ title, "slug": slug.current }
+}`;
+
+export async function getTestimonials() {
+  return sanityFetch(
+    `*[_type == "testimonial"] | order(displayOrder asc) ${TESTIMONIAL_CARD}`,
+    {},
+    [],
+  );
+}
+
+export async function getFeaturedTestimonials(limit = 3) {
+  return sanityFetch(
+    `*[_type == "testimonial" && featured == true] | order(displayOrder asc)[0...$limit] ${TESTIMONIAL_CARD}`,
+    { limit },
+    [],
+  );
+}
+
+// ---- Get Started + For You + Resources page singletons --------------------
+
+export async function getGetStartedPage() {
+  return sanityFetch(`*[_type == "getStartedPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    requestForm->${FORM_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    steps[]{ _key, title, body },
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
+export async function getForYouPage() {
+  return sanityFetch(`*[_type == "forYouPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    personas[]{ _key, label, promise, cta${CTA_PROJECTION} },
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
+export async function getResourcesPage() {
+  return sanityFetch(`*[_type == "resourcesPage"][0]{
+    ...,
+    heroImage${IMAGE_PROJECTION},
+    seoImage${IMAGE_PROJECTION},
+    finalCta${CTA_PROJECTION},
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
