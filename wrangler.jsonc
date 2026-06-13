@@ -4,7 +4,7 @@
   "compatibility_date": "2026-05-26",
   "compatibility_flags": ["global_fetch_strictly_public"],
   // REPLACE before deploy (rebrand.mjs stamps this): your Cloudflare Worker name.
-  "name": "church-starter",
+  "name": "presacademy",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     "directory": "./dist",
