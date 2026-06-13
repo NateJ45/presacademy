@@ -41,9 +41,9 @@ git diff                     # the diff IS the rebrand; review it
 npm run typegen
 ```
 
-`rebrand.mjs` replaces the template's exact placeholder strings ("The Presbyterian Academy
-Academy", "9463 Cincinnati Columbus Rd", "presbyterianacademy.org"...) across the code,
-schemas, and docs. Anything it can't know (photos, colors, denomination
+`rebrand.mjs` replaces the template's exact placeholder strings (church name,
+short name, address, domain, emails, phone, worker name, studio host) across the
+code, schemas, and docs. Anything it can't know (photos, colors, denomination
 wording) is in the checklist.
 
 Note: `storageKeyPrefix` is NOT in bootstrap.config.json — `src/data/site.ts`
@@ -52,9 +52,9 @@ in sync without a separate config field.
 
 ## 3. Design seam (optional but probably yes)
 
-The starter ships the reference palette (warm cream paper, espresso ink,
-bronze, deep chapel green, liturgical gold) and serif pairing (Instrument
-Serif + Newsreader). To reskin for the new church:
+The starter ships the Oxblood & Stone palette (stone cream paper, walnut ink,
+geneva oxblood, deep-oxblood bands, aged brass) and a serif display (Fraunces)
+over a humanist sans body (Source Sans 3). To reskin for the new church:
 
 1. `src/styles/globals.css` `@theme` block: palette tokens + `--tint-rgb`.
 2. Mirror the colors in `src/data/site.ts` `brandColors`.

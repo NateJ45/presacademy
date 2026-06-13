@@ -38,8 +38,8 @@ Use `<SanityImage />`'s `width` prop to drive these. **Never request larger than
 
 ### Font loading
 
-- **Libre Baskerville** (display serif): self-hosted via `@fontsource/libre-baskerville`. Load only the weights you use -- each unused weight file is ~50KB wasted across latin + latin-ext woff/woff2.
-- **Inter** (body sans-serif): self-hosted via `@fontsource-variable/inter`. The variable file covers all weights in a single request.
+- **Fraunces** (display serif): self-hosted via `@fontsource-variable/fraunces`. The variable file covers all weights in a single request.
+- **Source Sans 3** (humanist sans body): self-hosted via `@fontsource-variable/source-sans-3`. The variable file covers all weights in a single request.
 - **Script accent font** (opt-in): no script font is loaded by default. To enable the `font-script` utility, add a `@fontsource` import in `globals.css` and point `--font-script` at the family. See `animation.md` for the full opt-in steps.
 - No `<link rel="preload">` on font URLs. Vite hashes the filenames at build time, so a static preload tag would 404. The cost is one extra paint; the benefit is no broken preload (and Lighthouse stays at 100 Best Practices).
 

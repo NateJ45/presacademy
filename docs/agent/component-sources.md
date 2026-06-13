@@ -40,11 +40,11 @@ When pasting from HyperUI, Tailark, react-bits, or any palette-first source, rep
 
 | Static utility | Hex (starter values) | Role |
 |---|---|---|
-| `bg-chapel` | `#1E423B` | Structural bands: utility bar, footer, closing CTA |
-| `bg-chapel-deep` | `#16322C` | Footer deep base |
+| `bg-chapel` | `#5E2122` | Structural bands: utility bar, footer, closing CTA (deep oxblood) |
+| `bg-chapel-deep` | `#4A1B1C` | Footer deep base |
 | `text-chapel-foreground` | `#F1EAD9` | Text on chapel surfaces |
-| `bg-primary` | `#8A6A43` | Bronze CTA pills |
-| `bg-gold` / `text-gold` | `#A07D45` | Hairline rules, step numerals, small accents |
+| `bg-primary` | `#7A2A2C` | Oxblood CTA pills |
+| `bg-gold` / `text-gold` | `#A87C3E` | Hairline rules, step numerals, small accents |
 
 **Theme-aware shadcn semantic tokens** (flip between light and dark):
 
@@ -54,9 +54,9 @@ When pasting from HyperUI, Tailark, react-bits, or any palette-first source, rep
 | `bg-gray-50`, `bg-gray-100` | `bg-muted` | quiet alternating surface |
 | `text-gray-900`, `text-black` | `text-foreground` | body / heading text |
 | `text-gray-600`, `text-gray-500` | `text-muted-foreground` | secondary / caption text |
-| `text-indigo-600`, `text-blue-600` | `text-link` | inline links, bronze in light / lifted bronze in dark |
-| `bg-indigo-600`, `bg-blue-600` | `bg-primary` | brand action background (bronze) |
-| `text-white` (on primary bg) | `text-primary-foreground` | text on bronze pill |
+| `text-indigo-600`, `text-blue-600` | `text-link` | inline links, oxblood in light / lifted oxblood in dark |
+| `bg-indigo-600`, `bg-blue-600` | `bg-primary` | brand action background (oxblood) |
+| `text-white` (on primary bg) | `text-primary-foreground` | text on oxblood pill |
 | `border-gray-200`, `border-gray-300` | `border-border-soft` | warm faint dividers |
 | `border-gray-400` | `border-border` | stronger borders, input outlines |
 | `ring-indigo-500` | `ring-ring` | focus rings |
@@ -66,7 +66,7 @@ When pasting from HyperUI, Tailark, react-bits, or any palette-first source, rep
 
 | Utility | Role |
 |---|---|
-| `text-chapel-ink` | Keyword emphasis in display headlines (deep green on cream, lifted on dark) |
+| `text-chapel-ink` | Keyword emphasis in display headlines (deep oxblood on cream, lifted on dark) |
 | `text-gold-ink` | Gold text on theme-flipping surfaces (card badges, step numerals) |
 
 ---
@@ -86,7 +86,7 @@ Example header comment:
 ```
 // Source: https://shadcnblocks.com/block/hero-125 (free copy-paste)
 // Token remaps: bg-slate-900 -> bg-background, text-indigo-500 -> text-link
-// Church remaps: "chapel green band" handled by bg-chapel not bg-primary
+// Church remaps: "deep oxblood band" handled by bg-chapel not bg-primary
 ```
 
 ---
