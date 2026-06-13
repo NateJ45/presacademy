@@ -62,6 +62,14 @@ const settings = resolveSiteSettings(siteSettings);
 
 const brandName = settings.brandName;
 
+// Split the wordmark's first line so its final word carries the brand
+// keyword-emphasis color (text-chapel-ink), e.g. "The [Presbyterian]". The
+// footer wordmark sits on the dark band and stays all-cream, so this only
+// applies in the header (on the cream page surface).
+const line1Words = site.wordmark.line1.trim().split(/\s+/);
+const line1Key = line1Words.pop() ?? site.wordmark.line1;
+const line1Lead = line1Words.join(' ');
+
 // Utility-bar content. Service time + address read top-left; Watch + Give read
 // top-right.
 const serviceTimes = serviceTime(settings.worshipService).line;
@@ -275,7 +283,9 @@ function isGroupActive(items: { href: string }[]) {
       class="inline-flex flex-col leading-none hover:opacity-80 transition-opacity"
       aria-label={`${brandName} home`}
     >
-      <span class="font-display text-xl sm:text-2xl text-foreground leading-none">{site.wordmark.line1}</span>
+      <span class="font-display text-xl sm:text-2xl leading-none">
+        {line1Lead && <span class="text-foreground">{line1Lead}{' '}</span>}<span class="text-chapel-ink">{line1Key}</span>
+      </span>
       {site.wordmark.line2 && (
         <span class="font-display text-base sm:text-lg text-foreground/70 leading-tight mt-0.5">{site.wordmark.line2}</span>
       )}
