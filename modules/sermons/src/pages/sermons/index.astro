@@ -23,10 +23,10 @@ const [page, sermons, siteSettings] = await Promise.all([
 const title = page?.seoTitle ?? `Sermons · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Watch and listen to messages from First Church of Springfield, and join Sunday worship online.';
+  'Watch and listen to messages from The Presbyterian Academy, and join Sunday worship online.';
 
 const heroEyebrow = page?.heroEyebrow ?? 'Sermons';
-const heroHeadline = page?.heroHeadline ?? 'Messages from First Church';
+const heroHeadline = page?.heroHeadline ?? 'Messages from The Presbyterian Academy';
 const heroSubhead =
   page?.heroSubhead ??
   'Sunday worship is preached from the Word and shared online. Catch up on a recent message or join us live.';

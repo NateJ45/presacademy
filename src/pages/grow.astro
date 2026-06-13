@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getGrowPage, getSiteSettings } from '@/lib/queries';
-import heroGrow from '@/assets/hero-grow.webp';
+import heroGrow from '@/assets/placeholders/teach-seminar-discussion.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -19,7 +19,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Grow · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Community groups at First Church: Bible study, Theology on Tap, and reading groups. Drop in and walk with others on the Way of Jesus.';
+  'Community groups at The Presbyterian Academy: Bible study, Theology on Tap, and reading groups. Drop in and walk with others on the Way of Jesus.';
 
 const schemas = [
   breadcrumbSchema([
@@ -35,7 +35,7 @@ const FALLBACK_GROUPS = [
   { name: 'Mid-Morning Bible Study', when: 'First and third Thursdays, 10am', where: 'The Pastor\'s Office', body: 'Read through books of the Bible together over coffee.' },
   { name: 'Theology on Tap', when: 'Third Thursdays, 7pm', where: 'Rotating neighborhood pubs', body: 'Read short pieces of theological writing over drinks and good conversation.' },
   { name: 'Alpha to Omega Bible Reading Group', when: 'Thursdays, 5pm to 6pm', where: 'By conference call', body: 'Read through the whole Bible together, a stretch at a time.' },
-  { name: 'First Church Book Group', when: 'Select Sundays, 9:30am', where: 'At the church', body: 'Read and discuss a book together before worship.' },
+  { name: 'The Presbyterian Academy Book Group', when: 'Select Sundays, 9:30am', where: 'At the church', body: 'Read and discuss a book together before worship.' },
 ];
 
 const groups = page?.groups?.length ? page.groups : FALLBACK_GROUPS;
@@ -44,12 +44,12 @@ const groups = page?.groups?.length ? page.groups : FALLBACK_GROUPS;
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Get Involved'}
-    headline={page?.heroHeadline ?? 'Community Groups at First Church'}
+    headline={page?.heroHeadline ?? 'Community Groups at The Presbyterian Academy'}
     subhead={page?.heroSubhead ?? 'Drop in and walk with others on the Way of Jesus.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroGrow}
-    localImageAlt="Inside the historic sanctuary at First Church"
+    localImageAlt="A small group in discussion with a teacher"
     headingId="grow-hero"
     size="short"
   />
@@ -70,7 +70,7 @@ const groups = page?.groups?.length ? page.groups : FALLBACK_GROUPS;
 
   <FinalCta
     eyebrow={page?.finalCtaEyebrow ?? 'Join In'}
-    headline={page?.finalCtaHeadline ?? 'Find your people at First Church'}
+    headline={page?.finalCtaHeadline ?? 'Find your people at The Presbyterian Academy'}
     subhead={page?.finalCtaSubhead ?? 'Everyone is welcome at every group. Check the calendar for the next gathering, or just show up.'}
     cta={page?.finalCta?.label ? page.finalCta : { label: 'See the Calendar', linkType: 'external', externalUrl: '/events' }}
   />

@@ -9,7 +9,7 @@ import Hero from '@/components/Hero.astro';
 import Sections from '@/components/Sections.astro';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import heroFallback from '@/assets/hero-sanctuary.webp';
+import heroFallback from '@/assets/placeholders/study-bible-notebook.jpg';
 
 export async function getStaticPaths() {
   // Top-level routes that already exist as their own files. A custom page must
@@ -43,7 +43,7 @@ const description = page?.seoDescription ?? '';
     subhead={page?.heroSubhead ?? ''}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroFallback}
-    localImageAlt="First Church of Springfield"
+    localImageAlt="An open Bible beside a notebook"
     headingId="page-hero"
     size="short"
   />

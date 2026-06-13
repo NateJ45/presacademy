@@ -10,8 +10,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
 const result = await renderOg({
-  wordmark: 'First Church',
-  tagline: ['of Springfield'],
+  wordmark: 'The Presbyterian Academy',
+  tagline: ["Equipping tomorrow's church"],
   outPath: resolve(root, 'public/og-default.png'),
 });
 

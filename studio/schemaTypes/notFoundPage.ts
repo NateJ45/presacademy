@@ -61,7 +61,7 @@ export const notFoundPage = defineType({
       options: { hotspot: true },
       fields: [
         defineField({ name: 'alt', title: 'Alt text', type: 'string', validation: (R) => R.required() }),
-        defineField({ name: 'caption', title: 'Caption (optional)', type: 'string', initialValue: 'First Church of Springfield' }),
+        defineField({ name: 'caption', title: 'Caption (optional)', type: 'string', initialValue: 'The Presbyterian Academy' }),
       ],
     }),
 

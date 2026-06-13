@@ -1,17 +1,17 @@
-# First Church of Springfield
+# The Presbyterian Academy
 
-> A welcoming church in downtown Springfield. This file orients AI crawlers to
+> A welcoming church in downtown West Chester Township. This file orients AI crawlers to
 > the site's key pages. Regenerate after launch with `npm run llms:full`, and
 > replace this description with the church's own one-liner.
 
 ## Key pages
-- [Plan a Visit](https://www.example-church.org/worship/): Service time, what to expect, parking, kids, accessibility
-- [What We Believe](https://www.example-church.org/what-we-believe/): The faith this church shares
-- [Sermons](https://www.example-church.org/sermons/): Watch recent messages or join worship live online
-- [Events](https://www.example-church.org/events/): Weekly rhythms and upcoming gatherings
-- [Music](https://www.example-church.org/music/): The church's musical life
-- [Pastor & Staff](https://www.example-church.org/pastor-staff/): The people you'll meet
-- [Give](https://www.example-church.org/give/): Online and by-mail giving
-- [Weddings](https://www.example-church.org/weddings/): Getting married in the sanctuary
-- [Use Our Space](https://www.example-church.org/use-our-space/): Renting the building
-- [Contact](https://www.example-church.org/contact/): Address, office hours, who to reach
+- [Plan a Visit](https://www.presbyterianacademy.org/worship/): Service time, what to expect, parking, kids, accessibility
+- [What We Believe](https://www.presbyterianacademy.org/what-we-believe/): The faith this church shares
+- [Sermons](https://www.presbyterianacademy.org/sermons/): Watch recent messages or join worship live online
+- [Events](https://www.presbyterianacademy.org/events/): Weekly rhythms and upcoming gatherings
+- [Music](https://www.presbyterianacademy.org/music/): The church's musical life
+- [Pastor & Staff](https://www.presbyterianacademy.org/pastor-staff/): The people you'll meet
+- [Give](https://www.presbyterianacademy.org/give/): Online and by-mail giving
+- [Weddings](https://www.presbyterianacademy.org/weddings/): Getting married in the sanctuary
+- [Use Our Space](https://www.presbyterianacademy.org/use-our-space/): Renting the building
+- [Contact](https://www.presbyterianacademy.org/contact/): Address, office hours, who to reach

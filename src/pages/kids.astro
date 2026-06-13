@@ -1,10 +1,10 @@
 ---
 // Safe to edit by hand for copy + structure changes.
-// Kids. How children and families are welcomed at First Church.
+// Kids. How children and families are welcomed at The Presbyterian Academy.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageHero, getSiteSettings } from '@/lib/queries';
-import heroKids from '@/assets/sanctuary-interior.webp';
+import heroKids from '@/assets/placeholders/community-shared-meal.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -20,7 +20,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Kids · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Children are part of the worshipping congregation at First Church of Springfield. How we welcome kids and families on Sunday morning.';
+  'Children are part of the worshipping congregation at The Presbyterian Academy. How we welcome kids and families on Sunday morning.';
 
 const schemas = [
   breadcrumbSchema([
@@ -34,11 +34,11 @@ const schemas = [
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Get Involved'}
     headline={page?.heroHeadline ?? 'Children are welcome here'}
-    subhead={page?.heroSubhead ?? 'At First Church, little ones are part of the worshipping congregation, and we welcome their noise and their needs.'}
+    subhead={page?.heroSubhead ?? 'At The Presbyterian Academy, little ones are part of the worshipping congregation, and we welcome their noise and their needs.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroKids}
-    localImageAlt="The welcoming nave of First Church"
+    localImageAlt="People gathered around a shared table"
     headingId="kids-hero"
     size="short"
   />

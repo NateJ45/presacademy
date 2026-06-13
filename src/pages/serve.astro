@@ -4,7 +4,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getServePage, getSiteSettings } from '@/lib/queries';
-import heroServe from '@/assets/hero-exterior.webp';
+import heroServe from '@/assets/placeholders/community-outdoor-gathering.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -19,7 +19,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Serve · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Serve alongside First Church of Springfield. From our food ministry at the Main Street door to neighborhood gatherings, there are many ways to love our downtown Springfield neighbors.';
+  'Serve alongside The Presbyterian Academy. From our food ministry at the Main Street door to neighborhood gatherings, there are many ways to love our downtown West Chester Township neighbors.';
 
 const schemas = [
   breadcrumbSchema([
@@ -44,11 +44,11 @@ const ways = page?.ways?.length ? page.ways : FALLBACK_WAYS;
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Get Involved'}
     headline={page?.heroHeadline ?? 'Love our neighbors'}
-    subhead={page?.heroSubhead ?? 'We are called to love God and our neighbors. Much of that happens right here in downtown Springfield.'}
+    subhead={page?.heroSubhead ?? 'We are called to love God and our neighbors. Much of that happens right here in downtown West Chester Township.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroServe}
-    localImageAlt="First Church of Springfield on Main Street"
+    localImageAlt="People gathered together at an outdoor event"
     headingId="serve-hero"
     size="short"
   />

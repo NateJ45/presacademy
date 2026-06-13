@@ -69,7 +69,7 @@ if (event.start) {
         '@type': 'Place',
         name: event.location ?? site.name,
         // Build address only from resolved Sanity values; omit fields that
-        // are not yet populated rather than emitting placeholder Springfield data.
+        // are not yet populated rather than emitting placeholder West Chester Township data.
         address: (() => {
           const addr: Record<string, string> = { '@type': 'PostalAddress' };
           if (settings.addressLine) addr.streetAddress = settings.addressLine;
@@ -134,7 +134,7 @@ const pillPrimary =
 
   <FinalCta
     eyebrow={eventsPage?.detailFinalCtaEyebrow ?? "Come and See"}
-    headline={eventsPage?.detailFinalCtaHeadline ?? "Join us at First Church"}
+    headline={eventsPage?.detailFinalCtaHeadline ?? "Join us at The Presbyterian Academy"}
     subhead={eventsPage?.detailFinalCtaSubhead ?? "Everyone is welcome. Worship is every Sunday, and the door is always open."}
     cta={eventsPage?.detailFinalCta?.label ? eventsPage.detailFinalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
   />

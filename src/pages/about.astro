@@ -14,8 +14,8 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
 import SanityImage from '@/components/SanityImage.astro';
-import angelMurals from '@/assets/angel-murals.jpg';
-import sanctuaryInterior from '@/assets/sanctuary-interior.webp';
+import angelMurals from '@/assets/placeholders/place-sanctuary-wooden-pews.jpg';
+import sanctuaryInterior from '@/assets/placeholders/place-church-aisle.jpg';
 
 const [page, siteSettings] = await Promise.all([
   getAboutPage().catch(() => null),
@@ -26,13 +26,13 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `About · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'A historic sanctuary and a living congregation in downtown Springfield. The story of First Church of Springfield.';
+  'A historic sanctuary and a living congregation in downtown West Chester Township. The story of The Presbyterian Academy.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'About First Church';
+const heroEyebrow = page?.heroEyebrow ?? 'About The Presbyterian Academy';
 const heroHeadline = page?.heroHeadline ?? 'A historic church with an open door';
 const heroSubhead =
   page?.heroSubhead ??
-  'A historic downtown congregation, First Church has worshipped on Main Street for generations. The building is extraordinary. The people are the point.';
+  'A historic downtown congregation, The Presbyterian Academy has worshipped on Main Street for generations. The building is extraordinary. The people are the point.';
 
 const schemas = [
   breadcrumbSchema([
@@ -53,7 +53,7 @@ const pillOutline =
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={angelMurals}
-    localImageAlt="The historic sanctuary ceiling at First Church"
+    localImageAlt="A sanctuary with wooden pews"
     headingId="about-hero"
     size="short"
   />
@@ -71,7 +71,7 @@ const pillOutline =
     ) : (
       <Image
         src={angelMurals}
-        alt="The interior of our historic sanctuary"
+        alt="A sanctuary with wooden pews"
         widths={[768, 1280, 1500]}
         sizes="(min-width: 1280px) 1216px, 100vw"
         class="w-full h-auto rounded-md shadow-sm"
@@ -110,13 +110,13 @@ const pillOutline =
           source={page.buildingImage}
           width={1000}
           sizes="(min-width: 768px) 45vw, 100vw"
-          alt={page.buildingImage.alt || 'The nave of First Church, lined with stained-glass windows'}
+          alt={page.buildingImage.alt || 'The nave of The Presbyterian Academy, lined with stained-glass windows'}
           class="w-full h-auto rounded-md shadow-sm"
         />
       ) : (
         <Image
           src={sanctuaryInterior}
-          alt="The nave of First Church, lined with stained-glass windows"
+          alt="Looking down a church aisle"
           widths={[600, 900, 1197]}
           sizes="(min-width: 768px) 45vw, 100vw"
           class="w-full h-auto rounded-md shadow-sm"
@@ -130,7 +130,7 @@ const pillOutline =
     <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-start">
       <SectionHeading
         eyebrow={page?.whoEyebrow ?? 'Who we are'}
-        headline={page?.whoHeadline ?? 'A living congregation in downtown Springfield'}
+        headline={page?.whoHeadline ?? 'A living congregation in downtown West Chester Township'}
         headingId="about-who"
       />
       <div class="text-foreground/85 text-lg leading-relaxed space-y-m">
