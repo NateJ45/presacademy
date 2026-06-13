@@ -65,6 +65,7 @@ const SINGLETON_TYPES = [
 const HIDDEN_FROM_DEFAULT = new Set<string>([
   ...SINGLETON_TYPES,
   // Collections placed explicitly below (so they don't double-show at the root).
+  'faqCategory',
   'faqItem',
   'staffMember',
   'ministry',
@@ -201,6 +202,7 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
             .items([
               S.documentTypeListItem('staffMember').title('Pastors & Staff').icon(UsersIcon),
               S.documentTypeListItem('ministry').title('Ministries').icon(HeartIcon),
+              S.documentTypeListItem('faqCategory').title('FAQ Categories').icon(HelpCircleIcon),
               S.documentTypeListItem('faqItem').title('FAQ Items').icon(HelpCircleIcon),
               S.documentTypeListItem('form').title('Forms').icon(EnvelopeIcon),
               S.documentTypeListItem('worshipResource').title('Worship Resources').icon(DocumentsIcon),

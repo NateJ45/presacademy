@@ -23,6 +23,7 @@ import LogosBlock from '@/components/blocks/LogosBlock.astro';
 import MediaFeatureBlock from '@/components/blocks/MediaFeatureBlock.astro';
 import DynamicListBlock from '@/components/blocks/DynamicListBlock.astro';
 import ArchShowcaseBlock from '@/components/blocks/ArchShowcaseBlock.astro';
+import FaqListBlock from '@/components/blocks/FaqListBlock.astro';
 import EmbedBlock from '@/components/EmbedBlock.astro';
 
 interface Props {
@@ -48,6 +49,7 @@ const MAP: Record<string, any> = {
   sectionMediaFeature: MediaFeatureBlock,
   sectionDynamicList: DynamicListBlock,
   sectionArchShowcase: ArchShowcaseBlock,
+  sectionFaqList: FaqListBlock,
   embed: EmbedBlock,
 };
 
@@ -56,7 +58,7 @@ const SHELL_AWARE = new Set([
   'sectionRichText', 'sectionImageText', 'sectionCardGrid', 'sectionQuote', 'sectionCtaBand',
   'sectionFeatureCards', 'sectionStats', 'sectionAccordion', 'sectionGallery',
   'sectionSteps', 'sectionLogos', 'sectionMediaFeature', 'sectionDynamicList',
-  'sectionArchShowcase',
+  'sectionArchShowcase', 'sectionFaqList',
 ]);
 
 // Default background tone when the editor hasn't chosen one (the quote + CTA

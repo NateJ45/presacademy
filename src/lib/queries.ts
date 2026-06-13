@@ -46,7 +46,11 @@ const SECTION_MEMBERS = `{
     video{ asset->{ url, mimeType } },
     videoPoster${IMAGE_PROJECTION}
   },
-  _type == "sectionForm" => { form->${FORM_PROJECTION} }
+  _type == "sectionForm" => { form->${FORM_PROJECTION} },
+  _type == "sectionFaqList" => {
+    // Resolve the optional categoryRef so the block component gets the title.
+    "categoryFilter": coalesce(categoryRef->title, categoryString)
+  }
 }`;
 
 // ---- Site settings (used in BaseLayout / Header / Footer) -----------------
@@ -267,8 +271,13 @@ export async function getFaqPage() {
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
     categoryOrder,
-    "faqs": *[_type == "faqItem"] | order(category asc, displayOrder asc){
-      question, answer, category, displayOrder
+    // coalesce: prefer the new categoryRef document title; fall back to the
+    // legacy hardcoded string so existing items keep grouping correctly until
+    // editors migrate them to the reference field.
+    "faqs": *[_type == "faqItem"] | order(coalesce(categoryRef->title, category) asc, displayOrder asc){
+      question, answer,
+      "category": coalesce(categoryRef->title, category),
+      displayOrder
     },
     finalCtaEyebrow, finalCtaHeadline, finalCtaScriptAccent, finalCtaSubhead,
     finalCtaBackgroundImage${IMAGE_PROJECTION},
@@ -276,6 +285,39 @@ export async function getFaqPage() {
     secondaryCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
+}
+
+// ---- FAQ items (for sectionFaqList page-builder block) -------------------
+// Optionally filtered by category string (coalesced from categoryRef or legacy
+// field). The block component calls this at build time. Returns [] when Sanity
+// is unconfigured so the graceful empty state renders.
+export async function getFaqItems(opts: { category?: string; limit?: number } = {}) {
+  const { category, limit } = opts;
+  // If a category filter is requested, use a parameterised query; otherwise
+  // fetch all items ordered by category then display order.
+  if (category) {
+    return sanityFetch(
+      `*[_type == "faqItem" && coalesce(categoryRef->title, category) == $category]
+        | order(displayOrder asc)
+        [0...$limit]{
+          question, answer,
+          "category": coalesce(categoryRef->title, category),
+          displayOrder
+        }`,
+      { category, limit: limit ?? 50 },
+      [],
+    );
+  }
+  return sanityFetch(
+    `*[_type == "faqItem"] | order(coalesce(categoryRef->title, category) asc, displayOrder asc)
+      [0...$limit]{
+        question, answer,
+        "category": coalesce(categoryRef->title, category),
+        displayOrder
+      }`,
+    { limit: limit ?? 50 },
+    [],
+  );
 }
 
 // ---- Contact page ---------------------------------------------------------

@@ -14,6 +14,7 @@ import { ctaBlock } from './ctaBlock';
 import { embed } from './embed';
 import { event } from './event';
 import { eventsPage } from './eventsPage';
+import { faqCategory } from './faqCategory';
 import { faqItem } from './faqItem';
 import { faqPage } from './faqPage';
 import { form } from './form';
@@ -53,6 +54,7 @@ export const schemaTypes = [
   ...churchPageSingletons,
 
   // Reusable content collections
+  faqCategory,
   faqItem,
   staffMember,
   ministry,

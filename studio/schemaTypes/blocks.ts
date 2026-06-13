@@ -579,6 +579,52 @@ export const sectionArchShowcase = defineType({
   },
 });
 
+export const sectionFaqList = defineType({
+  name: 'sectionFaqList',
+  title: 'FAQ list (from collection)',
+  type: 'object',
+  description:
+    'Pulls FAQ items from the faqItem collection into the page. Optionally filtered to one category. Use this when you want to embed a subset of the FAQ collection (e.g. Weddings questions on the Weddings page) rather than authoring inline Q+As.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'headline', title: 'Headline', type: 'string' }),
+    defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
+    // Category filter. A reference to an faqCategory document takes priority;
+    // if only a string is provided (legacy or convenience), it is matched
+    // against the coalesced category value (categoryRef->title or legacy string).
+    defineField({
+      name: 'categoryRef',
+      title: 'Filter by category (reference)',
+      type: 'reference',
+      to: [{ type: 'faqCategory' }],
+      description: 'Optional. Show only FAQ items in this category. Takes priority over the plain text filter below.',
+    }),
+    defineField({
+      name: 'categoryString',
+      title: 'Filter by category (plain text)',
+      type: 'string',
+      description: 'Optional. Used only when the reference above is not set. Match the exact category name, e.g. "Giving".',
+    }),
+    defineField({
+      name: 'limit',
+      title: 'How many to show',
+      type: 'number',
+      description: 'Maximum number of FAQ items to display. Leave empty to show all in the category.',
+      validation: (R) => R.min(1).max(50),
+    }),
+    defineField({ name: 'ctaLabel', title: 'Link label (optional)', type: 'string', description: 'Shows a text link at the bottom, e.g. "See all FAQ".' }),
+    defineField({ name: 'ctaUrl', title: 'Link URL (optional)', type: 'string', description: 'Internal path like "/faq" or a full URL.' }),
+    bgField(),
+  ],
+  preview: {
+    select: { title: 'headline', cat: 'categoryRef.title', catStr: 'categoryString' },
+    prepare: ({ title, cat, catStr }) => ({
+      title: title || 'FAQ list',
+      subtitle: cat ?? catStr ?? 'All categories',
+    }),
+  },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -596,6 +642,7 @@ export const sectionBlocks = [
   sectionMediaFeature,
   sectionDynamicList,
   sectionArchShowcase,
+  sectionFaqList,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -616,5 +663,6 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionQuote' },
   { type: 'sectionCtaBand' },
   { type: 'sectionForm' },
+  { type: 'sectionFaqList' },
   { type: 'embed' },
 ];

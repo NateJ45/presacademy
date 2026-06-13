@@ -269,6 +269,23 @@ export type SectionCtaBandBackgroundImage = {
   _type: 'image';
 };
 
+export type SectionFaqListBackground = {
+  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  image?: SectionFaqListBackgroundImage;
+  videoUrl?: string;
+  overlay?: number;
+  padding?: 'compact' | 'normal' | 'spacious';
+};
+
+export type SectionFaqListBackgroundImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "sectionFaqList.background.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type SanityFileAssetReference = {
   _ref: string;
   _type: 'reference';
@@ -584,6 +601,13 @@ export type StaffMember = {
   displayOrder?: number;
 };
 
+export type FaqCategoryReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'faqCategory';
+};
+
 export type FaqItem = {
   _id: string;
   _type: 'faqItem';
@@ -618,6 +642,7 @@ export type FaqItem = {
     | 'Giving'
     | 'Weddings & Space'
     | 'Food Ministry';
+  categoryRef?: FaqCategoryReference;
   displayOrder?: number;
 };
 
@@ -715,6 +740,9 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -839,6 +867,30 @@ export type SiteSettings = {
     successMessage?: string;
     consentNote?: string;
   };
+};
+
+export type SectionFaqList = {
+  _type: 'sectionFaqList';
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  categoryRef?: FaqCategoryReference;
+  categoryString?: string;
+  limit?: number;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionFaqListBackground;
+};
+
+export type FaqCategory = {
+  _id: string;
+  _type: 'faqCategory';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  displayOrder?: number;
 };
 
 export type SectionArchShowcase = {
@@ -1348,6 +1400,9 @@ export type Page = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   seoTitle?: string;
@@ -1438,6 +1493,9 @@ export type GivePage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -1449,6 +1507,12 @@ export type GivePage = {
   foodHeadline?: string;
   foodBodyP1?: string;
   foodLinkLabel?: string;
+  impactStats?: Array<{
+    value?: string;
+    label?: string;
+    _type: 'impactStat';
+    _key: string;
+  }>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -1528,6 +1592,9 @@ export type WeddingsPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -1635,6 +1702,9 @@ export type UseOurSpacePage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -1725,6 +1795,9 @@ export type FoodPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -1819,6 +1892,9 @@ export type KidsPage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -1906,6 +1982,9 @@ export type ServePage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2000,6 +2079,9 @@ export type GrowPage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -2092,6 +2174,9 @@ export type StaffPage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -2174,6 +2259,9 @@ export type MusicPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2278,6 +2366,9 @@ export type BeliefsPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2396,6 +2487,9 @@ export type WorshipPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2524,6 +2618,9 @@ export type SermonsPage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
 };
@@ -2617,6 +2714,9 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2717,6 +2817,9 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -2850,6 +2953,9 @@ export type FaqPage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
 };
@@ -2969,6 +3075,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
     | ({
         _key: string;
       } & Embed)
@@ -3158,6 +3267,9 @@ export type HomePage = {
       } & SectionForm)
     | ({
         _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
       } & Embed)
   >;
 };
@@ -3299,6 +3411,8 @@ export type AllSanitySchemaTypes =
   | SectionQuoteBackgroundImage
   | SectionCtaBandBackground
   | SectionCtaBandBackgroundImage
+  | SectionFaqListBackground
+  | SectionFaqListBackgroundImage
   | SanityFileAssetReference
   | WorshipResource
   | Announcement
@@ -3310,10 +3424,13 @@ export type AllSanitySchemaTypes =
   | MinistryReference
   | Ministry
   | StaffMember
+  | FaqCategoryReference
   | FaqItem
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | SectionFaqList
+  | FaqCategory
   | SectionArchShowcase
   | SectionDynamicList
   | SectionMediaFeature

@@ -66,6 +66,27 @@ const pillPrimary =
     </div>
   </section>
 
+  {/* Giving impact stats row — self-hides when the array is empty or not set.
+      Uses the same token-based stat pattern as StatsBlock (font-display text-h2,
+      tracking-eyebrow label). Max 4 stats per the Studio validation. */}
+  {Array.isArray(page?.impactStats) && page.impactStats.length > 0 && (
+    <section class="surface-warm bg-muted" aria-label="Giving impact">
+      <div class="mx-auto max-w-content px-m py-section-md">
+        <ul
+          class={`grid grid-cols-2 ${page.impactStats.length >= 4 ? 'sm:grid-cols-4' : page.impactStats.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-l text-center list-none p-0`}
+          data-stagger-grid
+        >
+          {page.impactStats.map((stat: { value: string; label: string }) => (
+            <li>
+              <p class="font-display text-h2 leading-none text-foreground">{stat.value}</p>
+              <p class="mt-s text-xs uppercase tracking-eyebrow text-foreground/70">{stat.label}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
   {/* Other ways to give */}
   <section class="surface-warm bg-muted" aria-labelledby="give-ways">
     <div class="mx-auto max-w-content px-m py-section-lg">

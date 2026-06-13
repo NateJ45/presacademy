@@ -64,11 +64,18 @@ export const faqItem = defineType({
       ],
       validation: (Rule) => Rule.required(),
     }),
+    // LEGACY: hardcoded string category. Hidden from editors but preserved so
+    // existing documents keep their data (deleting the field from the schema
+    // would surface a "Remove field?" prompt in Studio that destroys content).
+    // Migration path: set categoryRef below and leave this untouched.
+    // The FAQ page query coalesces: coalesce(categoryRef->title, category).
     defineField({
       name: 'category',
-      title: 'Category',
+      title: 'Category (legacy)',
       type: 'string',
-      description: 'Which group this question belongs in on the FAQ page.',
+      hidden: true,
+      readOnly: true,
+      description: 'Legacy hardcoded category string. Preserved for data safety; use Category (reference) below instead.',
       options: {
         list: [
           { title: 'Visiting', value: 'Visiting' },
@@ -80,7 +87,17 @@ export const faqItem = defineType({
           { title: 'Food Ministry', value: 'Food Ministry' },
         ],
       },
-      validation: (Rule) => Rule.required(),
+    }),
+    // NEW: reference to the faqCategory document. Overrides the legacy category
+    // string when set. The FAQ page query uses:
+    //   coalesce(categoryRef->title, category) as `category`
+    // so existing items continue grouping correctly until editors migrate them.
+    defineField({
+      name: 'categoryRef',
+      title: 'Category',
+      type: 'reference',
+      to: [{ type: 'faqCategory' }],
+      description: 'Which group this question belongs in. Replaces the legacy category field. Create categories under Content > FAQ Categories.',
     }),
     defineField({
       name: 'displayOrder',

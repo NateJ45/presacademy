@@ -550,6 +550,30 @@ export const givePage = definePageSingleton('givePage', 'Give', {
     defineField({ name: 'foodHeadline', title: 'Food ministry heading', type: 'string', group: 'content' }),
     defineField({ name: 'foodBodyP1', title: 'Food ministry paragraph', type: 'text', rows: 3, group: 'content' }),
     defineField({ name: 'foodLinkLabel', title: 'Food ministry link label', type: 'string', group: 'content' }),
+    // Optional giving impact numbers: up to 4 stat pairs (value + label).
+    // When populated, they render as a stat row on the Give page between the
+    // online-giving section and the other-ways section. Leave empty and the
+    // stat row is hidden. Max 4 enforced here in Studio for layout reasons.
+    defineField({
+      name: 'impactStats',
+      title: 'Giving impact stats (optional)',
+      type: 'array',
+      group: 'content',
+      description:
+        'Up to 4 giving-impact numbers shown as a stat row on the Give page (e.g. "$1.2M given last year", "600 neighbors fed weekly"). Leave empty to hide the row.',
+      validation: (R) => R.max(4),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'impactStat',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "$1.2M" or "600+". Free text.', validation: (R) => R.required() }),
+            defineField({ name: 'label', title: 'Label', type: 'string', description: 'e.g. "Given last year" or "Neighbors fed weekly".', validation: (R) => R.required() }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+    }),
     defineField({ name: 'finalCtaEyebrow', title: 'Closing CTA eyebrow', type: 'string', group: 'content' }),
     defineField({ name: 'finalCtaHeadline', title: 'Closing CTA headline', type: 'string', group: 'content' }),
     defineField({ name: 'finalCtaSubhead', title: 'Closing CTA subhead', type: 'text', rows: 2, group: 'content' }),

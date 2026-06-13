@@ -1,0 +1,87 @@
+---
+// Safe to edit by hand
+// sectionFaqList block. Pulls faqItem collection documents into a page-builder
+// section, optionally filtered to one category. Uses the same native <details>
+// accordion UI as the /faq page so the experience is consistent.
+//
+// Category filter resolution (same coalesce as the queries.ts FAQ projection):
+//   1. categoryRef resolved to a title string (projected as `categoryFilter`
+//      by SECTION_MEMBERS in queries.ts)
+//   2. Plain categoryString fallback
+//
+// Does NOT emit a second FAQPage JSON-LD schema tag: the /faq page owns that
+// structured-data type. Emitting it here would create duplicate structured data
+// if this block lands on a non-FAQ page, and is simply redundant on /faq itself.
+//
+// Graceful empty state: when Sanity is unconfigured or the query returns nothing,
+// the block renders nothing (the section simply does not appear). This keeps the
+// page clean rather than showing a skeleton or error state.
+
+import { getFaqItems } from '@/lib/queries';
+import PortableTextStatic from '@/components/PortableTextStatic.astro';
+
+const { block } = Astro.props as { block: any };
+
+// `categoryFilter` is the pre-resolved string from SECTION_MEMBERS projection.
+// Fall back to the plain categoryString field for any blocks fetched without
+// the full projection (e.g. direct Sanity Studio preview calls).
+const categoryFilter: string | undefined =
+  block?.categoryFilter ?? block?.categoryString ?? undefined;
+
+const limit = block?.limit ? Number(block.limit) : undefined;
+
+// Fetch at build time; defensively returns [] when Sanity is unconfigured.
+const items: any[] = await getFaqItems({ category: categoryFilter, limit }).catch(() => []);
+---
+
+{items.length > 0 && (
+  <div class="mx-auto max-w-3xl px-m">
+    {/* Section heading — only rendered when at least one field is present */}
+    {(block?.eyebrow || block?.headline || block?.subhead) && (
+      <div class="mb-l">
+        {block.eyebrow && (
+          <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>
+        )}
+        {block.headline && (
+          <h2 class="mt-s font-display text-h2">{block.headline}</h2>
+        )}
+        {block.subhead && (
+          <p class="mt-s opacity-80 leading-relaxed">{block.subhead}</p>
+        )}
+      </div>
+    )}
+
+    {/* FAQ accordion — matches the /faq page's native <details> pattern exactly */}
+    <div class="divide-y divide-current/15 border-t border-b border-current/15">
+      {items.map((f: any) => (
+        <details class="group py-m">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg">
+            {f.question}
+            <span class="shrink-0 text-gold transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+          </summary>
+          {/* Handle both Portable Text answers (from faqItem) and plain strings
+              (future-proofing; currently all faqItem answers are Portable Text). */}
+          {typeof f.answer === 'string' ? (
+            <p class="mt-s opacity-85 leading-relaxed">{f.answer}</p>
+          ) : (
+            <div class="mt-s opacity-85 leading-relaxed [&>div>*:first-child]:mt-0">
+              <PortableTextStatic value={f.answer} />
+            </div>
+          )}
+        </details>
+      ))}
+    </div>
+
+    {/* Optional "See all FAQ" style link at the bottom of the block */}
+    {block?.ctaUrl && block?.ctaLabel && (
+      <div class="mt-l">
+        <a
+          href={block.ctaUrl}
+          class="inline-flex items-center gap-xs text-xs uppercase tracking-eyebrow font-semibold text-link"
+        >
+          {block.ctaLabel} <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    )}
+  </div>
+)}
