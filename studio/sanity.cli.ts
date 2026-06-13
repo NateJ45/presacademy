@@ -13,8 +13,9 @@ export default defineCliConfig({
   // the first studio deploy (rebrand.mjs stamps this).
   studioHost: 'presbyterian-academy',
   deployment: {
-    // After your FIRST `npm run studio:deploy`, Sanity prints the new app's id.
-    // Pin it here (appId: '...') to keep later deploys non-interactive.
+    // appId pinned after the first `npm run studio:deploy` so later deploys are
+    // non-interactive. autoUpdates keeps the hosted Studio on the latest version.
+    appId: 'usl3ubscklxyewmtgfv3v4xy',
     autoUpdates: true,
   },
   // Typegen reads the extracted schema and writes types into the Astro project's src/lib/.
