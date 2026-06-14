@@ -73,7 +73,7 @@ const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-foreground/80';
 // inverse surfaces) defined in globals.css, so every section eyebrow matches.
 ---
 
-<div class:list={[wrapperAlign, 'max-w-3xl', extraClass]}>
+<div data-reveal class:list={[wrapperAlign, 'max-w-3xl', extraClass]}>
   {eyebrow && (
     <p class:list={['eyebrow', tone === 'inverse' && 'eyebrow-inverse', 'mb-m text-xs uppercase tracking-eyebrow', toneEyebrow]}>{eyebrow}</p>
   )}

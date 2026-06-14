@@ -426,6 +426,55 @@ const announcementClass = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
           }
         }
 
+        // ---- Stat count-up ----------------------------------------------
+        // Numbers inside [data-countup-grid] climb from 0 to their value as the
+        // band enters view. Year-style stats opt out (they carry no
+        // data-countup). easeOutCubic over 1.2s; snaps to the exact final text.
+        const countGrids = document.querySelectorAll<HTMLElement>('[data-countup-grid]:not(.is-counted)');
+        if (countGrids.length > 0) {
+          if (reduceMotion || !('IntersectionObserver' in window)) {
+            countGrids.forEach((el) => el.classList.add('is-counted'));
+          } else {
+            const countObserver = new IntersectionObserver(
+              (entries) => {
+                for (const entry of entries) {
+                  if (!entry.isIntersecting) continue;
+                  entry.target.classList.add('is-counted');
+                  countObserver.unobserve(entry.target);
+                  entry.target.querySelectorAll<HTMLElement>('[data-countup]').forEach((el) => {
+                    // initPolish runs on load AND astro:page-load, so guard each
+                    // number against a second observer fighting the same rAF.
+                    if (el.dataset.counted === '1') return;
+                    el.dataset.counted = '1';
+                    const finalText = (el.textContent || '').trim();
+                    const m = finalText.match(/^(\D*)([\d.,]+)(.*)$/s);
+                    if (!m) return;
+                    const prefix = m[1];
+                    const suffix = m[3];
+                    const hasComma = m[2].indexOf(',') >= 0;
+                    const target = parseFloat(m[2].replace(/,/g, ''));
+                    if (!isFinite(target)) return;
+                    const fmt = (n: number) =>
+                      hasComma ? Math.round(n).toLocaleString('en-US') : String(Math.round(n));
+                    const dur = 1200;
+                    const startT = performance.now();
+                    const step = (now: number) => {
+                      const t = Math.min(1, (now - startT) / dur);
+                      const eased = 1 - Math.pow(1 - t, 3);
+                      el.textContent = prefix + fmt(target * eased) + suffix;
+                      if (t < 1) requestAnimationFrame(step);
+                      else el.textContent = finalText;
+                    };
+                    requestAnimationFrame(step);
+                  });
+                }
+              },
+              { rootMargin: '0px 0px -15% 0px', threshold: 0.2 },
+            );
+            countGrids.forEach((el) => countObserver.observe(el));
+          }
+        }
+
         // ---- Sticky-header hide on scroll-down --------------------------
         // The header is position:sticky via .site-header. We swap a data-state
         // attribute that the CSS translates into a translateY(-100%) when the
