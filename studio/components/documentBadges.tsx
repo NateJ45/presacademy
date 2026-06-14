@@ -4,8 +4,8 @@
 // the Published/Draft pill and give the editor an at-a-glance read on a document's
 // state without opening it or hunting through fields:
 //
-//   - "Featured"      — a project or post pinned to a prominent spot
-//   - "Needs a photo" — a project/post whose cover image is still empty
+//   - "Featured"      — a course / faculty member / testimonial pinned to a spot
+//   - "Needs a photo" — a course / faculty member / event whose image is empty
 //   - "Add SEO"       — an indexable page whose SEO title or description is blank
 //
 // Registered via document.badges in sanity.config.ts. Each badge returns null
@@ -17,33 +17,30 @@ import { StarIcon, ImageIcon, SearchIcon } from '@sanity/icons';
 import type { DocumentBadgeComponent, DocumentBadgeProps } from 'sanity';
 
 // Indexable page singletons that carry seoTitle + seoDescription and are
-// expected to have them filled before launch. Deliberately excludes:
-//   - notFoundPage (the 404 is noindex, SEO is irrelevant)
-//   - styleQuiz / budgetCalculator (no SEO title/description fields)
-//   - project / journalEntry / leadMagnet (their SEO fields are OPTIONAL
-//     overrides that fall back to the title/excerpt, so a badge would nag)
+// expected to have them filled before launch. Excludes notFoundPage (the 404 is
+// noindex). These are the live SCHOOL pages; the old church/template types that
+// used to be listed here were removed in the lay-school rebuild.
 const SEO_PAGE_TYPES = new Set<string>([
   'homePage',
   'aboutPage',
-  'processPage',
-  'servicesPage',
-  'portfolioPage',
+  'coursesPage',
+  'facultyPage',
+  'pricingPage',
+  'getStartedPage',
+  'forYouPage',
+  'resourcesPage',
+  'eventsPage',
   'faqPage',
   'contactPage',
-  'journalPage',
-  'eDesignPage',
-  'shopPage',
-  'giftPage',
-  'resourcesPage',
   'privacyPage',
-  'pressPage',
 ]);
 
-// Doc types with a cover/hero image worth flagging when empty, and the field
-// name to check on each.
+// Doc types with a cover/portrait/image worth flagging when empty, and the field
+// name to check on each (course cover, faculty portrait, event image).
 const PHOTO_FIELD: Record<string, string> = {
-  project: 'heroImage',
-  journalEntry: 'coverImage',
+  course: 'coverImage',
+  facultyMember: 'photo',
+  event: 'image',
 };
 
 // The live document being edited: prefer the draft, fall back to the published
@@ -68,8 +65,9 @@ const NeedsPhotoBadge: DocumentBadgeComponent = (props) => {
   const field = PHOTO_FIELD[props.type as string];
   if (!field) return null;
   const doc = currentDoc(props);
-  // Don't nag a brand-new draft that has no title yet.
-  if (!doc.title) return null;
+  // Don't nag a brand-new draft that has no name/title yet. (facultyMember uses
+  // `name`; course/event use `title`.)
+  if (!doc.title && !doc.name) return null;
   const hasPhoto = Boolean(doc[field]?.asset?._ref);
   if (hasPhoto) return null;
   return { label: 'Needs a photo', title: 'No cover image set yet', color: 'warning', icon: ImageIcon };

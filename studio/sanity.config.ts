@@ -14,7 +14,7 @@ import { schemaTypes } from './schemaTypes';
 import { deskStructure } from './structure';
 import StudioLogo from './components/StudioLogo';
 import StudioLayout from './components/StudioLayout';
-import { CharacterCountInput } from './components/CharacterCountInput';
+import { StudioFormInput } from './components/StudioFormInput';
 import { documentBadges } from './components/documentBadges';
 
 // Brand theme for the Studio UI. Uses Sanity's legacy theme builder which
@@ -86,41 +86,53 @@ const studioTheme = {
     : baseTheme.fonts,
 };
 
-// Set this to your deployed Workers URL (e.g. 'https://my-project.workers.dev') after deploy.
-export const SITE_URL_FOR_PREVIEW = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:4321';
+// Preview/site base used by urlForDoc (kept for a future preview pane; see
+// structure.ts). Defaults to production; override with SANITY_STUDIO_PREVIEW_URL
+// (e.g. a workers.dev preview, or http://localhost:4321 for local Studio + site dev).
+export const SITE_URL_FOR_PREVIEW = process.env.SANITY_STUDIO_PREVIEW_URL || 'https://www.presbyterianacademy.org';
 
-// Map doc _type → live-site path. Singletons get a fixed path; slug-based
-// docs build the path from the doc's slug. Returns null for types that have
-// no viewable page (siteSettings) — the preview pane is hidden for those.
-// Exported so structure.ts can call it when wiring per-doc views.
-export function urlForDoc(schemaType: string, doc: any): string | null {
-  const SITE_URL = SITE_URL_FOR_PREVIEW;
+// The live (production) site base used by the "View on the live site" help
+// banner. Deliberately INDEPENDENT of SITE_URL_FOR_PREVIEW (which may point at
+// localhost during local Studio dev) so faculty in the deployed Studio are
+// always sent to the real site. Stamp this with the project's domain at rebrand.
+export const LIVE_SITE_URL = 'https://www.presbyterianacademy.org';
+
+// Map doc _type → live-site PATH (no host). Singletons get a fixed path;
+// slug-based docs build it from the slug. Returns null for types with no public
+// page (siteSettings). Exported so the help banner + any preview wiring share it.
+export function pathForDoc(schemaType: string, doc: any): string | null {
   const slug = doc?.slug?.current;
   switch (schemaType) {
     // Core pages
-    case 'homePage':      return `${SITE_URL}/`;
-    case 'aboutPage':     return `${SITE_URL}/about`;
-    case 'faqPage':       return `${SITE_URL}/faq`;
-    case 'contactPage':   return `${SITE_URL}/contact`;
-    case 'notFoundPage':  return `${SITE_URL}/404`;
-    case 'privacyPage':   return `${SITE_URL}/privacy`;
+    case 'homePage':      return '/';
+    case 'aboutPage':     return '/about';
+    case 'faqPage':       return '/faq';
+    case 'contactPage':   return '/contact';
+    case 'notFoundPage':  return '/404';
+    case 'privacyPage':   return '/privacy';
     // School index pages + page singletons
-    case 'eventsPage':       return `${SITE_URL}/events`;
-    case 'coursesPage':      return `${SITE_URL}/courses`;
-    case 'facultyPage':      return `${SITE_URL}/faculty`;
-    case 'pricingPage':      return `${SITE_URL}/pricing`;
-    case 'getStartedPage':   return `${SITE_URL}/get-started`;
-    case 'forYouPage':       return `${SITE_URL}/for-you`;
-    case 'resourcesPage':    return `${SITE_URL}/resources`;
+    case 'eventsPage':       return '/events';
+    case 'coursesPage':      return '/courses';
+    case 'facultyPage':      return '/faculty';
+    case 'pricingPage':      return '/pricing';
+    case 'getStartedPage':   return '/get-started';
+    case 'forYouPage':       return '/for-you';
+    case 'resourcesPage':    return '/resources';
     // Collections: dated detail pages by slug; course + faculty detail; FAQ list.
-    case 'event':         return slug ? `${SITE_URL}/events/${slug}` : `${SITE_URL}/events`;
-    case 'course':        return slug ? `${SITE_URL}/courses/${slug}` : `${SITE_URL}/courses`;
-    case 'facultyMember': return slug ? `${SITE_URL}/faculty/${slug}` : `${SITE_URL}/faculty`;
-    case 'faqItem':       return `${SITE_URL}/faq`;
+    case 'event':         return slug ? `/events/${slug}` : '/events';
+    case 'course':        return slug ? `/courses/${slug}` : '/courses';
+    case 'facultyMember': return slug ? `/faculty/${slug}` : '/faculty';
+    case 'faqItem':       return '/faq';
     // Generic custom pages live at /<slug>.
-    case 'page':        return slug ? `${SITE_URL}/${slug}` : null;
-    default:            return null;
+    case 'page':          return slug ? `/${slug}` : null;
+    default:              return null;
   }
+}
+
+// Full URL on the preview/site base. Kept for a future preview pane (structure.ts).
+export function urlForDoc(schemaType: string, doc: any): string | null {
+  const path = pathForDoc(schemaType, doc);
+  return path === null ? null : `${SITE_URL_FOR_PREVIEW}${path}`;
 }
 
 export default defineConfig({
@@ -147,13 +159,13 @@ export default defineConfig({
     },
   },
 
-  // Global form customization. Registering the character-count input once here
-  // applies it to every capped text field across all schemas. The component
-  // falls through to the default input for anything that isn't a string/text
-  // field with a max length, so it's safe as a global wrapper.
+  // Global form customization. Only one input component is allowed at this slot,
+  // so StudioFormInput composes two aids: a "what you're editing + view it live"
+  // banner at each document's root, and the live character counter on capped
+  // text fields. It falls through to the default input everywhere else.
   form: {
     components: {
-      input: CharacterCountInput,
+      input: StudioFormInput,
     },
   },
 
