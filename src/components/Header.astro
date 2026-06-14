@@ -16,8 +16,9 @@
 
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import { site } from '@/data/site';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
-import { ChevronDown } from 'lucide-react';
+import { getNextTerm } from '@/lib/queries';
+import { telHref } from '@/lib/phone';
+import { ChevronDown, Phone } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
 
@@ -75,6 +76,16 @@ const cityLine = settings.addressLocality ?? settings.cityStateZip ?? '';
 
 const ig = settings.social.instagram;
 const fb = settings.social.facebook;
+const phone = settings.phone;
+
+// Timely enrollment status for the utility bar: the soonest upcoming term, so the
+// bar carries a live "now enrolling" nudge on every page instead of a static
+// tagline. Falls back to the identity line when no term is scheduled.
+const nextTerm = await getNextTerm().catch(() => null);
+function fmtTermDate(d?: string): string {
+  if (!d) return '';
+  return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+}
 
 // Subset of siteSettings the mobile menu needs. Pass as a plain object so the
 // React island doesn't try to serialize the whole Sanity document graph.
@@ -175,64 +186,57 @@ function isGroupActive(items: { href: string }[]) {
       mobile menu drawer. Visible on every viewport. */}
   <div class="h-1 bg-primary" aria-hidden="true"></div>
 
-  {/* Utility bar (all viewports). A deep Chapel-green strip carrying the
-      church's front-door logistics: service time + address on the left,
-      Watch Live + Give + social + theme on the right. This colored bar is the
-      clearest "purpose-built church" signal and replaces the template's muted
-      designer eyebrow. Cream text on deep green (~9:1 contrast). On phones the
-      address + social icons drop away to keep one tidy line; the service time,
-      Watch, Give, and theme toggle always show. */}
+  {/* Utility bar (all viewports). It earns its keep by carrying the one timely,
+      decision-relevant thing a prospective student wants on every page — the
+      live enrollment status / next cohort — plus tap-to-call, the Request-info
+      action, and the theme toggle. Falls back to the identity line when no term
+      is scheduled. Cream on deep green (~9:1 contrast). */}
   <div class="bg-chapel text-chapel-foreground">
-    <div class="mx-auto flex max-w-content items-center justify-between gap-m px-m sm:px-l py-1.5">
-      <p class="flex min-w-0 items-center gap-2 text-[0.7rem] sm:text-xs">
-        <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Reformed lay formation</span>
-        {cityLine && (
-          <>
-            <span class="hidden sm:inline text-chapel-foreground/50" aria-hidden="true">·</span>
-            <span class="hidden sm:inline truncate text-chapel-foreground/80">{cityLine}</span>
-          </>
-        )}
-      </p>
+    <div class="mx-auto flex max-w-content items-center justify-between gap-m px-m sm:px-l py-1.5 text-[0.7rem] sm:text-xs">
+      {nextTerm ? (
+        <a
+          href="/courses"
+          class="flex min-w-0 items-center gap-2 hover:text-white transition-colors"
+          aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
+        >
+          <span class="enroll-dot" aria-hidden="true"></span>
+          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Now enrolling</span>
+          <span class="hidden sm:inline text-chapel-foreground/40" aria-hidden="true">·</span>
+          <span class="hidden sm:inline truncate text-chapel-foreground/85">{nextTerm.title} begins {fmtTermDate(nextTerm.startDate)}</span>
+          <span class="sm:hidden truncate text-chapel-foreground/85">{nextTerm.title}</span>
+        </a>
+      ) : (
+        <p class="flex min-w-0 items-center gap-2">
+          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Reformed lay formation</span>
+          {cityLine && (
+            <>
+              <span class="hidden sm:inline text-chapel-foreground/40" aria-hidden="true">·</span>
+              <span class="hidden sm:inline truncate text-chapel-foreground/80">{cityLine}</span>
+            </>
+          )}
+        </p>
+      )}
 
-      <div class="flex items-center gap-3 sm:gap-m">
+      <div class="flex shrink-0 items-center gap-3 sm:gap-m">
+        {phone && (
+          <a
+            href={telHref(phone)}
+            class="inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 hover:text-white transition-colors"
+            aria-label={`Call ${phone}`}
+          >
+            <Phone size={13} strokeWidth={1.75} aria-hidden="true" />
+            <span class="hidden sm:inline tabular-nums">{phone}</span>
+          </a>
+        )}
+        <span class="hidden sm:inline h-3.5 w-px bg-chapel-foreground/25" aria-hidden="true"></span>
         <a
           href="/get-started"
-          class="text-[0.7rem] sm:text-xs uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
+          class="uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
         >
           Request info
         </a>
-
-        {(ig || fb) && (
-          <div class="hidden sm:flex items-center gap-1">
-            {ig && (
-              <a
-                href={ig}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                class="inline-flex h-7 w-7 items-center justify-center rounded-full text-chapel-foreground/80 hover:bg-white/10 hover:text-white transition-colors"
-              >
-                <IconBrandInstagram size={14} stroke={1.5} />
-              </a>
-            )}
-            {fb && (
-              <a
-                href={fb}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                class="inline-flex h-7 w-7 items-center justify-center rounded-full text-chapel-foreground/80 hover:bg-white/10 hover:text-white transition-colors"
-              >
-                <IconBrandFacebook size={14} stroke={1.5} />
-              </a>
-            )}
-          </div>
-        )}
-
-        {/* Theme toggle. Its button defaults to text-foreground (dark ink),
-            which would disappear on the green bar, so force cream + a soft white
-            hover via arbitrary variants. The descendant selector reaches through
-            Astro's <astro-island> wrapper. Hydrate on idle to protect TBT. */}
+        {/* Theme toggle. Force cream + a soft-white hover so the button reads on
+            the green bar (its default dark ink would vanish). Hydrate on idle. */}
         <div class="[&_button]:!text-chapel-foreground [&_button:hover]:!bg-white/10 [&_button:hover]:!text-white">
           <ThemeToggle client:idle />
         </div>
@@ -362,6 +366,21 @@ function isGroupActive(items: { href: string }[]) {
 </header>
 
 <style>
+  /* Utility-bar "now enrolling" status dot — a soft lifted-green pulse so the
+     timely enrollment line catches the eye without shouting. Reduced-motion safe. */
+  .enroll-dot {
+    display: inline-block; flex: none;
+    width: 7px; height: 7px; border-radius: 9999px;
+    background: #9CC6AC;
+    animation: enroll-pulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes enroll-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(156, 198, 172, 0.55); }
+    70%  { box-shadow: 0 0 0 6px rgba(156, 198, 172, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(156, 198, 172, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .enroll-dot { animation: none; } }
+
   /* Desktop dropdown groups (native <details>). The links are server-rendered
      and fully usable with no JS; these styles + the script below add the
      dropdown affordances. */
