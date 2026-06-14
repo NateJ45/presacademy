@@ -20,6 +20,10 @@ Two utility classes layered on top of the families. Use them instead of ad-hoc a
 
 Both are declared in `src/styles/globals.css` via `@utility`. Don't replace with arbitrary values (`leading-[1.05]`, `tracking-[0.18em]`) in new code; use the named utilities so a future scale change is one edit.
 
+### Eyebrow rubric classes (`.eyebrow` / `.eyebrow-inverse`)
+
+The Direction A signature mark. Add `.eyebrow` to an uppercase `tracking-eyebrow` label that introduces a headline; a short brand-green leading rule is drawn before it via `::before`. On dark / green / photo surfaces add `.eyebrow-inverse` so the rule lifts to brass and stays visible. Declared in `globals.css` (not a token — a pair of utility classes). Full usage discipline: `polish-layer.md`. These are independent of the type/spacing tokens above, which are unchanged by the brand evolution.
+
 ---
 
 ## Spacing tokens
@@ -49,12 +53,12 @@ If you ever suspect this regressed, the diagnostic is: open the page in the dev 
 
 ## Color tokens
 
-See `theme-and-color.md` for the full palette reference, the `--tint-rgb` token, and the light/dark discipline. A short summary of what to use in component code:
+See `theme-and-color.md` for the full palette reference, the `--tint-rgb` token, and the light/dark discipline. The brand anchor is Geneva Green (`#33503F`) as of the Direction A evolution; `bg-primary`, `text-link`, and the `chapel` bands all resolve to green. A short summary of what to use in component code:
 
 - Body text and headings: `text-foreground`
 - Page and card surfaces: `bg-background`, `bg-card`, `bg-muted`
-- Brand action color: `bg-primary`, `text-primary-foreground`
-- Tinted overlays (polish layer): `rgba(var(--tint-rgb), <opacity>)`
+- Brand action color: `bg-primary`, `text-primary-foreground` (Geneva Green)
+- Tinted overlays (polish layer): `rgba(var(--tint-rgb), <opacity>)` (warm brass)
 - Borders: `border-border`
 
 Never hardcode hex values in component markup. All palette and semantic tokens are in `globals.css`; change the token, not every usage site.

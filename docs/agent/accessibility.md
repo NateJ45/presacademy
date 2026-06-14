@@ -26,7 +26,7 @@ Target: WCAG 2.1 AA in both light and dark modes. Aim for 100 Lighthouse Accessi
 - The before/after slider (if the portfolio module is active) needs keyboard support: arrow keys move the divider, the handle is focusable, and the focus indicator is visible.
 
 **Color tokens by responsibility** (definitions and contrast math in `globals.css`):
-- `--primary` (Slate/Ink): buttons, focus rings, CTA backgrounds at large size, brand-stripe rhythm. Paired with white or Paper foreground.
+- `--primary` (Geneva Green, the Direction A anchor): buttons, focus rings, CTA backgrounds at large size, brand-stripe rhythm, the eyebrow-rubric rule. Paired with white or cream foreground.
 - `--link`: theme-aware accent for inline links, anchor-style body text, price numerals, step numerals, any always-on text that needs to read in both modes.
 - `--accent` (theme-aware): hover surfaces only -- NOT body text. Light-mode value must be visibly darker than `--muted` so hover states are actually visible.
 - `--foreground` (Ink in light, Paper in dark): headings and body text.
