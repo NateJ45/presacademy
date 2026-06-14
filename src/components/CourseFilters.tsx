@@ -94,7 +94,7 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
                   type="checkbox"
                   checked={activeTopics.has(o.slug)}
                   onChange={() => toggle(activeTopics, o.slug, setActiveTopics)}
-                  className="accent-[#7A2A2C]"
+                  className="accent-[#33503F]"
                 />
                 <span>{o.label}</span>
                 <span className="text-secondary">({o.count})</span>
@@ -114,7 +114,7 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
                   type="checkbox"
                   checked={activeTeachers.has(o.slug)}
                   onChange={() => toggle(activeTeachers, o.slug, setActiveTeachers)}
-                  className="accent-[#7A2A2C]"
+                  className="accent-[#33503F]"
                 />
                 <span>{o.label}</span>
                 <span className="text-secondary">({o.count})</span>

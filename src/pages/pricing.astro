@@ -35,8 +35,8 @@ function priceLabel(t: any): string {
 }
 
 const stats = [
-  { value: '1998', label: 'Established' },
-  { value: '1,200+', label: 'Learners formed' },
+  { value: 'Free', label: 'Sit in on a class first' },
+  { value: 'Per course', label: 'Pay as you go, no degree debt' },
   { value: 'Need-based', label: 'Scholarships every term' },
 ];
 
@@ -51,10 +51,12 @@ const schemas = [
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
-      {page?.pricingIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.pricingIntro}</p>}
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+        {page?.pricingIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.pricingIntro}</p>}
+      </div>
       <div class="mt-l h-px w-full bg-gold/50"></div>
     </div>
   </section>
@@ -90,16 +92,18 @@ const schemas = [
   {/* Scholarships */}
   <section class="surface-warm bg-muted">
     <div class="mx-auto max-w-content px-m py-section-lg">
-      <p class="text-xs uppercase tracking-eyebrow text-gold-ink">{page?.scholarshipEyebrow ?? 'Scholarships'}</p>
-      <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{page?.scholarshipHeadline ?? 'No one is turned away for cost'}</h2>
-      <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{page?.scholarshipBody ?? 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.'}</p>
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{page?.scholarshipEyebrow ?? 'Scholarships'}</p>
+        <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{page?.scholarshipHeadline ?? 'No one is turned away for cost'}</h2>
+        <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{page?.scholarshipBody ?? 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.'}</p>
+      </div>
       {page?.footnote && <p class="mt-m max-w-2xl text-sm text-foreground/65">{page.footnote}</p>}
     </div>
   </section>
 
   {/* Heritage band */}
   <section class="border-b border-border-soft bg-background">
-    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3">
+    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3" data-stagger-grid>
       {stats.map((s, i) => (
         <div class:list={['px-m py-l', i < stats.length - 1 && 'sm:border-r border-border-soft border-b sm:border-b-0']}>
           <p class="font-display text-h3 text-chapel-ink">{s.value}</p>

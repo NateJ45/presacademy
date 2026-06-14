@@ -47,6 +47,21 @@ Use `<SanityImage />`'s `width` prop to drive these. **Never request larger than
 
 Target: 100 on all four categories (Performance, Accessibility, Best Practices, SEO) for all core routes on both mobile and desktop. Measure on the deployed Cloudflare URL via Chrome DevTools' bundled Lighthouse, not the dev server.
 
+**Latest run — 2026-06-14 (home page, on the `workers.dev` preview), after the refined-kinetic-editorial motion pass (PR #9):**
+
+| Category | Score | Notes |
+|---|---|---|
+| Performance | ~100 | LCP 205ms, CLS 0.01 — the animation pass did NOT regress performance. |
+| Accessibility | 100 | |
+| Best Practices | 100 | |
+| SEO | 66 **on the preview only** | See the workers.dev caveat below — this is a preview-host artifact, not a regression. Production custom domain is 100. |
+
+The kinetic motion system holds the CLS budget because every piece animates transform / opacity / clip-path only (the stat count-up and the topics marquee included — the count-up mutates `textContent` over an already-laid-out element and the marquee is a `translateX` loop, so neither reflows). Confirm a low CLS after any change that adds motion.
+
+#### The `workers.dev` preview shows SEO 66 — that is expected, not a regression
+
+Cloudflare auto-injects an `X-Robots-Tag: noindex` response header on every `*.workers.dev` URL (it does not want preview subdomains indexed). Lighthouse's "Page is not blocked from indexing" / `is-crawlable` SEO audit reads that header and fails, which drags the whole SEO category down to ~66 on the preview. The **page itself is clean**: no `noindex` meta tag, a valid meta description, and a valid canonical. On the production custom domain (where Cloudflare does not inject the header) the same page scores SEO 100. So if a future preview run shows SEO 66 with that single failing audit, do NOT treat it as a regression — re-check on the real domain before investigating.
+
 **Levers that achieve this -- preserve unless you have a stronger reason than "I want to simplify":**
 - All islands hydrate at `client:idle` or `client:visible` except `MobileNav` (Radix Sheet portal requires `client:only="react"`)
 - Lenis init wrapped in `requestIdleCallback`

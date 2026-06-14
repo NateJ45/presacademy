@@ -70,10 +70,16 @@ const WORDMARK = env.SITE_NAME ?? 'The Presbyterian Academy';
 
 let count = 0;
 async function render(slug, tagline) {
-  await renderOg({ wordmark: WORDMARK, tagline, outPath: resolve(outDir, `${slug}.png`) });
-  count += 1;
-  const t = String(tagline);
-  console.log(`  ${slug}.png — ${t.slice(0, 60)}${t.length > 60 ? '…' : ''}`);
+  try {
+    await renderOg({ wordmark: WORDMARK, tagline, outPath: resolve(outDir, `${slug}.png`) });
+    count += 1;
+    const t = String(tagline);
+    console.log(`  ${slug}.png — ${t.slice(0, 60)}${t.length > 60 ? '…' : ''}`);
+  } catch (e) {
+    // Never fail the build. Sharp's text rendering needs Pango on the host; if
+    // it is unavailable in CI, the committed PNG for this route ships instead.
+    console.warn(`  (skipped ${slug}.png — ${e?.message ?? e})`);
+  }
 }
 
 // ---- Page singletons → /og/<slug>.png -----------------------------------

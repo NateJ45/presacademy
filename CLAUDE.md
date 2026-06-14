@@ -2,13 +2,15 @@
 
 This is the always-loaded reference for the `ncs-presacademy` codebase: the conventions and landmines an agent needs on every task. Deep detail for specific areas (theme, components, SEO, performance, Sanity, deployment) lives under `docs/agent/` and is read on demand. The topic index at the bottom is the map.
 
-> **This repository is a reusable church-website starter** (Astro + Sanity + Cloudflare Workers), extracted from a finished, live church build. It ships with placeholder identity ("The Presbyterian Academy", presbyterianacademy.org) that `scripts/rebrand.mjs` stamps with a real church's details, a starter Sanity dataset (`npm run seed`), and the **Events** and **Sermons** modules enabled. **Sanity is the single source of truth for all site content** (see the callout below). New-project flow: `README.md` quick start, then `docs/bootstrap/NEW-PROJECT.md`.
+> **This repository is a reusable church-website starter** (Astro + Sanity + Cloudflare Workers), extracted from a finished, live church build. It ships with placeholder identity ("The Presbyterian Academy", presbyterianacademy.org) that `scripts/rebrand.mjs` stamps with a real church's details, a starter Sanity dataset (`npm run seed`), and the **Events** and **Sermons** modules enabled. (This particular repo has moved well past that starting point: see the Current project state note below.) **Sanity is the single source of truth for all site content** (see the callout below). New-project flow: `README.md` quick start, then `docs/bootstrap/NEW-PROJECT.md`.
 >
 > **Content model — Sanity is the single source of truth.** Every piece of visible content (page copy, headings, buttons/links, images, the nav menus, SEO titles/descriptions, the worship service time, contact details) is a Sanity field; on a launched site every field should be populated so Sanity Studio mirrors the live site exactly. The literal strings in `src/pages/*.astro` are **safety-net fallbacks** (in the template they carry the placeholder-church example copy) that render only when a field is empty; on a live project they are NOT the live content. **Change content in Studio (the site rebuilds), not in the `.astro` files** — a populated Sanity field overrides the inline string. Values that repeat are single-sourced: the worship time is `siteSettings.worshipService` (derived everywhere via `src/lib/serviceTime.ts`); identity / contact / social (church name, email, pastoral email, phone, address, office hours, socials, give/watch links) resolve through `src/lib/siteSettings.ts` (`resolveSiteSettings`), read by the header, footer, nav, JSON-LD, and every page. There is deliberately no hardcoded contact/social fallback in `src/data/site.ts`, so an empty Sanity field renders blank or hides rather than showing a stand-in. Full map: `docs/agent/editor-vs-hardcoded.md`.
 
 Companion tactical runbook: `OPERATIONS.md`. New-project setup entry point: `docs/bootstrap/NEW-PROJECT.md` with `docs/bootstrap/setup-checklist.md` as the launch gate.
 
 Project slash commands (in `.claude/commands/`): `/sanity-audit` (ground truth on the dataset: counts, gaps, drafts — run it before debugging any "content looks wrong" report), `/rebuild` (trigger the production rebuild that makes published Sanity content live), `/visual-verify` (the both-themes-both-viewports screenshot loop). The design system summary for visual work is `design.md` at the repo root.
+
+> **Current project state (2026-06-14).** This repo is no longer a generic church-starter instance: it is the live build for **The Presbyterian Academy, a Reformed lay-formation SCHOOL** (not a church). The church routes/modules (sermons, worship, ministries, kids, weddings, give, what-we-believe, music, journal) were removed in the lay-school revamp and replaced by the school catalog: **courses, faculty, terms, pricing tiers, teaching areas, testimonials**. The brand is **"Direction A": green-anchored bookish minimalism** — near-white warm paper, soft near-black ink, a deep Reformed forest green anchor, brass hairlines, Fraunces over Source Sans 3, and a green eyebrow-rubric signature; the Romanesque arch and the paper-grain texture are retired. Current palette lives in `design.md` and `docs/agent/theme-and-color.md`; the branding decision is written up in `docs/research/2026-06-14-brand-direction-debate.md`. A live visual reference of every token, font, and example component is the secret **`/style-guide`** route (noindex, unlinked, sitemap-excluded). The site also carries a CSS-first "refined kinetic editorial" motion system (graph-paper atmosphere, a kinetic hero headline, choreographed scroll reveals, a topics ticker, stat count-ups; details in `docs/agent/animation.md`), and the Sanity dataset is seeded with PLACEHOLDER images (`scripts/seed-placeholder-images.mjs`) so the site renders fully for styling until real photography is added. Much of the generic *starter* framing below still describes the reusable template this was extracted from; trust this note for the current site.
 
 ---
 
@@ -60,6 +62,7 @@ Standalone scripts:
 - `npm run og` to re-run `scripts/generate-og-default.mjs` and regenerate `public/og-default.png` (after changing brand colors, tagline, or the wordmark in the script's inputs block).
 - `npm run studio:dev` to start the Sanity Studio locally for content editing.
 - `npm run studio:deploy` to deploy the Sanity Studio to its hosted URL. **Run this after every schema change.** If you skip it, the hosted Studio shows "unknown fields" warnings next to data in new fields, and the editor sees a prompt to "Remove field." Do NOT click "Remove field" in Studio: it deletes the Sanity document data for every document with that field populated, and it cannot be undone without a dataset restore. The correct sequence is: edit schema, `npm run typegen`, `npm run studio:deploy`, commit.
+- `node scripts/seed-placeholder-images.mjs` (add `--apply` to write) fills any empty course cover, faculty portrait, or page hero in the Sanity dataset with a placeholder image, so the site renders fully for styling. Idempotent; the editor swaps real photography later.
 
 `public/og-default.png` is committed to the repo because it is a real asset shipped to visitors. `src/lib/sanity.types.ts` is also committed so collaborators don't need to run typegen to see what the schemas look like in code.
 
@@ -79,26 +82,31 @@ Standalone scripts:
 
 ## Routes summary
 
-Core routes that ship with the starter (always on, not toggleable):
+The actual routes of this lay-school build (this replaces the church-starter route set):
 
 | Path | Source | Notes |
 |---|---|---|
-| `/` | `src/pages/index.astro` | Home page singleton from Sanity |
+| `/` | `src/pages/index.astro` | Home: split hero, wayfinding ledger, start-here rail, stats, course + faculty + testimonial strips |
 | `/about` | `src/pages/about.astro` | About page singleton |
-| `/faq` | `src/pages/faq.astro` | FAQ page + faqItem collection grouped by category |
-| `/contact` | `src/pages/contact.astro` | Contact details + map (church build removed the Web3Forms form) |
-| `/events` | `src/pages/events/index.astro` | Events module: upcoming + recurring rhythms |
+| `/courses` | `src/pages/courses/index.astro` | Course catalog + filters (topic, teacher, term) |
+| `/courses/[slug]` | `src/pages/courses/[slug].astro` | Course detail: sessions, pricing, instructors |
+| `/faculty` | `src/pages/faculty/index.astro` | Faculty index |
+| `/faculty/[slug]` | `src/pages/faculty/[slug].astro` | Faculty profile: degrees, publications, courses taught |
+| `/events` | `src/pages/events/index.astro` | Events: info sessions, lectures, term starts |
 | `/events/[slug]` | `src/pages/events/[slug].astro` | Event detail |
-| `/sermons` | `src/pages/sermons/index.astro` | Sermons module: featured + archive + livestream |
-| `/sermons/[slug]` | `src/pages/sermons/[slug].astro` | Sermon detail (embedded video) |
-| `/worship` | `src/pages/worship.astro` | The "I'm New / Plan a Visit" page (first-visit info) |
-| `/journal` | `src/pages/journal/index.astro` | Post grid with category chips |
-| `/journal/[slug]` | `src/pages/journal/[slug].astro` | Post detail: reading progress + header + cover + body + related |
-| `/privacy` | `src/pages/privacy.astro` | Privacy policy from singleton, with static fallback when doc is absent |
+| `/pricing` | `src/pages/pricing.astro` | Pricing tiers + scholarships |
+| `/for-you` | `src/pages/for-you.astro` | "Find your path" audience routing |
+| `/get-started` | `src/pages/get-started.astro` | Express-interest + Calendly intro |
+| `/resources` | `src/pages/resources.astro` | Resources page |
+| `/faq` | `src/pages/faq.astro` | FAQ page + faqItem collection grouped by category |
+| `/contact` | `src/pages/contact.astro` | Contact details + map |
+| `/privacy` | `src/pages/privacy.astro` | Privacy policy singleton, with static fallback when the doc is absent |
+| `/[slug]` | `src/pages/[slug].astro` | Custom pages: the `page` collection + the 16-block page builder |
+| `/style-guide` | `src/pages/style-guide.astro` | SECRET internal brand reference: noindex, unlinked, sitemap-excluded |
 | `/sitemap-index.xml` | `@astrojs/sitemap` (auto) | Production sitemap |
 | `/404` | `src/pages/404.astro` | Custom 404 |
 
-Additional routes come from opt-in modules staged under `modules/`. Each module is documented under `docs/modules/`. Modules: `events` and `sermons` (both ENABLED on this site, see their docs in `docs/modules/`), `portfolio`, `process`, `newsletter`, `lead-magnets`, `style-quiz`, `budget-calculator`, `shop`, `e-design`, `gift-certificates`, `press`, `resources`.
+The opt-in modules under `modules/` are mostly church-era. `events` is active (reframed for school events); the former `sermons`, `worship`, `journal`, and ministry modules were removed in the lay-school revamp. The other staged modules (`portfolio`, `process`, `newsletter`, `lead-magnets`, `style-quiz`, `budget-calculator`, `shop`, `e-design`, `gift-certificates`, `press`, `resources`) are unused by this build.
 
 ---
 
@@ -230,7 +238,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 
 | Area | Doc |
 |---|---|
-| **Design brief (one-file system: palette, type, motion, idioms, hard rules)** | `design.md` — attach it (plus screenshots) for any visual work |
+| **Design brief (one-file system: palette, type, motion, idioms, hard rules)** | `design.md` — attach it (plus screenshots) for any visual work. Live visual reference: the secret `/style-guide` route. |
 | Stack detail + astro.config landmines | `docs/agent/stack-and-config.md` |
 | Page + section architecture, nav, visibility toggles | `docs/agent/page-architecture.md` |
 | Brand colors + theme system (light/dark discipline) | `docs/agent/theme-and-color.md` |
@@ -250,7 +258,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Change history | `docs/agent/changelog.md` |
 | New-project setup runbook + pre-launch checklist | `docs/bootstrap/NEW-PROJECT.md`, `docs/bootstrap/setup-checklist.md` |
 | Per-module enable guides | `docs/modules/<module-name>.md` |
-| Church-website research (peer audit + gold-standard study) | `docs/research/` |
+| Research (church peer audit, lay-school IA patterns, the 2026-06 brand-direction debate + verdict) | `docs/research/` |
 
 ---
 

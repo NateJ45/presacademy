@@ -106,7 +106,7 @@ const pillGhost =
 
           {course.whoFor?.length > 0 && (
             <div class="mt-l">
-              <h2 class="font-body text-xs font-normal uppercase tracking-eyebrow text-foreground/80">Who this is for</h2>
+              <h2 class="eyebrow font-body text-xs font-normal uppercase tracking-eyebrow text-foreground/80">Who this is for</h2>
               <ul class="mt-3 list-disc space-y-1.5 pl-5 text-foreground/80">
                 {course.whoFor.map((w: string) => <li>{w}</li>)}
               </ul>
@@ -115,7 +115,7 @@ const pillGhost =
 
           {course.sessionOutline?.length > 0 && (
             <div class="mt-l">
-              <h2 class="font-body text-xs font-normal uppercase tracking-eyebrow text-foreground/80">The sessions</h2>
+              <h2 class="eyebrow font-body text-xs font-normal uppercase tracking-eyebrow text-foreground/80">The sessions</h2>
               <div class="mt-3 border-t border-border-soft">
                 {course.sessionOutline.map((s: any, idx: number) => (
                   <div class="grid grid-cols-[3rem_1fr] gap-4 border-b border-border-soft py-4">

@@ -64,11 +64,14 @@ const wayfinding = [
   { n: '04', title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
 ];
 
+// Stats for a NEW (2026) school: structure + standards, not a track record.
+// No founding year and no alumni counts — the school is brand-new, so historical
+// figures would be false. Only the 100% faculty figure counts up.
 const stats = [
-  { value: '1998', label: 'Established' },
-  { value: '1,200+', label: 'Learners formed' },
   { value: '100%', label: 'Ordained or credentialed faculty' },
-  { value: '3', label: 'Denominations served' },
+  { value: 'In person', label: 'Taught in cohorts', count: false },
+  { value: 'Need-based', label: 'Scholarships every term', count: false },
+  { value: 'Reformed', label: 'Rooted in the Westminster Standards', count: false },
 ];
 
 const pillPrimary =
@@ -79,11 +82,15 @@ const pillGhost =
 
 <BaseLayout {title} {description} {siteSettings}>
   {/* Split hero */}
-  <section class="bg-background" aria-labelledby="home-hero">
+  <section class="bg-background hero-atmos overflow-hidden" aria-labelledby="home-hero">
     <div class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]">
-      <div>
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      <div class="hero-entry-stagger">
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">
+          <span class="kinetic-words">{heroHeadline.split(' ').map((word: string, i: number) => (
+            <><span class="w" style={`--i:${i}`}><span>{word}</span></span>{' '}</>
+          ))}</span>
+        </h1>
         <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
         <div class="mt-l flex flex-wrap gap-3">
           <a href="/courses" class={pillPrimary}>Browse courses</a>
@@ -101,9 +108,9 @@ const pillGhost =
         <div class="h-0.5 w-full bg-gold"></div>
         <div class="img-zoom relative aspect-[4/5] overflow-hidden bg-muted">
           {heroImg?.asset ? (
-            <SanityImage source={heroImg} width={900} loading="eager" fetchpriority="high" sizes="(min-width: 1024px) 520px, 90vw" class="h-full w-full object-cover" />
+            <SanityImage source={heroImg} width={900} loading="eager" fetchpriority="high" sizes="(min-width: 1024px) 520px, 90vw" class="h-full w-full object-cover parallax-slow" />
           ) : (
-            <div class="image-well h-full w-full"></div>
+            <div class="image-well h-full w-full parallax-slow"></div>
           )}
         </div>
       </div>
@@ -112,7 +119,7 @@ const pillGhost =
 
   {/* Wayfinding ledger */}
   <section class="border-y border-border-soft bg-background" aria-label="Where to begin">
-    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" data-stagger-grid>
       {wayfinding.map((w, i) => (
         <a href={w.href} class:list={['group block px-m py-l no-underline', i < wayfinding.length - 1 && 'lg:border-r border-border-soft']}>
           <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{w.n}</span>
@@ -127,8 +134,10 @@ const pillGhost =
   {startHere.length > 0 && (
     <section class="bg-card" aria-labelledby="home-start">
       <div class="mx-auto max-w-content px-m py-section-md">
-        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
-        <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">A few courses to begin with</h2>
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
+          <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">A few courses to begin with</h2>
+        </div>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
           {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
         </ul>
@@ -136,15 +145,30 @@ const pillGhost =
     </section>
   )}
 
-  {/* Stat / heritage band */}
-  <section class="border-b border-border-soft bg-background" aria-label="The Academy in numbers">
-    <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4">
+  {/* Stat band */}
+  <section class="border-b border-border-soft bg-background" aria-label="The Academy at a glance">
+    <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
       {stats.map((s, i) => (
         <div class:list={['px-m py-l', i < stats.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
-          <p class="font-display text-h2 text-chapel-ink">{s.value}</p>
+          <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count === false ? undefined : true}>{s.value}</p>
           <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
         </div>
       ))}
+    </div>
+  </section>
+
+  {/* Topics ticker — a slow marquee of what the Academy teaches. Decorative. */}
+  <section class="border-b border-border-soft bg-card" aria-hidden="true">
+    <div class="marquee py-3.5">
+      <div class="marquee__track">
+        {[0, 1].map(() => (
+          <div class="marquee__group text-xs uppercase tracking-eyebrow text-foreground/55">
+            {['Old Testament', 'Systematic Theology', 'Church History', 'Reformed Worship', 'Biblical Greek', 'Christian Ethics', 'Apologetics', 'Pastoral Care', 'The Confessions', 'Spiritual Formation'].map((topic) => (
+              <span class="inline-flex items-center gap-3">{topic}<span class="text-gold-ink">&#10022;</span></span>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -153,11 +177,11 @@ const pillGhost =
     <section class="bg-background" aria-labelledby="home-courses">
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
             <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">Learn something worth knowing</h2>
           </div>
-          <a href="/courses" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">See all courses</a>
+          <a href="/courses" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">See all courses<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
@@ -172,11 +196,11 @@ const pillGhost =
     <section class="surface-warm bg-muted" aria-labelledby="home-faculty">
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
             <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">Taught by ministers and scholars</h2>
           </div>
-          <a href="/faculty" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">Meet the faculty</a>
+          <a href="/faculty" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">Meet the faculty<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
@@ -190,8 +214,10 @@ const pillGhost =
   {testimonials.length > 0 && (
     <section class="bg-background" aria-labelledby="home-stories">
       <div class="mx-auto max-w-content px-m py-section-lg">
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
-        <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">From the people we serve</h2>
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
+          <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">From the people we serve</h2>
+        </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
           {testimonials.map((t: any) => (

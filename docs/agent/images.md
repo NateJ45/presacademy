@@ -41,6 +41,22 @@ Each entry is a width. The wrapper filters this down to entries <= requested `wi
 
 **Hotspot and crop.** Enable `hotspot: true` on every Sanity image field. Editors can then click to set the focal point, and the URL builder passes that hotspot to Sanity so crops at smaller sizes keep the right part of the image in frame. Faces, key visual elements, anything that matters when the image gets cropped down.
 
+### Placeholder images in the dataset (`scripts/seed-placeholder-images.mjs`)
+
+So the site renders fully while design and copy are still in progress, the dataset now carries placeholder images, seeded by `scripts/seed-placeholder-images.mjs` (added 2026-06-14, commit 8a644e5). The script uploads placeholders into Sanity and patches **only empty image fields**, so it never overwrites real photography an editor has already set, and it is idempotent (re-running it is a no-op once fields are populated). It covers:
+
+- **Course `coverImage`s** and **page `heroImage`s** — drawn from the in-repo Pexels library under `src/assets/placeholders/` (`teach-*`, `study-*`, `community-*`).
+- **Faculty `photo`s** — fetched from `pravatar.cc`.
+
+Run it as a dry run first, then apply:
+
+```
+node scripts/seed-placeholder-images.mjs          # dry run — reports what it would patch
+node scripts/seed-placeholder-images.mjs --apply  # actually uploads + patches
+```
+
+The initial `--apply` run patched 22 documents (8 course covers, 5 faculty portraits, 9 page heroes including the home hero). **These are placeholders — the editor swaps in real photography later** (the same idempotent script then leaves the now-populated fields alone). Note the static deployment only shows the placeholders after a rebuild; the dev server shows them immediately.
+
 ### Portrait orientation caps
 
 The journal inline image block detects orientation from the Sanity asset `_ref` (it encodes `{W}x{H}` in the filename) via `parseSanityAssetDimensions()`. When `height > width`:

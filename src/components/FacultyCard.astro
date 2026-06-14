@@ -24,10 +24,11 @@ const areaSlugs = (person.teachingAreas ?? []).map((t: any) => t.slug).filter(Bo
 
 <li data-faculty-card data-areas={areaSlugs} class="list-none">
   <a href={`/faculty/${person.slug}`} class="card-lift group grid grid-cols-[96px_1fr] gap-4 no-underline">
-    <div class="image-well aspect-[4/5] overflow-hidden">
+    <div class="img-zoom image-well aspect-[4/5] overflow-hidden">
       {person.photo?.asset && (
         <SanityImage source={person.photo} width={240} sizes="96px" class="h-full w-full object-cover" />
       )}
+      <div class="img-tint img-tint-evergreen" aria-hidden="true"></div>
     </div>
     <div>
       <h3 class="font-display text-h5 text-foreground transition-colors group-hover:text-link">{name}</h3>

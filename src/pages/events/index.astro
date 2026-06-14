@@ -59,9 +59,11 @@ const schemas = [
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      </div>
       <div class="mt-l h-px w-full bg-gold/50"></div>
     </div>
   </section>
@@ -69,8 +71,10 @@ const schemas = [
   {/* Upcoming one-time events */}
   <section class="bg-background" aria-labelledby="upcoming-heading">
     <div class="mx-auto max-w-content px-m pb-section-md">
-      <p class="text-xs uppercase tracking-eyebrow text-gold-ink">{page?.upcomingEyebrow ?? 'Mark your calendar'}</p>
-      <h2 id="upcoming-heading" class="mt-2 font-display text-h2 text-foreground">{page?.upcomingHeadline ?? 'Upcoming'}</h2>
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{page?.upcomingEyebrow ?? 'Mark your calendar'}</p>
+        <h2 id="upcoming-heading" class="mt-2 font-display text-h2 text-foreground">{page?.upcomingHeadline ?? 'Upcoming'}</h2>
+      </div>
       {upcoming.length > 0 ? (
         <ul class:list={['mt-l grid grid-cols-1 gap-l list-none p-0', upcoming.length === 1 ? 'max-w-3xl' : 'md:grid-cols-2 lg:grid-cols-3']} data-stagger-grid>
           {upcoming.map((ev: any) => (
@@ -99,9 +103,11 @@ const schemas = [
   {/* Recurring rhythms */}
   <section class="surface-warm bg-muted" aria-labelledby="recurring-heading">
     <div class="mx-auto max-w-content px-m py-section-md">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{page?.rhythmsEyebrow ?? 'Every month'}</p>
-      <h2 id="recurring-heading" class="mt-2 font-display text-h2 text-foreground">{page?.rhythmsHeadline ?? 'Ways to get a feel for the Academy'}</h2>
-      <ul class="mt-l max-w-3xl list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft">
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{page?.rhythmsEyebrow ?? 'Every month'}</p>
+        <h2 id="recurring-heading" class="mt-2 font-display text-h2 text-foreground">{page?.rhythmsHeadline ?? 'Ways to get a feel for the Academy'}</h2>
+      </div>
+      <ul class="mt-l max-w-3xl list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft" data-stagger-grid>
         {displayRecurring.map((ev: any) => (
           <li class="py-m">
             <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">

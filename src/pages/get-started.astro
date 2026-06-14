@@ -57,9 +57,11 @@ const schemas = [
 <BaseLayout {title} {description} {schemas} {siteSettings}>
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      </div>
       <div class="mt-l h-px w-full bg-gold/50"></div>
     </div>
   </section>
@@ -68,9 +70,11 @@ const schemas = [
     <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-lg lg:grid-cols-[1.1fr_.9fr]">
       {/* Express-interest form */}
       <div>
-        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Request information</p>
-        <h2 class="mt-2 font-display text-h3 text-foreground">Ask us anything</h2>
-        <p class="mt-3 text-foreground/80">Tell us what you are hoping to learn and we will help you find the right course.</p>
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Request information</p>
+          <h2 class="mt-2 font-display text-h3 text-foreground">Ask us anything</h2>
+          <p class="mt-3 text-foreground/80">Tell us what you are hoping to learn and we will help you find the right course.</p>
+        </div>
         <div class="mt-l">
           <FormBlock form={page?.requestForm} fallbackEmail={settings.email} fallbackLabel="Email us" />
         </div>
@@ -80,7 +84,7 @@ const schemas = [
       <aside>
         <div class="h-0.5 w-full bg-gold"></div>
         <div class="border border-t-0 border-border-soft bg-card p-l">
-          <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{page?.calendlyEyebrow ?? 'Or talk to us first'}</p>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{page?.calendlyEyebrow ?? 'Or talk to us first'}</p>
           <h3 class="mt-2 font-display text-h4 text-foreground">{page?.calendlyHeadline ?? 'Book a free intro session'}</h3>
           <p class="mt-2 text-sm text-foreground/75">{page?.calendlyBody ?? 'A short, no-pressure conversation about where you are and what fits.'}</p>
           {calendlyUrl ? (
@@ -90,12 +94,12 @@ const schemas = [
           )}
 
           <div class="mt-l border-t border-border-soft pt-l">
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Visit a class</p>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">Visit a class</p>
             <p class="mt-2 text-sm text-foreground/75">{page?.visitClassBody ?? 'You are welcome to sit in on the first session of any course, free, before you decide.'}</p>
           </div>
 
           <div class="mt-l border-t border-border-soft pt-l">
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Take a syllabus with you</p>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">Take a syllabus with you</p>
             <p class="mt-2 text-sm text-foreground/75">{page?.syllabusBody ?? 'Every course page has a downloadable syllabus, so you can see exactly what a term covers.'}</p>
             <a href="/courses" class="mt-2 inline-block text-sm text-link underline underline-offset-2 hover:text-primary-dark">Browse courses</a>
           </div>
@@ -107,8 +111,10 @@ const schemas = [
   {/* What happens next */}
   <section class="surface-warm bg-muted">
     <div class="mx-auto max-w-content px-m py-section-md">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{page?.stepsHeadline ?? 'What happens next'}</p>
-      <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3">
+      <div data-reveal>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{page?.stepsHeadline ?? 'What happens next'}</p>
+      </div>
+      <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
         {steps.map((s: any, i: number) => (
           <div class="border-t-2 border-gold pt-4">
             <span class="font-display text-lg tabular-nums text-gold-ink">{String(i + 1).padStart(2, '0')}</span>

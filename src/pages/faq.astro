@@ -10,7 +10,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getFaqPage, getSiteSettings } from '@/lib/queries';
-import heroFaq from '@/assets/placeholders/place-sanctuary-interior-light.jpg';
+import heroFaq from '@/assets/placeholders/teach-class-discussion.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -104,13 +104,13 @@ const schemas = [
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroFaq}
-    localImageAlt="A seminar room set for an evening class"
+    localImageAlt="Adult students in a lively class discussion"
     headingId="faq-hero"
     size="short"
   />
 
   <section class="bg-background" aria-label="Frequently asked questions">
-    <div class="mx-auto max-w-3xl px-m py-section-lg space-y-section-md">
+    <div class="mx-auto max-w-3xl px-m py-section-lg space-y-section-md" data-stagger-grid>
       {grouped.map((group) => (
         <div>
           <h2 class="font-display text-h3 text-foreground mb-m">{group.category}</h2>

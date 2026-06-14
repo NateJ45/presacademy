@@ -19,14 +19,20 @@
 
 @theme {
   /* Brand palette — Oxblood & Stone. */
-  --color-primary:      #7A2A2C; /* Geneva Oxblood — interactive accent */
-  --color-primary-dark: #5E2122; /* Oxblood Deep — anchor/link text */
-  --color-accent:       #2A2521; /* Walnut Ink — headings + body */
-  --color-accent-dark:  #1E1A17; /* Walnut Deep — dark surfaces */
+  /* Direction A (brand evolution): green-anchored, near-white, soft-black.
+     Oxblood is demoted from the lead/field color to a sparing accent; deep
+     forest green is promoted to the primary anchor. Token NAMES are kept
+     (chapel, chapel-ink, etc.) and only VALUES changed, so the change is
+     contained and reversible — chapel now carries green, not oxblood. */
+  --color-primary:      #33503F; /* Geneva Green — primary anchor (Direction A) */
+  --color-primary-dark: #2A4233; /* Green Deep — deeper anchor/link text */
+  --color-accent:       #1F1B18; /* Soft near-black — headings + body (Direction A) */
+  --color-accent-dark:  #1E1A17; /* Near-black deep — dark surfaces */
   --color-secondary:    #B7A99B; /* Cloister Stone — borders, eyebrows */
   --color-tertiary:     #9C8E7E; /* Stone Deep — sparingly */
-  --color-bg:           #F4EEE6; /* Stone Cream — warm page surface */
-  --color-bg-soft:      #FCF9F4; /* Chalk — alternating surface */
+  --color-bg:           #FAF8F4; /* Near-white warm paper — page surface (Direction A) */
+  --color-bg-soft:      #FFFFFF; /* White — raised/alt surface (Direction A) */
+  --color-oxblood:      #7A2A2C; /* Oxblood — demoted, sparing secondary accent */
   /* border-soft is theme-aware (declared in the @theme inline map below, with
      per-theme values in :root / .dark). It used to be a static #DED6C8 here,
      which made every faint divider GLOW at ~12:1 on the dark page. */
@@ -39,15 +45,15 @@
      always cream (--color-chapel-foreground). The token keeps its legacy `chapel`
      name; only the value changed to oxblood. Reachable as bg-chapel,
      bg-chapel-deep, text-chapel-foreground. */
-  --color-chapel:            #5E2122; /* Oxblood Deep — utility bar, footer, CTA band */
-  --color-chapel-deep:       #4A1B1C; /* Oxblood Deepest — deepest band base */
-  --color-chapel-foreground: #F1EAD9; /* warm cream text on band surfaces */
+  --color-chapel:            #2A4233; /* Forest Green — footer + closing-CTA band (Direction A) */
+  --color-chapel-deep:       #1F3227; /* Forest Green Deepest — band base (Direction A) */
+  --color-chapel-foreground: #F1EAD9; /* warm cream text on green band surfaces */
   --color-gold:              #A87C3E; /* Aged Brass — hairline rules, small accents */
 
   /* Arched-top crown radius — the building's architectural signature, applied to
      hero / feature / staff images via the .arch-top utility (a Romanesque
      rounded arch). One token so the curve stays consistent everywhere. */
-  --arch-radius: clamp(3.5rem, 14vw, 9rem);
+  --arch-radius: clamp(0.5rem, 1vw, 0.85rem); /* Direction A: Romanesque arch retired -> quiet modern rounding */
 
   /* Fonts */
   --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
@@ -202,6 +208,31 @@
   letter-spacing: var(--tracking-eyebrow);
 }
 
+/* Eyebrow rubric — the unified section-eyebrow mark (Direction A signature).
+   A short brand-green leading rule before a section / hero eyebrow, so every
+   eyebrow that introduces a headline reads as ONE system across the site (this
+   replaces the old mix of a brass underline on SectionHeading and bare labels
+   elsewhere, and stands in for the retired arch). Usage: add the `eyebrow` class
+   to an uppercase `tracking-eyebrow` label that sits above a headline. On dark /
+   green / photo-scrim surfaces also add `eyebrow-inverse` so the rule lifts to
+   brass and stays visible (the green rule would vanish on the green band).
+   Deliberately NOT applied to inline category tags, stat labels, footer/nav
+   labels, or button text — those are a different element. */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--primary);
+  vertical-align: middle;
+  margin-right: 0.625rem;
+  position: relative;
+  top: -0.06em;
+}
+.eyebrow-inverse::before {
+  background: #C7A875;
+}
+
 /* Script accent (OPT-IN) — no script font is loaded by default; the accent
    falls back to a system cursive (Snell Roundhand / Apple Chancery / cursive).
    To enable an editorial script accent for a project: (1) add a @fontsource
@@ -259,37 +290,37 @@
 
 :root {
     /* Surfaces */
-    --background: #F4EEE6;
-    --foreground: #2A2521;
-    --card: #FCF9F4;
-    --card-foreground: #2A2521;
-    --popover: #FCF9F4;
-    --popover-foreground: #2A2521;
+    --background: #FAF8F4;
+    --foreground: #1F1B18;
+    --card: #FFFFFF;
+    --card-foreground: #1F1B18;
+    --popover: #FFFFFF;
+    --popover-foreground: #1F1B18;
 
     /* Brand */
-    --primary: #7A2A2C;
+    --primary: #33503F;
     --primary-foreground: #FFFFFF;
     --secondary: #B7A99B;
-    --secondary-foreground: #2A2521;
+    --secondary-foreground: #1F1B18;
 
     /* Quiet surfaces / muted text */
-    --muted: #EDE5D9;
-    --muted-foreground: #5C5046;    /* warm gray on cream — verify AA */
+    --muted: #F1F0EB;
+    --muted-foreground: #55514A;    /* warm gray on near-white — AA */
 
     /* Accent */
-    --accent: #E7DDCF;
-    --accent-foreground: #2A2521;
+    --accent: #ECEAE3;
+    --accent-foreground: #1F1B18;
 
     /* States */
     --destructive: oklch(0.577 0.245 27.325);
-    --border: #E0D6C7;
-    --input: #E0D6C7;
-    --ring: #7A2A2C;
-    --link: #5E2122;                /* deep oxblood on cream — verify AA */
-    --status-success: #2F6B4F;      /* status green on cream (~5.3:1, AA) */
-    --chapel-ink: #7A2A2C;          /* oxblood keyword emphasis on cream (~7:1) */
-    --gold-ink: #6E5128;            /* deepened brass as TEXT on cream (~4.8:1, AA) */
-    --border-soft: #E0D6C7;         /* faint warm divider */
+    --border: #E6E3DB;
+    --input: #E6E3DB;
+    --ring: #33503F;
+    --link: #33503F;                /* deep green on near-white — AA ~8:1 */
+    --status-success: #2F6B4F;      /* status green on near-white (~5.3:1, AA) */
+    --chapel-ink: #33503F;          /* green keyword emphasis on near-white (~8:1) */
+    --gold-ink: #6E5128;            /* deepened brass as TEXT on near-white (~4.8:1, AA) */
+    --border-soft: #EAE7DF;         /* faint warm divider */
 
     /* Charts (kept neutral, not used at launch) */
     --chart-1: oklch(0.87 0 0);
@@ -301,14 +332,14 @@
     --radius: 0.5rem;
 
     /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
-    --sidebar: #F4EEE6;
-    --sidebar-foreground: #2A2521;
-    --sidebar-primary: #7A2A2C;
+    --sidebar: #FAF8F4;
+    --sidebar-foreground: #1F1B18;
+    --sidebar-primary: #33503F;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #EDE5D9;
-    --sidebar-accent-foreground: #2A2521;
-    --sidebar-border: #E0D6C7;
-    --sidebar-ring: #7A2A2C;
+    --sidebar-accent: #F1F0EB;
+    --sidebar-accent-foreground: #1F1B18;
+    --sidebar-border: #E6E3DB;
+    --sidebar-ring: #33503F;
 
     --tint-rgb: 168, 124, 62;
 }
@@ -328,10 +359,11 @@
     --popover: #2A2420;
     --popover-foreground: #F1EAD9;
 
-    --primary: #C16A5A;
-    /* White (not ink) on the oxblood pill background: bg-primary stays the
-       static #7A2A2C in both themes; white keeps every primary CTA at ~7:1 in
-       both light and dark mode. */
+    --primary: #74A98A;
+    /* White on the static CTA pill: @theme bg-primary is the static green
+       #33503F in both themes; white keeps every primary CTA at ~8:1. This
+       shadcn --primary (lifted green) is used only for rings / underlines /
+       decoration on the dark page, where #33503F would vanish. */
     --primary-foreground: #FFFFFF;
     --secondary: #8C7E70;
     --secondary-foreground: #F1EAD9;
@@ -345,10 +377,10 @@
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 12%);
     --input: oklch(1 0 0 / 15%);
-    --ring: #C16A5A;
-    --link: #E0998C;
+    --ring: #74A98A;
+    --link: #9CC6AC;
     --status-success: #6FBF95;      /* lifted status green for dark (~8:1, AA) */
-    --chapel-ink: #E0998C;          /* lifted oxblood keyword emphasis on dark */
+    --chapel-ink: #9CC6AC;          /* lifted green keyword emphasis on dark */
     --gold-ink: #C9A06A;            /* lifted brass as TEXT on dark surfaces (AA) */
     --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
 
@@ -957,14 +989,182 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0; /* Direction A: paper grain retired (rule kept for easy restore) */
   background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   background-size: 220px 220px;
   mix-blend-mode: multiply;
 }
 .dark body::before {
-  opacity: 0.06;
+  opacity: 0; /* Direction A: paper grain retired */
   mix-blend-mode: screen;
+}
+
+/* ============================================================
+   Direction A motion system — "refined kinetic editorial."
+   CSS-first choreography layered on the BaseLayout reveal observer.
+   Everything animates transform / opacity / clip-path / background
+   only (zero CLS). The reduced-motion block at the END of this
+   section neutralizes all of it. An academic graph-paper texture and
+   a couple of scroll-linked set-pieces (guarded behind @supports)
+   carry the modern, younger-feeling polish.
+   ============================================================ */
+
+/* ---- Academic graph-paper + dot textures -------------------- */
+/* Faint notebook grid for hero / band backgrounds, painted on the
+   element background so it always sits behind content (no extra DOM,
+   no stacking surprises). Theme-aware: ink lines on near-white, soft
+   cream on the dark page. Very low alpha — atmosphere, not pattern. */
+:root { --grid-rgb: 31, 27, 24; }     /* soft near-black */
+.dark { --grid-rgb: 241, 234, 217; }  /* warm cream */
+
+.surface-grid {
+  background-image:
+    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.surface-dots {
+  background-image: radial-gradient(rgba(var(--grid-rgb), 0.10) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+/* Hero atmosphere: a soft brand-green glow up top + the notebook grid
+   beneath, as one background stack so it stays behind content. */
+.hero-atmos {
+  background-image:
+    radial-gradient(58% 55% at 50% -8%, rgba(51, 80, 63, 0.10), transparent 72%),
+    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+.dark .hero-atmos {
+  background-image:
+    radial-gradient(58% 55% at 50% -8%, rgba(116, 169, 138, 0.12), transparent 72%),
+    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* ---- Choreographed reveals (extend [data-reveal]) ----------- */
+/* Directional variants: pair a class with data-reveal on any element. */
+[data-reveal].reveal-l { translate: -1.5rem 0; }
+[data-reveal].reveal-r { translate:  1.5rem 0; }
+[data-reveal].reveal-l.is-visible,
+[data-reveal].reveal-r.is-visible { translate: 0 0; }
+
+/* Headline mask-rise: a display line wipes up from behind its own
+   baseline as its [data-reveal] wrapper reveals. clip-path + transform
+   only (no reflow). Put .reveal-rise on an inline-block headline. */
+[data-reveal] .reveal-rise {
+  display: inline-block;
+  clip-path: inset(-0.12em 0 105% 0);
+  transform: translateY(0.32em);
+  transition:
+    clip-path 820ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal].is-visible .reveal-rise {
+  clip-path: inset(-0.12em 0 -0.12em 0);
+  transform: translateY(0);
+}
+
+/* The eyebrow rubric draws itself in as its section reveals. */
+.eyebrow::before {
+  transform-origin: left center;
+  transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1) 120ms;
+}
+[data-reveal]:not(.is-visible) .eyebrow::before { transform: scaleX(0); }
+[data-reveal].is-visible .eyebrow::before { transform: scaleX(1); }
+
+/* Per-word headline rise — the hero signature. Each word sits in an
+   overflow-hidden box and lifts into place on load, lightly staggered
+   by its --i index. Transform-only, fires once (forwards). */
+.kinetic-words .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.16em; margin-bottom: -0.16em; }
+.kinetic-words .w > span {
+  display: inline-block;
+  transform: translateY(1em);
+  animation: word-rise 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 65ms + 120ms);
+}
+@keyframes word-rise { to { transform: translateY(0); } }
+
+/* ---- Micro-interactions ------------------------------------- */
+/* Inline arrow that nudges forward on hover/focus of its link. */
+.link-arrow__icon {
+  display: inline-block;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-arrow:hover .link-arrow__icon,
+.link-arrow:focus-visible .link-arrow__icon { transform: translateX(0.28rem); }
+
+/* Linked cards: a green border breathes in on hover, with the lift. */
+.card-link { transition: border-color 440ms cubic-bezier(0.16, 1, 0.3, 1); }
+.card-link:hover { border-color: rgba(51, 80, 63, 0.45); }
+.dark .card-link:hover { border-color: rgba(116, 169, 138, 0.45); }
+
+/* Green duotone wash on image hover. Pairs with .img-zoom; add
+   .img-tint.img-tint-evergreen inside the image well. */
+.group:hover .img-zoom .img-tint-evergreen,
+.img-zoom:hover .img-tint-evergreen { background: rgba(51, 80, 63, 0.22); }
+
+/* ---- Marquee / ticker --------------------------------------- */
+/* A slow, edge-faded ticker. Duplicate the content inside the track so
+   the -100% loop is seamless. Pauses on hover. */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee__track {
+  --duration: 46s;
+  display: flex;
+  width: max-content;
+  animation: marquee-loop var(--duration) linear infinite;
+  will-change: transform;
+}
+/* Two identical groups sit flush; -50% loops seamlessly. The trailing
+   padding gives the seam the same rhythm as the internal gaps. */
+.marquee__group {
+  --gap: 2.75rem;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--gap);
+  padding-right: var(--gap);
+  white-space: nowrap;
+}
+@keyframes marquee-loop { to { transform: translateX(-50%); } }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+
+/* ---- Scroll-linked set-pieces (bolder, @supports-guarded) ---- */
+/* Modern CSS scroll-driven animation: no JS, degrades to a static
+   element where unsupported. A slow parallax drift on hero media. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .parallax-slow {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+    @keyframes parallax-drift {
+      from { transform: translateY(-3%) scale(1.06); }
+      to   { transform: translateY(3%)  scale(1.06); }
+    }
+  }
+}
+
+/* ---- Reduced motion: neutralize the whole system ------------ */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].reveal-l,
+  [data-reveal].reveal-r { translate: 0 0 !important; }
+  [data-reveal] .reveal-rise {
+    clip-path: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .eyebrow::before { transform: scaleX(1) !important; transition: none !important; }
+  .kinetic-words .w > span { transform: none !important; animation: none !important; }
+  .marquee__track { animation: none !important; }
+  .parallax-slow { animation: none !important; transform: none !important; }
 }
 
 /* ---------- Reduced motion -------------------------------------------- */

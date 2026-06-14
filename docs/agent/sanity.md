@@ -42,6 +42,17 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 > journal*) were removed in the remodel; the opt-in module schemas under `docs/modules/`
 > are not active for this project.
 
+> **Placeholder images in the dataset (2026-06-14).** `scripts/seed-placeholder-images.mjs`
+> (commit 8a644e5) seeds the dataset with placeholder imagery so the site renders fully
+> while real photography is pending. It uploads placeholders and patches ONLY empty image
+> fields (idempotent — it never clobbers an editor's real images): course `coverImage`s and
+> page `heroImage`s come from the in-repo Pexels library (`src/assets/placeholders/teach-*`,
+> `study-*`, `community-*`); faculty `photo`s come from `pravatar.cc`. Run
+> `node scripts/seed-placeholder-images.mjs` for a dry run, add `--apply` to write; the
+> initial apply patched 22 docs (8 course covers, 5 faculty portraits, 9 page heroes incl.
+> home). The editor replaces these with real photography later. Full detail in `images.md`.
+> (Static deploys show them only after a rebuild; the dev server shows them immediately.)
+
 **Settings and globals:**
 - `siteSettings` (singleton) — church name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links, service time; a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
 
@@ -110,7 +121,7 @@ All GROQ queries live in `src/lib/queries.ts`. Each page has a typed query funct
 
 **All-fields default.** The `default: true` property is removed from every schema field group definition. Without it, Studio opens documents on the "All fields" tab instead of a single group, so editors see everything without needing to know which group a field lives in.
 
-**Studio branding.** `studio/sanity.config.ts` sets the Studio title, the brand theme (Geneva Oxblood / Stone Cream / Walnut Ink + the site's serif display Fraunces over a humanist sans body Source Sans 3), a logo (`studio.components.logo` = the church mark + wordmark), and a layout wrapper (`studio.components.layout` = `StudioLayout`, which injects the brand web fonts). Replace the title / theme / logo for each project.
+**Studio branding.** `studio/sanity.config.ts` sets the Studio title, the brand theme (the green Direction A palette: Geneva Green accent / near-white paper surfaces / soft near-black ink + a deep forest-green top bar, with the site's serif display Fraunces over a humanist sans body Source Sans 3), a logo (`studio.components.logo` = the church mark + wordmark), and a layout wrapper (`studio.components.layout` = `StudioLayout`, which injects the brand web fonts). Replace the title / theme / logo for each project.
 
 **No document preview.** This is a static site (`output: 'static'`) with no draft-preview environment, so documents show the **form only** — there is no iframe "Preview" tab. The old one loaded the last PUBLISHED build (not the editor's draft) and only changed after a rebuild, which misled editors. `urlForDoc` / `SITE_URL_FOR_PREVIEW` stay in `sanity.config.ts` as hooks if a real preview (SSR deploy + Sanity's Presentation tool + draft-mode `sanityFetch`) is added later.
 
