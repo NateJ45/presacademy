@@ -75,7 +75,7 @@ const pub = (title, publisher, year) => ({ _key: key(), title, publisher, year }
 
 const faculty = [
   {
-    _id: 'faculty.miriam-hale', honorific: 'Rev. Dr.', name: 'Miriam Hale', title: 'Teacher of Scripture',
+    _id: 'faculty.miriam-hale', honorific: 'The Rev. Dr.', name: 'Miriam Hale', title: 'Teacher of Scripture',
     areas: ['ta.scripture', 'ta.reformed-theology'],
     degrees: [degree('PhD', 'New Testament', 'Princeton Theological Seminary', '2009'), degree('MDiv', '', 'Pittsburgh Theological Seminary', '2003'), degree('BA', 'Religion', 'The College of Wooster', '2000')],
     ordination: 'Ordained minister of Word and Sacrament', denomination: 'PC(USA)',
@@ -99,7 +99,7 @@ const faculty = [
     order: 2,
   },
   {
-    _id: 'faculty.carla-jimenez', honorific: 'Rev.', name: 'Carla Jiménez', title: 'Teacher of Spiritual Formation',
+    _id: 'faculty.carla-jimenez', honorific: 'The Rev.', name: 'Carla Jiménez', title: 'Teacher of Spiritual Formation',
     areas: ['ta.prayer', 'ta.leading-group'],
     degrees: [degree('DMin', 'Spiritual Formation', 'Fuller Theological Seminary', '2015'), degree('MDiv', '', 'Pittsburgh Theological Seminary', '2008')],
     ordination: 'Ordained minister', denomination: 'ECO',
@@ -111,7 +111,7 @@ const faculty = [
     order: 3,
   },
   {
-    _id: 'faculty.thomas-reese', honorific: 'Rev. Dr.', name: 'Thomas Reese', title: 'Teacher of Church History',
+    _id: 'faculty.thomas-reese', honorific: 'The Rev. Dr.', name: 'Thomas Reese', title: 'Teacher of Church History',
     areas: ['ta.church-history', 'ta.preaching'],
     degrees: [degree('PhD', 'Historical Theology', 'University of Notre Dame', '2007'), degree('MDiv', '', 'Princeton Theological Seminary', '2001')],
     ordination: 'Ordained minister of Word and Sacrament', denomination: 'PC(USA)',
