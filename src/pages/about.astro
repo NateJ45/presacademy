@@ -31,13 +31,34 @@ const heroSubhead =
   page?.heroSubhead ??
   'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.';
 
-// What We Believe — the distinctives, plainly, each paired with a pastoral line.
-const beliefs = [
+// About body copy: each reads the aboutPage singleton and falls back to these
+// literals when the field is empty.
+const missionEyebrow = page?.missionEyebrow ?? 'Our mission';
+const missionStatement = page?.missionStatement ?? 'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.';
+const missionBody = page?.missionBody ?? 'We are a school, not a church. We exist to equip the people who already serve: ruling elders, small-group leaders, Sunday-school teachers, and lifelong learners in PC(USA), ECO, and EPC congregations. We teach in person, in cohorts, at a pace that fits a working life.';
+
+const believeEyebrow = page?.believeEyebrow ?? 'What we believe';
+const believeHeadline = page?.believeHeadline ?? 'Confessional, and warm about it';
+// The distinctives, plainly, each paired with a pastoral line.
+const beliefs = page?.beliefs?.length ? page.beliefs : [
   { title: 'Scripture is our final authority', body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.' },
   { title: 'Salvation is by grace alone', body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.' },
   { title: 'The confessions guide us', body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.' },
   { title: 'Formation is for everyone', body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.' },
 ];
+const believeFootnote = page?.believeFootnote ?? 'Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.';
+
+const teachEyebrow = page?.teachEyebrow ?? 'How we teach';
+const teachHeadline = page?.teachHeadline ?? 'Formation, not just information';
+const teachBody = page?.teachBody ?? 'A course here is more than a lecture. You read real texts, you discuss them with a cohort that sticks together, and you leave able to teach what you have learned. The goal is not to make you a scholar. It is to make you a wiser, steadier leader of the people God has already given you.';
+
+const whyEyebrow = page?.whyEyebrow ?? 'Why we exist';
+const whyHeadline = page?.whyHeadline ?? 'A school for the whole church';
+const whyBody = page?.whyBody ?? 'The Presbyterian Academy is supported by the Presbytery of Cincinnati, bringing seminary-grade teaching to lay leaders who cannot leave their jobs and families for a degree. We teach the historic Reformed faith for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious, taught by ministers and scholars who believe ordinary believers deserve the real thing.';
+
+const facultyBandEyebrow = page?.facultyBandEyebrow ?? 'The people who teach';
+const facultyBandHeadline = page?.facultyBandHeadline ?? 'Every course is led by an ordained minister or a credentialed Reformed scholar.';
+const facultyBandCtaLabel = page?.facultyBandCtaLabel ?? 'Meet the faculty';
 
 const schemas = [
   breadcrumbSchema([
@@ -63,10 +84,10 @@ const schemas = [
   {/* Mission, editorial two-column */}
   <section class="bg-background">
     <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-md lg:grid-cols-[200px_1fr]">
-      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Our mission</p>
+      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{missionEyebrow}</p>
       <div class="max-w-prose" data-reveal>
-        <p class="font-display text-h3 leading-snug text-foreground">We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.</p>
-        <p class="mt-m text-lg leading-relaxed text-foreground/80">We are a school, not a church. We exist to equip the people who already serve: ruling elders, small-group leaders, Sunday-school teachers, and lifelong learners in PC(USA), ECO, and EPC congregations. We teach in person, in cohorts, at a pace that fits a working life.</p>
+        <p class="font-display text-h3 leading-snug text-foreground">{missionStatement}</p>
+        <p class="mt-m text-lg leading-relaxed text-foreground/80">{missionBody}</p>
       </div>
     </div>
   </section>
@@ -75,8 +96,8 @@ const schemas = [
   <section class="surface-warm bg-muted">
     <div class="mx-auto max-w-content px-m py-section-lg">
       <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">What we believe</p>
-        <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">Confessional, and warm about it</h2>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{believeEyebrow}</p>
+        <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{believeHeadline}</h2>
       </div>
       <div class="mt-l h-px w-full bg-gold/50"></div>
       <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
@@ -88,7 +109,7 @@ const schemas = [
           </div>
         ))}
       </div>
-      <p class="mt-l max-w-2xl text-foreground/70">Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.</p>
+      <p class="mt-l max-w-2xl text-foreground/70">{believeFootnote}</p>
     </div>
   </section>
 
@@ -96,14 +117,14 @@ const schemas = [
   <section class="bg-background">
     <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m py-section-md lg:grid-cols-2">
       <div class="max-w-prose reveal-l" data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">How we teach</p>
-        <h2 class="mt-2 font-display text-h3 text-foreground">Formation, not just information</h2>
-        <p class="mt-m leading-relaxed text-foreground/80">A course here is more than a lecture. You read real texts, you discuss them with a cohort that sticks together, and you leave able to teach what you have learned. The goal is not to make you a scholar. It is to make you a wiser, steadier leader of the people God has already given you.</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{teachEyebrow}</p>
+        <h2 class="mt-2 font-display text-h3 text-foreground">{teachHeadline}</h2>
+        <p class="mt-m leading-relaxed text-foreground/80">{teachBody}</p>
       </div>
       <div class="max-w-prose reveal-r" data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Why we exist</p>
-        <h2 class="mt-2 font-display text-h3 text-foreground">A school for the whole church</h2>
-        <p class="mt-m leading-relaxed text-foreground/80">The Presbyterian Academy is supported by the Presbytery of Cincinnati, bringing seminary-grade teaching to lay leaders who cannot leave their jobs and families for a degree. We teach the historic Reformed faith for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious, taught by ministers and scholars who believe ordinary believers deserve the real thing.</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{whyEyebrow}</p>
+        <h2 class="mt-2 font-display text-h3 text-foreground">{whyHeadline}</h2>
+        <p class="mt-m leading-relaxed text-foreground/80">{whyBody}</p>
       </div>
     </div>
   </section>
@@ -112,10 +133,10 @@ const schemas = [
   <section class="border-y border-border-soft bg-background">
     <div class="mx-auto flex max-w-content flex-wrap items-center justify-between gap-m px-m py-l">
       <div>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">The people who teach</p>
-        <p class="mt-2 max-w-xl font-display text-h4 text-foreground">Every course is led by an ordained minister or a credentialed Reformed scholar.</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{facultyBandEyebrow}</p>
+        <p class="mt-2 max-w-xl font-display text-h4 text-foreground">{facultyBandHeadline}</p>
       </div>
-      <a href="/faculty" class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">Meet the faculty</a>
+      <a href="/faculty" class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">{facultyBandCtaLabel}</a>
     </div>
   </section>
 

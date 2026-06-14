@@ -2301,69 +2301,30 @@ export type AboutPage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
-  heroKeyword?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroScriptAccent?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaScriptAccent?: string;
-  finalCtaSubhead?: string;
-  finalCta?: CtaBlock;
-  finalCtaBackgroundImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: 'image';
-  };
-  featureImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  muralCaption?: string;
-  buildingEyebrow?: string;
-  buildingHeadline?: string;
-  buildingBodyP1?: string;
-  buildingBodyP2?: string;
-  buildingImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  whoEyebrow?: string;
-  whoHeadline?: string;
-  whoBodyP1?: string;
-  whoBodyP2?: string;
-  buildingCta?: CtaBlock;
-  whoCtaPrimary?: CtaBlock;
-  whoCtaSecondary?: CtaBlock;
+  missionEyebrow?: string;
+  missionStatement?: string;
+  missionBody?: string;
+  believeEyebrow?: string;
+  believeHeadline?: string;
+  beliefs?: Array<{
+    title?: string;
+    body?: string;
+    _type: 'belief';
+    _key: string;
+  }>;
+  believeFootnote?: string;
+  teachEyebrow?: string;
+  teachHeadline?: string;
+  teachBody?: string;
+  whyEyebrow?: string;
+  whyHeadline?: string;
+  whyBody?: string;
+  facultyBandEyebrow?: string;
+  facultyBandHeadline?: string;
+  facultyBandCtaLabel?: string;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2417,6 +2378,28 @@ export type AboutPage = {
         _key: string;
       } & Embed)
   >;
+  finalCtaEyebrow?: string;
+  finalCtaHeadline?: string;
+  finalCtaSubhead?: string;
+  finalCta?: CtaBlock;
+  finalCtaBackgroundImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
 };
 
 export type HomePage = {
