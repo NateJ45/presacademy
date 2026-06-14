@@ -57,22 +57,46 @@ function fmtDate(d?: string): string {
 }
 const cityLine = settings.addressLocality ?? 'West Chester, Ohio';
 
-const wayfinding = [
-  { n: '01', title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
-  { n: '02', title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
-  { n: '03', title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
-  { n: '04', title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
+// Home section copy: each reads the homePage singleton and falls back to these
+// literals when the field is empty. (The strip CARDS come from the catalog
+// collections fetched above.)
+const heroPrimaryLabel = page?.heroPrimaryLabel ?? 'Browse courses';
+const heroSecondaryLabel = page?.heroSecondaryLabel ?? 'Book a free intro';
+const nextCohortLabel = page?.nextCohortLabel ?? 'Next cohort begins';
+
+const wayfinding = page?.wayfinding?.length ? page.wayfinding : [
+  { title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
+  { title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
+  { title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
+  { title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
 ];
 
-// Stats for a NEW (2026) school: structure + standards, not a track record.
-// No founding year and no alumni counts — the school is brand-new, so historical
-// figures would be false. Only the 100% faculty figure counts up.
-const stats = [
-  { value: '100%', label: 'Ordained or credentialed faculty' },
-  { value: 'In person', label: 'Taught in cohorts', count: false },
-  { value: 'Need-based', label: 'Scholarships every term', count: false },
-  { value: 'Reformed', label: 'Rooted in the Westminster Standards', count: false },
+const startHereEyebrow = page?.startHereEyebrow ?? 'Start here';
+const startHereHeadline = page?.startHereHeadline ?? 'A few courses to begin with';
+
+// Stats for a NEW (2026) school: structure + standards, not a track record (no
+// founding year, no alumni counts). Only number values (count: true) animate.
+const stats = page?.stats?.length ? page.stats : [
+  { value: '100%', label: 'Ordained or credentialed faculty', count: true },
+  { value: 'In person', label: 'Taught in cohorts' },
+  { value: 'Need-based', label: 'Scholarships every term' },
+  { value: 'Reformed', label: 'Rooted in the Westminster Standards' },
 ];
+
+const tickerTopics = page?.tickerTopics?.length ? page.tickerTopics : [
+  'Old Testament', 'Systematic Theology', 'Church History', 'Reformed Worship',
+  'Biblical Greek', 'Christian Ethics', 'Apologetics', 'Pastoral Care',
+  'The Confessions', 'Spiritual Formation',
+];
+
+const coursesEyebrow = page?.coursesEyebrow ?? 'Courses';
+const coursesHeadline = page?.coursesHeadline ?? 'Learn something worth knowing';
+const coursesLinkLabel = page?.coursesLinkLabel ?? 'See all courses';
+const facultyEyebrow = page?.facultyEyebrow ?? 'The faculty';
+const facultyHeadline = page?.facultyHeadline ?? 'Taught by ministers and scholars';
+const facultyLinkLabel = page?.facultyLinkLabel ?? 'Meet the faculty';
+const testimonialsEyebrow = page?.testimonialsEyebrow ?? 'In their words';
+const testimonialsHeadline = page?.testimonialsHeadline ?? 'From the people we serve';
 
 const pillPrimary =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
@@ -93,13 +117,13 @@ const pillGhost =
         </h1>
         <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
         <div class="mt-l flex flex-wrap gap-3">
-          <a href="/courses" class={pillPrimary}>Browse courses</a>
-          <a href="/get-started" class={pillGhost}>Book a free intro</a>
+          <a href="/courses" class={pillPrimary}>{heroPrimaryLabel}</a>
+          <a href="/get-started" class={pillGhost}>{heroSecondaryLabel}</a>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         {nextTerm && (
           <p class="mt-4 text-sm text-foreground/75">
-            <span class="font-display tabular-nums uppercase tracking-[0.12em] text-gold-ink">Next cohort begins</span>
+            <span class="font-display tabular-nums uppercase tracking-[0.12em] text-gold-ink">{nextCohortLabel}</span>
             &nbsp; {fmtDate(nextTerm.startDate)} &nbsp;·&nbsp; {nextTerm.title} &nbsp;·&nbsp; {cityLine}
           </p>
         )}
@@ -122,7 +146,7 @@ const pillGhost =
     <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" data-stagger-grid>
       {wayfinding.map((w, i) => (
         <a href={w.href} class:list={['group block px-m py-l no-underline', i < wayfinding.length - 1 && 'lg:border-r border-border-soft']}>
-          <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{w.n}</span>
+          <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
           <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{w.title}</h2>
           <p class="mt-1 text-sm text-foreground/70">{w.body}</p>
         </a>
@@ -135,8 +159,8 @@ const pillGhost =
     <section class="bg-card" aria-labelledby="home-start">
       <div class="mx-auto max-w-content px-m py-section-md">
         <div data-reveal>
-          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
-          <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">A few courses to begin with</h2>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{startHereEyebrow}</p>
+          <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">{startHereHeadline}</h2>
         </div>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
           {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
@@ -150,7 +174,7 @@ const pillGhost =
     <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
       {stats.map((s, i) => (
         <div class:list={['px-m py-l', i < stats.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
-          <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count === false ? undefined : true}>{s.value}</p>
+          <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
           <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
         </div>
       ))}
@@ -163,7 +187,7 @@ const pillGhost =
       <div class="marquee__track">
         {[0, 1].map(() => (
           <div class="marquee__group text-xs uppercase tracking-eyebrow text-foreground/55">
-            {['Old Testament', 'Systematic Theology', 'Church History', 'Reformed Worship', 'Biblical Greek', 'Christian Ethics', 'Apologetics', 'Pastoral Care', 'The Confessions', 'Spiritual Formation'].map((topic) => (
+            {tickerTopics.map((topic: string) => (
               <span class="inline-flex items-center gap-3">{topic}<span class="text-gold-ink">&#10022;</span></span>
             ))}
           </div>
@@ -178,10 +202,10 @@ const pillGhost =
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div data-reveal>
-            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
-            <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">Learn something worth knowing</h2>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{coursesEyebrow}</p>
+            <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">{coursesHeadline}</h2>
           </div>
-          <a href="/courses" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">See all courses<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+          <a href="/courses" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{coursesLinkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
@@ -197,10 +221,10 @@ const pillGhost =
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div data-reveal>
-            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
-            <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">Taught by ministers and scholars</h2>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{facultyEyebrow}</p>
+            <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">{facultyHeadline}</h2>
           </div>
-          <a href="/faculty" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">Meet the faculty<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+          <a href="/faculty" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{facultyLinkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
@@ -215,8 +239,8 @@ const pillGhost =
     <section class="bg-background" aria-labelledby="home-stories">
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div data-reveal>
-          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
-          <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">From the people we serve</h2>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{testimonialsEyebrow}</p>
+          <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">{testimonialsHeadline}</h2>
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>

@@ -558,31 +558,6 @@ export type TeachingArea = {
   displayOrder?: number;
 };
 
-export type WorshipResource = {
-  _id: string;
-  _type: 'worshipResource';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  date?: string;
-  type?:
-    | 'Bulletin'
-    | 'Order of Worship'
-    | 'Liturgy'
-    | 'Hymn list'
-    | 'Newsletter'
-    | 'Annual report'
-    | 'Other';
-  file?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  externalUrl?: string;
-  description?: string;
-};
-
 export type Announcement = {
   _id: string;
   _type: 'announcement';
@@ -601,79 +576,6 @@ export type Announcement = {
   enabled?: boolean;
 };
 
-export type Sermon = {
-  _id: string;
-  _type: 'sermon';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  date?: string;
-  speaker?: string;
-  series?: string;
-  scripture?: string;
-  videoUrl?: string;
-  audioUrl?: string;
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h3';
-    listItem?: 'bullet';
-    markDefs?: Array<{
-      href?: string;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  featured?: boolean;
-  liturgicalDay?: string;
-  bulletin?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  manuscript?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  hymns?: Array<{
-    title?: string;
-    number?: string;
-    _type: 'hymn';
-    _key: string;
-  }>;
-  serviceMusic?: Array<{
-    role?: string;
-    title?: string;
-    composer?: string;
-    _type: 'musicPiece';
-    _key: string;
-  }>;
-  worshipLeaders?: Array<{
-    role?: string;
-    name?: string;
-    _type: 'worshipLeader';
-    _key: string;
-  }>;
-};
-
 export type Event = {
   _id: string;
   _type: 'event';
@@ -684,27 +586,15 @@ export type Event = {
   slug?: Slug;
   eventType?: 'recurring' | 'oneTime';
   category?:
-    | 'Worship'
-    | 'Study'
-    | 'Meals'
-    | 'Music'
-    | 'Fellowship'
-    | 'Service'
-    | 'Youth'
-    | 'Kids'
-    | 'Outreach'
-    | 'Special';
-  audience?: 'Everyone' | 'Families' | 'Kids' | 'Youth' | 'Adults' | 'Seniors';
-  specialService?: boolean;
-  liturgicalSeason?:
-    | 'Advent'
-    | 'Christmas'
-    | 'Epiphany'
-    | 'Lent'
-    | 'Holy Week'
-    | 'Easter'
-    | 'Pentecost'
-    | 'Ordinary';
+    | 'Info session'
+    | 'Open lecture'
+    | 'Workshop'
+    | 'Webinar'
+    | 'Term start'
+    | 'Application deadline'
+    | 'Community'
+    | 'Other';
+  audience?: 'Everyone' | 'Lay leaders' | 'Newcomers' | 'Prospective students' | 'Clergy';
   scheduleLabel?: string;
   start?: string;
   end?: string;
@@ -744,104 +634,6 @@ export type Event = {
   };
   featured?: boolean;
   featuredOnHome?: boolean;
-};
-
-export type MinistryReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'ministry';
-};
-
-export type Ministry = {
-  _id: string;
-  _type: 'ministry';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  audience?: 'everyone' | 'families' | 'kids' | 'youth' | 'adults' | 'seniors' | 'neighbors';
-  ageRange?: string;
-  schedule?: string;
-  season?: 'Year-round' | 'School year' | 'Summer' | 'Seasonal';
-  summary?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  link?: string;
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal';
-    listItem?: 'bullet';
-    markDefs?: Array<{
-      href?: string;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  parentMinistry?: MinistryReference;
-  registrationUrl?: string;
-  contactName?: string;
-  contactEmail?: string;
-  displayOrder?: number;
-  featured?: boolean;
-};
-
-export type StaffMember = {
-  _id: string;
-  _type: 'staffMember';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-  role?: string;
-  photo?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  email?: string;
-  bio?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal';
-    listItem?: never;
-    markDefs?: Array<{
-      href?: string;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  favorites?: Array<{
-    label?: string;
-    value?: string;
-    _type: 'favoriteItem';
-    _key: string;
-  }>;
-  displayOrder?: number;
 };
 
 export type FaqCategoryReference = {
@@ -887,6 +679,729 @@ export type FaqItem = {
     | 'Food Ministry';
   categoryRef?: FaqCategoryReference;
   displayOrder?: number;
+};
+
+export type PrivacyPage = {
+  _id: string;
+  _type: 'privacyPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroScriptAccent?: string;
+  lastUpdated?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal' | 'h2' | 'h3';
+    listItem?: 'bullet' | 'number';
+    markDefs?: Array<{
+      href?: string;
+      openInNewTab?: boolean;
+      _type: 'link';
+      _key: string;
+    }>;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  flexibleSections?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionArchShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & Embed)
+  >;
+};
+
+export type NotFoundPage = {
+  _id: string;
+  _type: 'notFoundPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  eyebrow?: string;
+  headline?: string;
+  body?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    caption?: string;
+    _type: 'image';
+  };
+  primaryCtaLabel?: string;
+  primaryCtaHref?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaHref?: string;
+  tertiaryCtaLabel?: string;
+  tertiaryCtaHref?: string;
+};
+
+export type SiteSettings = {
+  _id: string;
+  _type: 'siteSettings';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  tagline?: string;
+  mission?: string;
+  email?: string;
+  pastorEmail?: string;
+  phone?: string;
+  officeHours?: string;
+  favicon?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: 'image';
+  };
+  addressLine?: string;
+  cityStateZip?: string;
+  geoLat?: number;
+  geoLng?: number;
+  navItems?: Array<
+    | {
+        label?: string;
+        href?: string;
+        _type: 'navLink';
+        _key: string;
+      }
+    | {
+        label?: string;
+        links?: Array<{
+          label?: string;
+          href?: string;
+          _type: 'navSubLink';
+          _key: string;
+        }>;
+        _type: 'navGroup';
+        _key: string;
+      }
+  >;
+  footerColumns?: Array<{
+    title?: string;
+    links?: Array<{
+      label?: string;
+      href?: string;
+      _type: 'footerLink';
+      _key: string;
+    }>;
+    _type: 'footerColumn';
+    _key: string;
+  }>;
+  worshipService?: {
+    time?: string;
+    day?: string;
+    startTime24?: string;
+    endTime24?: string;
+  };
+  watchUrl?: string;
+  giveUrl?: string;
+  appUrl?: string;
+  directoryUrl?: string;
+  registrationBaseUrl?: string;
+  prayerUrl?: string;
+  socialInstagram?: string;
+  socialFacebook?: string;
+  socialYoutube?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  footerCredit?: string;
+  footerCreditUrl?: string;
+  newsletter?: {
+    enabled?: boolean;
+    providerLabel?: string;
+    formActionUrl?: string;
+    audienceId?: string;
+    heading?: string;
+    blurb?: string;
+    buttonLabel?: string;
+    successMessage?: string;
+    consentNote?: string;
+  };
+};
+
+export type SectionFaqList = {
+  _type: 'sectionFaqList';
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  categoryRef?: FaqCategoryReference;
+  categoryString?: string;
+  limit?: number;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionFaqListBackground;
+};
+
+export type FaqCategory = {
+  _id: string;
+  _type: 'faqCategory';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  displayOrder?: number;
+};
+
+export type SectionArchShowcase = {
+  _type: 'sectionArchShowcase';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  mediaType?: 'slideshow' | 'video';
+  images?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+    _key: string;
+  }>;
+  video?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  videoUrl?: string;
+  videoPoster?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  background?: SectionArchShowcaseBackground;
+};
+
+export type SectionDynamicList = {
+  _type: 'sectionDynamicList';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  source?: 'featuredCourses' | 'upcomingEvents' | 'faculty';
+  count?: number;
+  background?: SectionDynamicListBackground;
+};
+
+export type SectionMediaFeature = {
+  _type: 'sectionMediaFeature';
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  mediaSide?: 'left' | 'right';
+  videoUrl?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionMediaFeatureBackground;
+};
+
+export type SectionLogos = {
+  _type: 'sectionLogos';
+  heading?: string;
+  intro?: string;
+  grayscale?: boolean;
+  items?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    url?: string;
+    _type: 'image';
+    _key: string;
+  }>;
+  background?: SectionLogosBackground;
+};
+
+export type SectionSteps = {
+  _type: 'sectionSteps';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  steps?: Array<{
+    title?: string;
+    body?: string;
+    _type: 'step';
+    _key: string;
+  }>;
+  background?: SectionStepsBackground;
+};
+
+export type SectionGallery = {
+  _type: 'sectionGallery';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  columns?: '2' | '3' | '4';
+  images?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    caption?: string;
+    _type: 'image';
+    _key: string;
+  }>;
+  background?: SectionGalleryBackground;
+};
+
+export type SectionAccordion = {
+  _type: 'sectionAccordion';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  items?: Array<{
+    question?: string;
+    answer?: string;
+    _type: 'qa';
+    _key: string;
+  }>;
+  background?: SectionAccordionBackground;
+};
+
+export type SectionStats = {
+  _type: 'sectionStats';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  columns?: '2' | '3' | '4';
+  items?: Array<{
+    value?: string;
+    label?: string;
+    note?: string;
+    _type: 'stat';
+    _key: string;
+  }>;
+  background?: SectionStatsBackground;
+};
+
+export type SectionFeatureCards = {
+  _type: 'sectionFeatureCards';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  columns?: '2' | '3' | '4';
+  arched?: boolean;
+  cards?: Array<{
+    image?: FeatureCardImage;
+    eyebrow?: string;
+    title?: string;
+    body?: string;
+    badge?: string;
+    ctaLabel?: string;
+    ctaUrl?: string;
+    _type: 'featureCard';
+    _key: string;
+  }>;
+  background?: SectionFeatureCardsBackground;
+};
+
+export type FormReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'form';
+};
+
+export type SectionForm = {
+  _type: 'sectionForm';
+  heading?: string;
+  intro?: string;
+  form?: FormReference;
+};
+
+export type SectionCtaBand = {
+  _type: 'sectionCtaBand';
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionCtaBandBackground;
+};
+
+export type SectionQuote = {
+  _type: 'sectionQuote';
+  quote?: string;
+  attribution?: string;
+  background?: SectionQuoteBackground;
+};
+
+export type SectionCardGrid = {
+  _type: 'sectionCardGrid';
+  eyebrow?: string;
+  heading?: string;
+  subhead?: string;
+  columns?: '2' | '3' | '4';
+  cards?: Array<{
+    title?: string;
+    body?: string;
+    link?: string;
+    _type: 'card';
+    _key: string;
+  }>;
+  background?: SectionCardGridBackground;
+};
+
+export type SectionImageText = {
+  _type: 'sectionImageText';
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  imageSide?: 'left' | 'right';
+  arched?: boolean;
+  eyebrow?: string;
+  heading?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote';
+    listItem?: 'bullet' | 'number';
+    markDefs?: Array<{
+      href?: string;
+      openInNewTab?: boolean;
+      _type: 'link';
+      _key: string;
+    }>;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionImageTextBackground;
+};
+
+export type SectionRichText = {
+  _type: 'sectionRichText';
+  eyebrow?: string;
+  heading?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote';
+    listItem?: 'bullet' | 'number';
+    markDefs?: Array<{
+      href?: string;
+      openInNewTab?: boolean;
+      _type: 'link';
+      _key: string;
+    }>;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  align?: 'left' | 'center';
+  background?: Background;
+};
+
+export type Embed = {
+  _type: 'embed';
+  title?: string;
+  mode?: 'url' | 'html';
+  url?: string;
+  html?: string;
+  aspect?: string;
+};
+
+export type HomePageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'homePage';
+};
+
+export type AboutPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'aboutPage';
+};
+
+export type FaqPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'faqPage';
+};
+
+export type ContactPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'contactPage';
+};
+
+export type EventsPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'eventsPage';
+};
+
+export type CoursesPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'coursesPage';
+};
+
+export type FacultyPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'facultyPage';
+};
+
+export type PricingPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'pricingPage';
+};
+
+export type GetStartedPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'getStartedPage';
+};
+
+export type ForYouPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'forYouPage';
+};
+
+export type ResourcesPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'resourcesPage';
+};
+
+export type PageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'page';
+};
+
+export type CtaBlock = {
+  _type: 'ctaBlock';
+  label?: string;
+  linkType?: 'internal' | 'external' | 'email' | 'phone';
+  internalLink?:
+    | HomePageReference
+    | AboutPageReference
+    | FaqPageReference
+    | ContactPageReference
+    | EventsPageReference
+    | CoursesPageReference
+    | FacultyPageReference
+    | PricingPageReference
+    | GetStartedPageReference
+    | ForYouPageReference
+    | ResourcesPageReference
+    | PageReference;
+  externalUrl?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+  openInNewTab?: boolean;
+};
+
+export type Page = {
+  _id: string;
+  _type: 'page';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  sections?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionArchShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & Embed)
+  >;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
 };
 
 export type ResourcesPage = {
@@ -975,161 +1490,6 @@ export type ResourcesPage = {
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
-};
-
-export type HomePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'homePage';
-};
-
-export type AboutPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'aboutPage';
-};
-
-export type FaqPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'faqPage';
-};
-
-export type ContactPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'contactPage';
-};
-
-export type EventsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'eventsPage';
-};
-
-export type SermonsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sermonsPage';
-};
-
-export type WorshipPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'worshipPage';
-};
-
-export type BeliefsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'beliefsPage';
-};
-
-export type MusicPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'musicPage';
-};
-
-export type StaffPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'staffPage';
-};
-
-export type GrowPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'growPage';
-};
-
-export type ServePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'servePage';
-};
-
-export type KidsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'kidsPage';
-};
-
-export type FoodPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'foodPage';
-};
-
-export type UseOurSpacePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'useOurSpacePage';
-};
-
-export type WeddingsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'weddingsPage';
-};
-
-export type GivePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'givePage';
-};
-
-export type PageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'page';
-};
-
-export type CtaBlock = {
-  _type: 'ctaBlock';
-  label?: string;
-  linkType?: 'internal' | 'external' | 'email' | 'phone';
-  internalLink?:
-    | HomePageReference
-    | AboutPageReference
-    | FaqPageReference
-    | ContactPageReference
-    | EventsPageReference
-    | SermonsPageReference
-    | WorshipPageReference
-    | BeliefsPageReference
-    | MusicPageReference
-    | StaffPageReference
-    | GrowPageReference
-    | ServePageReference
-    | KidsPageReference
-    | FoodPageReference
-    | UseOurSpacePageReference
-    | WeddingsPageReference
-    | GivePageReference
-    | PageReference;
-  externalUrl?: string;
-  emailAddress?: string;
-  phoneNumber?: string;
-  openInNewTab?: boolean;
 };
 
 export type ForYouPage = {
@@ -1225,13 +1585,6 @@ export type ForYouPage = {
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
-};
-
-export type FormReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'form';
 };
 
 export type GetStartedPage = {
@@ -1605,1823 +1958,6 @@ export type CoursesPage = {
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
-};
-
-export type PrivacyPage = {
-  _id: string;
-  _type: 'privacyPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroScriptAccent?: string;
-  lastUpdated?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h2' | 'h3';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      openInNewTab?: boolean;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-};
-
-export type NotFoundPage = {
-  _id: string;
-  _type: 'notFoundPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  eyebrow?: string;
-  headline?: string;
-  body?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    caption?: string;
-    _type: 'image';
-  };
-  primaryCtaLabel?: string;
-  primaryCtaHref?: string;
-  secondaryCtaLabel?: string;
-  secondaryCtaHref?: string;
-  tertiaryCtaLabel?: string;
-  tertiaryCtaHref?: string;
-};
-
-export type SiteSettings = {
-  _id: string;
-  _type: 'siteSettings';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  tagline?: string;
-  mission?: string;
-  email?: string;
-  pastorEmail?: string;
-  phone?: string;
-  officeHours?: string;
-  favicon?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: 'image';
-  };
-  addressLine?: string;
-  cityStateZip?: string;
-  geoLat?: number;
-  geoLng?: number;
-  navItems?: Array<
-    | {
-        label?: string;
-        href?: string;
-        _type: 'navLink';
-        _key: string;
-      }
-    | {
-        label?: string;
-        links?: Array<{
-          label?: string;
-          href?: string;
-          _type: 'navSubLink';
-          _key: string;
-        }>;
-        _type: 'navGroup';
-        _key: string;
-      }
-  >;
-  footerColumns?: Array<{
-    title?: string;
-    links?: Array<{
-      label?: string;
-      href?: string;
-      _type: 'footerLink';
-      _key: string;
-    }>;
-    _type: 'footerColumn';
-    _key: string;
-  }>;
-  worshipService?: {
-    time?: string;
-    day?: string;
-    startTime24?: string;
-    endTime24?: string;
-  };
-  watchUrl?: string;
-  giveUrl?: string;
-  appUrl?: string;
-  directoryUrl?: string;
-  registrationBaseUrl?: string;
-  prayerUrl?: string;
-  socialInstagram?: string;
-  socialFacebook?: string;
-  socialYoutube?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  footerCredit?: string;
-  footerCreditUrl?: string;
-  newsletter?: {
-    enabled?: boolean;
-    providerLabel?: string;
-    formActionUrl?: string;
-    audienceId?: string;
-    heading?: string;
-    blurb?: string;
-    buttonLabel?: string;
-    successMessage?: string;
-    consentNote?: string;
-  };
-};
-
-export type SectionFaqList = {
-  _type: 'sectionFaqList';
-  eyebrow?: string;
-  headline?: string;
-  subhead?: string;
-  categoryRef?: FaqCategoryReference;
-  categoryString?: string;
-  limit?: number;
-  ctaLabel?: string;
-  ctaUrl?: string;
-  background?: SectionFaqListBackground;
-};
-
-export type FaqCategory = {
-  _id: string;
-  _type: 'faqCategory';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  displayOrder?: number;
-};
-
-export type SectionArchShowcase = {
-  _type: 'sectionArchShowcase';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  mediaType?: 'slideshow' | 'video';
-  images?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-    _key: string;
-  }>;
-  video?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  videoUrl?: string;
-  videoPoster?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  background?: SectionArchShowcaseBackground;
-};
-
-export type SectionDynamicList = {
-  _type: 'sectionDynamicList';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  source?: 'latestSermons' | 'upcomingEvents' | 'ministries' | 'staff' | 'worshipResources';
-  count?: number;
-  background?: SectionDynamicListBackground;
-};
-
-export type SectionMediaFeature = {
-  _type: 'sectionMediaFeature';
-  eyebrow?: string;
-  heading?: string;
-  body?: string;
-  mediaSide?: 'left' | 'right';
-  videoUrl?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  ctaLabel?: string;
-  ctaUrl?: string;
-  background?: SectionMediaFeatureBackground;
-};
-
-export type SectionLogos = {
-  _type: 'sectionLogos';
-  heading?: string;
-  intro?: string;
-  grayscale?: boolean;
-  items?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    url?: string;
-    _type: 'image';
-    _key: string;
-  }>;
-  background?: SectionLogosBackground;
-};
-
-export type SectionSteps = {
-  _type: 'sectionSteps';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  steps?: Array<{
-    title?: string;
-    body?: string;
-    _type: 'step';
-    _key: string;
-  }>;
-  background?: SectionStepsBackground;
-};
-
-export type SectionGallery = {
-  _type: 'sectionGallery';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  columns?: '2' | '3' | '4';
-  images?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    caption?: string;
-    _type: 'image';
-    _key: string;
-  }>;
-  background?: SectionGalleryBackground;
-};
-
-export type SectionAccordion = {
-  _type: 'sectionAccordion';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  items?: Array<{
-    question?: string;
-    answer?: string;
-    _type: 'qa';
-    _key: string;
-  }>;
-  background?: SectionAccordionBackground;
-};
-
-export type SectionStats = {
-  _type: 'sectionStats';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  columns?: '2' | '3' | '4';
-  items?: Array<{
-    value?: string;
-    label?: string;
-    note?: string;
-    _type: 'stat';
-    _key: string;
-  }>;
-  background?: SectionStatsBackground;
-};
-
-export type SectionFeatureCards = {
-  _type: 'sectionFeatureCards';
-  eyebrow?: string;
-  heading?: string;
-  intro?: string;
-  columns?: '2' | '3' | '4';
-  arched?: boolean;
-  cards?: Array<{
-    image?: FeatureCardImage;
-    eyebrow?: string;
-    title?: string;
-    body?: string;
-    badge?: string;
-    ctaLabel?: string;
-    ctaUrl?: string;
-    _type: 'featureCard';
-    _key: string;
-  }>;
-  background?: SectionFeatureCardsBackground;
-};
-
-export type SectionForm = {
-  _type: 'sectionForm';
-  heading?: string;
-  intro?: string;
-  form?: FormReference;
-};
-
-export type SectionCtaBand = {
-  _type: 'sectionCtaBand';
-  eyebrow?: string;
-  headline?: string;
-  subhead?: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
-  background?: SectionCtaBandBackground;
-};
-
-export type SectionQuote = {
-  _type: 'sectionQuote';
-  quote?: string;
-  attribution?: string;
-  background?: SectionQuoteBackground;
-};
-
-export type SectionCardGrid = {
-  _type: 'sectionCardGrid';
-  eyebrow?: string;
-  heading?: string;
-  subhead?: string;
-  columns?: '2' | '3' | '4';
-  cards?: Array<{
-    title?: string;
-    body?: string;
-    link?: string;
-    _type: 'card';
-    _key: string;
-  }>;
-  background?: SectionCardGridBackground;
-};
-
-export type SectionImageText = {
-  _type: 'sectionImageText';
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  imageSide?: 'left' | 'right';
-  arched?: boolean;
-  eyebrow?: string;
-  heading?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      openInNewTab?: boolean;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  ctaLabel?: string;
-  ctaUrl?: string;
-  background?: SectionImageTextBackground;
-};
-
-export type SectionRichText = {
-  _type: 'sectionRichText';
-  eyebrow?: string;
-  heading?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      openInNewTab?: boolean;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  align?: 'left' | 'center';
-  background?: Background;
-};
-
-export type Embed = {
-  _type: 'embed';
-  title?: string;
-  mode?: 'url' | 'html';
-  url?: string;
-  html?: string;
-  aspect?: string;
-};
-
-export type Page = {
-  _id: string;
-  _type: 'page';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  sections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-};
-
-export type GivePage = {
-  _id: string;
-  _type: 'givePage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  onlineHeadline?: string;
-  onlineBodyP1?: string;
-  waysHeadline?: string;
-  mailHeadline?: string;
-  mailBodyP1?: string;
-  foodHeadline?: string;
-  foodBodyP1?: string;
-  foodLinkLabel?: string;
-  impactStats?: Array<{
-    value?: string;
-    label?: string;
-    _type: 'impactStat';
-    _key: string;
-  }>;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type WeddingsPage = {
-  _id: string;
-  _type: 'weddingsPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  inquiryForm?: FormReference;
-  faqEyebrow?: string;
-  faqHeadline?: string;
-  weddingFaqs?: Array<{
-    q?: string;
-    a?: string;
-    _type: 'weddingFaq';
-    _key: string;
-  }>;
-  pricingEyebrow?: string;
-  pricingHeadline?: string;
-  weddingPricing?: Array<{
-    item?: string;
-    price?: string;
-    _type: 'weddingPriceRow';
-    _key: string;
-  }>;
-  pricingFootnote?: string;
-  inquireEyebrow?: string;
-  inquireHeadline?: string;
-  inquireIntro?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type UseOurSpacePage = {
-  _id: string;
-  _type: 'useOurSpacePage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  inquiryForm?: FormReference;
-  introEyebrow?: string;
-  introHeadline?: string;
-  introBodyP1?: string;
-  introBodyP2?: string;
-  uses?: Array<string>;
-  inquireHeadline?: string;
-  inquireIntro?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type FoodPage = {
-  _id: string;
-  _type: 'foodPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  lunchBagHeadline?: string;
-  lunchBagSchedule?: string;
-  lunchBagBodyP1?: string;
-  lunchBagCta?: CtaBlock;
-  tableHeadline?: string;
-  tableSchedule?: string;
-  tableBodyP1?: string;
-  tableCta?: CtaBlock;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type KidsPage = {
-  _id: string;
-  _type: 'kidsPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  worshipEyebrow?: string;
-  worshipHeadline?: string;
-  worshipBodyP1?: string;
-  worshipBodyP2?: string;
-  worshipBodyP3?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type ServePage = {
-  _id: string;
-  _type: 'servePage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  ways?: Array<{
-    name?: string;
-    href?: string;
-    body?: string;
-    _type: 'serveWay';
-    _key: string;
-  }>;
-  serveLinkLabel?: string;
-  serveCtaEyebrow?: string;
-  serveCtaHeadline?: string;
-  serveCtaSubhead?: string;
-};
-
-export type GrowPage = {
-  _id: string;
-  _type: 'growPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  groups?: Array<{
-    name?: string;
-    when?: string;
-    where?: string;
-    body?: string;
-    _type: 'communityGroup';
-    _key: string;
-  }>;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type StaffPage = {
-  _id: string;
-  _type: 'staffPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type MusicPage = {
-  _id: string;
-  _type: 'musicPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  introHeading?: string;
-  introBodyP1?: string;
-  choirEyebrow?: string;
-  choirHeadline?: string;
-  choirBodyP1?: string;
-  choirBodyP2?: string;
-  organEyebrow?: string;
-  organHeadline?: string;
-  organBodyP1?: string;
-  organBodyP2?: string;
-  organImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  organCreditLead?: string;
-  organCreditCta?: CtaBlock;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type BeliefsPage = {
-  _id: string;
-  _type: 'beliefsPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  scriptureQuote?: string;
-  scriptureCitation?: string;
-  beliefsQ1?: string;
-  beliefsQ1A1?: string;
-  beliefsQ2?: string;
-  beliefsQ2A1?: string;
-  beliefsQ3?: string;
-  beliefsQ3A1?: string;
-  beliefsQ3A2?: string;
-  fitEyebrow?: string;
-  fitHeadline?: string;
-  fitCard1Title?: string;
-  fitCard1Body?: string;
-  fitCard2Title?: string;
-  fitCard2Body?: string;
-  fitCard3Title?: string;
-  fitCard3Body?: string;
-  goingEyebrow?: string;
-  goingHeadline?: string;
-  goingCard1Title?: string;
-  goingCard1Body?: string;
-  goingCard2Title?: string;
-  goingCard2Body?: string;
-  goingCard3Title?: string;
-  goingCard3Body?: string;
-  deeperHeadline?: string;
-  deeperIntro?: string;
-  resources?: Array<{
-    label?: string;
-    href?: string;
-    external?: boolean;
-    _type: 'beliefsResource';
-    _key: string;
-  }>;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type WorshipPage = {
-  _id: string;
-  _type: 'worshipPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
-  finalCta?: CtaBlock;
-  gatherEyebrow?: string;
-  serviceBodyP1?: string;
-  serviceBodyP2?: string;
-  planEyebrow?: string;
-  planHeadline?: string;
-  planCard1Title?: string;
-  planCard1Body?: string;
-  planCard2Title?: string;
-  planCard2Body?: string;
-  planCard3Title?: string;
-  planCard3Body?: string;
-  planCard4Title?: string;
-  planCard4Body?: string;
-  kidsEyebrow?: string;
-  kidsHeadline?: string;
-  kidsBodyP1?: string;
-  kidsBodyP2?: string;
-  childrenImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  quoteText?: string;
-  quoteAttribution?: string;
-  gatherDirectionsCta?: CtaBlock;
-  gatherWatchCta?: CtaBlock;
-  kidsMoreCta?: CtaBlock;
-  resourcesEyebrow?: string;
-  resourcesHeadline?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-};
-
-export type SermonsPage = {
-  _id: string;
-  _type: 'sermonsPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroKeyword?: string;
-  livestreamUrl?: string;
-  podcastAppleUrl?: string;
-  podcastSpotifyUrl?: string;
-  watchLiveLabel?: string;
-  watchYoutubeLabel?: string;
-  emptyVisitCta?: CtaBlock;
-  latestEyebrow?: string;
-  watchEyebrow?: string;
-  watchHeadline?: string;
-  watchBody?: string;
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaSubhead?: string;
-  finalCta?: CtaBlock;
-  detailFinalCtaEyebrow?: string;
-  detailFinalCtaHeadline?: string;
-  detailFinalCtaSubhead?: string;
-  detailFinalCta?: CtaBlock;
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionArchShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & Embed)
-  >;
 };
 
 export type EventsPage = {
@@ -3889,28 +2425,9 @@ export type HomePage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
-  heroKeyword?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
   heroImages?: Array<{
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -3920,104 +2437,34 @@ export type HomePage = {
     _type: 'image';
     _key: string;
   }>;
-  heroVideo?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  heroVideoUrl?: string;
-  heroVideoPoster?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroPrimaryCta?: CtaBlock;
-  heroSecondaryCta?: CtaBlock;
-  heroRotatingWords?: Array<string>;
-  heroScriptAccent?: string;
-  seasonalHero?: {
-    enabled?: boolean;
-    startDate?: string;
-    endDate?: string;
-    eyebrow?: string;
-    headline?: string;
-    keyword?: string;
-    subhead?: string;
-    image?: {
-      asset?: SanityImageAssetReference;
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: 'image';
-    };
-    primaryCtaLabel?: string;
-    primaryCtaUrl?: string;
-  };
-  thisSunday?: {
-    enabled?: boolean;
-    dateLabel?: string;
-    sermonTitle?: string;
-    scripture?: string;
-    preacher?: string;
-    note?: string;
-  };
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaScriptAccent?: string;
-  finalCtaSubhead?: string;
-  finalCta?: CtaBlock;
-  finalCtaBackgroundImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: 'image';
-  };
-  welcomeEyebrow?: string;
-  welcomeHeadline?: string;
-  welcomeBodyP1?: string;
-  welcomeBodyP2?: string;
-  welcomeImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  serviceBand?: {
-    worshipLabel?: string;
-    joinLabel?: string;
-    joinNote?: string;
-    whereLabel?: string;
-  };
-  weeklyRhythms?: Array<{
-    label?: string;
-    time?: string;
-    _type: 'weeklyRhythm';
+  heroPrimaryLabel?: string;
+  heroSecondaryLabel?: string;
+  nextCohortLabel?: string;
+  wayfinding?: Array<{
+    title?: string;
+    body?: string;
+    href?: string;
+    _type: 'wayfindingStep';
     _key: string;
   }>;
-  eventsEyebrow?: string;
-  eventsHeadline?: string;
-  eventsIntro?: string;
-  inclusiveStatement?: string;
-  inclusiveBody?: string;
-  involvedEyebrow?: string;
-  involvedHeadline?: string;
-  involvedSubhead?: string;
-  recordEyebrow?: string;
-  recordHeadline?: string;
-  recordBody?: string;
-  recordCtaLabel?: string;
-  welcomeCtaPrimary?: CtaBlock;
-  welcomeCtaSecondary?: CtaBlock;
-  serviceBandVisitCta?: CtaBlock;
-  serviceBandWatchCta?: CtaBlock;
-  eventsCalendarCta?: CtaBlock;
+  startHereEyebrow?: string;
+  startHereHeadline?: string;
+  stats?: Array<{
+    value?: string;
+    label?: string;
+    count?: boolean;
+    _type: 'stat';
+    _key: string;
+  }>;
+  tickerTopics?: Array<string>;
+  coursesEyebrow?: string;
+  coursesHeadline?: string;
+  coursesLinkLabel?: string;
+  facultyEyebrow?: string;
+  facultyHeadline?: string;
+  facultyLinkLabel?: string;
+  testimonialsEyebrow?: string;
+  testimonialsHeadline?: string;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -4071,6 +2518,28 @@ export type HomePage = {
         _key: string;
       } & Embed)
   >;
+  finalCtaEyebrow?: string;
+  finalCtaHeadline?: string;
+  finalCtaSubhead?: string;
+  finalCta?: CtaBlock;
+  finalCtaBackgroundImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
 };
 
 export type MediaTag = {
@@ -4227,41 +2696,10 @@ export type AllSanitySchemaTypes =
   | PricingTier
   | Term
   | TeachingArea
-  | WorshipResource
   | Announcement
-  | Sermon
   | Event
-  | MinistryReference
-  | Ministry
-  | StaffMember
   | FaqCategoryReference
   | FaqItem
-  | ResourcesPage
-  | HomePageReference
-  | AboutPageReference
-  | FaqPageReference
-  | ContactPageReference
-  | EventsPageReference
-  | SermonsPageReference
-  | WorshipPageReference
-  | BeliefsPageReference
-  | MusicPageReference
-  | StaffPageReference
-  | GrowPageReference
-  | ServePageReference
-  | KidsPageReference
-  | FoodPageReference
-  | UseOurSpacePageReference
-  | WeddingsPageReference
-  | GivePageReference
-  | PageReference
-  | CtaBlock
-  | ForYouPage
-  | FormReference
-  | GetStartedPage
-  | PricingPage
-  | FacultyPage
-  | CoursesPage
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
@@ -4276,6 +2714,7 @@ export type AllSanitySchemaTypes =
   | SectionAccordion
   | SectionStats
   | SectionFeatureCards
+  | FormReference
   | SectionForm
   | SectionCtaBand
   | SectionQuote
@@ -4283,19 +2722,26 @@ export type AllSanitySchemaTypes =
   | SectionImageText
   | SectionRichText
   | Embed
+  | HomePageReference
+  | AboutPageReference
+  | FaqPageReference
+  | ContactPageReference
+  | EventsPageReference
+  | CoursesPageReference
+  | FacultyPageReference
+  | PricingPageReference
+  | GetStartedPageReference
+  | ForYouPageReference
+  | ResourcesPageReference
+  | PageReference
+  | CtaBlock
   | Page
-  | GivePage
-  | WeddingsPage
-  | UseOurSpacePage
-  | FoodPage
-  | KidsPage
-  | ServePage
-  | GrowPage
-  | StaffPage
-  | MusicPage
-  | BeliefsPage
-  | WorshipPage
-  | SermonsPage
+  | ResourcesPage
+  | ForYouPage
+  | GetStartedPage
+  | PricingPage
+  | FacultyPage
+  | CoursesPage
   | EventsPage
   | ContactPage
   | Form

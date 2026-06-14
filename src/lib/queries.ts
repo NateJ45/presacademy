@@ -188,8 +188,10 @@ export async function getBeliefsPage() {
 }
 
 // ---- Home page ------------------------------------------------------------
-// Hero + SEO only. The home sections render from inline church copy; the hero
-// image (single or slideshow) is the editor-managed override.
+// The hero + every built-in school section's copy (wayfinding, stat band, topics
+// ticker, and the strip eyebrow/heading/link labels), the final CTA, and the
+// page-builder array. The strip CARDS come from the catalog collections below.
+// Each field falls back to the literal in index.astro when empty.
 
 export async function getHomePage() {
   return sanityFetch(`*[_type == "homePage"][0]{
@@ -198,36 +200,19 @@ export async function getHomePage() {
     seoImage${IMAGE_PROJECTION},
     heroEyebrow,
     heroHeadline,
-    heroKeyword,
     heroSubhead,
-    heroImage${IMAGE_PROJECTION},
     heroImages[]${IMAGE_PROJECTION},
-    heroVideo{ asset->{ url, mimeType } },
-    heroVideoUrl,
-    heroVideoPoster${IMAGE_PROJECTION},
-    heroPrimaryCta${CTA_PROJECTION},
-    heroSecondaryCta${CTA_PROJECTION},
-    heroRotatingWords,
-    heroScriptAccent,
-    seasonalHero{
-      enabled, startDate, endDate, eyebrow, headline, keyword, subhead,
-      image${IMAGE_PROJECTION},
-      primaryCtaLabel, primaryCtaUrl
-    },
-    thisSunday,
-    serviceBand,
-    weeklyRhythms,
-    welcomeEyebrow, welcomeHeadline, welcomeBodyP1, welcomeBodyP2,
-    welcomeImage${IMAGE_PROJECTION},
-    eventsEyebrow, eventsHeadline, eventsIntro,
-    inclusiveStatement, inclusiveBody,
-    involvedEyebrow, involvedHeadline, involvedSubhead,
-    recordEyebrow, recordHeadline, recordBody, recordCtaLabel,
-    welcomeCtaPrimary,
-    welcomeCtaSecondary,
-    serviceBandVisitCta,
-    serviceBandWatchCta,
-    eventsCalendarCta,
+    heroPrimaryLabel,
+    heroSecondaryLabel,
+    nextCohortLabel,
+    wayfinding[]{ title, body, href },
+    startHereEyebrow,
+    startHereHeadline,
+    stats[]{ value, label, count },
+    tickerTopics,
+    coursesEyebrow, coursesHeadline, coursesLinkLabel,
+    facultyEyebrow, facultyHeadline, facultyLinkLabel,
+    testimonialsEyebrow, testimonialsHeadline,
     finalCtaEyebrow, finalCtaHeadline, finalCtaSubhead,
     finalCta${CTA_PROJECTION},
     finalCtaBackgroundImage${IMAGE_PROJECTION},
