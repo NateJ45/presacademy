@@ -22,7 +22,7 @@ import {
 } from '@/lib/queries';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import SanityImage from '@/components/SanityImage.astro';
+import HeroSlideshow from '@/components/HeroSlideshow.astro';
 import CourseCard from '@/components/CourseCard.astro';
 import FacultyCard from '@/components/FacultyCard.astro';
 import FinalCta from '@/components/FinalCta.astro';
@@ -49,7 +49,13 @@ const heroHeadline = page?.heroHeadline ?? 'Theological depth, taught for ordina
 const heroSubhead =
   page?.heroSubhead ??
   'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
-const heroImg = (page?.heroImages?.length ? page.heroImages[0] : page?.heroImage) ?? null;
+// The hero accepts one image (static) or several (a slow Ken Burns slideshow).
+// Prefer the heroImages array; fall back to the legacy single heroImage field.
+const heroImages = page?.heroImages?.length
+  ? page.heroImages
+  : page?.heroImage
+    ? [page.heroImage]
+    : [];
 
 function fmtDate(d?: string): string {
   if (!d) return '';
@@ -130,13 +136,13 @@ const pillGhost =
       </div>
       <div>
         <div class="h-0.5 w-full bg-gold"></div>
-        <div class="img-zoom relative aspect-[3/2] lg:aspect-[4/5] overflow-hidden bg-muted">
-          {heroImg?.asset ? (
-            <SanityImage source={heroImg} width={900} loading="eager" fetchpriority="high" sizes="(min-width: 1024px) 520px, 90vw" class="h-full w-full object-cover parallax-slow" />
-          ) : (
-            <div class="image-well h-full w-full parallax-slow"></div>
-          )}
-        </div>
+        <HeroSlideshow
+          images={heroImages}
+          eager
+          id="home"
+          aspectClass="aspect-[3/2] lg:aspect-[4/5]"
+          sizes="(min-width: 1024px) 520px, 90vw"
+        />
       </div>
     </div>
   </section>

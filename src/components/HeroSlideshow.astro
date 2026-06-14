@@ -1,0 +1,126 @@
+---
+// Safe to edit by hand.
+// Ken Burns hero slideshow. Renders a stack of cross-fading images with a slow,
+// continuous zoom that pans from a different focal point on each slide (the
+// "Ken Burns" effect). Driven entirely by CSS, so there is no JavaScript island
+// and no layout shift: the frame reserves its aspect ratio and the images fade
+// underneath it.
+//
+//   0 images  -> the empty "image well" placeholder
+//   1 image   -> a single static image (no animation)
+//   2+ images -> the cross-fading Ken Burns slideshow
+//
+// Timing and the multi-stop keyframe are generated from the image count so the
+// hand-off stays clean for any number of slides. The first slide carries the
+// alt text; the rest are decorative (they show the same subject matter and
+// would only add noise for a screen reader). The whole effect is gated behind
+// prefers-reduced-motion: visitors who ask for reduced motion get the first
+// image as a still, with no fade and no zoom.
+
+import SanityImage from '@/components/SanityImage.astro';
+
+interface Props {
+  images?: any[];
+  /** Tailwind aspect-ratio classes for the frame. */
+  aspectClass?: string;
+  /** Responsive sizes attribute passed to each image. */
+  sizes?: string;
+  /** Eager-load + high-priority the FIRST slide (use for an above-the-fold hero). */
+  eager?: boolean;
+  /** Max width requested from Sanity for each slide. */
+  width?: number;
+  /** Unique id so multiple slideshows on one page don't share a keyframe name. */
+  id?: string;
+  class?: string;
+}
+
+const {
+  images = [],
+  aspectClass = 'aspect-[3/2] lg:aspect-[4/5]',
+  sizes = '(min-width: 1024px) 520px, 90vw',
+  eager = false,
+  width = 1200,
+  id = 'hero',
+  class: extra = '',
+} = Astro.props;
+
+const slides = (images ?? []).filter((im) => im?.asset);
+const n = slides.length;
+const uid = `hkb-${id}`;
+
+// Each image is the "front" image for ~7s; the loop is n * 7s long. Every image
+// owns 100/n% of the timeline, with a short cross-fade overlapping into the next.
+const SECONDS_PER = 7;
+const total = Math.max(n, 1) * SECONDS_PER;
+const seg = 100 / Math.max(n, 1);
+const fade = Math.min(7, seg * 0.45);
+const p1 = +fade.toFixed(2); // faded in
+const p2 = +seg.toFixed(2); // hold ends, fade-out begins
+const p3 = +(seg + fade).toFixed(2); // faded out
+// Shift the whole sequence back by one fade so slide 1 is already fully visible
+// at first paint (no blank flash on load) while the hand-off timing stays exact.
+const shift = +((p1 / 100) * total).toFixed(2);
+// A handful of transform-origins so each slide's zoom pans from a different spot.
+const ORIGINS = ['50% 50%', '32% 30%', '68% 64%', '36% 68%', '66% 32%', '50% 38%'];
+
+const css =
+  n > 1
+    ? `
+@keyframes ${uid}-kb {
+  0%      { opacity: 0; transform: scale(1.04); }
+  ${p1}%  { opacity: 1; }
+  ${p2}%  { opacity: 1; transform: scale(1.10); }
+  ${p3}%  { opacity: 0; transform: scale(1.15); }
+  100%    { opacity: 0; transform: scale(1.15); }
+}
+.${uid} .s { position: absolute; inset: 0; opacity: 0; will-change: opacity, transform; }
+.${uid} .s:first-child { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+${slides
+  .map(
+    (_, i) =>
+      `  .${uid} .s:nth-child(${i + 1}) { animation: ${uid}-kb ${total}s linear ${(i * SECONDS_PER - shift).toFixed(2)}s infinite; transform-origin: ${ORIGINS[i % ORIGINS.length]}; }`,
+  )
+  .join('\n')}
+}
+`
+    : '';
+---
+
+{
+  n === 0 ? (
+    <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+      <div class="image-well h-full w-full" />
+    </div>
+  ) : n === 1 ? (
+    <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+      <SanityImage
+        source={slides[0]}
+        width={width}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        sizes={sizes}
+        quality={65}
+        class="h-full w-full object-cover"
+      />
+    </div>
+  ) : (
+    <div class={`${uid} relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+      {slides.map((img, i) => (
+        <div class="s" aria-hidden={i === 0 ? undefined : 'true'}>
+          <SanityImage
+            source={img}
+            width={width}
+            loading={eager && i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={eager && i === 0 ? 'high' : undefined}
+            sizes={sizes}
+            quality={65}
+            alt={i === 0 ? undefined : ''}
+            class="h-full w-full object-cover"
+          />
+        </div>
+      ))}
+      <style is:inline set:html={css} />
+    </div>
+  )
+}

@@ -39,3 +39,9 @@ studio/dist/
 
 # Local Sanity dataset backups (not versioned)
 backups/
+
+# Scratch placeholder-image sourcing tooling + downloads (curation only, not versioned).
+# The curated picks are copied into src/assets/placeholders/ and committed; the
+# raw download pools + one-off probe scripts stay local.
+scripts/_*.mjs
+scripts/_stock*/
