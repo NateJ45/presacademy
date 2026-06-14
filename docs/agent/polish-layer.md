@@ -86,13 +86,26 @@ Update `--tint-rgb` in `globals.css` when re-skinning so this overlay picks up t
 
 The structural-green sibling of `.surface-warm`, for the forest-green bands. Adds a faint cream glow at the top plus a `chapel` -> `chapel-deep` vertical fade so the green bands read as lit surfaces instead of a flat single-hex slab. Apply ALONGSIDE `bg-chapel` (which stays the fallback fill). Static across themes, so one rule serves both.
 
+### Graph-paper atmosphere (`.hero-atmos` / `.surface-grid` / `.surface-dots`)
+
+The academic-notebook texture added in the 2026-06-14 kinetic pass. A faint graph-paper grid (and a dotted variant) painted on the element's own `background-image`, plus a soft green glow on the hero. `.surface-grid` is the bare 32px notebook grid; `.surface-dots` is a dotted variant; `.hero-atmos` adds a brand-green radial glow above the grid for the hero. All three are theme-aware via the new `--grid-rgb` token (ink lines on near-white, cream on dark) at very low alpha, so they read as atmosphere, not pattern. These are static textures, not motion; the full description is in `animation.md` under the refined-kinetic-editorial section.
+
 ### Paper grain (`body::before`) — RETIRED in Direction A
 
 The 4% SVG-noise grain is turned off (`body::before` set to `opacity: 0` in both light and dark). The rule is left in `globals.css` for an easy restore, but Direction A intentionally reads as clean near-white paper with no texture; large flat fills are meant to look flat, not grainy. Don't reintroduce the grain without a deliberate brand decision.
 
-### Image zoom + tint on hover (`.img-zoom` / `.img-tint` / `.img-tint-light`)
+### Image zoom + tint on hover (`.img-zoom` / `.img-tint` / `.img-tint-light` / `.img-tint-evergreen`)
 
 Card hero images scale to 1.06 and gain a faint brand-color wash on hover. Add `.img-zoom` to the `overflow-hidden` image wrapper and drop an `.img-tint` (heavier, ~0.15 opacity) or `.img-tint.img-tint-light` (lighter, ~0.08 opacity) div inside it. The tint color is `rgba(var(--tint-rgb), <opacity>)` so it inherits the project palette. Transitions are gated behind `prefers-reduced-motion: no-preference`.
+
+`.img-tint-evergreen` is a green-duotone variant added in the 2026-06-14 kinetic pass: drop `.img-tint.img-tint-evergreen` inside an `.img-zoom` well and the wash becomes a deeper Geneva-green (`rgba(51, 80, 63, 0.22)`) on hover, reading as a green duotone over the photo. The `Course` and `Faculty` cards use it. It fires on `.img-zoom:hover` and on `.group:hover` so it can ride a parent card's hover state.
+
+### Micro-interaction hovers (`.link-arrow` / `.card-link`)
+
+Two small hover affordances added in the 2026-06-14 kinetic pass:
+
+- **`.link-arrow`** — an inline "read more" arrow that nudges forward. Put `.link-arrow` on the link and wrap the arrow glyph in `.link-arrow__icon`; on `:hover` / `:focus-visible` the icon slides `translateX(0.28rem)` over 320ms. Transform-only.
+- **`.card-link`** — a linked card whose border breathes green on hover. `.card-link:hover` transitions `border-color` to a translucent Geneva-green (`0.45` alpha; the dark-mode lift `116, 169, 138`) over 440ms, pairing with the `.card-lift` shadow.
 
 ### Process connector lines (`.step-connector`)
 
@@ -109,6 +122,18 @@ Journal posts open with a floated display-font drop cap on the first paragraph a
 ### Print stylesheet
 
 A `@media print` block in `globals.css` suppresses nav, footer, CTAs, and decorative elements, and sets `color: black; background: white` on the body so journal post content prints cleanly. This is intentionally minimal -- the goal is a legible print, not a designed one.
+
+### Refined kinetic editorial idioms (cross-reference)
+
+The 2026-06-14 motion pass added several more utilities that are CSS-first animation rather than static polish, so their full writeups live in `animation.md`. Listed here so the catalog is complete:
+
+- **`.kinetic-words`** — the per-word hero-headline rise on load (transform-only, LCP-safe).
+- **Choreographed reveals** — `[data-reveal]` directional variants (`.reveal-l` / `.reveal-r`), the headline clip-wipe (`.reveal-rise`), and the self-drawing eyebrow rubric (`.eyebrow::before` scaleX keyed to `[data-reveal].is-visible`).
+- **`.marquee` / `.marquee__track` / `.marquee__group`** — the seamless, edge-faded, hover-pausing topics ticker (two groups, `-50%` loop).
+- **`[data-countup-grid]` / `[data-countup]`** — the `BaseLayout`-driven stat count-up (easeOutCubic, snaps to the exact final text; opt out by omitting `data-countup`).
+- **`.parallax-slow`** — the `@supports`-guarded CSS scroll-driven parallax (`animation-timeline: view()`) on hero media.
+
+All honor `prefers-reduced-motion` via a dedicated reset block in `globals.css`.
 
 ### View Transitions discipline
 

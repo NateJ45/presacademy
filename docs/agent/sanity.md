@@ -42,6 +42,17 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 > journal*) were removed in the remodel; the opt-in module schemas under `docs/modules/`
 > are not active for this project.
 
+> **Placeholder images in the dataset (2026-06-14).** `scripts/seed-placeholder-images.mjs`
+> (commit 8a644e5) seeds the dataset with placeholder imagery so the site renders fully
+> while real photography is pending. It uploads placeholders and patches ONLY empty image
+> fields (idempotent — it never clobbers an editor's real images): course `coverImage`s and
+> page `heroImage`s come from the in-repo Pexels library (`src/assets/placeholders/teach-*`,
+> `study-*`, `community-*`); faculty `photo`s come from `pravatar.cc`. Run
+> `node scripts/seed-placeholder-images.mjs` for a dry run, add `--apply` to write; the
+> initial apply patched 22 docs (8 course covers, 5 faculty portraits, 9 page heroes incl.
+> home). The editor replaces these with real photography later. Full detail in `images.md`.
+> (Static deploys show them only after a rebuild; the dev server shows them immediately.)
+
 **Settings and globals:**
 - `siteSettings` (singleton) — church name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links, service time; a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
 

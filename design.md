@@ -129,15 +129,50 @@ semibold-small or large text; cream-on-chapel (green) is ~9:1+, always safe.
 - Mobile first reality: most visitors are at ~375px. Anything new must be
   checked there before desktop.
 
-## Motion (restrained, CSS-only)
+## Motion (refined kinetic editorial, CSS-first)
 
-Defaults: 440ms `cubic-bezier(0.16,1,0.3,1)` on all interactive elements.
-Idioms (all in globals.css, all honor `prefers-reduced-motion`):
-`[data-reveal]` scroll reveal (+`is-visible`), `[data-stagger-grid]` card
-stagger, `.card-lift` hover, `.press-tactile` CTA press, `.img-zoom`/`.img-tint`
-photo hover, `.hero-entry-stagger` load-in, hero Ken Burns, `.nav-underline` /
-`.link-underline`, View Transitions cross-fade. Do not add JS-driven animation;
-do not exceed these durations; performance (Lighthouse 100s) is defended.
+Defaults: 440ms `cubic-bezier(0.16,1,0.3,1)` on all interactive elements. The
+motion system is CSS-first (transform / opacity / clip-path only, so zero CLS),
+and the whole thing is neutralized by a `prefers-reduced-motion` reset block at
+the end of the motion section in `globals.css`. The home page is the showcase.
+
+Base idioms (all in globals.css): `[data-reveal]` scroll reveal (+`is-visible`),
+`[data-stagger-grid]` card stagger, `.card-lift` hover, `.press-tactile` CTA
+press, `.img-zoom`/`.img-tint` photo hover, `.hero-entry-stagger` load-in, hero
+Ken Burns, `.nav-underline` / `.link-underline`, View Transitions cross-fade.
+
+The "refined kinetic editorial" idioms (added 2026-06-14, the academic-notebook
+layer):
+
+- **Kinetic hero headline** (`.kinetic-words`) — each word sits in an
+  overflow-hidden box and rises into place on load, lightly staggered by a
+  `--i` index. Transform-only, so it stays LCP-safe.
+- **Graph-paper atmosphere** (`.hero-atmos` / `.surface-grid` / `.surface-dots`)
+  — a faint academic notebook grid (and dotted variant) plus a soft green hero
+  glow, theme-aware via the `--grid-rgb` token (ink lines on near-white, cream
+  on dark). This is the distinctive academic-notebook texture, painted on the
+  element background so it sits behind content with no extra DOM.
+- **Choreographed reveals + eyebrow draw** — `[data-reveal]` gains directional
+  variants (`.reveal-l` / `.reveal-r`) and a headline clip-wipe (`.reveal-rise`,
+  a display line wiping up from its own baseline via clip-path + transform), and
+  the eyebrow rubric now DRAWS ITSELF IN: `.eyebrow::before` scales its leading
+  rule from 0 keyed to `[data-reveal].is-visible`. `SectionHeading`'s wrapper is
+  `[data-reveal]`, so the reveal + eyebrow-draw cascade to nearly every section.
+- **Topics ticker** (`.marquee` / `.marquee__group`) — a slow, edge-faded,
+  hover-pausing ticker; two identical groups loop seamlessly at -50%.
+- **Stat count-up** (`[data-countup-grid]` / `[data-countup]`) — numbers climb
+  from 0 to their value as the band enters view (easeOutCubic, snaps to the
+  exact final text). Year-style stats opt out by carrying no `data-countup`.
+- **Image parallax** (`.parallax-slow`) — a CSS scroll-driven drift on hero
+  media (`animation-timeline: view()`), `@supports`-guarded so it degrades to a
+  static element where unsupported.
+- **Micro-interactions** — `.link-arrow` (arrow nudge on hover/focus),
+  `.card-link` (green border on hover), `.img-tint-evergreen` (green duotone
+  image hover, pairs with `.img-zoom`).
+
+Do not add JS-driven decorative animation; do not exceed these durations; animate
+transform / opacity / clip-path only, never height or top. Performance (Lighthouse
+100s, zero CLS) is defended and the kinetic pass did not regress it.
 
 ## Component idioms
 
