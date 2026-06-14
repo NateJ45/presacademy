@@ -145,6 +145,10 @@
        lifted Bronze in dark mode. Use text-link for inline links and bronze
        link-style buttons that need to read in both modes. */
     --color-link: var(--link);
+    /* Theme-aware status green for the "Open" course pill: deep green on cream
+       in light, lifted green on the dark page in dark, so the tag clears AA in
+       both modes (a static green can only satisfy one). */
+    --color-status-success: var(--status-success);
     /* Theme-aware Chapel green for KEYWORD EMPHASIS in headlines (the Highland
        Park "set the key word in a second color" device). Deep green on light
        cream surfaces, lifted green on dark surfaces. Use text-chapel-ink on a
@@ -282,6 +286,7 @@
     --input: #E0D6C7;
     --ring: #7A2A2C;
     --link: #5E2122;                /* deep oxblood on cream — verify AA */
+    --status-success: #2F6B4F;      /* status green on cream (~5.3:1, AA) */
     --chapel-ink: #7A2A2C;          /* oxblood keyword emphasis on cream (~7:1) */
     --gold-ink: #6E5128;            /* deepened brass as TEXT on cream (~4.8:1, AA) */
     --border-soft: #E0D6C7;         /* faint warm divider */
@@ -342,6 +347,7 @@
     --input: oklch(1 0 0 / 15%);
     --ring: #C16A5A;
     --link: #E0998C;
+    --status-success: #6FBF95;      /* lifted status green for dark (~8:1, AA) */
     --chapel-ink: #E0998C;          /* lifted oxblood keyword emphasis on dark */
     --gold-ink: #C9A06A;            /* lifted brass as TEXT on dark surfaces (AA) */
     --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
