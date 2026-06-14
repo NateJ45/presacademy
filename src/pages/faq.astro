@@ -28,25 +28,25 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Frequently Asked Questions · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Everything a first-time visitor wants to know about worship, parking, kids, giving, weddings, and our food ministry at The Presbyterian Academy.';
+  'Common questions about courses, format, cost, scholarships, who it is for, and our Reformed identity.';
 
 // Built-in starter questions. Used only when the faqItem collection is empty.
-// Mirrors scripts/seed-faq-items.mjs (same categories + order). Answers here are
-// plain strings; collection answers are Portable Text.
+// Answers here are plain strings; collection answers are Portable Text.
 const fallbackFaqs = [
-  { category: 'Visiting', question: 'What time is worship?', answer: 'Worship is every Sunday at 11am, and it usually runs about an hour and fifteen minutes. We are at 9463 Cincinnati Columbus Rd in downtown West Chester Township.' },
-  { category: 'Visiting', question: 'Where do I park?', answer: 'We sit on Main Street close to public transit, with first-come, first-served free parking. There are additional public parking options nearby.' },
-  { category: 'Visiting', question: 'Do I have to be a member, or a Christian, to come?', answer: 'Not at all. Whether you are a weekly churchgoer, have not been in ages, or do not know anything about Christianity, there is a place for you here. Everyone is welcome.' },
-  { category: 'Worship', question: 'I have never been here. What should I expect?', answer: 'Our service is traditional and liturgical, with hymns, spirituals, and anthems led by organ and choir. We share communion on the first Sunday of each month. Casual attire is always welcome.' },
-  { category: 'Worship', question: 'Can I watch online?', answer: 'Yes. We livestream worship on our YouTube channel, so you can join from anywhere.' },
-  { category: 'Kids & Family', question: 'Can I bring my kids?', answer: 'Please do. Little ones are part of the worshipping congregation, and we welcome their noise and their needs. There is a children\'s message during the service, plus books and quiet toys, and a cry room with an audio stream if you need it.' },
-  { category: 'Giving', question: 'How do I give?', answer: 'You can give online through our secure giving portal, by mail with a check, or designate your gift to the food ministry. Visit the Give page to get started.' },
-  { category: 'Weddings & Space', question: 'Can I get married at The Presbyterian Academy?', answer: 'Yes. We welcome gay and straight couples to marry in our historic sanctuary. See the Weddings page for details, pricing, and how to inquire about your date.' },
-  { category: 'Weddings & Space', question: 'Can my group use the building?', answer: 'Often, yes. We host all sorts of gatherings throughout the week. See the Use Our Space page and get in touch about fees and availability.' },
-  { category: 'Food Ministry', question: 'I need food. How does that work?', answer: 'Find free food for all in need, no questions asked, at our Main Street door. Lunch Bag runs Tuesday through Thursday from 11am to 1pm, and the Main Street Community Table gathers on Sunday evenings.' },
+  { category: 'Courses & Format', question: 'How do courses work?', answer: 'Each course meets in person, in a cohort, over six to ten evenings. You read real texts, discuss them together, and leave able to teach what you have learned.' },
+  { category: 'Courses & Format', question: 'Do I need a degree or prior training?', answer: 'No. Our courses are built for adult lay leaders and curious believers. We meet you where you are.' },
+  { category: 'Courses & Format', question: 'Where do classes meet?', answer: 'On our West Chester campus, with free on-site parking. Most courses meet on weekday evenings.' },
+  { category: 'Cost & Scholarships', question: 'What does a course cost?', answer: 'Most courses are $195, or $95 to audit. A full certificate track is $1,400. See the Pricing page for the details.' },
+  { category: 'Cost & Scholarships', question: 'What if I cannot afford it?', answer: 'Need-based scholarships are available every term, funded by our supporters. No one is turned away for cost. Just tell us on the interest form.' },
+  { category: "Who It's For", question: 'Who takes courses here?', answer: 'Ruling and teaching elders, small-group and Sunday-school leaders, lifelong learners from PC(USA), ECO, and EPC churches, and anyone discerning a call.' },
+  { category: "Who It's For", question: 'Can I take a course if I am not Presbyterian?', answer: 'Yes. Reformed Christians of every stripe, and the simply curious, are welcome.' },
+  { category: 'Reformed Identity', question: 'What do you believe?', answer: 'We are a confessional Reformed school in the PC(USA), holding to the Westminster Standards and the Book of Confessions, taught for ordinary believers.' },
+  { category: 'Reformed Identity', question: 'Is this a seminary?', answer: 'No. We are a lay-formation school. The teaching is seminary-grade, but it is built for people who are not leaving their jobs and families for a degree.' },
+  { category: 'Getting Started', question: 'How do I try before I enroll?', answer: 'Sit in on the first session of any course, free, or book a free intro session. Request information and we will help you find a fit.' },
+  { category: 'Getting Started', question: 'When do courses start?', answer: 'We run cohorts each term. The next term and its dates are on the home page and the Events page.' },
 ];
 
-const DEFAULT_CATEGORY_ORDER = ['Visiting', 'Worship', 'Kids & Family', 'Getting Involved', 'Giving', 'Weddings & Space', 'Food Ministry'];
+const DEFAULT_CATEGORY_ORDER = ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'];
 
 const faqs: any[] = (Array.isArray(page?.faqs) && page.faqs.length > 0) ? page.faqs : fallbackFaqs;
 const categoryOrder: string[] = (page?.categoryOrder?.length) ? page.categoryOrder : DEFAULT_CATEGORY_ORDER;
@@ -100,11 +100,11 @@ const schemas = [
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Common Questions'}
     headline={page?.heroHeadline ?? 'Everything you want to know'}
-    subhead={page?.heroSubhead ?? 'If your question is not here, just ask. We would love to help you feel at home before you ever walk in.'}
+    subhead={page?.heroSubhead ?? 'If your question is not here, just ask. We are happy to help you figure out whether the Academy is a fit.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroFaq}
-    localImageAlt="Light falling through a church interior"
+    localImageAlt="A seminar room set for an evening class"
     headingId="faq-hero"
     size="short"
   />
@@ -139,10 +139,10 @@ const schemas = [
   <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
 
   <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Still Wondering?"}
+    eyebrow={page?.finalCtaEyebrow ?? "Still wondering?"}
     headline={page?.finalCtaHeadline ?? "Ask us anything"}
-    subhead={page?.finalCtaSubhead ?? "The best answer to most questions is a Sunday morning. Reach out and we will help however we can."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get in Touch', linkType: 'external', externalUrl: '/contact' }}
+    subhead={page?.finalCtaSubhead ?? "If your question is not here, send it our way and we will answer plainly."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started' }}
     backgroundImage={page?.finalCtaBackgroundImage}
   />
 </BaseLayout>

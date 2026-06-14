@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Presbyterian Academy — Rule &amp; Ledger mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EEE6; --chalk:#FCF9F4; --muted:#EDE5D9;
+    --ink:#2A2521; --ink-soft:#5C5046; --stone:#B7A99B;
+    --oxblood:#7A2A2C; --oxblood-deep:#5E2122; --oxblood-deepest:#4A1B1C;
+    --brass:#A87C3E; --cream:#F1EAD9; --border:#E0D6C7;
+    --edge:2px; --rule:rgba(168,124,62,.55);
+    --display:"Fraunces",Georgia,serif; --body:"Source Sans 3",system-ui,sans-serif;
+  }
+  .dark{
+    --paper:#1E1A17; --chalk:#2A2420; --muted:#262019;
+    --ink:#F1EAD9; --ink-soft:#B7AC9A; --stone:#8C7E70;
+    --oxblood:#C16A5A; --oxblood-deep:#5E2122; --oxblood-deepest:#4A1B1C;
+    --brass:#C9A06A; --cream:#F1EAD9; --border:rgba(255,255,255,.14);
+    --rule:rgba(201,160,106,.5);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.disp{font-family:var(--display);font-weight:400;letter-spacing:-.01em;line-height:1.08;margin:0}
+  p{margin:0 0 1rem}
+  a{color:var(--oxblood);text-decoration:none}
+  .screen{max-width:1180px;margin:0 auto;padding:0 40px}
+  .screenwrap{border-top:1px solid var(--border)}
+  .label{font-size:12.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .idx{font-family:var(--display);font-variant-numeric:lining-nums tabular-nums;color:var(--brass);
+    font-size:13px;letter-spacing:.12em;font-weight:500}
+  .rule{height:1px;background:var(--rule);border:0;width:100%;margin:0}
+  .rule-brass{height:2px;background:var(--brass);border:0}
+  .lede{font-size:19px;color:var(--ink-soft)}
+  .pill{display:inline-flex;align-items:center;gap:.5em;font-family:var(--body);font-weight:600;
+    font-size:13.5px;letter-spacing:.08em;text-transform:uppercase;padding:13px 22px;border-radius:999px;
+    cursor:pointer;border:1.5px solid transparent}
+  .pill-primary{background:var(--oxblood);color:#fff}
+  .pill-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+  .pill-cream{background:var(--cream);color:var(--oxblood-deepest)}
+  .pill-cream-ghost{background:transparent;color:var(--cream);border-color:var(--cream)}
+  .tag{display:inline-block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    padding:4px 10px;border:1px solid var(--border);border-radius:var(--edge);color:var(--ink-soft)}
+  .tag-open{color:#2f6b4f;border-color:#2f6b4f}
+  .tag-soon{color:var(--brass);border-color:var(--brass)}
+  .tag-wait{color:var(--oxblood);border-color:var(--oxblood)}
+  .well{position:relative;background:
+      repeating-linear-gradient(135deg,rgba(168,124,62,.10) 0 1px,transparent 1px 9px),var(--muted);
+    border-radius:var(--edge);overflow:hidden}
+  .well::before{content:"";position:absolute;inset:8px;border:1px solid var(--rule);border-radius:var(--edge);pointer-events:none}
+  .well .cap{position:absolute;left:14px;bottom:12px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  .well .fig{position:absolute;right:12px;top:10px;font-family:var(--display);color:var(--brass);font-size:12px;letter-spacing:.12em}
+  /* header */
+  header.site{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;max-width:1180px;margin:0 auto}
+  .wm{font-family:var(--display);line-height:1;letter-spacing:-.01em}
+  .wm .l1{font-size:21px} .wm .l1 b{font-weight:500;color:var(--oxblood)} .wm .l2{font-size:21px;display:block;margin-top:1px}
+  nav.main{display:flex;gap:26px;font-size:14.5px;letter-spacing:.04em;font-weight:600;color:var(--ink)}
+  nav.main a{color:var(--ink)}
+  .head-cta{display:flex;gap:10px}
+  .utility{background:var(--oxblood-deepest);color:var(--cream);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase}
+  .utility .inner{max-width:1180px;margin:0 auto;padding:9px 40px;display:flex;justify-content:space-between}
+  .utility a{color:var(--cream)}
+  /* generic grid helpers */
+  .sec{padding:64px 0}
+  .sechead{display:grid;grid-template-columns:170px 1fr;gap:28px;align-items:end;margin-bottom:8px}
+  .sechead .h{font-size:34px}
+  @media(max-width:760px){
+    .sechead{grid-template-columns:1fr;gap:6px}
+    .screen{padding:0 22px}
+    header.site{padding:16px 22px;flex-wrap:wrap;gap:14px}
+    nav.main{order:3;width:100%;gap:18px;font-size:13.5px}
+    .utility .inner{padding:9px 22px;font-size:11px;gap:10px}
+    .sec{padding:40px 0}
+    h1{font-size:38px !important}
+    .sechead .h{font-size:27px}
+    /* collapse every 2+ column grid to one column */
+    .screen > div[style*="grid-template-columns"],
+    section[style*="grid-template-columns"]{grid-template-columns:1fr !important;gap:26px !important}
+    .screen .sec > div[style*="grid-template-columns"]{grid-template-columns:1fr !important}
+    div[style*="repeat(3,1fr)"],div[style*="repeat(4,1fr)"]{grid-template-columns:1fr !important;gap:20px !important}
+    div[style*="grid-template-columns:230px"],div[style*="grid-template-columns:300px"],
+    div[style*="grid-template-columns:1.15fr"],div[style*="grid-template-columns:1.05fr"],
+    div[style*="grid-template-columns:1.1fr"],div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+    article[style*="grid-template-columns"]{grid-template-columns:80px 1fr !important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ HOME ============================ -->
+<div class="utility"><div class="inner"><span>Reformed lay formation · West Chester, Ohio</span><span><a href="#">Next cohort · Sep 8, 2026</a> &nbsp;·&nbsp; <a href="#">Request info</a></span></div></div>
+<header class="site">
+  <div class="wm"><span class="l1">The <b>Presbyterian</b></span><span class="l2">Academy</span></div>
+  <nav class="main"><a>Courses</a><a>Faculty</a><a>About</a><a>Events</a><a>Resources</a></nav>
+  <div class="head-cta"><span class="pill pill-ghost">Free intro</span><span class="pill pill-primary">Request info</span></div>
+</header>
+<div class="rule-brass" style="max-width:1180px;margin:0 auto"></div>
+
+<div class="screenwrap" style="border-top:0">
+<section class="screen sec" style="padding-top:48px">
+  <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center">
+    <div>
+      <div class="label">The Presbyterian Academy</div>
+      <h1 style="font-size:58px;margin:18px 0 0">Theological depth, taught for ordinary believers.</h1>
+      <p class="lede" style="margin:22px 0 28px;max-width:30em">Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.</p>
+      <div style="display:flex;gap:12px;margin-bottom:34px"><span class="pill pill-primary">Browse courses</span><span class="pill pill-ghost">Book a free intro</span></div>
+      <hr class="rule" />
+      <div style="display:flex;gap:28px;margin-top:14px;font-size:14.5px;color:var(--ink-soft)">
+        <span><span class="idx">BEGINS</span>&nbsp; September 8, 2026</span>
+        <span><span class="idx">TERM</span>&nbsp; Fall cohort</span>
+        <span><span class="idx">WHERE</span>&nbsp; West Chester, Ohio</span>
+      </div>
+    </div>
+    <div>
+      <div class="rule-brass"></div>
+      <div class="well" style="aspect-ratio:4/5"><span class="fig">Fig. 01</span><span class="cap">Seminar room, evening cohort</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="screenwrap"><section class="screen" style="padding:0">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr)">
+    <div style="padding:34px 28px 34px 0;border-right:1px solid var(--border)"><div class="idx">01</div><h3 style="font-size:21px;margin:10px 0 6px">Take a course</h3><p style="font-size:15px;color:var(--ink-soft);margin:0">Browse the catalog by topic or teacher.</p></div>
+    <div style="padding:34px 28px;border-right:1px solid var(--border)"><div class="idx">02</div><h3 style="font-size:21px;margin:10px 0 6px">Meet the teachers</h3><p style="font-size:15px;color:var(--ink-soft);margin:0">Ordained ministers and Reformed scholars.</p></div>
+    <div style="padding:34px 28px;border-right:1px solid var(--border)"><div class="idx">03</div><h3 style="font-size:21px;margin:10px 0 6px">Find your path</h3><p style="font-size:15px;color:var(--ink-soft);margin:0">A track for where you are right now.</p></div>
+    <div style="padding:34px 0 34px 28px"><div class="idx">04</div><h3 style="font-size:21px;margin:10px 0 6px">Start free</h3><p style="font-size:15px;color:var(--ink-soft);margin:0">Sit in on a class, no commitment.</p></div>
+  </div>
+</section></div>
+
+<div class="screenwrap" style="background:var(--chalk)"><section class="screen sec">
+  <div class="sechead"><div class="label">Start here</div><div><h2 class="h">Three courses to begin with</h2></div></div>
+  <hr class="rule" style="margin:18px 0 30px" />
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
+    <!-- card -->
+    <article>
+      <div class="rule-brass"></div>
+      <div class="well" style="aspect-ratio:3/2"><span class="fig">No. 01</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px"><span class="idx">COURSE 01</span><span class="tag tag-open">Open</span></div>
+      <h3 style="font-size:23px">Reading the Bible as one story</h3>
+      <p style="font-size:14.5px;color:var(--ink-soft);margin:8px 0 14px">with Rev. Dr. Miriam Hale</p>
+      <hr class="rule" />
+      <div style="display:flex;gap:16px;font-size:13.5px;color:var(--ink-soft);margin-top:10px"><span>Fall 2026</span><span>·</span><span>8 sessions</span><span>·</span><span>In person</span></div>
+    </article>
+    <article>
+      <div class="rule-brass"></div>
+      <div class="well" style="aspect-ratio:3/2"><span class="fig">No. 02</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px"><span class="idx">COURSE 02</span><span class="tag tag-soon">Starts soon</span></div>
+      <h3 style="font-size:23px">The Reformed confessions, plainly</h3>
+      <p style="font-size:14.5px;color:var(--ink-soft);margin:8px 0 14px">with Dr. Samuel Okonkwo</p>
+      <hr class="rule" />
+      <div style="display:flex;gap:16px;font-size:13.5px;color:var(--ink-soft);margin-top:10px"><span>Fall 2026</span><span>·</span><span>6 sessions</span><span>·</span><span>In person</span></div>
+    </article>
+    <article>
+      <div class="rule-brass"></div>
+      <div class="well" style="aspect-ratio:3/2"><span class="fig">No. 03</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px"><span class="idx">COURSE 03</span><span class="tag tag-wait">Waitlist</span></div>
+      <h3 style="font-size:23px">Leading a small group with depth</h3>
+      <p style="font-size:14.5px;color:var(--ink-soft);margin:8px 0 14px">with Rev. Carla Jiménez</p>
+      <hr class="rule" />
+      <div style="display:flex;gap:16px;font-size:13.5px;color:var(--ink-soft);margin-top:10px"><span>Spring 2027</span><span>·</span><span>10 sessions</span><span>·</span><span>In person</span></div>
+    </article>
+  </div>
+</section></div>
+
+<div class="screenwrap"><section class="screen" style="padding:0">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr)">
+    <div style="padding:40px 24px 40px 0;border-right:1px solid var(--border)"><div class="disp" style="font-size:40px;color:var(--oxblood)">1998</div><div class="label" style="margin-top:8px">Established</div></div>
+    <div style="padding:40px 24px;border-right:1px solid var(--border)"><div class="disp" style="font-size:40px;color:var(--oxblood)">1,200+</div><div class="label" style="margin-top:8px">Learners formed</div></div>
+    <div style="padding:40px 24px;border-right:1px solid var(--border)"><div class="disp" style="font-size:40px;color:var(--oxblood)">100%</div><div class="label" style="margin-top:8px">Ordained or credentialed faculty</div></div>
+    <div style="padding:40px 0 40px 24px"><div class="disp" style="font-size:40px;color:var(--oxblood)">3</div><div class="label" style="margin-top:8px">Denominations served</div></div>
+  </div>
+</section></div>
+
+<div class="screenwrap"><section class="screen sec">
+  <div class="sechead"><div class="label">The faculty</div><div><h2 class="h">Taught by ministers and scholars</h2></div></div>
+  <hr class="rule" style="margin:18px 0 30px" />
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
+    <article style="display:grid;grid-template-columns:96px 1fr;gap:18px">
+      <div class="well" style="aspect-ratio:4/5"></div>
+      <div><h3 style="font-size:21px">Rev. Dr. Miriam Hale</h3>
+        <div style="font-size:13.5px;color:var(--brass);margin:5px 0 8px">PhD, Princeton Theological Seminary</div>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0 0 10px">Teacher of Scripture</p>
+        <span class="tag">PC(USA), ordained</span></div>
+    </article>
+    <article style="display:grid;grid-template-columns:96px 1fr;gap:18px">
+      <div class="well" style="aspect-ratio:4/5"></div>
+      <div><h3 style="font-size:21px">Dr. Samuel Okonkwo</h3>
+        <div style="font-size:13.5px;color:var(--brass);margin:5px 0 8px">ThM, Westminster Theological Seminary</div>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0 0 10px">Teacher of Systematic Theology</p>
+        <span class="tag">PC(USA), ordained</span></div>
+    </article>
+    <article style="display:grid;grid-template-columns:96px 1fr;gap:18px">
+      <div class="well" style="aspect-ratio:4/5"></div>
+      <div><h3 style="font-size:21px">Rev. Carla Jiménez</h3>
+        <div style="font-size:13.5px;color:var(--brass);margin:5px 0 8px">MDiv, Pittsburgh Theological Seminary</div>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0 0 10px">Teacher of Spiritual Formation</p>
+        <span class="tag">ECO, ordained</span></div>
+    </article>
+  </div>
+</section></div>
+
+<!-- colophon CTA -->
+<div style="background:var(--oxblood-deep)">
+  <div class="rule-brass" style="max-width:1180px;margin:0 auto"></div>
+  <section class="screen" style="padding:62px 40px;color:var(--cream)">
+    <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center">
+      <div>
+        <div class="label" style="color:var(--cream);opacity:.8">Begin your formation</div>
+        <h2 style="font-size:42px;color:var(--cream);margin:14px 0 14px">Tell us what you want to learn.</h2>
+        <p style="color:var(--cream);opacity:.86;margin:0;max-width:34em">We will help you find the right course, point you to a free intro session, and answer any question. No application fee, no pressure.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <span class="pill pill-cream">Request information</span>
+        <span class="pill pill-cream-ghost">Book a free intro session</span>
+        <div class="label" style="color:var(--cream);opacity:.6;margin-top:8px">Established 1998 · A ministry of the Reformed church</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================ COURSE CATALOG ============================ -->
+<div style="height:46px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:.25em;text-transform:uppercase">Course catalog</div>
+<div class="screenwrap"><section class="screen sec">
+  <div class="sechead"><div class="label">Catalog</div><div><h2 class="h">Courses</h2></div></div>
+  <hr class="rule" style="margin:18px 0 26px" />
+  <div style="display:grid;grid-template-columns:230px 1fr;gap:40px">
+    <aside>
+      <div class="label" style="margin-bottom:12px">Topic</div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:14.5px;color:var(--ink-soft);margin-bottom:26px">
+        <label><input type="checkbox" checked> Scripture <span style="color:var(--stone)">(6)</span></label>
+        <label><input type="checkbox"> Reformed theology <span style="color:var(--stone)">(5)</span></label>
+        <label><input type="checkbox"> Prayer &amp; spiritual life <span style="color:var(--stone)">(4)</span></label>
+        <label><input type="checkbox"> Church history <span style="color:var(--stone)">(3)</span></label>
+        <label><input type="checkbox"> Leading a group <span style="color:var(--stone)">(4)</span></label>
+      </div>
+      <hr class="rule" />
+      <div class="label" style="margin:22px 0 12px">Teacher</div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:14.5px;color:var(--ink-soft);margin-bottom:26px">
+        <label><input type="checkbox"> Rev. Dr. Miriam Hale <span style="color:var(--stone)">(4)</span></label>
+        <label><input type="checkbox"> Dr. Samuel Okonkwo <span style="color:var(--stone)">(3)</span></label>
+        <label><input type="checkbox"> Rev. Carla Jiménez <span style="color:var(--stone)">(2)</span></label>
+      </div>
+      <hr class="rule" />
+      <div class="label" style="margin:22px 0 12px">Term</div>
+      <select style="width:100%;padding:9px;border:1px solid var(--border);border-radius:var(--edge);background:var(--chalk);color:var(--ink);font-family:var(--body)"><option>All upcoming terms</option><option>Fall 2026</option><option>Spring 2027</option></select>
+    </aside>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:24px">
+        <span style="font-size:14px;color:var(--ink-soft)"><b style="color:var(--ink)">12</b> courses · Fall 2026</span>
+        <span style="font-size:13.5px;color:var(--ink-soft)">Sort: Next start date</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 01</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 01</span><span class="tag tag-open">Open</span></div><h3 style="font-size:20px">Reading the Bible as one story</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Rev. Dr. Miriam Hale</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Fall 2026 · 8 sessions · $195</div></article>
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 02</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 02</span><span class="tag tag-soon">Starts soon</span></div><h3 style="font-size:20px">The Reformed confessions, plainly</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Dr. Samuel Okonkwo</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Fall 2026 · 6 sessions · $165</div></article>
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 03</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 03</span><span class="tag tag-open">Open</span></div><h3 style="font-size:20px">Prayer and the Psalms</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Rev. Carla Jiménez</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Fall 2026 · 8 sessions · $195</div></article>
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 04</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 04</span><span class="tag tag-open">Open</span></div><h3 style="font-size:20px">The early church and the creeds</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Dr. Samuel Okonkwo</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Fall 2026 · 6 sessions · $165</div></article>
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 05</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 05</span><span class="tag tag-wait">Waitlist</span></div><h3 style="font-size:20px">Leading a small group with depth</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Rev. Carla Jiménez</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Spring 2027 · 10 sessions · $240</div></article>
+        <article><div class="rule-brass"></div><div class="well" style="aspect-ratio:3/2"><span class="fig">No. 06</span></div><div style="display:flex;justify-content:space-between;margin:13px 0 7px"><span class="idx">COURSE 06</span><span class="tag tag-open">Open</span></div><h3 style="font-size:20px">Calvin for everyday faith</h3><p style="font-size:13.5px;color:var(--ink-soft);margin:7px 0 12px">Rev. Dr. Miriam Hale</p><hr class="rule"><div style="font-size:13px;color:var(--ink-soft);margin-top:9px">Fall 2026 · 8 sessions · $195</div></article>
+      </div>
+    </div>
+  </div>
+</section></div>
+
+<!-- ============================ COURSE DETAIL ============================ -->
+<div style="height:46px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:.25em;text-transform:uppercase">Course detail</div>
+<div class="screenwrap"><section class="screen sec">
+  <div style="font-size:13px;color:var(--ink-soft);letter-spacing:.04em;margin-bottom:20px">Courses &nbsp;/&nbsp; Scripture &nbsp;/&nbsp; <span style="color:var(--ink)">Reading the Bible as one story</span></div>
+  <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:48px">
+    <div>
+      <div class="idx" style="margin-bottom:12px">COURSE 01 / SCRIPTURE</div>
+      <h1 style="font-size:46px">Reading the Bible as one story</h1>
+      <p style="font-size:18px;color:var(--ink-soft);margin:14px 0 26px">with Rev. Dr. Miriam Hale</p>
+      <p style="font-size:17px;max-width:40em">The Bible is not a box of disconnected verses. Over eight evenings we walk the whole arc, creation to new creation, and learn to read any single passage in light of the one story it belongs to. Built for people who lead a study, teach a class, or simply want to know the Scriptures better.</p>
+      <div class="label" style="margin:30px 0 12px">Who this is for</div>
+      <ul style="margin:0;padding-left:1.1em;color:var(--ink-soft);font-size:16px;line-height:1.9">
+        <li>Small-group and Sunday-school leaders who teach the text</li>
+        <li>Newcomers who want the big picture before the details</li>
+        <li>Lifelong readers who have never seen the whole arc at once</li>
+      </ul>
+
+      <div class="label" style="margin:34px 0 0">The sessions</div>
+      <hr class="rule" style="margin:12px 0 0" />
+      <div>
+        <div style="display:grid;grid-template-columns:54px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)"><div class="idx" style="font-size:18px">01</div><div><h3 style="font-size:19px">Creation and covenant</h3><p style="font-size:14.5px;color:var(--ink-soft);margin:4px 0 0">Why the Bible opens the way it does.</p></div></div>
+        <div style="display:grid;grid-template-columns:54px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)"><div class="idx" style="font-size:18px">02</div><div><h3 style="font-size:19px">Exodus and the shape of redemption</h3><p style="font-size:14.5px;color:var(--ink-soft);margin:4px 0 0">The pattern that runs through everything after.</p></div></div>
+        <div style="display:grid;grid-template-columns:54px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)"><div class="idx" style="font-size:18px">03</div><div><h3 style="font-size:19px">Kings, prophets, and the long wait</h3><p style="font-size:14.5px;color:var(--ink-soft);margin:4px 0 0">Promise stretched across centuries.</p></div></div>
+        <div style="display:grid;grid-template-columns:54px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)"><div class="idx" style="font-size:18px">04</div><div><h3 style="font-size:19px">The Gospels: the story turns</h3><p style="font-size:14.5px;color:var(--ink-soft);margin:4px 0 0">Reading Jesus as the center, not a chapter.</p></div></div>
+      </div>
+      <p style="font-size:14px;color:var(--ink-soft);margin-top:14px">Sessions 05 to 08 continue through Acts, the letters, and Revelation.</p>
+    </div>
+
+    <aside>
+      <div class="rule-brass"></div>
+      <div style="border:1px solid var(--border);border-top:0;background:var(--chalk)">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border)"><div class="label">At a glance</div></div>
+        <table style="width:100%;border-collapse:collapse;font-size:14.5px">
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Term</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">Fall 2026</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Begins</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">Sep 8, 2026</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Schedule</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">Tue, 7-9pm</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Sessions</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">8 weeks</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Format</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">In person</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Venue</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)">West Chester campus</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft);border-bottom:1px solid var(--border)">Tuition</td><td style="padding:11px 20px;text-align:right;border-bottom:1px solid var(--border)"><b>$195</b> · audit $95</td></tr>
+          <tr><td style="padding:11px 20px;color:var(--ink-soft)">Apply by</td><td style="padding:11px 20px;text-align:right">Aug 25, 2026</td></tr>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+        <span class="pill pill-primary" style="justify-content:center">Express interest</span>
+        <span class="pill pill-ghost" style="justify-content:center">Request information</span>
+      </div>
+      <p style="font-size:13.5px;color:var(--ink-soft);text-align:center;margin-top:12px">You can visit the first session free before you decide.</p>
+
+      <div style="margin-top:26px;border-top:1px solid var(--border);padding-top:20px;display:grid;grid-template-columns:64px 1fr;gap:14px">
+        <div class="well" style="aspect-ratio:1"></div>
+        <div><div class="label" style="font-size:11px">Your teacher</div><h3 style="font-size:18px;margin:5px 0 3px">Rev. Dr. Miriam Hale</h3><div style="font-size:12.5px;color:var(--brass)">PhD, Princeton Theological Seminary</div><a style="font-size:13px;display:inline-block;margin-top:7px">Full profile →</a></div>
+      </div>
+    </aside>
+  </div>
+</section></div>
+
+<!-- ============================ FACULTY BIO ============================ -->
+<div style="height:46px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:.25em;text-transform:uppercase">Faculty bio</div>
+<div class="screenwrap"><section class="screen sec">
+  <div style="display:grid;grid-template-columns:300px 1fr;gap:48px">
+    <div>
+      <div class="rule-brass"></div>
+      <div class="well" style="aspect-ratio:4/5"><span class="cap">Portrait</span></div>
+      <div style="margin-top:18px"><span class="tag">PC(USA), ordained</span></div>
+      <div class="label" style="margin:22px 0 10px">Teaching areas</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><span class="tag">Scripture</span><span class="tag">Biblical theology</span><span class="tag">Preaching</span></div>
+    </div>
+    <div>
+      <div class="idx" style="margin-bottom:10px">Faculty</div>
+      <h1 style="font-size:44px">Rev. Dr. Miriam Hale</h1>
+      <p style="font-size:18px;color:var(--ink-soft);margin:10px 0 4px">Teacher of Scripture</p>
+      <div style="font-size:15px;color:var(--brass);margin-bottom:22px">PhD, Princeton Theological Seminary · MDiv, Pittsburgh Theological Seminary</div>
+      <p style="font-size:17px;max-width:44em">Miriam has spent twenty years helping ordinary congregations read the Bible with both rigor and joy. Before joining the Academy she pastored two churches in Ohio and taught biblical studies as adjunct faculty, and she still preaches most months somewhere in the presbytery.</p>
+      <p style="font-size:17px;max-width:44em;font-style:italic;font-family:var(--display)">She makes the hardest passages feel like an open door, not a locked one.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:30px">
+        <div>
+          <div class="label">Degrees</div><hr class="rule" style="margin:10px 0 0">
+          <div style="font-size:15px;padding:12px 0;border-bottom:1px solid var(--border)"><b>PhD, New Testament</b><br><span style="color:var(--ink-soft)">Princeton Theological Seminary, 2009</span></div>
+          <div style="font-size:15px;padding:12px 0;border-bottom:1px solid var(--border)"><b>MDiv</b><br><span style="color:var(--ink-soft)">Pittsburgh Theological Seminary, 2003</span></div>
+          <div style="font-size:15px;padding:12px 0"><b>BA, Religion</b><br><span style="color:var(--ink-soft)">The College of Wooster, 2000</span></div>
+        </div>
+        <div>
+          <div class="label">Selected publications</div><hr class="rule" style="margin:10px 0 0">
+          <div style="font-size:15px;padding:12px 0;border-bottom:1px solid var(--border)">The Whole Story <span style="color:var(--ink-soft)">· Eerdmans, 2018</span></div>
+          <div style="font-size:15px;padding:12px 0;border-bottom:1px solid var(--border)">Reading Together <span style="color:var(--ink-soft)">· Westminster John Knox, 2014</span></div>
+          <div class="label" style="margin:24px 0 10px">Affiliations</div><hr class="rule" style="margin:0 0 10px">
+          <div style="font-size:14.5px;color:var(--ink-soft)">Ruling elder, Heritage Presbyterian · Member, Society of Biblical Literature</div>
+        </div>
+      </div>
+
+      <div class="label" style="margin:34px 0 12px">Courses taught</div>
+      <div style="display:flex;gap:14px">
+        <div style="flex:1;border:1px solid var(--border);border-top:2px solid var(--brass);padding:14px 16px"><div class="idx" style="font-size:11px">COURSE 01</div><div style="font-family:var(--display);font-size:18px;margin-top:4px">Reading the Bible as one story</div></div>
+        <div style="flex:1;border:1px solid var(--border);border-top:2px solid var(--brass);padding:14px 16px"><div class="idx" style="font-size:11px">COURSE 06</div><div style="font-family:var(--display);font-size:18px;margin-top:4px">Calvin for everyday faith</div></div>
+      </div>
+    </div>
+  </div>
+</section></div>
+
+<div style="height:60px"></div>
+</body>
+</html>

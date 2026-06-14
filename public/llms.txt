@@ -1,17 +1,16 @@
 # The Presbyterian Academy
 
-> A welcoming church in downtown West Chester Township. This file orients AI crawlers to
-> the site's key pages. Regenerate after launch with `npm run llms:full`, and
-> replace this description with the church's own one-liner.
+> A PC(USA) Reformed school of theological formation for adult lay leaders. This
+> file orients AI crawlers to the site's key pages. Regenerate after content
+> changes with `npm run llms:full`.
 
 ## Key pages
-- [Plan a Visit](https://www.presbyterianacademy.org/worship/): Service time, what to expect, parking, kids, accessibility
-- [What We Believe](https://www.presbyterianacademy.org/what-we-believe/): The faith this church shares
-- [Sermons](https://www.presbyterianacademy.org/sermons/): Watch recent messages or join worship live online
-- [Events](https://www.presbyterianacademy.org/events/): Weekly rhythms and upcoming gatherings
-- [Music](https://www.presbyterianacademy.org/music/): The church's musical life
-- [Pastor & Staff](https://www.presbyterianacademy.org/pastor-staff/): The people you'll meet
-- [Give](https://www.presbyterianacademy.org/give/): Online and by-mail giving
-- [Weddings](https://www.presbyterianacademy.org/weddings/): Getting married in the sanctuary
-- [Use Our Space](https://www.presbyterianacademy.org/use-our-space/): Renting the building
+- [Courses](https://www.presbyterianacademy.org/courses/): The course catalog, browsable by topic and teacher
+- [Faculty](https://www.presbyterianacademy.org/faculty/): The ministers and scholars who teach
+- [About](https://www.presbyterianacademy.org/about/): Mission, Reformed identity, and what we believe
+- [Pricing & Scholarships](https://www.presbyterianacademy.org/pricing/): Tuition, said plainly, and scholarships
+- [Get Started](https://www.presbyterianacademy.org/get-started/): Request information or book a free intro
+- [For You](https://www.presbyterianacademy.org/for-you/): Find a starting point for where you are
+- [Events](https://www.presbyterianacademy.org/events/): Info sessions, open lectures, and term dates
+- [Resources](https://www.presbyterianacademy.org/resources/): Teaching and formation essays
 - [Contact](https://www.presbyterianacademy.org/contact/): Address, office hours, who to reach

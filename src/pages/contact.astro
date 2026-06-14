@@ -28,7 +28,7 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `Contact · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Reach The Presbyterian Academy. Address, phone, email, office hours, and how to find us in downtown West Chester Township.';
+  'Reach The Presbyterian Academy. Address, phone, email, office hours, and how to find the West Chester campus.';
 
 const schemas = [
   breadcrumbSchema([
@@ -50,9 +50,8 @@ const mapQuery = encodeURIComponent(`${addressLine}, ${cityStateZip}`);
 // from Sanity siteSettings (public + pastoral) via the resolver.
 const FALLBACK_REASONS = [
   { label: 'General questions', value: settings.email, href: `mailto:${settings.email}` },
-  { label: 'Pastoral care', value: settings.pastorEmail, href: `mailto:${settings.pastorEmail}` },
-  { label: 'Weddings', value: 'See wedding details', href: '/weddings' },
-  { label: 'Use our space', value: 'Inquire about the building', href: '/use-our-space' },
+  { label: 'Courses and enrollment', value: 'Request information', href: '/get-started' },
+  { label: 'Pricing and scholarships', value: 'See pricing', href: '/pricing' },
 ];
 
 const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_REASONS;
@@ -62,7 +61,7 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Contact'}
     headline={page?.heroHeadline ?? 'Get in touch'}
-    subhead={page?.heroSubhead ?? 'The best way to meet us is on a Sunday morning. Until then, here is how to reach the church office.'}
+    subhead={page?.heroSubhead ?? 'Questions about a course, scholarships, or getting started? Here is how to reach us.'}
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroContact}
@@ -109,7 +108,7 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
         <div class="border-t border-border-soft pt-l text-foreground/80 leading-relaxed">
           <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.gettingHereLabel ?? 'Getting here'}</p>
           <p>
-            {page?.gettingHereBody ?? 'We sit on Main Street in downtown West Chester Township, close to public transit, with first-come, first-served free parking. Looking for our food ministry? Find us at the Main Street door.'}
+            {page?.gettingHereBody ?? 'Courses meet in person on the West Chester campus, with free on-site parking. The building is a short drive from the interstate.'}
           </p>
         </div>
       </div>
@@ -149,9 +148,9 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
   <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
 
   <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
-    headline={page?.finalCtaHeadline ?? "We hope to see you Sunday"}
-    subhead={page?.finalCtaSubhead ?? "We gather for worship every Sunday. Whoever you are, you are welcome here."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
+    eyebrow={page?.finalCtaEyebrow ?? "Ready to begin?"}
+    headline={page?.finalCtaHeadline ?? "Tell us what you want to learn"}
+    subhead={page?.finalCtaSubhead ?? "Request information or book a free intro. No application fee, no pressure."}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
   />
 </BaseLayout>
