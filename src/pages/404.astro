@@ -21,15 +21,15 @@ const [notFoundPage, siteSettings] = await Promise.all([
 const seoTitle       = notFoundPage?.seoTitle       ?? 'Page not found';
 const seoDescription = notFoundPage?.seoDescription ?? 'That page wandered off. Head back to the homepage or get in touch.';
 
-const eyebrow  = notFoundPage?.eyebrow  ?? '404';
-const headline = notFoundPage?.headline ?? 'That page wandered off.';
-const body     = notFoundPage?.body     ?? "It happens. Maybe a link is old, maybe the URL has a typo. Either way, here's where to head next.";
+const eyebrow  = notFoundPage?.eyebrow  ?? 'Error 404';
+const headline = notFoundPage?.headline ?? "This page isn't in the index.";
+const body     = notFoundPage?.body     ?? 'A link may be out of date, or the address mistyped. The catalog, the faculty, and a way to reach us are all a click away.';
 
-// Church CTAs (the template's "Browse the portfolio" / /portfolio is gone).
-const primaryLabel    = notFoundPage?.primaryCtaLabel    ?? 'Back home';
-const primaryHref     = notFoundPage?.primaryCtaHref     ?? '/';
-const secondaryLabel  = notFoundPage?.secondaryCtaLabel  ?? 'Browse courses';
-const secondaryHref   = notFoundPage?.secondaryCtaHref   ?? '/courses';
+// School CTAs: send a lost visitor to the catalog, the faculty, or a person.
+const primaryLabel    = notFoundPage?.primaryCtaLabel    ?? 'Browse courses';
+const primaryHref     = notFoundPage?.primaryCtaHref     ?? '/courses';
+const secondaryLabel  = notFoundPage?.secondaryCtaLabel  ?? 'Meet the faculty';
+const secondaryHref   = notFoundPage?.secondaryCtaHref   ?? '/faculty';
 const tertiaryLabel   = notFoundPage?.tertiaryCtaLabel   ?? 'Get in touch';
 const tertiaryHref    = notFoundPage?.tertiaryCtaHref    ?? '/contact';
 
@@ -87,7 +87,10 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
     {/* Photo column. Stacks above the text on mobile (md:order-2 swaps it on
         desktop so the eye lands on text first, photo balances right). */}
     <figure class="order-first md:order-2">
-      <div class="arch-top overflow-hidden ring-1 ring-primary/40 dark:ring-[#C7A875]/40 shadow-sm aspect-[5/6]">
+      {/* Brass top rule + rectangular crop — the current "Rule & Ledger" frame.
+          The Romanesque arch was retired in the brand evolution. */}
+      <div class="h-0.5 w-full bg-gold"></div>
+      <div class="overflow-hidden aspect-[5/6] bg-muted">
         {sanityPhoto ? (
           <SanityImage
             source={sanityPhoto}

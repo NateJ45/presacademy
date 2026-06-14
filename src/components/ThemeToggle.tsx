@@ -1,8 +1,9 @@
 // Foundation, edit with care
-// Three-state theme toggle: light → dark → system. Persists to
-// localStorage (key from site.themeStorageKey). Anti-FOUC script in BaseLayout
-// applies the resolved class on initial paint; this component only
-// handles cycling and runtime re-application.
+// Three-state theme toggle: light → dark → system. LIGHT is the default for a
+// new visitor (no saved choice); the OS theme is only followed if the visitor
+// explicitly picks "system". Persists to localStorage (key from
+// site.themeStorageKey). Anti-FOUC script in BaseLayout applies the resolved
+// class on initial paint; this component only handles cycling + re-application.
 
 import { useEffect, useState } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
@@ -32,15 +33,15 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    const stored = (localStorage.getItem(KEY) as Theme | null) ?? 'system';
+    const stored = (localStorage.getItem(KEY) as Theme | null) ?? 'light';
     setTheme(stored);
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const onChange = () => {
-      if ((localStorage.getItem(KEY) ?? 'system') === 'system') applyTheme('system');
+      if ((localStorage.getItem(KEY) ?? 'light') === 'system') applyTheme('system');
     };
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);

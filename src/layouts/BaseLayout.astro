@@ -135,9 +135,10 @@ const announcementClass = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
-    {/* Mobile browser UI chrome color, theme-aware (Soft Linen / Charcoal Dark). */}
-    <meta name="theme-color" content="#ECE4DA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1C1813" media="(prefers-color-scheme: dark)" />
+    {/* Mobile browser UI chrome color. Light by default (matching the default
+        theme); the bootstrap below flips it to the dark value when the visitor
+        has chosen dark, so the browser bar follows the APP theme, not the OS. */}
+    <meta name="theme-color" content="#ECE4DA" id="theme-color-meta" />
 
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={appleTouchHref} />
@@ -181,13 +182,19 @@ const announcementClass = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
         function applyTheme() {
           let dark = false;
           try {
-            const stored = localStorage.getItem(key) ?? 'system';
+            // Default to LIGHT for a new visitor (no saved choice). 'system' is
+            // used only when the visitor explicitly picks it, so the site does
+            // not follow the OS's dark mode by default.
+            const stored = localStorage.getItem(key) ?? 'light';
             dark =
               stored === 'dark' ||
               (stored === 'system' &&
                 window.matchMedia('(prefers-color-scheme: dark)').matches);
             document.documentElement.classList.toggle('dark', dark);
             document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+            // Keep the mobile browser chrome color in step with the app theme.
+            const metaTC = document.getElementById('theme-color-meta');
+            if (metaTC) metaTC.setAttribute('content', dark ? '#1C1813' : '#ECE4DA');
           } catch (_) { /* localStorage unavailable, default light */ }
 
           // Theme-aware images (header logo) — swap src/srcset to match the
