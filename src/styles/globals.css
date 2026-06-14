@@ -19,14 +19,20 @@
 
 @theme {
   /* Brand palette — Oxblood & Stone. */
-  --color-primary:      #7A2A2C; /* Geneva Oxblood — interactive accent */
-  --color-primary-dark: #5E2122; /* Oxblood Deep — anchor/link text */
-  --color-accent:       #2A2521; /* Walnut Ink — headings + body */
-  --color-accent-dark:  #1E1A17; /* Walnut Deep — dark surfaces */
+  /* Direction A (brand evolution): green-anchored, near-white, soft-black.
+     Oxblood is demoted from the lead/field color to a sparing accent; deep
+     forest green is promoted to the primary anchor. Token NAMES are kept
+     (chapel, chapel-ink, etc.) and only VALUES changed, so the change is
+     contained and reversible — chapel now carries green, not oxblood. */
+  --color-primary:      #33503F; /* Geneva Green — primary anchor (Direction A) */
+  --color-primary-dark: #2A4233; /* Green Deep — deeper anchor/link text */
+  --color-accent:       #1F1B18; /* Soft near-black — headings + body (Direction A) */
+  --color-accent-dark:  #1E1A17; /* Near-black deep — dark surfaces */
   --color-secondary:    #B7A99B; /* Cloister Stone — borders, eyebrows */
   --color-tertiary:     #9C8E7E; /* Stone Deep — sparingly */
-  --color-bg:           #F4EEE6; /* Stone Cream — warm page surface */
-  --color-bg-soft:      #FCF9F4; /* Chalk — alternating surface */
+  --color-bg:           #FAF8F4; /* Near-white warm paper — page surface (Direction A) */
+  --color-bg-soft:      #FFFFFF; /* White — raised/alt surface (Direction A) */
+  --color-oxblood:      #7A2A2C; /* Oxblood — demoted, sparing secondary accent */
   /* border-soft is theme-aware (declared in the @theme inline map below, with
      per-theme values in :root / .dark). It used to be a static #DED6C8 here,
      which made every faint divider GLOW at ~12:1 on the dark page. */
@@ -39,15 +45,15 @@
      always cream (--color-chapel-foreground). The token keeps its legacy `chapel`
      name; only the value changed to oxblood. Reachable as bg-chapel,
      bg-chapel-deep, text-chapel-foreground. */
-  --color-chapel:            #5E2122; /* Oxblood Deep — utility bar, footer, CTA band */
-  --color-chapel-deep:       #4A1B1C; /* Oxblood Deepest — deepest band base */
-  --color-chapel-foreground: #F1EAD9; /* warm cream text on band surfaces */
+  --color-chapel:            #2A4233; /* Forest Green — footer + closing-CTA band (Direction A) */
+  --color-chapel-deep:       #1F3227; /* Forest Green Deepest — band base (Direction A) */
+  --color-chapel-foreground: #F1EAD9; /* warm cream text on green band surfaces */
   --color-gold:              #A87C3E; /* Aged Brass — hairline rules, small accents */
 
   /* Arched-top crown radius — the building's architectural signature, applied to
      hero / feature / staff images via the .arch-top utility (a Romanesque
      rounded arch). One token so the curve stays consistent everywhere. */
-  --arch-radius: clamp(3.5rem, 14vw, 9rem);
+  --arch-radius: clamp(0.5rem, 1vw, 0.85rem); /* Direction A: Romanesque arch retired -> quiet modern rounding */
 
   /* Fonts */
   --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
@@ -259,37 +265,37 @@
 
 :root {
     /* Surfaces */
-    --background: #F4EEE6;
-    --foreground: #2A2521;
-    --card: #FCF9F4;
-    --card-foreground: #2A2521;
-    --popover: #FCF9F4;
-    --popover-foreground: #2A2521;
+    --background: #FAF8F4;
+    --foreground: #1F1B18;
+    --card: #FFFFFF;
+    --card-foreground: #1F1B18;
+    --popover: #FFFFFF;
+    --popover-foreground: #1F1B18;
 
     /* Brand */
-    --primary: #7A2A2C;
+    --primary: #33503F;
     --primary-foreground: #FFFFFF;
     --secondary: #B7A99B;
-    --secondary-foreground: #2A2521;
+    --secondary-foreground: #1F1B18;
 
     /* Quiet surfaces / muted text */
-    --muted: #EDE5D9;
-    --muted-foreground: #5C5046;    /* warm gray on cream — verify AA */
+    --muted: #F1F0EB;
+    --muted-foreground: #55514A;    /* warm gray on near-white — AA */
 
     /* Accent */
-    --accent: #E7DDCF;
-    --accent-foreground: #2A2521;
+    --accent: #ECEAE3;
+    --accent-foreground: #1F1B18;
 
     /* States */
     --destructive: oklch(0.577 0.245 27.325);
-    --border: #E0D6C7;
-    --input: #E0D6C7;
-    --ring: #7A2A2C;
-    --link: #5E2122;                /* deep oxblood on cream — verify AA */
-    --status-success: #2F6B4F;      /* status green on cream (~5.3:1, AA) */
-    --chapel-ink: #7A2A2C;          /* oxblood keyword emphasis on cream (~7:1) */
-    --gold-ink: #6E5128;            /* deepened brass as TEXT on cream (~4.8:1, AA) */
-    --border-soft: #E0D6C7;         /* faint warm divider */
+    --border: #E6E3DB;
+    --input: #E6E3DB;
+    --ring: #33503F;
+    --link: #33503F;                /* deep green on near-white — AA ~8:1 */
+    --status-success: #2F6B4F;      /* status green on near-white (~5.3:1, AA) */
+    --chapel-ink: #33503F;          /* green keyword emphasis on near-white (~8:1) */
+    --gold-ink: #6E5128;            /* deepened brass as TEXT on near-white (~4.8:1, AA) */
+    --border-soft: #EAE7DF;         /* faint warm divider */
 
     /* Charts (kept neutral, not used at launch) */
     --chart-1: oklch(0.87 0 0);
@@ -301,14 +307,14 @@
     --radius: 0.5rem;
 
     /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
-    --sidebar: #F4EEE6;
-    --sidebar-foreground: #2A2521;
-    --sidebar-primary: #7A2A2C;
+    --sidebar: #FAF8F4;
+    --sidebar-foreground: #1F1B18;
+    --sidebar-primary: #33503F;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #EDE5D9;
-    --sidebar-accent-foreground: #2A2521;
-    --sidebar-border: #E0D6C7;
-    --sidebar-ring: #7A2A2C;
+    --sidebar-accent: #F1F0EB;
+    --sidebar-accent-foreground: #1F1B18;
+    --sidebar-border: #E6E3DB;
+    --sidebar-ring: #33503F;
 
     --tint-rgb: 168, 124, 62;
 }
@@ -328,10 +334,11 @@
     --popover: #2A2420;
     --popover-foreground: #F1EAD9;
 
-    --primary: #C16A5A;
-    /* White (not ink) on the oxblood pill background: bg-primary stays the
-       static #7A2A2C in both themes; white keeps every primary CTA at ~7:1 in
-       both light and dark mode. */
+    --primary: #74A98A;
+    /* White on the static CTA pill: @theme bg-primary is the static green
+       #33503F in both themes; white keeps every primary CTA at ~8:1. This
+       shadcn --primary (lifted green) is used only for rings / underlines /
+       decoration on the dark page, where #33503F would vanish. */
     --primary-foreground: #FFFFFF;
     --secondary: #8C7E70;
     --secondary-foreground: #F1EAD9;
@@ -345,10 +352,10 @@
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 12%);
     --input: oklch(1 0 0 / 15%);
-    --ring: #C16A5A;
-    --link: #E0998C;
+    --ring: #74A98A;
+    --link: #9CC6AC;
     --status-success: #6FBF95;      /* lifted status green for dark (~8:1, AA) */
-    --chapel-ink: #E0998C;          /* lifted oxblood keyword emphasis on dark */
+    --chapel-ink: #9CC6AC;          /* lifted green keyword emphasis on dark */
     --gold-ink: #C9A06A;            /* lifted brass as TEXT on dark surfaces (AA) */
     --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
 
@@ -957,13 +964,13 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0; /* Direction A: paper grain retired (rule kept for easy restore) */
   background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   background-size: 220px 220px;
   mix-blend-mode: multiply;
 }
 .dark body::before {
-  opacity: 0.06;
+  opacity: 0; /* Direction A: paper grain retired */
   mix-blend-mode: screen;
 }
 
