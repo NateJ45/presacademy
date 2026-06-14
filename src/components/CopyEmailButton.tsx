@@ -66,7 +66,7 @@ export default function CopyEmailButton({ email, label, variant = 'link' }: Prop
         onClick={copyToClipboard}
         aria-label={`Copy ${email} to clipboard`}
         title="Copy email address"
-        className="inline-flex h-7 w-7 items-center justify-center rounded text-foreground/55 hover:text-link hover:bg-accent transition-colors"
+        className="inline-flex h-7 w-7 items-center justify-center rounded text-foreground/70 hover:text-link hover:bg-accent transition-colors"
       >
         {copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
       </button>
