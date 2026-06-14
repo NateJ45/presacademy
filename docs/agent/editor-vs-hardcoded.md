@@ -2,6 +2,8 @@
 
 > Reference for what an editor can change in Studio versus what needs a code edit. Mark component files accordingly.
 
+> **⚠️ Stale for the SCHOOL pages (2026-06-14).** The "all content is editor-driven" claim below describes the finished *church* build. The lay-school rebuild shipped many sections as hardcoded literals and reused the church schemas, so it is NOT currently true for the home, about, course/faculty-detail pages, or the global chrome. See **[`content-editability-audit.md`](content-editability-audit.md)** for the real page-by-page state and the fix plan; this doc is corrected as those fixes land.
+
 ## Sanity is the single source of truth
 
 **All content on the site is editor-driven through Sanity, and every content field is populated, so the Studio mirrors the live site exactly.** Page copy, headings, body text, buttons and links, images, the navigation menus, SEO titles/descriptions, the worship service time, and contact details all live in Sanity. To change anything a visitor reads, sees, or clicks, edit it in Sanity Studio; the site rebuilds and the change appears a few minutes later.
