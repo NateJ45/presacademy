@@ -110,6 +110,7 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
     case 'contactPage':   return '/contact';
     case 'notFoundPage':  return '/404';
     case 'privacyPage':   return '/privacy';
+    case 'accessibilityPage': return '/accessibility';
     // School index pages + page singletons
     case 'eventsPage':       return '/events';
     case 'coursesPage':      return '/courses';
@@ -230,6 +231,7 @@ const SINGLETON_TYPES = new Set<string>([
   'contactPage',
   'notFoundPage',
   'privacyPage',
+  'accessibilityPage',
   // School index pages + page singletons
   'eventsPage',
   'coursesPage',

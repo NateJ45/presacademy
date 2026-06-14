@@ -41,6 +41,7 @@ const SINGLETON_TYPES = [
   'eventsPage',
   'notFoundPage',
   'privacyPage',
+  'accessibilityPage',
   // School page singletons
   'coursesPage',
   'facultyPage',
@@ -161,6 +162,7 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
               singleton(S, 'contactPage', 'Contact', EnvelopeIcon),
               singleton(S, 'notFoundPage', '404 Page', DocumentTextIcon),
               singleton(S, 'privacyPage', 'Privacy Policy Page', LockIcon),
+              singleton(S, 'accessibilityPage', 'Accessibility Page', HeartIcon),
 
               S.divider(),
 

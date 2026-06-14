@@ -1,0 +1,165 @@
+---
+// Safe to edit by hand
+// Accessibility statement page. Fetches the accessibilityPage singleton from
+// Sanity for the body and last-reviewed date. When the doc doesn't exist yet
+// (or Sanity isn't reachable), a complete plain-voice statement is rendered so
+// the page is always live and accurate.
+//
+// The barrier-report contact (email + phone) resolves through siteSettings, so
+// it stays single-sourced with the header, footer, and contact page. A clear,
+// monitored way to report a problem is the part of an accessibility statement
+// that matters most, so it always renders even when the body is the fallback.
+//
+// Reuses PortableText for the body when Sanity content is present; falls back
+// to static HTML copy for the period before the editor publishes the doc.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import heroAccessibility from '@/assets/placeholders/study-bible-notebook.jpg';
+import PortableTextStatic from '@/components/PortableTextStatic.astro';
+import Sections from '@/components/Sections.astro';
+import { getAccessibilityPage, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import { telHref } from '@/lib/phone';
+
+const [page, siteSettings] = await Promise.all([
+  getAccessibilityPage().catch(() => null),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title       = page?.seoTitle       ?? `Accessibility · ${site.name}`;
+const description = page?.seoDescription ?? 'How we make this site usable for everyone, and how to tell us if something gets in your way.';
+
+const heroEyebrow  = page?.heroEyebrow  ?? 'Built for everyone.';
+const heroHeadline = page?.heroHeadline ?? 'Accessibility';
+const heroSubhead  = page?.heroSubhead  ?? '';
+
+// Format the lastUpdated date from Sanity or fall back to nothing (the static
+// statement carries its own "last reviewed" line at the bottom).
+function formatDate(d?: string): string {
+  if (!d) return '';
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+const lastUpdated = formatDate(page?.lastUpdated);
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Accessibility', url: `${site.url}/accessibility` },
+  ]),
+];
+
+// Barrier-report contact — single-sourced from siteSettings. Either may be
+// blank on a fresh dataset, so each is rendered conditionally; the contact-page
+// link is always offered as the reliable path.
+const contactEmail = settings.email;
+const contactPhone = settings.phone;
+
+// Whether to use Sanity body content
+const hasSanityBody = Boolean(page?.body);
+
+const linkClass = 'text-link underline underline-offset-2 hover:text-primary transition-colors';
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+  {/* Hero — text variant, short height. */}
+  <Hero
+    eyebrow={heroEyebrow}
+    headline={heroHeadline}
+    subhead={heroSubhead}
+    backgroundImage={page?.heroImage ?? null}
+    localImage={heroAccessibility}
+    localImageAlt="An open Bible, reading glasses, and a notebook laid out for study"
+    headingId="accessibility-hero-heading"
+    size="short"
+  />
+
+  <section class="bg-background" aria-label="Accessibility statement">
+    <div class="mx-auto max-w-3xl px-m py-section-lg">
+      {lastUpdated && (
+        <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-l">
+          Last reviewed: {lastUpdated}
+        </p>
+      )}
+
+      {hasSanityBody ? (
+        <PortableTextStatic
+          value={page!.body}
+          className="prose-friendly"
+        />
+      ) : (
+        <div class="space-y-l text-foreground leading-relaxed">
+          <p class="text-foreground/80">
+            {site.name} wants this website to work for everyone, including people who use a
+            screen reader, move through pages with a keyboard, or rely on other assistive
+            technology. We treat accessibility as part of building and maintaining the site,
+            not an afterthought.
+          </p>
+
+          <div>
+            <h2 class="font-display text-h3 text-foreground mb-s">The standard we hold ourselves to</h2>
+            <p class="text-foreground/80">
+              We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1
+              at Level AA. That is the benchmark most widely used for the web, and we check our
+              work against it as the site grows.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="font-display text-h3 text-foreground mb-s">What that looks like here</h2>
+            <ul class="list-disc pl-l space-y-1 text-foreground/80">
+              <li>Clear, semantic headings and page landmarks, so assistive technology can move through each page in a logical order.</li>
+              <li>Full keyboard support, with a visible focus outline and a skip-to-content link at the top of every page.</li>
+              <li>Text and background colors chosen for sufficient contrast, checked in both light and dark modes.</li>
+              <li>Written descriptions for images that carry meaning, with decorative images hidden from screen readers.</li>
+              <li>Text that resizes cleanly and a layout that adapts down to small phone screens.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="font-display text-h3 text-foreground mb-s">Where we are still working</h2>
+            <p class="text-foreground/80">
+              A few parts of the site use tools from other companies, such as the scheduling
+              widget and the embedded map. We choose accessible options where we can, but we do
+              not control everything about how those tools behave. If one of them gets in your
+              way, tell us and we will get you the same information another way.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="font-display text-h3 text-foreground mb-s">Found a barrier? Tell us.</h2>
+            <p class="text-foreground/80">
+              If anything on this site is hard to use, or you need a page in a different format,
+              please reach out and we will make it right.
+            </p>
+            <p class="mt-s text-foreground/80">
+              {contactEmail && (
+                <>Email us at <a href={`mailto:${contactEmail}`} class={linkClass}>{contactEmail}</a>. </>
+              )}
+              {contactPhone && (
+                <>You can also call <a href={telHref(contactPhone)} class={linkClass}>{contactPhone}</a>. </>
+              )}
+              Or send a note through our <a href="/contact" class={linkClass}>contact page</a>.
+            </p>
+            <p class="mt-s text-foreground/80">
+              Please include the address of the page and a short note about what went wrong. We
+              read every message, reply within a few business days, and will get you the
+              information you need.
+            </p>
+          </div>
+
+          <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
+            This statement was last reviewed in June 2026. We update it as the site changes.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+</BaseLayout>

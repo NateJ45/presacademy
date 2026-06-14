@@ -7,6 +7,7 @@
 // the lay-school revamp and replaced by the catalog types below.
 
 import { aboutPage } from './aboutPage';
+import { accessibilityPage } from './accessibilityPage';
 import { announcement } from './announcement';
 import { sectionBlocks } from './blocks';
 import { contactPage } from './contactPage';
@@ -50,6 +51,7 @@ export const schemaTypes = [
   eventsPage,
   notFoundPage,
   privacyPage,
+  accessibilityPage,
   // School page singletons (courses, faculty, pricing, get-started, for-you, resources).
   ...schoolPageSingletons,
 

@@ -394,6 +394,23 @@ export async function getPrivacyPage() {
   }`, {}, null);
 }
 
+// ---- Accessibility statement ----------------------------------------------
+// Route: /accessibility. Same shape as the privacy page; the page renders a
+// complete static fallback statement when this singleton is null.
+export async function getAccessibilityPage() {
+  return sanityFetch(`*[_type == "accessibilityPage"][0]{
+    seoTitle,
+    seoDescription,
+    seoImage${IMAGE_PROJECTION},
+    heroEyebrow, heroHeadline, heroSubhead,
+    heroImage${IMAGE_PROJECTION},
+    heroScriptAccent,
+    lastUpdated,
+    body,
+    flexibleSections[]${SECTION_MEMBERS}
+  }`, {}, null);
+}
+
 // ---- Pastors & staff collection -------------------------------------------
 
 export async function getStaffMembers() {
