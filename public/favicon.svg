@@ -1,22 +1,22 @@
 <!--
-  The Presbyterian Academy favicon. A Geneva Oxblood (#7A2A2C) rounded square
+  The Presbyterian Academy favicon. A Geneva Green (#33503F) rounded square
   with a warm cream (#F1EAD9) "PA" monogram in a serif stack.
 
   Theme behavior:
-    - Light mode: oxblood square on a light tab background.
+    - Light mode: green square on a light tab background.
     - Dark mode: square lifts slightly so it reads against dark tab strips.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <style>
-    .disc { fill: #7A2A2C; }
+    .disc { fill: #33503F; }
     .mark { fill: #F1EAD9; }
     @media (prefers-color-scheme: dark) {
-      .disc { fill: #9A3A3C; }
+      .disc { fill: #44694F; }
       .mark { fill: #F5EEDF; }
     }
   </style>
 
-  <!-- Oxblood rounded square — the brand mark. -->
+  <!-- Geneva Green rounded square — the brand mark. -->
   <rect class="disc" x="2" y="2" width="60" height="60" rx="14" />
 
   <!--
