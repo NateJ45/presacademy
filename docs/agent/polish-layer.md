@@ -1,22 +1,40 @@
 # Polish layer
 
-> Custom CSS utilities and JS behaviors layered on Tailwind: brand stripe, card-lift, surface-warm, reading-progress, sticky-header, nav-underline, paper-grain, and print stylesheet.
+> Custom CSS utilities and JS behaviors layered on Tailwind: the eyebrow rubric, brand stripe, card-lift, surface-warm / surface-chapel, reading-progress, sticky-header, nav-underline, and print stylesheet.
 
 Animation behaviors (Lenis, scroll reveals, stagger grid, hero entry, view transitions, Ken Burns slideshow, script accent opt-in) are documented separately in `animation.md`.
+
+> **Direction A note (2026-06-14).** The brand evolution changed parts of this layer: the structural bands now read forest green (not oxblood), keyword emphasis is green, the Romanesque arch is retired (`.arch-top` renders near-rectangular), and the paper grain is turned off (`body::before` at `opacity: 0`). The new unifying signature is the **eyebrow rubric** below. Background: `docs/research/2026-06-14-brand-direction-debate.md`.
 
 ## Polish layer
 
 Custom CSS utilities and JS behaviors layered on top of Tailwind + shadcn. All declared in `src/styles/globals.css` and (where JS is needed) initialized in `BaseLayout.astro` with re-init on `astro:page-load` so they survive View Transitions.
 
-### Brand-stripe rhythm (THE primary visual signature)
+### Eyebrow rubric (`.eyebrow` / `.eyebrow-inverse`) — the Direction A signature
 
-A 2px brand-color line -- `<div class="h-0.5 bg-primary" aria-hidden="true"></div>` -- is the starter's repeating visual signature. It appears at the top of:
+The starter's unifying section mark, and the device that REPLACES the retired arch. A short brand-green leading rule is drawn (via `::before`) before any uppercase eyebrow label that introduces a headline, so every section / hero eyebrow reads as one system across the site — the manuscript "rubric." Usage: add the `eyebrow` class to an uppercase `tracking-eyebrow` label that sits above a headline.
+
+```html
+<p class="text-xs uppercase tracking-eyebrow text-foreground/80 eyebrow">Our courses</p>
+```
+
+On dark / green / photo-scrim surfaces, add `eyebrow-inverse` as well so the rule lifts to brass (`#C7A875`) and stays visible (the green rule would vanish on the green band):
+
+```html
+<p class="... eyebrow eyebrow-inverse text-chapel-foreground/80">This term</p>
+```
+
+Deliberately NOT applied to inline category tags, stat labels, footer/nav labels, or button text — those are a different element. `SectionHeading.astro` is the canonical place the rubric is wired.
+
+### Brand-stripe rhythm (a repeating visual signature)
+
+A 2px brand-color line -- `<div class="h-0.5 bg-primary" aria-hidden="true"></div>` (now green) -- is a repeating visual signature alongside the eyebrow rubric. It appears at the top of:
 
 - The site header (above the eyebrow strip)
 - The mobile menu drawer (`border-t-4 border-t-primary` on SheetContent)
 - The footer (above the brand block)
 - Every marketing card (ServiceCard, JournalCard, TestimonialCard)
-- The FinalCta dark panel
+- The FinalCta panel (now a green band)
 
 If you add a new card-like component or section that should feel part of the brand, include this stripe at the top edge. The repetition is what makes the site read as one designed object.
 
@@ -56,17 +74,21 @@ Lives in `ReadingProgress.astro` (rendered inside `BaseLayout`'s slot on journal
 
 ### Surface-warm (`.surface-warm`)
 
-A tinted radial gradient overlay for sections that want dimensional warmth. Uses `rgba(var(--tint-rgb), 0.07)` in light, `rgba(var(--tint-rgb), 0.10)` in dark. Apply alongside `bg-muted` or `bg-background`:
+A tinted radial gradient overlay for sections that want dimensional warmth. Uses the warm brass tint at `rgba(var(--tint-rgb), 0.07)` in light, `rgba(var(--tint-rgb), 0.10)` in dark. Apply alongside `bg-muted` or `bg-background`:
 
 ```html
 <section class="surface-warm bg-muted">...</section>
 ```
 
-Pairs with the global `body::before` paper-grain. Update `--tint-rgb` in `globals.css` when re-skinning the project so this overlay picks up the new hue automatically.
+Update `--tint-rgb` in `globals.css` when re-skinning so this overlay picks up the new accent hue. (In Direction A the tint is brass, not the green primary, so the wash stays a faint warm note over the near-white paper.)
 
-### Paper grain (`body::before`)
+### Surface-chapel (`.surface-chapel`)
 
-A faint SVG noise tile at 4% opacity sits behind everything via `body::before`. Adds tactile warmth across all surfaces. Multiply blend in light, screen blend in dark. Pointer-events none, z-index 0.
+The structural-green sibling of `.surface-warm`, for the forest-green bands. Adds a faint cream glow at the top plus a `chapel` -> `chapel-deep` vertical fade so the green bands read as lit surfaces instead of a flat single-hex slab. Apply ALONGSIDE `bg-chapel` (which stays the fallback fill). Static across themes, so one rule serves both.
+
+### Paper grain (`body::before`) — RETIRED in Direction A
+
+The 4% SVG-noise grain is turned off (`body::before` set to `opacity: 0` in both light and dark). The rule is left in `globals.css` for an easy restore, but Direction A intentionally reads as clean near-white paper with no texture; large flat fills are meant to look flat, not grainy. Don't reintroduce the grain without a deliberate brand decision.
 
 ### Image zoom + tint on hover (`.img-zoom` / `.img-tint` / `.img-tint-light`)
 
@@ -102,4 +124,4 @@ Pattern used by: scroll-reveal observer, sticky-header listener, reading-progres
 
 ---
 
-Cross-reference: `animation.md` covers Lenis smooth scroll, scroll reveals, stagger reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent.
+Cross-reference: `animation.md` covers Lenis smooth scroll, scroll reveals, stagger reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent. (The paper grain that used to be listed here is retired in Direction A — see Paper grain above.)

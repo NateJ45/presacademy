@@ -18,7 +18,9 @@ export default defineConfig({
   // The adapter's default would otherwise wire up the IMAGES binding which
   // is meant for SSR sites that want on-demand transforms (we don't).
   adapter: cloudflare({ imageService: 'compile' }),
-  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/404') }), react()],
+  // The /style-guide route is an internal brand reference: kept out of the
+  // sitemap (and noindex'd in BaseLayout) so it stays unlinked and unindexed.
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/style-guide') }), react()],
   vite: {
     plugins: [tailwindcss()],
   },

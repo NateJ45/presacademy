@@ -3,6 +3,42 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-14 — Brand evolution (Direction A): "green-anchored bookish
+minimalism," shipped on PR #9 (branch feat/brand-evolution-direction-a).
+Prompted by stakeholder feedback that the "Oxblood & Stone" brand "feels too
+old." A structured multi-agent debate (four research agents grounded in real
+seminaries, divinity schools, prestige-academic, and modern Christian-formation
+brands; three PRO/CON rounds; one judge) concluded EVOLVE, DON'T PIVOT: the
+"old" read came from the sanctuary layer (the Romanesque arches, the paper
+grain, the oxblood structural bands), not from the serif or the warmth, which
+are credibility assets. Verdict and full method: docs/research/2026-06-14-brand-direction-debate.md.
+
+What changed (src/styles/globals.css is the source of truth):
+- Palette: page surface Stone Cream #F4EEE6 -> near-white warm paper #FAF8F4;
+  cards #FCF9F4 -> white #FFFFFF; muted band #EDE5D9 -> warm grey #F1F0EB; ink
+  Walnut #2A2521 -> soft near-black #1F1B18.
+- Anchor: Geneva Oxblood #7A2A2C -> Geneva Green #33503F (buttons, links, nav
+  underline, focus ring, keyword emphasis, wordmark accent; deeper anchor
+  #2A4233). Dark mode primary lifts to #74A98A, link/keyword to #9CC6AC.
+- De-churched structural bands: the `chapel` token (NAME kept for reversibility)
+  flips from oxblood #5E2122/#4A1B1C to forest green #2A4233/#1F3227; cream text
+  retained. Footer and closing CTA now read green.
+- Oxblood demoted to a sparing secondary accent (new --color-oxblood); Aged
+  Brass #A87C3E kept as the hairline accent (green + gold pairing).
+- Signature moves: RETIRED the Romanesque arch (--arch-radius neutralized to a
+  quiet modern rounding; .arch-top/.arch-top-sm now near-rectangular) and the 4%
+  paper-grain body::before (opacity 0). ADDED the eyebrow rubric (.eyebrow /
+  .eyebrow-inverse) — a short brand-green leading rule before every section/hero
+  eyebrow (brass on dark/green/photo) — as the new unifying mark. Italic display
+  quieted to true epigraphs; script accent stays OFF.
+- Photography: church placeholders (place-church-*, place-sanctuary-*) swapped
+  for lay-school images (teach-seminar-discussion, teach-class-discussion,
+  study-bible-notebook, study-bibles-closeup) on contact/faq/privacy/404.
+- Docs updated: design.md, theme-and-color.md, polish-layer.md, design-tokens.md,
+  components.md, and a new research writeup. Maintainer caveat: the CSS token
+  names `chapel` / `chapel-ink` now carry GREEN, not oxblood — kept for
+  reversibility, may be renamed in a later pass.*
+
 *2026-06-13 — Rebranded to The Presbyterian Academy, a PC(USA) Reformed
 lay-formation school (presbyterianacademy.org). Identity stamped via
 scripts/rebrand.mjs from bootstrap.config.json. New brand: the "Oxblood &

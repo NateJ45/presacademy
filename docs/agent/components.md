@@ -23,7 +23,7 @@ shadcn primitives that wrap Radix's Dialog (Sheet, Dialog, DropdownMenu with por
 
 ### Button variants
 
-The primary CTA button extends `src/components/ui/button.tsx` with `variant="brand"` + `size="cta"`. Don't override the shadcn defaults inline. Leave other shadcn variants unmodified so future `npx shadcn add` commands don't fight with extensions.
+The primary CTA button extends `src/components/ui/button.tsx` with `variant="brand"` + `size="cta"`. In Direction A the brand fill is Geneva Green (`bg-primary`) with white text; secondary is an outline (green border + green label on light, cream-on-dark via the `onDark` prop). Don't override the shadcn defaults inline. Leave other shadcn variants unmodified so future `npx shadcn add` commands don't fight with extensions.
 
 ### Core components
 
@@ -39,7 +39,7 @@ The core component set, by role. All in `src/components/` unless noted.
 - `Hero.astro` -- image variant (full-bleed photo + gradient overlay) OR text variant (delegates to SectionHeading). Accepts `backgroundImage` for a single Sanity image or `backgroundImages` array for a cross-fading slideshow (falls back to single image for non-home pages). Image variant passes `onDark` to CTAs automatically. On the home page (`size="tall"`) it fills the viewport below the sticky header and shows a soft pulsing scroll cue.
 - `HeroBackground.astro` -- the hero background layer. Renders a single static `SanityImage` for 0-1 images, or a cross-fading Ken Burns slideshow for 2+. Used only by `Hero.astro`.
 - `ArchMedia.astro` -- the inner content of an arched photo frame: a looping muted video, OR a cross-fading Ken Burns slideshow (2+ images), OR a single static image, in that priority order. Does NOT draw the arch itself; the caller supplies the `position:relative` framed container. Reuses the global `.hero-slideshow` / `.hero-slide` CSS; its advance script is multi-instance safe (drives every `[data-arch-slideshow]` on the page with its own timer, plays/pauses `[data-arch-video]` by `prefers-reduced-motion`, re-wires on `astro:page-load`). Requests images at width 1600 so the constant Ken Burns zoom stays crisp on retina. Used by the home hero (`index.astro`) and the `sectionArchShowcase` block. (Supersedes the old `HeroArchSlideshow.astro`.)
-- `SectionHeading.astro` -- eyebrow + brand hairline accent + headline + subhead. Used by text-variant Hero and every interior section heading. Supports `tone="inverse"` for dark FinalCta panels. Accepts `scriptAccent?` for the optional calligraphic accent word (see `docs/agent/polish-layer.md`).
+- `SectionHeading.astro` -- rubric eyebrow (the `.eyebrow` green leading rule, Direction A signature) + headline + subhead. Used by text-variant Hero and every interior section heading. Supports `tone="inverse"` for the green FinalCta / dark panels (switches the rubric to `.eyebrow-inverse` brass). Accepts `scriptAccent?` for the optional calligraphic accent word (see `docs/agent/polish-layer.md`).
 - `ReadingProgress.astro` -- fixed 3px accent track at the top of `<article>`-wrapped pages. Used on journal posts.
 
 **Marketing cards (all share the brand-stripe + resting-shadow rhythm):**
@@ -109,7 +109,7 @@ The desktop nav dropdowns live directly in `Header.astro` as SSR'd `<details>` (
 - **Secondary variant** swaps from `border-primary text-link` (brand accent on light) to `border-white/70 text-white hover:bg-white/10` (cream on dark).
 - **Focus ring** offsets against `transparent` instead of `--background` so the ring still reads on photographic surfaces.
 
-Use it on any CTA over a hero image or any dark panel. `Hero.astro` (image variant) and `FinalCta.astro` set it automatically. Do NOT try to override secondary-variant colors via `class="text-bg ..."` -- Tailwind v4 generates utilities alphabetically and `text-link` beats `text-bg` in the cascade. Use the prop instead.
+Use it on any CTA over a hero image, a green chapel band, or any dark panel. `Hero.astro` (image variant) and `FinalCta.astro` (now a green band) set it automatically. Do NOT try to override secondary-variant colors via `class="text-bg ..."` -- Tailwind v4 generates utilities alphabetically and `text-link` beats `text-bg` in the cascade. Use the prop instead.
 
 ### Mobile-only alignment pattern
 
