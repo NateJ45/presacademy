@@ -57,7 +57,7 @@ const FALLBACK_REASONS = [
 const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_REASONS;
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings}>
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Contact'}
     headline={page?.heroHeadline ?? 'Get in touch'}

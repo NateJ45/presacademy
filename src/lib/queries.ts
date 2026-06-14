@@ -67,6 +67,7 @@ export async function getSiteSettings() {
     title,
     tagline,
     mission,
+    funder,
     email,
     pastorEmail,
     phone,
@@ -499,7 +500,7 @@ export async function getHomeFeaturedEvents() {
 export async function getEventBySlug(slug: string) {
   return sanityFetch(
     `*[_type == "event" && slug.current == $slug][0]{
-      _id, title, slug, eventType, category, audience, specialService, liturgicalSeason,
+      _id, title, slug, eventType, category, audience,
       scheduleLabel, start, end, allDay, location,
       summary, cost, registrationUrl, registrationLabel, contactName, contactEmail,
       featured, featuredOnHome,

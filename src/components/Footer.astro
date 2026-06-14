@@ -53,6 +53,7 @@ interface Props {
     socialYoutube?: string;
     tagline?: string;
     mission?: string;
+    funder?: string;
     worshipService?: { time?: string; day?: string; startTime24?: string; endTime24?: string } | null;
     giveUrl?: string;
     appUrl?: string;
@@ -104,10 +105,10 @@ const creditUrl = siteCreditUrl ?? 'https://www.nixoncreativestudio.com';
 // city/state/zip; the join in the markup drops it if neither is set).
 const locality = settings.addressLocality ?? cityStateZip;
 
-// Current-year underwriter. The school is funded by the Presbytery of Cincinnati;
-// shown as a footer acknowledgment on every page. Edit or clear this one line if
-// the funding arrangement changes.
-const funder = 'Presbytery of Cincinnati';
+// Current-year underwriter, shown as a footer acknowledgment on every page.
+// Editable in Sanity (Site Settings -> Funder); falls back to the current funder
+// when unset, and clearing the field in Studio hides the line.
+const funder = siteSettings?.funder ?? 'Presbytery of Cincinnati';
 
 // STRUCTURE: footer navigation, grouped to mirror the header IA.
 const EXPLORE_LINKS = [

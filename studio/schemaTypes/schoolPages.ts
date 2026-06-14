@@ -156,6 +156,7 @@ export const facultyPage = definePageSingleton('facultyPage', 'Faculty', {
   fields: [
     defineField({ name: 'directoryIntro', title: 'Directory intro', type: 'text', rows: 2, group: 'content' }),
     defineField({ name: 'aggregateTrustLine', title: 'Aggregate trust line', type: 'string', description: 'Example: "Every teacher is an ordained PC(USA) minister or a credentialed Reformed scholar."', group: 'content' }),
+    defineField({ name: 'emptyState', title: 'Empty-state line', type: 'text', rows: 2, description: 'Shown when no faculty have been added yet.', group: 'content' }),
     ...finalCtaText(),
   ],
 });
@@ -185,6 +186,9 @@ export const getStartedPage = definePageSingleton('getStartedPage', 'Get Started
   fields: [
     defineField({ name: 'requestForm', title: 'Express-interest form', type: 'reference', to: [{ type: 'form' }], group: 'form', description: 'The request-info form. Leave empty to show a direct email link.' }),
     defineField({ name: 'calendlyUrl', title: 'Calendly URL', type: 'url', group: 'form', description: 'The free-intro booking link. Leave empty to use the site default (PUBLIC_CALENDLY_URL).' }),
+    defineField({ name: 'requestEyebrow', title: 'Request-info panel eyebrow', type: 'string', group: 'content' }),
+    defineField({ name: 'requestHeadline', title: 'Request-info panel headline', type: 'string', group: 'content' }),
+    defineField({ name: 'requestBody', title: 'Request-info panel body', type: 'text', rows: 2, group: 'content' }),
     defineField({ name: 'calendlyEyebrow', title: 'Free-intro eyebrow', type: 'string', group: 'content' }),
     defineField({ name: 'calendlyHeadline', title: 'Free-intro headline', type: 'string', group: 'content' }),
     defineField({ name: 'calendlyBody', title: 'Free-intro body', type: 'text', rows: 2, group: 'content' }),

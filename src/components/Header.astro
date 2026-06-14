@@ -207,7 +207,7 @@ function isGroupActive(items: { href: string }[]) {
         </a>
       ) : (
         <p class="flex min-w-0 items-center gap-2">
-          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Reformed lay formation</span>
+          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">{settings.tagline ?? 'Reformed lay formation'}</span>
           {cityLine && (
             <>
               <span class="hidden sm:inline text-chapel-foreground/40" aria-hidden="true">·</span>

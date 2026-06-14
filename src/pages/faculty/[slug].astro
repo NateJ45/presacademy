@@ -79,6 +79,9 @@ const schemas = [
           {credential && (
             <span class="mt-l inline-block rounded-[2px] border border-border px-2 py-0.5 text-[11px] uppercase tracking-[0.08em] text-foreground/70">{credential}</span>
           )}
+          {person.yearsTeaching && (
+            <p class="mt-3 text-sm text-foreground/70">{person.yearsTeaching}</p>
+          )}
           {person.teachingAreas?.length > 0 && (
             <div class="mt-l">
               <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Teaching areas</p>
@@ -88,6 +91,19 @@ const schemas = [
                 ))}
               </div>
             </div>
+          )}
+          {person.specializations?.length > 0 && (
+            <div class="mt-l">
+              <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Research interests</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {person.specializations.map((s: string) => (
+                  <span class="rounded-[2px] border border-border-soft px-2 py-0.5 text-xs text-foreground/75">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {person.email && (
+            <a href={`mailto:${person.email}`} class="link-underline mt-l inline-block text-sm text-link hover:text-primary-dark transition-colors">Email {person.name}</a>
           )}
         </aside>
 

@@ -125,6 +125,20 @@ const ABOUT = {
   finalCtaSubhead: 'Browse the catalog, meet the teachers, and start when you are ready.',
 };
 
+const GET_STARTED = {
+  requestEyebrow: 'Request information',
+  requestHeadline: 'Ask us anything',
+  requestBody: 'Tell us what you are hoping to learn and we will help you find the right course.',
+};
+
+const FACULTY = {
+  emptyState: 'The faculty roster is being prepared. To ask about teaching with us, get in touch.',
+};
+
+const SETTINGS = {
+  funder: 'Presbytery of Cincinnati',
+};
+
 const isEmpty = (v) =>
   v == null || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0);
 
@@ -149,6 +163,9 @@ async function main() {
   let n = 0;
   n += await seedDoc('homePage', HOME);
   n += await seedDoc('aboutPage', ABOUT);
+  n += await seedDoc('getStartedPage', GET_STARTED);
+  n += await seedDoc('facultyPage', FACULTY);
+  n += await seedDoc('siteSettings', SETTINGS);
   console.log(`\n${APPLY ? 'Patched' : 'Would patch'} ${n} field(s) total.${APPLY ? '' : '  Re-run with --apply to write.'}`);
 }
 main().catch((e) => { console.error(e); process.exit(1); });

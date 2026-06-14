@@ -73,8 +73,7 @@ const schemas = [
         </ul>
       ) : (
         <p class="mt-l text-foreground/80 italic">
-          The faculty roster is being prepared. To ask about teaching with us,{' '}
-          <a href="/contact" class="text-link underline underline-offset-2">get in touch</a>.
+          {page?.emptyState ?? 'The faculty roster is being prepared. To ask about teaching with us, get in touch.'}
         </p>
       )}
     </div>

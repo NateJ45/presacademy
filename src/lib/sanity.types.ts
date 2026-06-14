@@ -821,6 +821,7 @@ export type SiteSettings = {
   title?: string;
   tagline?: string;
   mission?: string;
+  funder?: string;
   email?: string;
   pastorEmail?: string;
   phone?: string;
@@ -1671,6 +1672,9 @@ export type GetStartedPage = {
   finalCta?: CtaBlock;
   requestForm?: FormReference;
   calendlyUrl?: string;
+  requestEyebrow?: string;
+  requestHeadline?: string;
+  requestBody?: string;
   calendlyEyebrow?: string;
   calendlyHeadline?: string;
   calendlyBody?: string;
@@ -1864,6 +1868,7 @@ export type FacultyPage = {
   finalCta?: CtaBlock;
   directoryIntro?: string;
   aggregateTrustLine?: string;
+  emptyState?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;

@@ -96,7 +96,7 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings}>
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Common Questions'}
     headline={page?.heroHeadline ?? 'Everything you want to know'}

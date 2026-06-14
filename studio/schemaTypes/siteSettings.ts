@@ -50,6 +50,13 @@ export const siteSettings = defineType({
       group: 'identity',
     }),
     defineField({
+      name: 'funder',
+      title: 'Funder / underwriter (optional)',
+      type: 'string',
+      description: 'Shown in the footer on every page as "Made possible by the [name]". Example: "Presbytery of Cincinnati". Clear this to hide the line.',
+      group: 'identity',
+    }),
+    defineField({
       name: 'email',
       title: 'Public email',
       type: 'string',

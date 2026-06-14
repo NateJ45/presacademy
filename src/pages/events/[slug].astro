@@ -37,10 +37,10 @@ const description = event.summary ?? `An event at ${site.name}.`;
 function whenLabel(ev: any): string {
   if (ev.scheduleLabel) return ev.scheduleLabel;
   if (ev.start) {
-    return new Date(ev.start).toLocaleString('en-US', {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit',
-    });
+    const opts: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    // Honor the "all-day event" toggle: show just the date, no clock time.
+    if (!ev.allDay) { opts.hour = 'numeric'; opts.minute = '2-digit'; }
+    return new Date(ev.start).toLocaleString('en-US', opts);
   }
   return '';
 }

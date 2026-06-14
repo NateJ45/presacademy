@@ -43,7 +43,10 @@ function fmtDate(d?: string): string {
 }
 
 const price =
-  course.priceNote ?? (course.priceTier?.amount != null ? `$${course.priceTier.amount}` : null);
+  course.priceNote ??
+  (course.priceTier?.amount != null
+    ? `$${course.priceTier.amount}${course.priceTier.unit ? ` ${course.priceTier.unit}` : ''}`
+    : null);
 
 // At-a-glance ledger rows, empties dropped.
 const ledger = [
@@ -54,6 +57,7 @@ const ledger = [
   ['Format', course.format],
   ['Venue', course.location],
   ['Tuition', price],
+  ['Seats', no?.seatsNote],
   ['Apply by', fmtDate(no?.term?.registrationDeadline)],
 ].filter(([, v]) => Boolean(v)) as [string, string][];
 
@@ -158,6 +162,9 @@ const pillGhost =
               <a href="/get-started" class={pillGhost}>Request information</a>
             </div>
             <p class="mt-3 text-center text-sm text-foreground/70">You can visit the first session free before you decide.</p>
+            {course.syllabusUrl && (
+              <a href={course.syllabusUrl} target="_blank" rel="noopener noreferrer" class="link-underline mt-3 block text-center text-sm font-semibold text-link hover:text-primary-dark transition-colors">Download the syllabus</a>
+            )}
 
             {course.instructors?.length > 0 && (
               <div class="mt-l border-t border-border-soft pt-l">

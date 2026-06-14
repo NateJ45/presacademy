@@ -85,14 +85,14 @@ export const notFoundPage = defineType({
       title: 'Secondary CTA label',
       type: 'string',
       group: 'ctas',
-      initialValue: 'Plan a visit',
+      initialValue: 'Browse courses',
     }),
     defineField({
       name: 'secondaryCtaHref',
       title: 'Secondary CTA destination',
       type: 'string',
       group: 'ctas',
-      initialValue: '/worship',
+      initialValue: '/courses',
     }),
     defineField({
       name: 'tertiaryCtaLabel',
