@@ -64,11 +64,14 @@ const wayfinding = [
   { n: '04', title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
 ];
 
+// Stats for a NEW (2026) school: structure + standards, not a track record.
+// No founding year and no alumni counts — the school is brand-new, so historical
+// figures would be false. Only the 100% faculty figure counts up.
 const stats = [
-  { value: '1998', label: 'Established', count: false },
-  { value: '1,200+', label: 'Learners formed' },
   { value: '100%', label: 'Ordained or credentialed faculty' },
-  { value: '3', label: 'Denominations served' },
+  { value: 'In person', label: 'Taught in cohorts', count: false },
+  { value: 'Need-based', label: 'Scholarships every term', count: false },
+  { value: 'Reformed', label: 'Rooted in the Westminster Standards', count: false },
 ];
 
 const pillPrimary =
@@ -142,8 +145,8 @@ const pillGhost =
     </section>
   )}
 
-  {/* Stat / heritage band */}
-  <section class="border-b border-border-soft bg-background" aria-label="The Academy in numbers">
+  {/* Stat band */}
+  <section class="border-b border-border-soft bg-background" aria-label="The Academy at a glance">
     <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
       {stats.map((s, i) => (
         <div class:list={['px-m py-l', i < stats.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
