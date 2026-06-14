@@ -1,0 +1,89 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Faculty directory. A text-forward, filterable roster: every teacher leads
+// with honorific + name and the degree-with-institution line directly beneath.
+// Rule & Ledger layout with an aggregate trust line up top. Falls back to an
+// empty-state line before Sanity is seeded.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getFacultyPage, getFaculty, getTeachingAreas, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import FacultyCard from '@/components/FacultyCard.astro';
+import FacultyFilter from '@/components/FacultyFilter';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const [page, faculty, areas, siteSettings] = await Promise.all([
+  getFacultyPage().catch(() => null),
+  getFaculty().catch(() => []),
+  getTeachingAreas().catch(() => []),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Faculty · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'Every course is led by an ordained minister or a credentialed Reformed scholar. Meet the faculty of The Presbyterian Academy.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'The faculty';
+const heroHeadline = page?.heroHeadline ?? 'Taught by ministers and scholars';
+const heroSubhead =
+  page?.heroSubhead ?? 'The teachers are the heart of the Academy. Get to know them.';
+const trustLine =
+  page?.aggregateTrustLine ?? 'Every teacher is an ordained minister or a credentialed Reformed scholar.';
+
+// Only offer area chips that actually have faculty behind them.
+const usedAreas = new Set(faculty.flatMap((f: any) => (f.teachingAreas ?? []).map((t: any) => t.slug)));
+const areaChips = (areas ?? [])
+  .filter((a: any) => usedAreas.has(a.slug))
+  .map((a: any) => ({ slug: a.slug, label: a.title }));
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Faculty', url: `${site.url}/faculty` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <section class="bg-background" aria-labelledby="faculty-hero">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 id="faculty-hero" class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      {trustLine && (
+        <p class="mt-l border-t border-gold/50 pt-l text-base text-foreground/75">{trustLine}</p>
+      )}
+    </div>
+  </section>
+
+  <section class="bg-background" aria-labelledby="faculty-list">
+    <div class="mx-auto max-w-content px-m pb-section-lg">
+      <h2 id="faculty-list" class="sr-only">Faculty members</h2>
+      {areaChips.length > 0 && <FacultyFilter client:load areas={areaChips} />}
+      {faculty.length > 0 ? (
+        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+          {faculty.map((f: any) => <FacultyCard person={f} />)}
+        </ul>
+      ) : (
+        <p class="mt-l text-foreground/80 italic">
+          The faculty roster is being prepared. To ask about teaching with us,{' '}
+          <a href="/contact" class="text-link underline underline-offset-2">get in touch</a>.
+        </p>
+      )}
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Learn from them'}
+    headline={page?.finalCtaHeadline ?? 'Find a course to take'}
+    subhead={page?.finalCtaSubhead ?? 'Every course is taught by the people you just met.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
+  />
+</BaseLayout>

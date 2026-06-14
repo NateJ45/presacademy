@@ -1,18 +1,13 @@
 // Studio Desk structure. Pins Site Settings at the top, then ALL page singletons
-// (one document each) under "Pages", then the reusable content collections.
-// Every document type is placed explicitly so nothing floats loose at the desk
-// root. The trailing default-list filter is a safety net for any future type
-// that hasn't been placed (and hides sanity-plugin-media's media.tag type).
+// (one document each) under "Pages", then the catalog, people, and reusable
+// content collections. Every document type is placed explicitly so nothing
+// floats loose at the desk root. The trailing default-list filter is a safety
+// net for any future type that hasn't been placed (and hides media.tag).
 //
-// "Pages" is one list (so the rule for editors is simple: every page lives here).
-//
-// Remodel note: the interior-designer "Start Here" handbook, the Journal section,
-// and the Philosophy/Testimonials lists were removed. Pastors & Staff and
-// Ministries collections were added under "Content".
-//
-// Preview pane: singletons explicitly attach a form + preview iframe view via the
-// singletonWithPreview helper. Other types pick up preview from defaultDocumentNode
-// in sanity.config.ts.
+// Revamp note: the church singletons + collections (staffMember, ministry,
+// sermon, worshipResource and the per-page church pages) were retired and
+// replaced by the school catalog (course, facultyMember, term, pricingTier,
+// teachingArea, testimonial) and the new page singletons.
 
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
 import GuideView from './components/GuideView';
@@ -26,15 +21,14 @@ import {
   EnvelopeIcon,
   DocumentTextIcon,
   CalendarIcon,
-  PlayIcon,
   StarIcon,
   HeartIcon,
   ThListIcon,
   BookIcon,
   LockIcon,
-  PresentationIcon,
   BellIcon,
   DocumentsIcon,
+  TagIcon,
 } from '@sanity/icons';
 
 const SINGLETON_TYPES = [
@@ -45,21 +39,15 @@ const SINGLETON_TYPES = [
   'faqPage',
   'contactPage',
   'eventsPage',
-  'sermonsPage',
   'notFoundPage',
   'privacyPage',
-  // Per-page church singletons
-  'worshipPage',
-  'beliefsPage',
-  'musicPage',
-  'staffPage',
-  'growPage',
-  'servePage',
-  'kidsPage',
-  'foodPage',
-  'useOurSpacePage',
-  'weddingsPage',
-  'givePage',
+  // School page singletons
+  'coursesPage',
+  'facultyPage',
+  'pricingPage',
+  'getStartedPage',
+  'forYouPage',
+  'resourcesPage',
 ] as const;
 
 const HIDDEN_FROM_DEFAULT = new Set<string>([
@@ -67,14 +55,17 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   // Collections placed explicitly below (so they don't double-show at the root).
   'faqCategory',
   'faqItem',
-  'staffMember',
-  'ministry',
   'event',
-  'sermon',
   'form',
   'announcement',
-  'worshipResource',
   'page',
+  // School catalog
+  'course',
+  'facultyMember',
+  'term',
+  'teachingArea',
+  'pricingTier',
+  'testimonial',
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
   'media.tag',
@@ -82,8 +73,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
 
 /**
  * A singleton desk item: one document, form view only. The static site has no
- * live draft preview, so we do NOT attach an iframe "Preview" view (it would
- * load the last published build, not the editor's draft, and mislead editors).
+ * live draft preview, so we do NOT attach an iframe "Preview" view.
  */
 function singleton(
   S: StructureBuilder,
@@ -99,9 +89,7 @@ function singleton(
 
 /**
  * "How This Works" — a pinned, read-only help center built from repo data
- * (studio/guides/content.tsx), rendered by GuideView. Lives in code so staff
- * can't edit or delete it and every future client site inherits it. Each guide
- * is a navigable item that opens its own component pane.
+ * (studio/guides/content.tsx), rendered by GuideView.
  */
 function howThisWorks(S: StructureBuilder) {
   return S.listItem()
@@ -152,29 +140,20 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
             .title('Pages')
             .items([
               singleton(S, 'homePage', 'Home', HomeIcon),
-              singleton(S, 'worshipPage', "I'm New / Worship", StarIcon),
+              singleton(S, 'coursesPage', 'Courses', BookIcon),
+              singleton(S, 'facultyPage', 'Faculty', UsersIcon),
               singleton(S, 'aboutPage', 'About', UserIcon),
-              singleton(S, 'beliefsPage', 'What We Believe', BookIcon),
-              singleton(S, 'musicPage', 'Music', PlayIcon),
-              singleton(S, 'staffPage', 'Pastors & Staff', UsersIcon),
-
-              S.divider(),
-
-              singleton(S, 'growPage', 'Grow', HeartIcon),
-              singleton(S, 'servePage', 'Serve', HeartIcon),
-              singleton(S, 'kidsPage', 'Kids', HeartIcon),
-              singleton(S, 'foodPage', 'Food Ministry', HeartIcon),
 
               S.divider(),
 
               singleton(S, 'eventsPage', 'Events (index page)', CalendarIcon),
-              singleton(S, 'sermonsPage', 'Sermons (index page)', PlayIcon),
+              singleton(S, 'resourcesPage', 'Resources', DocumentsIcon),
 
               S.divider(),
 
-              singleton(S, 'useOurSpacePage', 'Use Our Space', PresentationIcon),
-              singleton(S, 'weddingsPage', 'Weddings', StarIcon),
-              singleton(S, 'givePage', 'Give', HeartIcon),
+              singleton(S, 'pricingPage', 'Pricing & Scholarships', StarIcon),
+              singleton(S, 'getStartedPage', 'Get Started', EnvelopeIcon),
+              singleton(S, 'forYouPage', 'For You', HeartIcon),
 
               S.divider(),
 
@@ -192,6 +171,26 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
 
       S.divider(),
 
+      // Catalog — the course library and its supporting types.
+      S.listItem()
+        .title('Catalog')
+        .icon(BookIcon)
+        .child(
+          S.list()
+            .title('Catalog')
+            .items([
+              S.documentTypeListItem('course').title('Courses').icon(BookIcon),
+              S.documentTypeListItem('term').title('Terms').icon(CalendarIcon),
+              S.documentTypeListItem('teachingArea').title('Teaching Areas').icon(ThListIcon),
+              S.documentTypeListItem('pricingTier').title('Pricing Tiers').icon(TagIcon),
+            ]),
+        ),
+
+      // People — faculty.
+      S.documentTypeListItem('facultyMember').title('Faculty').icon(UsersIcon),
+
+      S.divider(),
+
       // Content — reusable collections.
       S.listItem()
         .title('Content')
@@ -200,23 +199,18 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
           S.list()
             .title('Content')
             .items([
-              S.documentTypeListItem('staffMember').title('Pastors & Staff').icon(UsersIcon),
-              S.documentTypeListItem('ministry').title('Ministries').icon(HeartIcon),
+              S.documentTypeListItem('testimonial').title('Testimonials').icon(StarIcon),
               S.documentTypeListItem('faqCategory').title('FAQ Categories').icon(HelpCircleIcon),
               S.documentTypeListItem('faqItem').title('FAQ Items').icon(HelpCircleIcon),
               S.documentTypeListItem('form').title('Forms').icon(EnvelopeIcon),
-              S.documentTypeListItem('worshipResource').title('Worship Resources').icon(DocumentsIcon),
               S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
             ]),
         ),
 
       S.divider(),
 
-      // Events — recurring rhythms + one-time dated events shown on /events
+      // Events — info sessions, lectures, workshops, term starts shown on /events
       S.documentTypeListItem('event').title('Events').icon(CalendarIcon),
-
-      // Sermons — messages shown on /sermons
-      S.documentTypeListItem('sermon').title('Sermons').icon(PlayIcon),
 
       // Safety net: surface any document type we have NOT explicitly placed above
       // (and keep the hidden set, including media.tag, out of the desk root).

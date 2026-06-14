@@ -1,0 +1,83 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// For You — the lay-persona front door. Each card names who it is for, a
+// one-line promise, and a single CTA, so an ordinary adult can self-select a
+// starting point without anything resembling admissions UI. Rule & Ledger.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getForYouPage, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import CtaLink from '@/components/CtaLink.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const [page, siteSettings] = await Promise.all([
+  getForYouPage().catch(() => null),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `For You · ${site.name}`;
+const description =
+  page?.seoDescription ?? 'However you lead or learn, there is a starting point here for you.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'Find your path';
+const heroHeadline = page?.heroHeadline ?? 'Formation for where you are';
+const heroSubhead =
+  page?.heroSubhead ?? 'However you lead or learn, there is a starting point here for you.';
+
+const FALLBACK_PERSONAS = [
+  { label: 'The small-group leader', promise: 'Lead a study with more depth and less guesswork.', cta: { label: 'Courses for leaders', linkType: 'external', externalUrl: '/courses' } },
+  { label: 'The lifelong learner', promise: 'Finally read the whole Bible as one story.', cta: { label: 'Start with Scripture', linkType: 'external', externalUrl: '/courses' } },
+  { label: 'New to Reformed thought', promise: 'Understand what we believe, in plain words.', cta: { label: 'Explore the confessions', linkType: 'external', externalUrl: '/courses' } },
+  { label: 'Discerning a call', promise: 'Test the waters before seminary, in good company.', cta: { label: 'Book a free intro', linkType: 'external', externalUrl: '/get-started' } },
+];
+const personas = page?.personas?.length ? page.personas : FALLBACK_PERSONAS;
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'For You', url: `${site.url}/for-you` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      {page?.personasIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.personasIntro}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+    </div>
+  </section>
+
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pb-section-lg">
+      <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+        {personas.map((p: any, i: number) => (
+          <li class="list-none border border-t-2 border-border-soft border-t-gold p-l">
+            <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
+            <h2 class="mt-2 font-display text-h3 text-foreground">{p.label}</h2>
+            {p.promise && <p class="mt-2 text-foreground/80">{p.promise}</p>}
+            <div class="mt-m">
+              <CtaLink cta={p.cta} variant="secondary" fallbackHref="/get-started" fallbackLabel="Learn more" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Still deciding?'}
+    headline={page?.finalCtaHeadline ?? 'Talk to a real person'}
+    subhead={page?.finalCtaSubhead ?? 'Tell us where you are and we will help you find the right place to begin.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+  />
+</BaseLayout>

@@ -1,18 +1,12 @@
 ---
-// Dynamic list: pulls live content (latest sermons, upcoming events, ministries,
-// staff, or worship resources) into any page. Fetches at build time based on the
-// chosen source. Cards are light surfaces; section heading inherits the tone color.
-import {
-  getRecentSermons,
-  getUpcomingEvents,
-  getMinistries,
-  getStaffMembers,
-  getWorshipResources,
-} from '@/lib/queries';
+// Dynamic list: pulls live content (featured courses, upcoming events, or
+// faculty) into any page. Fetches at build time based on the chosen source.
+// Cards are light surfaces; section heading inherits the tone color.
+import { getFeaturedCourses, getUpcomingEvents, getFaculty } from '@/lib/queries';
 
 const { block } = Astro.props as { block: any };
 const count = Math.min(12, Math.max(1, Number(block?.count ?? 3)));
-const source = block?.source ?? 'upcomingEvents';
+const source = block?.source ?? 'featuredCourses';
 
 const fmt = (d: string) =>
   d ? new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
@@ -20,13 +14,13 @@ const fmt = (d: string) =>
 type Item = { title: string; meta?: string; summary?: string; href?: string | null };
 let items: Item[] = [];
 
-if (source === 'latestSermons') {
-  const s = await getRecentSermons().catch(() => []);
-  items = s.slice(0, count).map((x: any) => ({
+if (source === 'featuredCourses') {
+  const c = await getFeaturedCourses(count).catch(() => []);
+  items = c.slice(0, count).map((x: any) => ({
     title: x.title,
-    meta: [x.speaker, x.date ? fmt(x.date) : null].filter(Boolean).join(' · '),
-    summary: x.scripture,
-    href: x.slug?.current ? `/sermons/${x.slug.current}` : null,
+    meta: x.instructors?.[0]?.name,
+    summary: x.summary,
+    href: x.slug ? `/courses/${x.slug}` : null,
   }));
 } else if (source === 'upcomingEvents') {
   const e = await getUpcomingEvents().catch(() => []);
@@ -36,19 +30,13 @@ if (source === 'latestSermons') {
     summary: x.summary,
     href: x.slug?.current ? `/events/${x.slug.current}` : null,
   }));
-} else if (source === 'ministries') {
-  const m = await getMinistries().catch(() => []);
-  items = m.slice(0, count).map((x: any) => ({ title: x.title, meta: x.audience, summary: x.summary, href: x.link || null }));
-} else if (source === 'staff') {
-  const st = await getStaffMembers().catch(() => []);
-  items = st.slice(0, count).map((x: any) => ({ title: x.name, meta: x.role, href: '/pastor-staff' }));
-} else if (source === 'worshipResources') {
-  const w = await getWorshipResources(count).catch(() => []);
-  items = w.slice(0, count).map((x: any) => ({
-    title: x.title,
-    meta: [x.type, x.date ? fmt(x.date) : null].filter(Boolean).join(' · '),
-    summary: x.description,
-    href: x.fileUrl || x.externalUrl || null,
+} else if (source === 'faculty') {
+  const f = await getFaculty().catch(() => []);
+  items = f.slice(0, count).map((x: any) => ({
+    title: `${x.honorific ? x.honorific + ' ' : ''}${x.name}`,
+    meta: x.title,
+    summary: x.topDegree ? `${x.topDegree.degree}, ${x.topDegree.institution}` : '',
+    href: x.slug ? `/faculty/${x.slug}` : null,
   }));
 }
 ---

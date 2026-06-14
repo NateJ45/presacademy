@@ -103,25 +103,19 @@ export function urlForDoc(schemaType: string, doc: any): string | null {
     case 'contactPage':   return `${SITE_URL}/contact`;
     case 'notFoundPage':  return `${SITE_URL}/404`;
     case 'privacyPage':   return `${SITE_URL}/privacy`;
-    // Church index pages + per-page singletons
+    // School index pages + page singletons
     case 'eventsPage':       return `${SITE_URL}/events`;
-    case 'sermonsPage':      return `${SITE_URL}/sermons`;
-    case 'worshipPage':      return `${SITE_URL}/worship`;
-    case 'beliefsPage':      return `${SITE_URL}/what-we-believe`;
-    case 'musicPage':        return `${SITE_URL}/music`;
-    case 'staffPage':        return `${SITE_URL}/pastor-staff`;
-    case 'growPage':         return `${SITE_URL}/grow`;
-    case 'servePage':        return `${SITE_URL}/serve`;
-    case 'kidsPage':         return `${SITE_URL}/kids`;
-    case 'foodPage':         return `${SITE_URL}/food`;
-    case 'useOurSpacePage':  return `${SITE_URL}/use-our-space`;
-    case 'weddingsPage':     return `${SITE_URL}/weddings`;
-    case 'givePage':         return `${SITE_URL}/give`;
-    // Collections: dated detail pages by slug; staff list + FAQ list pages.
-    case 'event':       return slug ? `${SITE_URL}/events/${slug}` : `${SITE_URL}/events`;
-    case 'sermon':      return slug ? `${SITE_URL}/sermons/${slug}` : `${SITE_URL}/sermons`;
-    case 'staffMember': return `${SITE_URL}/pastor-staff`;
-    case 'faqItem':     return `${SITE_URL}/faq`;
+    case 'coursesPage':      return `${SITE_URL}/courses`;
+    case 'facultyPage':      return `${SITE_URL}/faculty`;
+    case 'pricingPage':      return `${SITE_URL}/pricing`;
+    case 'getStartedPage':   return `${SITE_URL}/get-started`;
+    case 'forYouPage':       return `${SITE_URL}/for-you`;
+    case 'resourcesPage':    return `${SITE_URL}/resources`;
+    // Collections: dated detail pages by slug; course + faculty detail; FAQ list.
+    case 'event':         return slug ? `${SITE_URL}/events/${slug}` : `${SITE_URL}/events`;
+    case 'course':        return slug ? `${SITE_URL}/courses/${slug}` : `${SITE_URL}/courses`;
+    case 'facultyMember': return slug ? `${SITE_URL}/faculty/${slug}` : `${SITE_URL}/faculty`;
+    case 'faqItem':       return `${SITE_URL}/faq`;
     // Generic custom pages live at /<slug>.
     case 'page':        return slug ? `${SITE_URL}/${slug}` : null;
     default:            return null;
@@ -223,18 +217,12 @@ const SINGLETON_TYPES = new Set<string>([
   'contactPage',
   'notFoundPage',
   'privacyPage',
-  // Church index pages + per-page singletons
+  // School index pages + page singletons
   'eventsPage',
-  'sermonsPage',
-  'worshipPage',
-  'beliefsPage',
-  'musicPage',
-  'staffPage',
-  'growPage',
-  'servePage',
-  'kidsPage',
-  'foodPage',
-  'useOurSpacePage',
-  'weddingsPage',
-  'givePage',
+  'coursesPage',
+  'facultyPage',
+  'pricingPage',
+  'getStartedPage',
+  'forYouPage',
+  'resourcesPage',
 ]);

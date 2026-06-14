@@ -23,10 +23,9 @@
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import { site } from '@/data/site';
 import { IconBrandInstagram, IconBrandFacebook, IconBrandYoutube } from '@tabler/icons-react';
-import { Phone, MapPin, Mail, Clock } from 'lucide-react';
+import { Phone, MapPin, Mail } from 'lucide-react';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { telHref } from '@/lib/phone';
-import { serviceTime } from '@/lib/serviceTime';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -84,11 +83,8 @@ const fb = settings.social.facebook;
 const yt = settings.social.youtube;
 const tagline = settings.tagline;
 const mission = settings.mission;
-const serviceTimes = serviceTime(settings.worshipService).line;
-const giveHref = settings.giveHref;
 const addressLine = settings.addressLine;
 const cityStateZip = settings.cityStateZip;
-const fullAddress = settings.fullAddress;
 const mapHref = settings.mapHref;
 
 const currentYear = new Date().getFullYear();
@@ -96,36 +92,23 @@ const siteCredit = siteSettings?.footerCredit;
 const siteCreditUrl = siteSettings?.footerCreditUrl;
 
 // STRUCTURE: footer navigation, grouped to mirror the header IA.
-const VISIT_LINKS = [
-  { label: 'Plan a Visit', href: '/worship' },
-  { label: 'Watch Sermons', href: '/sermons' },
-  { label: 'What We Believe', href: '/what-we-believe' },
-  { label: 'Music', href: '/music' },
+const EXPLORE_LINKS = [
+  { label: 'Courses', href: '/courses' },
+  { label: 'Faculty', href: '/faculty' },
   { label: 'Events', href: '/events' },
+  { label: 'Resources', href: '/resources' },
 ];
-const INVOLVED_LINKS = [
-  { label: 'Grow', href: '/grow' },
-  { label: 'Serve', href: '/serve' },
-  { label: 'Kids', href: '/kids' },
-  { label: 'Food Ministry', href: '/food' },
+const ABOUT_LINKS = [
+  { label: 'About', href: '/about' },
+  { label: 'For You', href: '/for-you' },
+  { label: 'Pricing & Scholarships', href: '/pricing' },
+  { label: 'FAQ', href: '/faq' },
 ];
-const CONNECT_LINKS = [
-  { label: 'Pastors & Staff', href: '/pastor-staff' },
-  { label: 'Use Our Space', href: '/use-our-space' },
-  { label: 'Weddings', href: '/weddings' },
+const START_LINKS = [
+  { label: 'Get started', href: '/get-started' },
+  { label: 'Request information', href: '/get-started' },
+  { label: 'Book a free intro', href: '/get-started' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Give', href: '/give' },
-];
-
-// Optional external integrations (church app, member directory, prayer card).
-// Appended to the Connect column only when set in siteSettings, so the template
-// can point at Subsplash / Planning Center / etc. without code, and nothing
-// extra shows for a church that doesn't use them.
-const connectLinks = [
-  ...CONNECT_LINKS,
-  ...(siteSettings?.appUrl ? [{ label: 'Church App', href: siteSettings.appUrl, external: true }] : []),
-  ...(siteSettings?.directoryUrl ? [{ label: 'Member Directory', href: siteSettings.directoryUrl, external: true }] : []),
-  ...(siteSettings?.prayerUrl ? [{ label: 'Prayer Request', href: siteSettings.prayerUrl, external: true }] : []),
 ];
 
 // Footer link columns. Editors can override these in Site Settings -> Navigation
@@ -136,9 +119,9 @@ const connectLinks = [
 type FooterColumn = { title: string; links: { label: string; href: string; external?: boolean }[] };
 
 const FALLBACK_FOOTER_COLUMNS: FooterColumn[] = [
-  { title: 'Visit', links: VISIT_LINKS },
-  { title: 'Get Involved', links: INVOLVED_LINKS },
-  { title: 'Connect', links: connectLinks },
+  { title: 'Explore', links: EXPLORE_LINKS },
+  { title: 'About', links: ABOUT_LINKS },
+  { title: 'Get started', links: START_LINKS },
 ];
 
 function footerColumnsFromSettings(
@@ -180,7 +163,7 @@ const footerLink =
     </div>
   )}
 
-  {/* ---- Brand + mission  |  Sunday Worship card ---------------------------- */}
+  {/* ---- Brand + mission  |  Where-we-meet card ---------------------------- */}
   <div class="mx-auto max-w-content px-m pt-section-md pb-l grid gap-l md:grid-cols-2 md:gap-section-md items-start">
     {/* Brand + mission + Plan a Visit */}
     <div class="text-center md:text-left">
@@ -194,22 +177,18 @@ const footerLink =
         {mission}
       </p>
       <a
-        href="/worship"
+        href="/get-started"
         class="press-tactile mt-m inline-flex items-center px-l py-2.5 rounded-full text-xs uppercase tracking-eyebrow font-semibold bg-primary text-primary-foreground hover:bg-primary-dark transition-colors"
       >
-        Plan a Visit
+        Request information
       </a>
     </div>
 
-    {/* Sunday Worship card — the church "when + where" at a glance. */}
+    {/* Where we meet — the campus address + directions. */}
     <div class="rounded-lg border border-chapel-foreground/15 bg-white/5 p-l text-center md:text-left">
-      <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/70">Sunday Worship</p>
+      <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/70">Where we meet</p>
       <div class="mt-s mb-m h-px w-12 bg-gold/60 mx-auto md:mx-0" aria-hidden="true"></div>
-      <p class="flex items-center justify-center md:justify-start gap-xs text-lg font-display text-chapel-foreground">
-        <Clock size={16} aria-hidden="true" className="shrink-0 text-gold" />
-        {serviceTimes}, in person and online
-      </p>
-      <p class="mt-s flex items-start justify-center md:justify-start gap-xs text-chapel-foreground/80">
+      <p class="flex items-start justify-center md:justify-start gap-xs text-chapel-foreground/85">
         <MapPin size={16} aria-hidden="true" className="mt-1 shrink-0 text-gold" />
         <span>{addressLine}<br />{cityStateZip}</span>
       </p>
@@ -221,6 +200,7 @@ const footerLink =
       >
         Get directions
       </a>
+      <p class="mt-m text-sm text-chapel-foreground/70">Courses meet in person, in cohorts, on the West Chester campus.</p>
     </div>
   </div>
 
@@ -305,7 +285,7 @@ const footerLink =
     <div class="mx-auto max-w-content px-m py-m flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-xs text-xs text-chapel-foreground/70 text-center">
       <p>© {currentYear} {brandName}</p>
       <div class="flex items-center gap-m">
-        <a href={giveHref} class="link-underline hover:text-white transition-colors">Give</a>
+        <a href="/pricing" class="link-underline hover:text-white transition-colors">Pricing</a>
         <a href="/privacy" class="underline underline-offset-2 hover:text-white transition-colors">Privacy policy</a>
         {siteCredit && (
           siteCreditUrl ? (

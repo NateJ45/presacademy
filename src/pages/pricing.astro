@@ -1,0 +1,120 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Pricing & Scholarships. The price said plainly: a ruled set of tier cards
+// (per course / audit / full track), then a scholarship section and a small
+// heritage band. Rule & Ledger layout. No checkout is wired; CTAs route to
+// /get-started (express interest).
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPricingPage, getPricingTiers, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const [page, tiers, siteSettings] = await Promise.all([
+  getPricingPage().catch(() => null),
+  getPricingTiers().catch(() => []),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Pricing & Scholarships · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'What a course costs, said plainly, and how we keep Reformed formation within reach.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'Tuition';
+const heroHeadline = page?.heroHeadline ?? 'Pricing and scholarships';
+const heroSubhead =
+  page?.heroSubhead ?? 'What a course costs, said plainly, and how we keep formation within reach.';
+
+function priceLabel(t: any): string {
+  return t.amount != null ? `$${t.amount.toLocaleString('en-US')}` : 'Free';
+}
+
+const stats = [
+  { value: '1998', label: 'Established' },
+  { value: '1,200+', label: 'Learners formed' },
+  { value: 'Need-based', label: 'Scholarships every term' },
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Pricing & Scholarships', url: `${site.url}/pricing` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      {page?.pricingIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.pricingIntro}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+    </div>
+  </section>
+
+  {/* Tier cards */}
+  {tiers.length > 0 && (
+    <section class="bg-background">
+      <div class="mx-auto max-w-content px-m pb-section-md">
+        <ul class="grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {tiers.map((t: any) => (
+            <li class:list={['list-none border border-border-soft', t.featured ? 'border-t-2 border-t-primary' : 'border-t-2 border-t-gold']}>
+              <div class="p-l">
+                {t.featured && <span class="mb-2 inline-block rounded-[2px] bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground">Most chosen</span>}
+                <h2 class="font-display text-h4 text-foreground">{t.name}</h2>
+                <p class="mt-2 font-display text-h2 text-primary">{priceLabel(t)}<span class="ml-1 align-middle text-sm font-normal text-foreground/60">{t.unit}</span></p>
+                {t.summary && <p class="mt-3 text-sm text-foreground/75">{t.summary}</p>}
+                {t.includes?.length > 0 && (
+                  <ul class="mt-l space-y-2 border-t border-border-soft pt-l text-sm text-foreground/80">
+                    {t.includes.map((inc: string) => (
+                      <li class="flex gap-2"><span class="text-gold-ink" aria-hidden="true">&middot;</span><span>{inc}</span></li>
+                    ))}
+                  </ul>
+                )}
+                <a href="/get-started" class="press-tactile mt-l inline-flex w-full items-center justify-center min-h-[44px] rounded-full border border-foreground px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-foreground hover:bg-accent">Express interest</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Scholarships */}
+  <section class="surface-warm bg-muted">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <p class="text-xs uppercase tracking-eyebrow text-gold-ink">{page?.scholarshipEyebrow ?? 'Scholarships'}</p>
+      <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{page?.scholarshipHeadline ?? 'No one is turned away for cost'}</h2>
+      <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{page?.scholarshipBody ?? 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.'}</p>
+      {page?.footnote && <p class="mt-m max-w-2xl text-sm text-foreground/65">{page.footnote}</p>}
+    </div>
+  </section>
+
+  {/* Heritage band */}
+  <section class="border-b border-border-soft bg-background">
+    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3">
+      {stats.map((s, i) => (
+        <div class:list={['px-m py-l', i < stats.length - 1 && 'sm:border-r border-border-soft border-b sm:border-b-0']}>
+          <p class="font-display text-h3 text-primary">{s.value}</p>
+          <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Questions about cost?'}
+    headline={page?.finalCtaHeadline ?? 'Ask us, plainly'}
+    subhead={page?.finalCtaSubhead ?? 'Tell us your situation on the interest form and we will be straight with you.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+  />
+</BaseLayout>

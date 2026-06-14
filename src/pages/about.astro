@@ -1,21 +1,18 @@
 ---
 // Safe to edit by hand for copy + structure changes.
-// About page. The church's story and its historic building. Sanity-aware
-// (aboutPage singleton drives the hero when present) with church fallbacks.
+// About — the identity page. Mission, Reformed (PC(USA)) identity, What We
+// Believe (the distinctives, folded in from the old beliefs page), how we define
+// formation, history, and a link to the faculty. Rule & Ledger layout. Hero,
+// SEO, and the closing CTA come from the aboutPage singleton with school
+// fallbacks; the body sections carry inline fallback copy.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getAboutPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import { Image } from 'astro:assets';
-import Hero from '@/components/Hero.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import Sections from '@/components/Sections.astro';
-import SanityImage from '@/components/SanityImage.astro';
-import angelMurals from '@/assets/placeholders/place-sanctuary-wooden-pews.jpg';
-import sanctuaryInterior from '@/assets/placeholders/place-church-aisle.jpg';
 
 const [page, siteSettings] = await Promise.all([
   getAboutPage().catch(() => null),
@@ -26,13 +23,21 @@ const settings = resolveSiteSettings(siteSettings);
 const title = page?.seoTitle ?? `About · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'A historic sanctuary and a living congregation in downtown West Chester Township. The story of The Presbyterian Academy.';
+  'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'About The Presbyterian Academy';
-const heroHeadline = page?.heroHeadline ?? 'A historic church with an open door';
+const heroEyebrow = page?.heroEyebrow ?? 'About the Academy';
+const heroHeadline = page?.heroHeadline ?? 'Reformed formation, for the whole church';
 const heroSubhead =
   page?.heroSubhead ??
-  'A historic downtown congregation, The Presbyterian Academy has worshipped on Main Street for generations. The building is extraordinary. The people are the point.';
+  'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.';
+
+// What We Believe — the distinctives, plainly, each paired with a pastoral line.
+const beliefs = [
+  { title: 'Scripture is our final authority', body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.' },
+  { title: 'Salvation is by grace alone', body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.' },
+  { title: 'The confessions guide us', body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.' },
+  { title: 'Formation is for everyone', body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.' },
+];
 
 const schemas = [
   breadcrumbSchema([
@@ -40,123 +45,82 @@ const schemas = [
     { name: 'About', url: `${site.url}/about` },
   ]),
 ];
-
-const pillOutline =
-  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-primary text-link hover:bg-accent transition-colors';
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  <Hero
-    eyebrow={heroEyebrow}
-    headline={heroHeadline}
-    subhead={heroSubhead}
-    keyword={page?.heroKeyword}
-    backgroundImage={page?.heroImage ?? null}
-    localImage={angelMurals}
-    localImageAlt="A sanctuary with wooden pews"
-    headingId="about-hero"
-    size="short"
-  />
-
-  {/* Feature: the historic sanctuary */}
-  <figure class="mx-auto max-w-content px-m pt-section-lg">
-    {page?.featureImage?.asset ? (
-      <SanityImage
-        source={page.featureImage}
-        width={1000}
-        sizes="(min-width: 1280px) 1216px, 100vw"
-        alt={page.featureImage.alt || 'The interior of our historic sanctuary'}
-        class="w-full h-auto rounded-md shadow-sm"
-      />
-    ) : (
-      <Image
-        src={angelMurals}
-        alt="A sanctuary with wooden pews"
-        widths={[768, 1280, 1500]}
-        sizes="(min-width: 1280px) 1216px, 100vw"
-        class="w-full h-auto rounded-md shadow-sm"
-      />
-    )}
-    <figcaption class="mt-s text-sm text-foreground/70 italic text-center">
-      {page?.muralCaption ?? 'Our historic sanctuary, the heart of our life together.'}
-    </figcaption>
-  </figure>
-
-  {/* The building */}
-  <section class="bg-background" aria-labelledby="about-building">
-    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-center">
-      <div>
-        <SectionHeading
-          eyebrow={page?.buildingEyebrow ?? 'Our Building'}
-          headline={page?.buildingHeadline ?? 'A sanctuary with a story'}
-          headingId="about-building"
-        />
-        <div class="mt-l text-foreground/85 text-lg leading-relaxed space-y-m">
-          <p>
-            {page?.buildingBodyP1 ??
-              'Our historic sanctuary is filled with stained-glass windows and craftsmanship from another era. Visitors travel from near and far to see it.'}
-          </p>
-          <p>
-            {page?.buildingBodyP2 ??
-              'It is a beautiful room, and it is still, first and last, a room built for worship.'}
-          </p>
-          <div class="pt-xs">
-            <a href={page?.buildingCta?.externalUrl || '/use-our-space'} class={pillOutline}>{page?.buildingCta?.label || 'Visit or Use the Space'}</a>
-          </div>
-        </div>
-      </div>
-      {page?.buildingImage?.asset ? (
-        <SanityImage
-          source={page.buildingImage}
-          width={1000}
-          sizes="(min-width: 768px) 45vw, 100vw"
-          alt={page.buildingImage.alt || 'The nave of The Presbyterian Academy, lined with stained-glass windows'}
-          class="w-full h-auto rounded-md shadow-sm"
-        />
-      ) : (
-        <Image
-          src={sanctuaryInterior}
-          alt="Looking down a church aisle"
-          widths={[600, 900, 1197]}
-          sizes="(min-width: 768px) 45vw, 100vw"
-          class="w-full h-auto rounded-md shadow-sm"
-        />
-      )}
+  {/* Hero */}
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 class="mt-3 max-w-4xl font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
     </div>
   </section>
 
-  {/* Who we are */}
-  <section class="surface-warm bg-muted" aria-labelledby="about-who">
-    <div class="mx-auto max-w-content px-m py-section-lg grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-start">
-      <SectionHeading
-        eyebrow={page?.whoEyebrow ?? 'Who we are'}
-        headline={page?.whoHeadline ?? 'A living congregation in downtown West Chester Township'}
-        headingId="about-who"
-      />
-      <div class="text-foreground/85 text-lg leading-relaxed space-y-m">
-        <p>
-          {page?.whoBodyP1 ??
-            'We are a congregation in the mainline Protestant tradition, gathering each week to worship, love, serve, pray, and share the gospel in word and deed.'}
-        </p>
-        <p>
-          {page?.whoBodyP2 ??
-            'We welcome everyone: women and men, gay and straight, lifelong believers and the simply curious. Whoever you are, you are welcome here.'}
-        </p>
-        <div class="flex flex-wrap gap-s pt-xs">
-          <a href={page?.whoCtaPrimary?.externalUrl || '/what-we-believe'} class={pillOutline}>{page?.whoCtaPrimary?.label || 'What We Believe'}</a>
-          <a href={page?.whoCtaSecondary?.externalUrl || '/pastor-staff'} class={pillOutline}>{page?.whoCtaSecondary?.label || 'Meet Our Pastors'}</a>
-        </div>
+  {/* Mission, editorial two-column */}
+  <section class="bg-background">
+    <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-md lg:grid-cols-[200px_1fr]">
+      <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Our mission</p>
+      <div class="max-w-prose">
+        <p class="font-display text-h3 leading-snug text-foreground">We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.</p>
+        <p class="mt-m text-lg leading-relaxed text-foreground/80">We are a school, not a church. We exist to equip the people who already serve: ruling elders, small-group leaders, Sunday-school teachers, and lifelong learners in PC(USA), ECO, and EPC congregations. We teach in person, in cohorts, at a pace that fits a working life.</p>
       </div>
+    </div>
+  </section>
+
+  {/* What We Believe */}
+  <section class="surface-warm bg-muted">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">What we believe</p>
+      <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">Confessional, and warm about it</h2>
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+      <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2">
+        {beliefs.map((b, i) => (
+          <div class="border-t-2 border-gold pt-4">
+            <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-2 font-display text-h4 text-foreground">{b.title}</h3>
+            <p class="mt-2 leading-relaxed text-foreground/80">{b.body}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-l max-w-2xl text-foreground/70">Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.</p>
+    </div>
+  </section>
+
+  {/* How we teach + history, editorial */}
+  <section class="bg-background">
+    <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m py-section-md lg:grid-cols-2">
+      <div class="max-w-prose">
+        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">How we teach</p>
+        <h2 class="mt-2 font-display text-h3 text-foreground">Formation, not just information</h2>
+        <p class="mt-m leading-relaxed text-foreground/80">A course here is more than a lecture. You read real texts, you discuss them with a cohort that sticks together, and you leave able to teach what you have learned. The goal is not to make you a scholar. It is to make you a wiser, steadier leader of the people God has already given you.</p>
+      </div>
+      <div class="max-w-prose">
+        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Our history</p>
+        <h2 class="mt-2 font-display text-h3 text-foreground">A small school with a long view</h2>
+        <p class="mt-m leading-relaxed text-foreground/80">The Academy was founded in 1998 to bring seminary-grade teaching to lay leaders who could not leave their jobs and families for a degree. Since then we have formed more than a thousand learners across three denominations, taught by ministers and scholars who believe ordinary believers deserve the real thing.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Leadership -> faculty */}
+  <section class="border-y border-border-soft bg-background">
+    <div class="mx-auto flex max-w-content flex-wrap items-center justify-between gap-m px-m py-l">
+      <div>
+        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">The people who teach</p>
+        <p class="mt-2 max-w-xl font-display text-h4 text-foreground">Every course is led by an ordained minister or a credentialed Reformed scholar.</p>
+      </div>
+      <a href="/faculty" class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">Meet the faculty</a>
     </div>
   </section>
 
   <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
 
   <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Come and See"}
-    headline={page?.finalCtaHeadline ?? "There is room for you here"}
-    subhead={page?.finalCtaSubhead ?? "Join us for worship this Sunday, and see our historic sanctuary for yourself."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Plan a Visit', linkType: 'external', externalUrl: '/worship' }}
-    backgroundImage={page?.finalCtaBackgroundImage}
+    eyebrow={page?.finalCtaEyebrow ?? 'Ready to learn?'}
+    headline={page?.finalCtaHeadline ?? 'Find a course to begin'}
+    subhead={page?.finalCtaSubhead ?? 'Browse the catalog, meet the teachers, and start when you are ready.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
   />
 </BaseLayout>

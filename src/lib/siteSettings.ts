@@ -32,7 +32,6 @@
 // <title>/OG meta in BaseLayout.
 
 import { site } from '@/data/site';
-import type { WorshipService } from './serviceTime';
 
 /** The raw siteSettings fields this resolver consumes (from getSiteSettings()). */
 export interface RawSiteSettings {
@@ -49,9 +48,6 @@ export interface RawSiteSettings {
   geoLat?: number | null;
   /** Decimal longitude of the building. Set in Studio via right-click on Google Maps. */
   geoLng?: number | null;
-  worshipService?: WorshipService | null;
-  giveUrl?: string | null;
-  watchUrl?: string | null;
   socialInstagram?: string | null;
   socialFacebook?: string | null;
   socialYoutube?: string | null;
@@ -103,12 +99,6 @@ export interface ResolvedSiteSettings {
    * The structured-data builder omits the geo block entirely when this is absent.
    */
   geoLng?: number;
-  /** Passed straight through to serviceTime() for the display strings. */
-  worshipService: WorshipService | null;
-  /** Where the "Give" button points: the giving portal, else the /give page. */
-  giveHref: string;
-  /** Where "Watch" points: the livestream URL, else the /sermons page. */
-  watchHref: string;
   social: {
     instagram?: string;
     facebook?: string;
@@ -116,7 +106,7 @@ export interface ResolvedSiteSettings {
   };
 }
 
-const DEFAULT_TAGLINE = 'Loving God and loving our neighbors in the heart Academy.';
+const DEFAULT_TAGLINE = 'Reformed theological formation for everyday leaders.';
 
 /** Trim a Sanity string; treat blank/whitespace-only/missing as "unset". */
 function clean(value?: string | null): string | undefined {
@@ -182,9 +172,6 @@ export function resolveSiteSettings(raw?: RawSiteSettings | null): ResolvedSiteS
     postalCode: parsed.postal,
     geoLat,
     geoLng,
-    worshipService: s.worshipService ?? null,
-    giveHref: clean(s.giveUrl) ?? '/give',
-    watchHref: clean(s.watchUrl) ?? '/sermons',
     social: {
       instagram: clean(s.socialInstagram),
       facebook: clean(s.socialFacebook),

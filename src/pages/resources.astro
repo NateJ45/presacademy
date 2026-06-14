@@ -1,0 +1,70 @@
+---
+// Safe to edit by hand for copy + structure changes.
+// Resources — teaching and formation essays from the faculty, free to everyone.
+// A content-marketing + SEO surface. Articles are authored as flexibleSections
+// (or a future resource collection); until then the page shows its intro and a
+// gentle empty state. Rule & Ledger layout.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getResourcesPage, getSiteSettings } from '@/lib/queries';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+const [page, siteSettings] = await Promise.all([
+  getResourcesPage().catch(() => null),
+  getSiteSettings().catch(() => null),
+]);
+const settings = resolveSiteSettings(siteSettings);
+
+const title = page?.seoTitle ?? `Resources · ${site.name}`;
+const description =
+  page?.seoDescription ?? 'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.';
+
+const heroEyebrow = page?.heroEyebrow ?? 'Resources';
+const heroHeadline = page?.heroHeadline ?? 'Teaching and formation essays';
+const heroSubhead = page?.heroSubhead ?? 'Short reads from our faculty, free to everyone.';
+
+const hasSections = (page?.flexibleSections?.length ?? 0) > 0;
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Resources', url: `${site.url}/resources` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings}>
+  <section class="bg-background">
+    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+      <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
+      {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
+      {page?.listIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.listIntro}</p>}
+      <div class="mt-l h-px w-full bg-gold/50"></div>
+    </div>
+  </section>
+
+  {!hasSections && (
+    <section class="bg-background">
+      <div class="mx-auto max-w-content px-m pb-section-lg">
+        <p class="max-w-2xl text-foreground/80 italic">
+          New essays are on the way. In the meantime, the best way to learn from our faculty is{' '}
+          <a href="/courses" class="text-link underline underline-offset-2">in a course</a>.
+        </p>
+      </div>
+    </section>
+  )}
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Go deeper'}
+    headline={page?.finalCtaHeadline ?? 'Learn with the faculty'}
+    subhead={page?.finalCtaSubhead ?? 'Every essay starts as something the faculty teach. Take the course.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
+  />
+</BaseLayout>
