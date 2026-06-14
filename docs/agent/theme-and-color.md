@@ -55,13 +55,14 @@ If a new shadcn primitive ever looks off-brand, the fix is almost always in that
 
 ## Theme system
 
-Three-state toggle (light / dark / system), persisted to `localStorage["theme"]`. System is the default for first-time visitors; while set to System, the page listens to `matchMedia('(prefers-color-scheme: dark)')` and flips live when the OS changes.
+Three-state toggle (light / dark / system), persisted to `localStorage["theme"]`. **Light is the default for first-time visitors** (no saved choice) — the site does NOT follow the OS by default. "System" is opt-in: only a visitor who explicitly picks System from the toggle gets OS-following behavior, and while set to System the page listens to `matchMedia('(prefers-color-scheme: dark)')` and flips live when the OS changes. The choice persists in `localStorage` either way. (Changed 2026-06-14 — the bootstrap and `ThemeToggle` both default to `'light'`, previously `'system'`.)
 
 The wiring, in order of execution:
 
-1. **Anti-FOUC script in `BaseLayout.astro`** runs inline in `<head>` before first paint. The script does three things every time it fires (initial load, `astro:after-swap` on View Transitions, and `DOMContentLoaded` after body parses):
-   - Reads the localStorage key and `prefers-color-scheme`
+1. **Anti-FOUC script in `BaseLayout.astro`** runs inline in `<head>` before first paint. The script does these things every time it fires (initial load, `astro:after-swap` on View Transitions, and `DOMContentLoaded` after body parses):
+   - Reads the localStorage key, defaulting to `'light'` when nothing is stored (`localStorage.getItem(key) ?? 'light'`); only resolves `prefers-color-scheme` when the stored value is the literal `'system'`
    - Applies the `.dark` class on `<html>` plus an inline `color-scheme` style so native widgets (scrollbars, form controls) follow
+   - Updates the single `<meta name="theme-color" id="theme-color-meta">` to the dark value (`#1C1813`) when dark is active, else the light value (`#ECE4DA`), so the mobile browser chrome follows the APP theme (see the theme-color note below)
    - Walks every `<img data-theme-logo>` and assigns the matching variant's `src` + `srcset` (theme-aware logo, see below)
 2. **`ThemeToggle.tsx`** (React island, single instance in the Header) cycles light -> dark -> system on click, writes to the same localStorage key, and re-binds the matchMedia listener whenever the chosen theme changes. Its `applyTheme()` function also walks the `[data-theme-logo]` images and swaps their srcs, so toggling the theme doesn't leave a dark-ink logo on a dark background.
 3. **`globals.css`** defines color tokens for both modes. `:root` carries light; `.dark` carries the overrides. The static `bg-primary` green holds in both modes; the shadcn `--primary` lifts to a brighter green in dark for rings / underlines / decoration, and only surface and muted-text tokens flip.
@@ -76,6 +77,10 @@ The fix lives in the anti-FOUC script and has three triggers:
 - **`astro:after-swap` listener** -- re-runs after every View Transitions navigation. Re-applies the `.dark` class and re-sets the logo `src` because both get reset by the swap.
 
 A `__themeBootstrapBound` flag on `window` guards against double-binding if the script ever runs twice. If you touch this script, preserve all three triggers.
+
+### theme-color meta follows the app theme
+
+The mobile browser chrome color tracks the chosen APP theme, not the OS. There is a single `<meta name="theme-color" id="theme-color-meta">` in `<head>`, authored with the light value (`#ECE4DA`); the anti-FOUC bootstrap rewrites its `content` to the dark value (`#1C1813`) whenever dark is active. This replaced the older two-`<meta>` `prefers-color-scheme` media-query approach, which keyed off the OS and so disagreed with the app theme once Light became the default. Because only the bootstrap updates the meta (and it re-fires on `astro:after-swap`), a `ThemeToggle` click updates the chrome color on the next navigation rather than instantly — acceptable, and not worth a second code path.
 
 ### Theme-aware single-img logo pattern
 

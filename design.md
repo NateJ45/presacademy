@@ -186,6 +186,13 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
   in Direction A; treat them as a soft rounding, not an arch.
 - Section heading pattern: rubric eyebrow (`.eyebrow`) + serif headline (optional
   green keyword span) + optional lede. Use `SectionHeading.astro`.
+- **Footer colophon.** The footer is composed as a printed-book *colophon* page
+  (oversized Fraunces wordmark masthead, a brass-ruled imprint row, a monogram
+  seal, and a typeface credit), not a generic link grid. It is a current brand
+  idiom: keep the bookish colophon read on any footer work.
+- **Rule & Ledger frame** (404, framed media). Framed photos now use a brass top
+  rule above a clean rectangular crop, not a Romanesque arch. The arch was
+  retired in Direction A; treat `.arch-top` as a soft rounding only.
 - No paper grain. `body::before` is set to `opacity: 0` in Direction A; large
   flat near-white fills are intentional and read clean, not dead.
 
@@ -193,6 +200,8 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
 
 1. Verify in BOTH themes and BOTH viewports (375 / 1280) before calling it done
    (`/visual-verify`; remember the `[data-reveal]` blank-screenshot gotcha).
+   LIGHT is the default theme (the site no longer follows the OS preference);
+   light is primary, but dark must still read as the brand.
 2. No new fonts, no new dependencies, no client-side JS for decoration.
 3. Desktop nav stays server-rendered; Lenis + reveal observers stay.
 4. No em-dashes in visitor-facing copy. Voice rules: `docs/brand/voice.md`.
@@ -200,3 +209,8 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
    only; never height/top).
 6. Content comes from Sanity. Don't bake copy into components; wire a field
    with an inline fallback (see CLAUDE.md content model).
+7. The school was **founded in 2026.** Never reintroduce a founding year, an
+   "Est." line, or long-history / large-enrollment claims (the old "Est. 1998 /
+   a thousand learners / long view" placeholder copy was removed everywhere).
+   Stats lead with structure and standards (credentialed faculty, in-person
+   cohorts, need-based scholarships, Westminster grounding), not age or size.

@@ -3,6 +3,86 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-14 — Theme default flipped to LIGHT for new visitors (commit eb1ce88).
+A first-time visitor with no saved choice now gets light mode instead of
+following the OS. The OS preference is honored ONLY when the visitor explicitly
+picks "system" in the toggle; any explicit choice persists in localStorage. The
+mobile browser-chrome color now tracks the APP theme: a single `theme-color` meta
+that the anti-FOUC bootstrap in BaseLayout.astro rewrites on theme change,
+replacing the previous pair of `prefers-color-scheme` media metas. Changed in
+BaseLayout.astro + ThemeToggle.tsx.*
+
+*2026-06-14 — 404 rebranded to "Rule & Ledger" (commit eb1ce88). The custom 404
+was reframed onto the current brand: a brass top rule + rectangular crop in place
+of the retired Romanesque arch frame, a bookish headline ("This page isn't in the
+index."), and school CTAs (Browse courses / Meet the faculty / Get in touch).*
+
+*2026-06-14 — Content-editability pass: "Sanity is the single source of truth"
+made true for the school pages (Phases 0-4). A 6-agent audit found the claim was
+substantially FALSE after the lay-school rebuild: large parts of the school pages
+were hardcoded literals and the docs still carried orphaned / mismatched
+church-era schema fields. Full page-by-page map + fix plan in
+docs/agent/content-editability-audit.md, which SUPERSEDES the "everything
+editable" claim in editor-vs-hardcoded.md. What landed:
+- **Editor-UX** (commit 7c046b3) — a per-document "View this page on the live
+  site" help banner at the top of every Studio form (studio/components/PageHelpBanner.tsx
+  + StudioFormInput.tsx, composed with CharacterCountInput into the single
+  form.components.input slot; deep-links via a dedicated LIVE_SITE_URL in
+  sanity.config.ts; urlForDoc split into pathForDoc + base). Fixed
+  documentBadges.tsx, whose SEO/photo type lists still named deleted church types
+  (so the "Add SEO / Needs a photo" badges did nothing on course/facultyMember).
+- **Home + About re-schema** (commits 91c1e4d, bf88d1d) — homePage.ts +
+  aboutPage.ts rewritten to clean SCHOOL fields (wayfinding, stats, ticker,
+  strip eyebrow/heading pairs, hero button labels, next-cohort label; mission /
+  beliefs / teach / why / faculty-band). The ~30 church orphans were REMOVED
+  (the docs held no data in them); pages read each field with the current literal
+  as the inline fallback, so the live site is unchanged. Queries rewritten.
+- **Detail data-loss** — course detail now renders the syllabus download +
+  a Seats row + the price unit; faculty detail renders specializations /
+  yearsTeaching / email; event detail honors the all-day toggle. Removed the dead
+  specialService / liturgicalSeason GROQ selections.
+- **Get Started + odds and ends** — fielded the "Request information" panel and
+  facultyPage.emptyState; passed seoImage to BaseLayout on contact + faq (it was
+  ignored); notFoundPage secondary CTA default fixed (/worship -> /courses); the
+  Header bar now uses settings.tagline.
+- **Seed** — scripts/seed-page-copy.mjs patches the current inline copy into any
+  EMPTY home / about / get-started / faculty / siteSettings(funder) field, so
+  Studio MIRRORS the live site (idempotent, only-empty; ran with --apply;
+  studio:deploy run twice).
+- **Intentionally left hardcoded (documented):** structural scaffolding labels
+  (At a glance, Degrees, the catalog/faculty filter legends in the React islands)
+  and brand constants (the "PA" monogram, the "PC(USA)" tag). Fielding these would
+  bloat Studio with never-touched fields.*
+
+*2026-06-14 — Founding-year scrub + Presbytery funder (commits f2b71fa, 82bb126).
+The school was FOUNDED IN 2026: do NOT highlight the founding year or imply a long
+history. Removed "Est. 1998", the home + pricing "Established / Learners formed /
+Denominations served" stat bands, and the about-page "founded in 1998 / a thousand
+learners / long view" block; replaced with honest new-school stats (100%
+credentialed faculty, in-person cohorts, need-based scholarships, Westminster
+grounding). The Presbytery of Cincinnati funds the school THIS YEAR: a
+"Made possible by the Presbytery of Cincinnati" footer band driven by a new
+editable siteSettings.funder field (made editable in 82bb126), plus an about-page
+line.*
+
+*2026-06-14 — Header utility bar + colophon footer (commit de4723e). The header
+utility bar now shows LIVE enrollment status: the soonest upcoming term via
+getNextTerm() ("Now enrolling · Fall 2026 begins September 8", with a pulsing
+.enroll-dot), tap-to-call, and a Request-info link; it falls back to
+settings.tagline when no term is scheduled, and shows a short form on mobile.
+The footer was rebuilt as a printed-book COLOPHON: an oversized Fraunces wordmark
+masthead + mission + two CTAs; an imprint row (where-we-meet / nav index /
+follow-along, each under a brass eyebrow rule); and a colophon bar (a "PA"
+monogram seal, locality + denomination, a typeface credit "Set in Fraunces &
+Source Sans 3", legal links, and the designer credit), over a faint graph-paper
+dot texture on the green band.*
+
+*2026-06-14 — Per-page OG images folded into the build chain (commit 7e8c8c5).
+`npm run build` is now `node scripts/generate-og-pages.mjs && astro build`
+(build:full chains `npm run build`), so per-page OG cards regenerate on every
+build. generate-og-pages.mjs is fail-safe: on a Pango-less host it ships the
+committed PNG instead of crashing the build.*
+
 *2026-06-14 — Lighthouse re-run after the kinetic motion pass (home page, on the
 workers.dev preview). Performance ~100 (LCP 205ms, CLS 0.01 — the animation pass
 did NOT regress performance), Accessibility 100, Best Practices 100. SEO showed

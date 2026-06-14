@@ -30,8 +30,8 @@ The primary CTA button extends `src/components/ui/button.tsx` with `variant="bra
 The core component set, by role. All in `src/components/` unless noted.
 
 **Page chrome:**
-- `Header.astro` -- two-row desktop (eyebrow strip + main nav), single-row mobile. Sticky-with-hide-on-scroll-down behavior wired via `.site-header`. The eyebrow strip carries availability status, email, and phone; on mobile the availability shows a compact pill.
-- `Footer.astro` -- a responsive link grid, brand logo, auto-year copyright, and "Site by..." credit on a thin bottom bar.
+- `Header.astro` -- two-row desktop (utility bar + main nav), single-row mobile. Sticky-with-hide-on-scroll-down behavior wired via `.site-header`. The utility bar carries **live enrollment status** -- it queries the soonest upcoming term via `getNextTerm()` and shows "Now enrolling · {term} begins {date}" with a pulsing `.enroll-dot` (links to `/courses`), falling back to `settings.tagline` when no term is scheduled -- plus tap-to-call, a "Request info" link, and the theme toggle. On mobile the enrollment line collapses to a short form (just the term title) and the phone number / city hide. The bar runs on all viewports (cream on deep green).
+- `Footer.astro` -- a printed-book **colophon** (the bookish brand idiom): an oversized Fraunces wordmark masthead + mission + two CTAs; an editorial imprint row (where-we-meet/contact, the editor-managed nav index, follow-along, each column under a brass eyebrow rule); a funding-acknowledgment line ("Made possible by the {funder}", driven by `siteSettings.funder`); and a colophon bar (a "PA" monogram seal, locality + denomination, the typeface credit "Set in Fraunces & Source Sans 3", auto-year copyright, legal links, and the always-shown designer credit). Faint graph-paper dot texture sits on the green band. Optional newsletter signup mounts above the masthead when `siteSettings.newsletter.enabled`.
 - `MobileNav.tsx` -- shadcn Sheet drawer (`client:only="react"` -- Radix portal can't SSR). Primary CTA, tagline, nav links, email + phone + socials + theme toggle, logo at bottom.
 - `BaseLayout.astro` -- anti-FOUC theme bootstrap, View Transitions, Lenis init, scroll-reveal observer, sticky-header scroll listener.
 
@@ -49,7 +49,10 @@ The core component set, by role. All in `src/components/` unless noted.
 - `FeaturedTestimonial.astro` -- large editorial pull-quote variant of TestimonialCard.
 
 **Home page featured sections:**
-- `FeaturedJournal.astro` -- hero journal entry + companion panel layout. Feeds off `featured: boolean` on `journalEntry`. Queries order `featured desc, publishedAt desc` capped at 4. Suppresses entirely when the collection is empty; degrades to a centered single-hero spread when there is only one item.
+
+The home and about pages' built-in sections are now **editor-driven**: their schemas were rewritten from church to school fields (home: wayfinding / stats / ticker / strip eyebrow-heading pairs / hero button labels / next-cohort label; about: mission / beliefs / how-we-teach / why / faculty-band), and each `.astro` section reads its Sanity field with the current literal as an inline fallback. A seed script (`scripts/seed-page-copy.mjs`) populated the fields so Studio mirrors the live site. Full map: `content-editability-audit.md`.
+
+- `FeaturedJournal.astro` -- hero journal entry + companion panel layout. Feeds off `featured: boolean` on `journalEntry`. Queries order `featured desc, publishedAt desc` capped at 4. Suppresses entirely when the collection is empty; degrades to a centered single-hero spread when there is only one item. (Journal is a church-era module, not active in this school build.)
 
 **Gotcha -- bottom-anchored overlay vs. image height.** Hero cards that pin title blocks to `absolute bottom-0` of an image will clip the top of the overlay if the overlay content is taller than the image. Two levers: a portrait mobile aspect (`4/5`, never wide) and capping the desktop case at `16/10`. If eyebrow chips vanish above a hero image, this is why.
 
@@ -96,8 +99,10 @@ The Portable Text renderer (`JournalPortableText.tsx`) detects image orientation
 - `GuideView.tsx` -- renders one "How This Works" help guide as a read-only desk pane. Content is repo-based data in `studio/guides/content.tsx` (12 plain-English guides for church staff); the guide to show is chosen per desk item via `.options({ guideSlug })`. Replaces the interior-designer "Start Here" handbook (the old `StudioGuide` / `BusinessOverview` / `BrandKit` / `StudioPlaybook` panels and their `studioGuide` / `studioNotes` / `studioPlaybook` singletons were removed in the remodel).
 - `StudioLogo.tsx` -- the Studio header logo: the church building mark (same image as the favicon, `church-mark.png`) on a paper chip next to the church wordmark in the display serif, wired via `studio.components.logo`.
 - `StudioLayout.tsx` -- wraps the Studio (`studio.components.layout`) to inject the brand web fonts so the themed serif families resolve.
-- `CharacterCountInput.tsx` -- global form input wrapper showing a live character counter under any capped text field (SEO title / description); registered once via `form.components.input`.
-- `documentBadges.tsx` -- at-a-glance status badges shown next to the publish status.
+- `StudioFormInput.tsx` -- the single global form input registered at `form.components.input` (Sanity allows only one). It composes two editor aids: at the document root (`props.id === 'root'`) it prepends `PageHelpBanner`; for every other field it delegates to `CharacterCountInput`.
+- `PageHelpBanner.tsx` -- the per-document "View on the live site" help banner shown at the top of every page form. Names what the editor is editing, deep-links to that page on the production site (`pathForDoc(type, doc)` + `LIVE_SITE_URL` from `sanity.config.ts`), and carries the publish-to-live reminder. Returns null for documents with no public page (e.g. Site Settings). This is the static-site stand-in for Sanity's Presentation click-to-edit overlay, which needs SSR and can't run on this `output: 'static'` build (see `content-editability-audit.md`).
+- `CharacterCountInput.tsx` -- live character counter under any capped text field (SEO title / description); a transparent pass-through for everything else. No longer registered directly -- it is now reached through `StudioFormInput` (the single `form.components.input` slot).
+- `documentBadges.tsx` -- at-a-glance status badges (Featured / Needs a photo / Add SEO) shown next to the publish status. Its `SEO_PAGE_TYPES` and `PHOTO_FIELD` lists were fixed to the live school types (`course` / `facultyMember` / `event` + the school page singletons); they previously referenced deleted church types, so the photo/SEO badges did nothing.
 
 The "How This Works" section is pinned at the top of `studio/structure.ts`, one navigable pane per guide. Because the guides are code (not singletons), staff cannot edit or delete them and every template clone inherits them. The Studio theme + fonts are configured in `studio/sanity.config.ts`.
 

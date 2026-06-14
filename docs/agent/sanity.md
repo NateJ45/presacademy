@@ -33,14 +33,13 @@ The domain feeds the canonical URL, OG tags, and the sitemap reference in `robot
 
 ### Sanity — the single source of truth for all content
 
-**All publicly-visible content lives in Sanity, and every content field is populated, so the Studio mirrors the live site exactly.** Page copy, headings, buttons/links, images, the nav menus, SEO, the worship service time, and contact details are all Sanity fields. Editors change content in Studio (the static site rebuilds and the change goes live); they never touch code for routine copy updates.
+**All publicly-visible content lives in Sanity, and every content field is populated, so the Studio mirrors the live site exactly.** Page copy, headings, buttons/links, images, the nav menus, SEO, and contact details are all Sanity fields. Editors change content in Studio (the static site rebuilds and the change goes live); they never touch code for routine copy updates.
 
-The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inline-fallback pattern) that render only if a field is ever left empty, so a section can never go blank. They are not the live content — a populated Sanity field always overrides them. Repeated values are single-sourced (worship time via `siteSettings.worshipService` + `src/lib/serviceTime.ts`; address/phone/email via `siteSettings`), so a change is one edit. The audit + field-by-field map is in `docs/agent/editor-vs-hardcoded.md` and `docs/agent/content-audit-2026-06-01.md`.
+The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inline-fallback pattern) that render only if a field is ever left empty, so a section can never go blank. They are not the live content — a populated Sanity field always overrides them. Repeated values are single-sourced (address/phone/email via `siteSettings`), so a change is one edit.
 
-> Church build note: the schema set below is the church-starter schema, not the
-> generic starter's. The interior-designer schemas (service, testimonial, philosophyPoint,
-> journal*) were removed in the remodel; the opt-in module schemas under `docs/modules/`
-> are not active for this project.
+> **Content-editability pass (2026-06-14).** A six-agent audit found "Sanity is the single source of truth" was substantially FALSE for the school pages: large swaths of the home, about, get-started, faculty, and detail pages were hardcoded with no matching field. That pass re-schematized the singletons (see below), added the missing fields, and shipped `scripts/seed-page-copy.mjs` to mirror the live wording into Studio. The authoritative page-by-page map is now **`docs/agent/content-editability-audit.md`**; it supersedes the older "everything editable" claim in `editor-vs-hardcoded.md`.
+
+> School re-schema note (2026-06-14): the schema set below is the lay-SCHOOL schema, not the church-starter's. The church singletons (`homePage`, `aboutPage`) were rewritten to clean school fields and the church orphan fields were removed (a GROQ check confirmed the docs held no data in them, so removal is clean — no "unknown field" warnings). The church collections (sermon, ministry, staffMember, worshipResource, etc.) and the interior-designer schemas (service, philosophyPoint, journal*) are gone; the opt-in module schemas under `docs/modules/` are not active for this project.
 
 > **Placeholder images in the dataset (2026-06-14).** `scripts/seed-placeholder-images.mjs`
 > (commit 8a644e5) seeds the dataset with placeholder imagery so the site renders fully
@@ -53,26 +52,41 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 > home). The editor replaces these with real photography later. Full detail in `images.md`.
 > (Static deploys show them only after a rebuild; the dev server shows them immediately.)
 
-**Settings and globals:**
-- `siteSettings` (singleton) — church name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links, service time; a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
+> **Seed page copy into Studio (2026-06-14).** `scripts/seed-page-copy.mjs` mirrors the
+> live wording into Studio so the Studio matches the live site after the re-schema. It
+> writes the current inline-fallback copy from `index.astro` / `about.astro` (and a few
+> get-started / faculty / siteSettings fields) into any EMPTY field on the `homePage`,
+> `aboutPage`, `getStartedPage`, `facultyPage`, and `siteSettings` (`funder`) docs. It is
+> only-empty (never clobbers copy an editor changed) and idempotent. Run
+> `node scripts/seed-page-copy.mjs` for a dry run, add `--apply` to write, then
+> `npm run studio:deploy`. Run it once after deploying the new home/about schema. This is
+> the companion to the editability pass: the new fields are empty until this runs, so
+> Studio would otherwise show blanks where the live site shows real copy.
 
-**Reusable collections:**
-- `event` — calendar + special/seasonal services (audience, cost, registration, contact, `featuredOnHome`, `specialService` + `liturgicalSeason`).
-- `sermon` — messages shown on `/sermons` (date, speaker, scripture, series string, video link).
-- `staffMember` — pastors & staff (drives `/pastor-staff`).
-- `ministry` — programs, with `parentMinistry` for nesting (e.g. Youth → Confirmation/VBS).
-- `faqItem` — FAQ questions (question, Portable Text answer, category, displayOrder); drive the FAQ page, grouped by `faqPage.categoryOrder`.
-- `form` — configurable contact/inquiry forms (native field builder OR external embed); referenced from contact / weddings / use-our-space and droppable as a page block.
+**Settings and globals:**
+- `siteSettings` (singleton) — school name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links; a **`funder`** string (renders the footer line "Made possible by the [name]" on every page; clear it to hide the line); a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
+
+**School catalog collections:**
+- `course` — the catalog (title, syllabus copy, `coverImage`, sessions, `schedule`, `seatsNote`, pricing `tier` reference, instructor references, `teachingArea`, `term`, `featured`, `syllabusUrl` from an uploaded file). Drives `/courses` + `/courses/[slug]`.
+- `facultyMember` — instructors (name, `photo`, degrees, `denomination`/`ordination`, `yearsTeaching`, `specializations`, `email`, bio, publications). Drives `/faculty` + `/faculty/[slug]`.
+- `term` — academic terms (the date/term/city the home "next cohort" line and course schedules derive from).
+- `pricingTier` — named price tiers referenced by courses and shown on `/pricing`.
+- `teachingArea` — the subject taxonomy courses are tagged with.
+- `testimonial` — student quotes (with `featured`) shown in the home testimonials strip.
+- `event` — info sessions, lectures, term starts (audience, cost, registration, contact, `allDay`, `featuredOnHome`). Drives `/events` + `/events/[slug]`.
+- `faqItem` + `faqCategory` — FAQ questions (question, Portable Text answer, category, displayOrder); drive the FAQ page, grouped by `faqPage.categoryOrder`.
+- `form` — configurable contact/inquiry forms (native field builder OR external embed); referenced from contact / get-started and droppable as a page block.
 - `announcement` — scheduled site banner (enabled + date window, info/special/urgent style).
-- `worshipResource` — bulletins, orders of worship, The Record, annual reports (PDF upload or external link).
 - `ctaBlock` — reusable object type (label + linkType + target) embedded in other schemas.
 
 **Page singletons:**
-- Core: `homePage`, `aboutPage`, `faqPage`, `contactPage`, `eventsPage`, `sermonsPage`, `privacyPage`, `notFoundPage`.
-- Per-page church singletons (via the `definePageSingleton` factory): `worshipPage` (I'm New), `beliefsPage` (What We Believe), `musicPage`, `staffPage`, `growPage`, `servePage`, `kidsPage`, `foodPage`, `useOurSpacePage`, `weddingsPage`, `givePage`.
+- Core: `homePage`, `aboutPage`, `faqPage`, `contactPage`, `eventsPage`, `privacyPage`, `notFoundPage`. `homePage` and `aboutPage` were rewritten to school fields in the 2026-06-14 editability pass — see the field groups below.
+- Per-page school singletons (via the `definePageSingleton` factory, in `schoolPages.ts`): `coursesPage`, `facultyPage`, `pricingPage`, `getStartedPage`, `forYouPage`, `resourcesPage`.
 - `page` — generic type for brand-new pages at `/<slug>`, built entirely from the block library.
 
-All page singletons have `seoTitle`/`seoDescription`, a `heroImage` (with alt), editable body-copy fields (with verbatim fallbacks), editable `finalCta*` closing copy, and a `flexibleSections[]` page-builder array. The block library (`studio/schemaTypes/blocks.ts`) and the background/media system are shared across every page; see `page-architecture.md`. Several pages also carry editable structured lists, each with a built-in fallback: weddings (`weddingFaqs` + `weddingPricing`), grow (`groups`), serve (`ways`), use-our-space (`uses`), contact (`contactReasons`), what-we-believe (`resources`), and home (`serviceBand` + `weeklyRhythms`).
+`homePage` field groups (school): hero (eyebrow / headline / subhead / `heroImages[]` / button labels / `nextCohortLabel`); page copy (`wayfinding[]`, `stats[]` with per-stat count-up, `tickerTopics[]`, plus eyebrow + headline + link-label fields for the Start-here / Courses / Faculty / Testimonials strips — the strips' CARDS still come from the catalog collections); `flexibleSections[]`; closing `finalCta*`; SEO. `aboutPage` field groups: hero; page copy (`mission*`, `believe*` + a `beliefs[]` array + `believeFootnote`, `teach*`, `why*`, `facultyBand*`); `flexibleSections[]`; closing `finalCta*`; SEO. The factory-built school singletons share `seoTitle`/`seoDescription`, a `heroImage` (with alt), a `heroKeyword` accent, a `flexibleSections[]` page-builder array, and `finalCta*` closing copy, plus per-page extras (e.g. `getStartedPage` adds `requestEyebrow`/`requestHeadline`/`requestBody` and the Calendly fields; `facultyPage` adds an `emptyState`). Every field falls back to the literal in its `.astro` page when empty, so the live design is unchanged until edited. The block library (`studio/schemaTypes/blocks.ts`) and the background/media system are shared across every page; see `page-architecture.md`.
+
+**Previously-orphaned detail fields now rendered** (closed in the editability pass): course `syllabusUrl` / `seatsNote` / pricing-`tier` unit; faculty `specializations` / `yearsTeaching` / `email`; event `allDay`. These existed in the schema but had no template output before.
 
 **In-Studio help** ("How This Works") is NOT a Sanity singleton — it's repo-based, locked code (`studio/guides/content.tsx` + `studio/components/GuideView.tsx`), which replaces the old `studioGuide`/`studioNotes`/`studioPlaybook` singletons.
 
@@ -125,19 +139,22 @@ All GROQ queries live in `src/lib/queries.ts`. Each page has a typed query funct
 
 **No document preview.** This is a static site (`output: 'static'`) with no draft-preview environment, so documents show the **form only** — there is no iframe "Preview" tab. The old one loaded the last PUBLISHED build (not the editor's draft) and only changed after a rebuild, which misled editors. `urlForDoc` / `SITE_URL_FOR_PREVIEW` stay in `sanity.config.ts` as hooks if a real preview (SSR deploy + Sanity's Presentation tool + draft-mode `sanityFetch`) is added later.
 
-**SEO length warnings.** `.warning()` validations on `seoTitle` (warns around 60 characters) and `seoDescription` (warns around 160 characters) across all page singletons and `journalEntry`. Editors see an amber warning if the text is getting too long for Google to show in full. A warning, not an error, so it does not block publishing.
+**"View on the live site" help banner (2026-06-14).** Standing in for the missing preview tab, a per-document banner sits at the top of every form: "You are editing: [title]", the publish-to-live reminder, and a button that opens that document's page on the live site. It is `studio/components/PageHelpBanner.tsx`, wired through `studio/components/StudioFormInput.tsx` — Sanity allows only ONE component at `form.components.input`, so `StudioFormInput` composes two aids in that single slot: at the document root (`props.id === 'root'`) it prepends the banner; for every other field it delegates to the existing `CharacterCountInput`. The banner links via `LIVE_SITE_URL` in `sanity.config.ts`, a constant kept deliberately independent of `SITE_URL_FOR_PREVIEW` (which may point at localhost in dev) so the deployed Studio always sends editors to the real site. `urlForDoc` was split into `pathForDoc(type, doc)` (path only, shared with the banner) + the base URL. `PageHelpBanner` returns null for docs with no public page (e.g. Site Settings). Stamp `LIVE_SITE_URL` with the project domain at rebrand.
+
+**Document badges fix.** `studio/components/documentBadges.tsx` (the "Featured" / "Needs a photo" / "Add SEO" status pills, registered via `document.badges`) had its `SEO_PAGE_TYPES` and `PHOTO_FIELD` lists pointing at deleted church types. They now list the live SCHOOL types (`homePage`, `aboutPage`, `coursesPage`, `facultyPage`, `pricingPage`, `getStartedPage`, `forYouPage`, `resourcesPage`, `eventsPage`, `faqPage`, `contactPage`, `privacyPage` for SEO; `course.coverImage` / `facultyMember.photo` / `event.image` for the photo check).
+
+**SEO length warnings.** `.warning()` validations on `seoTitle` (warns around 60 characters) and `seoDescription` (warns around 160 characters) across all page singletons (the core ones plus the factory-built school singletons). Editors see an amber warning if the text is getting too long for Google to show in full. A warning, not an error, so it does not block publishing.
 
 **Vision/GROQ plugin gating.** The `visionTool()` plugin (the in-Studio GROQ query runner) is conditionally registered only when `process.env.NODE_ENV !== 'production'`. The Vision tab appears in local dev Studio but does not clutter the hosted editor.
 
 ### Auto-populated lists
 
 Several pages pull their content from collections automatically:
-- Events on `/events`: upcoming `event` documents by date; `specialService` ones surface in the Special Services band; `featuredOnHome` ones appear on the home page.
-- Sermons on `/sermons`: recent `sermon` documents, newest first (the latest is featured).
+- Courses on `/courses`: `course` documents, filterable by `teachingArea` / instructor / `term`; `featured` ones surface in the home Start-here rail.
+- Faculty on `/faculty`: `facultyMember` documents; each course links to the instructor(s) who teach it.
+- Events on `/events`: upcoming `event` documents by date; `featuredOnHome` ones appear on the home page.
+- Testimonials in the home testimonials strip: `testimonial` documents (`featured` first).
 - FAQs on the FAQ page: `faqItem` documents grouped by `category`, in the order defined in `faqPage.categoryOrder`.
-- Pastors & Staff on `/pastor-staff`: `staffMember` documents.
-- Worship resources on `/worship`: `worshipResource` documents.
-- The "Dynamic list" page-builder block: latest sermons / events / ministries / staff / worship resources, chosen per block.
 - The site banner: the single enabled `announcement` within its date window (resolved at build).
 
 This means adding an `event` with `featuredOnHome: true` makes it appear on both `/events` and the home page without touching any other document.

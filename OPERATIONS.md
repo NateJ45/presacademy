@@ -156,6 +156,17 @@ See the "Patch Sanity content programmatically" section below for the client set
 
 **Important: seeded content is placeholder.** Before launch, replace all fabricated content (example press items, placeholder pricing, dummy affiliate URLs, sample guide PDFs) with real content.
 
+### Mirror the live page copy into Studio (`seed-page-copy.mjs`)
+
+This one is NOT placeholder — it copies the actual inline-fallback strings from the `.astro` pages into Sanity so an editor opening a page in Studio sees the live wording instead of a blank field. Run it after re-schematizing a page singleton (and after `studio:deploy`), or any time `/sanity-audit` shows empty fields on home/about/get-started/faculty that should mirror the site.
+
+```bash
+node scripts/seed-page-copy.mjs            # dry run: lists the empty fields it would fill
+node scripts/seed-page-copy.mjs --apply    # patch them
+```
+
+It patches only the `homePage`, `aboutPage`, `getStartedPage`, `facultyPage`, and `siteSettings` (the `funder` line) docs, fills **only empty fields** (`setIfMissing` semantics, never clobbers edited copy), and is idempotent — re-running once the fields are set does nothing. The built-in copy lives in the `HOME` / `ABOUT` / `GET_STARTED` / `FACULTY` / `SETTINGS` blocks at the top of the script; keep those in sync with the `.astro` fallbacks if you change one.
+
 ---
 
 ## Routes inventory
@@ -338,6 +349,10 @@ The PNGs land in `src/assets/` (NOT `public/`) so Astro's `<Image>` / `getImage(
 
 ## Common Sanity tasks
 
+### The "View this page on the live site" banner
+
+Every page-document form in Studio shows a help banner at the top with a deep link to that page on the live site, plus the publish-then-rebuild reminder. It is a root-input component (`studio/components/PageHelpBanner.tsx` + `StudioFormInput.tsx`) composed with `CharacterCountInput` into the single `form.components.input` slot, and the link is built from a dedicated `LIVE_SITE_URL` in `studio/sanity.config.ts` (the doc path comes from `pathForDoc`). If a new page type or route should show the banner, wire its path into `pathForDoc`; if the live domain changes, update `LIVE_SITE_URL`. Adding the banner does NOT enable Sanity's click-to-edit Presentation tool — that needs SSR and cannot run on this static build (see `content-editability-audit.md`).
+
 ### Add a new field to a page singleton
 
 1. Edit `studio/schemaTypes/<page>.ts` — add `defineField(...)`.
@@ -367,6 +382,7 @@ The PNGs land in `src/assets/` (NOT `public/`) so Astro's `<Image>` / `getImage(
 | Studio shows a field empty but the live site shows a value (or vice versa) | Three different layers can disagree: the published doc (what builds read), a draft overlay (what Studio shows), and the last build's HTML (what visitors see). A stale Studio tab is a fourth suspect. | Run `node scripts/sanity-audit.mjs` — it prints drafts vs published. If published has the value: hard-refresh the Studio tab. If published is right but the site is wrong: trigger a rebuild (`/rebuild`). Never "fix" by re-typing content until you know which layer disagrees. |
 | Image optimizer path mismatch after adapter upgrade | `@astrojs/cloudflare` upgraded past `13.5.5` | Revert to exactly `13.5.5`. See CLAUDE.md gotcha #8. |
 | Featured section shows wrong item as the hero | Falling back to date-based default | Toggle `featured: true` on the item to pin. Sections sort `featured desc, publishedAt desc`. |
+| Copy implies the school is long-established | The school was **founded in 2026** | Do NOT add a founding year, "Est." line, or "decades of" framing. The founding-year stats and "Est. 1998" were scrubbed (commits f2b71fa, 82bb126); keep stats honest for a new school (credentialed faculty, in-person cohorts, scholarships, Westminster grounding). |
 
 ---
 
