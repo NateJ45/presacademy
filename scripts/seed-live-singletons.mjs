@@ -1,18 +1,16 @@
-// POST-MERGE live-content gate. Flips the live page singletons (siteSettings,
-// homePage, aboutPage, faqPage) from church/empty values to school copy, so the
-// LIVE site renders the Academy content (not just the .astro fallbacks) and
-// editors see school copy in Studio.
+// POST-MERGE live-content gate. Creates/sets the core page singletons
+// (siteSettings, homePage, aboutPage, faqPage) with school copy, so the LIVE
+// site renders the Academy content (not just the .astro fallbacks) and editors
+// see school copy in Studio. These core singletons do not exist in the dataset
+// yet, so this uses createOrReplace.
 //
 // RUN THIS ONLY AFTER the revamp branch is merged to main. The publish webhook
-// rebuilds main on any content change; running it before merge would rebuild the
-// CURRENT (church-code) live site with school content and look broken.
+// rebuilds main on any content change.
 //
-//   node scripts/seed-live-singletons.mjs            (dry run: lists the patches)
+//   node scripts/seed-live-singletons.mjs            (dry run: lists the docs)
 //   node scripts/seed-live-singletons.mjs --apply    (writes to the dataset)
 //
-// Uses patch.set/.unset (not createOrReplace) so it only touches the named
-// fields and clears the retired church ones, leaving nav/footer/newsletter
-// config untouched. Copy follows docs/brand/voice.md (no em-dashes).
+// Copy follows docs/brand/voice.md (no em-dashes, warm + plainspoken).
 
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -38,59 +36,56 @@ if (!projectId || !token) {
   process.exit(1);
 }
 
-// Each entry: which singleton, the fields to set, and the church fields to clear.
-const patches = [
+const docs = [
   {
-    id: 'siteSettings',
-    set: {
-      tagline: 'Reformed theological formation for everyday leaders.',
-      mission: 'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.',
-      denominationStatement: 'A PC(USA) school of theological formation, holding to the Westminster Standards and the Book of Confessions.',
-      admissionsEmail: 'info@presbyterianacademy.org',
-      officeHours: 'Monday to Thursday, 9am to 4pm',
+    _id: 'siteSettings', _type: 'siteSettings',
+    title: 'The Presbyterian Academy',
+    tagline: 'Reformed theological formation for everyday leaders.',
+    mission: 'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.',
+    email: 'info@presbyterianacademy.org',
+    officeHours: 'Monday to Thursday, 9am to 4pm',
+    addressLine: '9463 Cincinnati Columbus Rd',
+    cityStateZip: 'West Chester Township, OH 45069',
+    denominationStatement: 'A PC(USA) school of theological formation, holding to the Westminster Standards and the Book of Confessions.',
+    admissionsEmail: 'info@presbyterianacademy.org',
+    newsletter: {
+      enabled: true,
+      heading: 'Stay in the loop',
+      blurb: 'Occasional notes on new courses, open lectures, and term dates. No spam.',
+      buttonLabel: 'Subscribe',
+      successMessage: 'Thank you. You are on the list.',
+      consentNote: 'We will never share your email.',
     },
-    unset: ['worshipService', 'watchUrl', 'giveUrl', 'appUrl', 'directoryUrl', 'prayerUrl', 'pastorEmail'],
   },
   {
-    id: 'homePage',
-    set: {
-      heroEyebrow: 'The Presbyterian Academy',
-      heroHeadline: 'Theological depth, taught for ordinary believers.',
-      heroSubhead: 'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.',
-      seoTitle: 'The Presbyterian Academy — Reformed lay formation',
-      seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. Courses taught in person, in cohorts, by ministers and scholars.',
-      finalCtaEyebrow: 'Begin your formation',
-      finalCtaHeadline: 'Tell us what you want to learn',
-      finalCtaSubhead: 'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.',
-    },
-    unset: ['thisSunday', 'seasonalHero', 'serviceBand', 'weeklyRhythms'],
+    _id: 'homePage', _type: 'homePage',
+    heroEyebrow: 'The Presbyterian Academy',
+    heroHeadline: 'Theological depth, taught for ordinary believers.',
+    heroSubhead: 'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.',
+    seoTitle: 'The Presbyterian Academy — Reformed lay formation',
+    seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. Courses taught in person, in cohorts, by ministers and scholars.',
+    finalCtaEyebrow: 'Begin your formation',
+    finalCtaHeadline: 'Tell us what you want to learn',
+    finalCtaSubhead: 'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.',
   },
   {
-    id: 'aboutPage',
-    set: {
-      heroEyebrow: 'About the Academy',
-      heroHeadline: 'Reformed formation, for the whole church',
-      heroSubhead: 'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.',
-      seoTitle: 'About — The Presbyterian Academy',
-      seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.',
-    },
-    unset: [],
+    _id: 'aboutPage', _type: 'aboutPage',
+    heroEyebrow: 'About the Academy',
+    heroHeadline: 'Reformed formation, for the whole church',
+    heroSubhead: 'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.',
+    seoTitle: 'About — The Presbyterian Academy',
+    seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.',
   },
   {
-    id: 'faqPage',
-    set: {
-      categoryOrder: ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'],
-      heroEyebrow: 'Common questions',
-      heroHeadline: 'Everything you want to know',
-    },
-    unset: [],
+    _id: 'faqPage', _type: 'faqPage',
+    heroEyebrow: 'Common questions',
+    heroHeadline: 'Everything you want to know',
+    categoryOrder: ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'],
   },
 ];
 
-console.log(`Live-singleton patches (${patches.length}):`);
-for (const p of patches) {
-  console.log(`  ${p.id}  set: ${Object.keys(p.set).join(', ')}${p.unset.length ? `  unset: ${p.unset.join(', ')}` : ''}`);
-}
+console.log(`Live singletons (${docs.length}):`);
+for (const d of docs) console.log(`  ${d._type}`);
 
 if (!APPLY) {
   console.log('\nDry run. Re-run with --apply (POST-MERGE only) to write to the dataset.');
@@ -98,11 +93,6 @@ if (!APPLY) {
 }
 
 const client = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
-let tx = client.transaction();
-for (const p of patches) {
-  let patch = client.patch(p.id).set(p.set);
-  if (p.unset.length) patch = patch.unset(p.unset);
-  tx = tx.patch(patch);
-}
+const tx = docs.reduce((t, d) => t.createOrReplace(d), client.transaction());
 const res = await tx.commit();
-console.log(`\nPatched ${patches.length} singletons. Transaction ${res.transactionId}.`);
+console.log(`\nWrote ${docs.length} live singletons. Transaction ${res.transactionId}.`);
