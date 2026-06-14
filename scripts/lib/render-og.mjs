@@ -14,10 +14,10 @@ import sharp from 'sharp';
 const DEFAULTS = {
   width: 1200,
   height: 630,
-  bg: '#F4EEE6',          // Stone Cream
-  primary: '#7A2A2C',     // Geneva Oxblood (accent rule)
-  primaryDark: '#2A2521', // Walnut Ink (wordmark)
-  accent: '#2A2521',      // Walnut Ink (tagline)
+  bg: '#FAF8F4',          // Near-white warm paper (Direction A)
+  primary: '#33503F',     // Geneva Green (accent rule)
+  primaryDark: '#1F1B18', // Soft near-black (wordmark)
+  accent: '#1F1B18',      // Soft near-black (tagline)
   taupe: '#B7A99B',       // Cloister Stone (border)
   fontDisplay: 'Fraunces, Georgia, Cambria, Times New Roman, serif',
 };
