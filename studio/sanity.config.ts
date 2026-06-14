@@ -22,29 +22,30 @@ import { documentBadges } from './components/documentBadges';
 // system (it derives the complete light + dark palette from these inputs).
 //
 // These values mirror the website's own design tokens (src/styles/globals.css)
-// so the Studio shares the site's Paper-and-Ink feel: warm Bronze as the
-// interactive accent, cream Paper surfaces, Espresso Ink text, and a deep
-// Chapel-green top bar with cream text — the same green the site uses for its
-// utility bar, footer, and closing CTA. The fonts are patched on below.
+// so the Studio shares the site's "Direction A" feel: deep Reformed GREEN as
+// the interactive accent, near-white warm-paper surfaces, soft near-black ink,
+// brass for warnings, and a deep forest-green top bar with cream text — the
+// same green the site uses for its utility bar, footer, and closing CTA. The
+// fonts are patched on below.
 const studioThemeProps = {
   // Foundation — neutrals everything else derives from.
-  '--black': '#2A2521',   // Walnut Ink — darkest text
-  '--white': '#FCF9F4',   // Chalk — lightest surface
+  '--black': '#1F1B18',   // Soft near-black — darkest text / ink
+  '--white': '#FFFFFF',   // White — lightest surface
   '--gray-base': '#6E6357', // Warm taupe — tints every neutral warm, not cool
 
-  // Brand accent — Geneva Oxblood.
-  '--brand-primary': '#7A2A2C',
+  // Brand accent — Geneva Green.
+  '--brand-primary': '#33503F',
   '--brand-primary--inverted': '#ffffff',
-  '--focus-color': '#7A2A2C',
+  '--focus-color': '#33503F',
 
-  // Stone surfaces for inputs and components.
-  '--input-bg': '#F1E9DD',
-  '--component-bg': '#FCF9F4',
-  '--component-text-color': '#2A2521',
+  // Near-white warm-paper component surfaces; white inputs sit crisply on top.
+  '--input-bg': '#FFFFFF',
+  '--component-bg': '#FAF8F4',
+  '--component-text-color': '#1F1B18',
 
-  // Buttons.
-  '--default-button-color': '#7A2A2C',
-  '--default-button-primary-color': '#7A2A2C',
+  // Buttons — green accent; brass warning; red danger.
+  '--default-button-color': '#33503F',
+  '--default-button-primary-color': '#33503F',
   '--default-button-success-color': '#3E7C66',
   '--default-button-warning-color': '#A87C3E',
   '--default-button-danger-color': '#C0392B',
@@ -54,9 +55,9 @@ const studioThemeProps = {
   '--state-warning-color': '#A87C3E',
   '--state-danger-color': '#C0392B',
 
-  // Top navigation bar — deep oxblood with cream text, echoing the site's
-  // utility bar and footer.
-  '--main-navigation-color': '#4A1B1C',
+  // Top navigation bar — deep forest green with cream text, echoing the site's
+  // utility bar, footer, and closing CTA band.
+  '--main-navigation-color': '#2A4233',
   '--main-navigation-color--inverted': '#F1EAD9',
 };
 
@@ -133,7 +134,7 @@ export default defineConfig({
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'placeholder-project-id',
   dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
-  // Brand theme — Slate primary + Paper background.
+  // Brand theme — Geneva Green primary + near-white paper.
   theme: studioTheme,
 
   // Studio chrome overrides. Logo replaces the default Sanity wordmark; the
