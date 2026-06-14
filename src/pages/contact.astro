@@ -6,7 +6,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getContactPage, getSiteSettings } from '@/lib/queries';
-import heroContact from '@/assets/placeholders/place-church-exterior-stone.jpg';
+import heroContact from '@/assets/placeholders/teach-seminar-discussion.jpg';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { telHref } from '@/lib/phone';
 import { site } from '@/data/site';
@@ -65,7 +65,7 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
     keyword={page?.heroKeyword}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroContact}
-    localImageAlt="A historic stone church exterior"
+    localImageAlt="A teacher and adult students together in a library"
     headingId="contact-hero"
     size="short"
   />
@@ -94,7 +94,7 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
         </ul>
 
         <div class="border-t border-border-soft pt-l">
-          <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.whoToReachLabel ?? 'Who to reach'}</p>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.whoToReachLabel ?? 'Who to reach'}</p>
           <ul class="space-y-2 list-none p-0">
             {reasons.map((r) => (
               <li class="flex flex-wrap justify-between gap-m border-b border-border-soft pb-2 last:border-b-0">
@@ -106,7 +106,7 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
         </div>
 
         <div class="border-t border-border-soft pt-l text-foreground/80 leading-relaxed">
-          <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.gettingHereLabel ?? 'Getting here'}</p>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{page?.gettingHereLabel ?? 'Getting here'}</p>
           <p>
             {page?.gettingHereBody ?? 'Courses meet in person on the West Chester campus, with free on-site parking. The building is a short drive from the interstate.'}
           </p>

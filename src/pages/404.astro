@@ -11,7 +11,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
 import SanityImage from '@/components/SanityImage.astro';
-import notFoundPhoto from '@/assets/placeholders/place-church-aisle.jpg';
+import notFoundPhoto from '@/assets/placeholders/study-bibles-closeup.jpg';
 
 const [notFoundPage, siteSettings] = await Promise.all([
   getNotFoundPage().catch(() => null),
@@ -54,7 +54,7 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
         "you're off-path" moment; left-aligned on desktop where the
         two-column layout needs the text anchored beside the photo column. */}
     <div class="text-center md:text-left">
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{eyebrow}</p>
+      <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">{eyebrow}</p>
       <h1 id="not-found-heading" class="font-display text-h1 text-foreground leading-headline-tight">
         {headline}
       </h1>
@@ -100,7 +100,7 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
         ) : (
           <Image
             src={notFoundPhoto}
-            alt="Looking down a quiet church aisle"
+            alt="Two open study Bibles beside a cup of coffee"
             widths={[480, 768, 1000]}
             sizes="(min-width: 768px) 50vw, 100vw"
             class="w-full h-full object-cover"

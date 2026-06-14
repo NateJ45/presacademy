@@ -10,7 +10,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
-import heroPrivacy from '@/assets/placeholders/place-church-tower.jpg';
+import heroPrivacy from '@/assets/placeholders/study-bible-notebook.jpg';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import Sections from '@/components/Sections.astro';
 import { getPrivacyPage, getSiteSettings } from '@/lib/queries';
@@ -62,7 +62,7 @@ const hasSanityBody = Boolean(page?.body);
     subhead={heroSubhead}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroPrivacy}
-    localImageAlt="A church tower against the sky"
+    localImageAlt="An open Bible, reading glasses, and a notebook laid out for study"
     headingId="privacy-hero-heading"
     size="short"
   />

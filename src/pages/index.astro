@@ -82,7 +82,7 @@ const pillGhost =
   <section class="bg-background" aria-labelledby="home-hero">
     <div class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]">
       <div>
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
         <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
         <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
         <div class="mt-l flex flex-wrap gap-3">
@@ -127,7 +127,7 @@ const pillGhost =
   {startHere.length > 0 && (
     <section class="bg-card" aria-labelledby="home-start">
       <div class="mx-auto max-w-content px-m py-section-md">
-        <p class="text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">Start here</p>
         <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">A few courses to begin with</h2>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
           {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
@@ -154,7 +154,7 @@ const pillGhost =
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">Courses</p>
             <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">Learn something worth knowing</h2>
           </div>
           <a href="/courses" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">See all courses</a>
@@ -173,7 +173,7 @@ const pillGhost =
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p class="text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">The faculty</p>
             <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">Taught by ministers and scholars</h2>
           </div>
           <a href="/faculty" class="text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">Meet the faculty</a>
@@ -190,7 +190,7 @@ const pillGhost =
   {testimonials.length > 0 && (
     <section class="bg-background" aria-labelledby="home-stories">
       <div class="mx-auto max-w-content px-m py-section-lg">
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">In their words</p>
         <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">From the people we serve</h2>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>

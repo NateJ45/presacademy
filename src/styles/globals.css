@@ -208,6 +208,31 @@
   letter-spacing: var(--tracking-eyebrow);
 }
 
+/* Eyebrow rubric — the unified section-eyebrow mark (Direction A signature).
+   A short brand-green leading rule before a section / hero eyebrow, so every
+   eyebrow that introduces a headline reads as ONE system across the site (this
+   replaces the old mix of a brass underline on SectionHeading and bare labels
+   elsewhere, and stands in for the retired arch). Usage: add the `eyebrow` class
+   to an uppercase `tracking-eyebrow` label that sits above a headline. On dark /
+   green / photo-scrim surfaces also add `eyebrow-inverse` so the rule lifts to
+   brass and stays visible (the green rule would vanish on the green band).
+   Deliberately NOT applied to inline category tags, stat labels, footer/nav
+   labels, or button text — those are a different element. */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--primary);
+  vertical-align: middle;
+  margin-right: 0.625rem;
+  position: relative;
+  top: -0.06em;
+}
+.eyebrow-inverse::before {
+  background: #C7A875;
+}
+
 /* Script accent (OPT-IN) — no script font is loaded by default; the accent
    falls back to a system cursive (Snell Roundhand / Apple Chancery / cursive).
    To enable an editorial script accent for a project: (1) add a @fontsource
