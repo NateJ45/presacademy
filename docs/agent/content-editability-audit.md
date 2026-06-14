@@ -84,11 +84,12 @@ Editable-with-fallback (OK): designer credit (`siteSettings.footerCredit`), nav 
 
 ## Fix plan (phases)
 
-0. **This doc** — the map. ✅
-1. **Editor-UX wins** — the "view it live" banner, fix stale badges, gotcha-field notes. (Studio only; low risk.)
-2. **Home re-schema** — add school fields, `hidden`-retire church orphans, wire `index.astro` + `getHomePage`.
-3. **About re-schema** — same pattern.
-4. **Detail pages + data-loss** — render syllabus/specializations/email/all-day; add/decide section-label fields; pass `seoImage` on contact+faq; fix stale defaults (404 `/worship`, etc.).
-5. **Finish** — `npm run typegen`, `npm run studio:deploy`, full build, verify both themes/viewports, commit, push.
+0. **This doc** — the map. ✅ `b6c6b0c`
+1. **Editor-UX wins** ✅ — the "view it live" banner on every form (`PageHelpBanner` + `StudioFormInput`, links to a dedicated `LIVE_SITE_URL`), and fixed the stale photo/SEO `documentBadges` (they pointed at deleted church types). Gotcha-field notes folded into the schema phases. Deployed.
+2. **Home re-schema** ✅ `91c1e4d` — added school fields (wayfinding, stats, ticker, strip labels, hero button labels, next-cohort label), removed the ~30 church orphans (the home doc held no data in them), wired `index.astro` + `getHomePage`. Live page unchanged.
+3. **About re-schema** ✅ `bf88d1d` — added mission / beliefs / teach / why / faculty-band fields, removed the church orphans, wired `about.astro` + `getAboutPage`.
+   - **Seed** ✅ `scripts/seed-page-copy.mjs` patched 35 empty home/about fields with the live copy, so Studio mirrors the site (idempotent, only-empty). Studio redeployed (`npm run studio:deploy`).
+4. **Detail pages + data-loss** — TODO. Course/faculty/event detail: render the silent-data-loss orphans (`syllabusFile`, `seatsNote`, `specializations`, `yearsTeaching`, `email`, `allDay`) and add/decide the section-label fields. Plus: the index filter labels (React islands), `seoImage` not passed on contact + faq, the script-accent orphans, the stale church `initialValue` defaults (404 `/worship`, FAQ categories, privacy fallback, contact/faq hero defaults), and the global-chrome fields (funder line + colophon tag + the Header tagline mismatch). Re-seed any new copy, then `studio:deploy`.
+5. **Finish** — done per phase: `typegen` + `studio:deploy` + build + verify + commit.
 
 **Schema-change safety (gotcha #1):** after any schema edit run `typegen` + `studio:deploy`; to remove a church field, set `hidden: true` first (keeps data, drops it from the editor UI) — never click "Remove field" in Studio on a populated field without a dataset migration.
