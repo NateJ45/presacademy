@@ -7,8 +7,10 @@
 // What it does:
 //   1. Sets the home hero to a 6-image Ken Burns slideshow (homePage.heroImages),
 //      only if that field is still empty.
-//   2. Fills every EMPTY course cover, page hero, and event image from an
-//      academic photo pool (people learning, study, campus, library, books).
+//   2. Replaces every EMPTY or old CHURCH-ERA course cover and page hero (asset
+//      filenames like teach-*, study-*, community-*, place-*, sanctuary-*) with
+//      an academic photo from the pool (people learning, study, campus, library).
+//      Event images and any real editor-added photo are left untouched.
 //   3. Fills every EMPTY faculty portrait from pravatar.cc (generic headshots).
 //
 // All scene photos are CC0 / public domain (sourced via Openverse from rawpixel,
@@ -18,8 +20,9 @@
 // The image files live in src/assets/placeholders/ (version-controlled). On the
 // first run this script copies the curated picks there from the scratch
 // scripts/_stock* folders if they are still present; after that it just reads
-// the bundled files, so it stays re-runnable. It only fills empty fields, so a
-// real image an editor adds is never clobbered.
+// the bundled files, so it stays re-runnable. It only touches empty fields or
+// the known church-era placeholders, so a real image an editor adds is never
+// clobbered, and re-running is idempotent (academic images are skipped).
 
 import { createClient } from '@sanity/client';
 import { readFileSync, existsSync, copyFileSync } from 'node:fs';
@@ -109,19 +112,27 @@ const imgField = (assetId, alt) => ({ _type: 'image', asset: { _type: 'reference
 
 async function main() {
   console.log(`Seeding academic images -> ${projectId}/${dataset}  (${APPLY ? 'APPLY' : 'dry run'})\n`);
-  const [home, courses, faculty, events, pages] = await Promise.all([
+  // An image slot is replaceable if it is empty OR still holds a church-era
+  // placeholder (those carry recognizable filename prefixes). Real editor photos
+  // and already-seeded academic photos (acad-*) are left alone.
+  const CHURCH = ['teach-', 'study-', 'community-', 'place-', 'sanctuary-'];
+  const replaceable = (f) => !f || CHURCH.some((p) => f.startsWith(p));
+
+  const [home, allCourses, faculty, events, allPages] = await Promise.all([
     client.fetch(`*[_id=='homePage'][0]{ "n": count(heroImages[defined(asset)]) }`),
-    client.fetch(`*[_type=='course' && !defined(coverImage.asset)]{_id, title}`),
+    client.fetch(`*[_type=='course']{_id, title, "f": coverImage.asset->originalFilename}`),
     client.fetch(`*[_type=='facultyMember' && !defined(photo.asset)]{_id, name}`),
     client.fetch(`*[_type=='event' && !defined(image.asset)]{_id, title}`),
-    client.fetch(`*[_id in $ids && !defined(heroImage.asset)]{_id}`, { ids: PAGE_IDS }),
+    client.fetch(`*[_id in $ids]{_id, "f": heroImage.asset->originalFilename}`, { ids: PAGE_IDS }),
   ]);
+  const courses = allCourses.filter((c) => replaceable(c.f));
+  const pages = allPages.filter((p) => replaceable(p.f));
   const homeNeedsHero = !home || !home.n;
   console.log(`  home hero slideshow needed    : ${homeNeedsHero ? 'YES (6 images)' : 'no (already set)'}`);
-  console.log(`  courses needing a cover photo : ${courses.length}`);
+  console.log(`  course covers to replace      : ${courses.length} of ${allCourses.length}`);
   console.log(`  faculty needing a portrait    : ${faculty.length}`);
   console.log(`  events needing an image       : ${events.length}`);
-  console.log(`  page heroes needing an image  : ${pages.length}  [${pages.map((p) => p._id).join(', ')}]`);
+  console.log(`  page heroes to replace        : ${pages.length}  [${pages.map((p) => p._id).join(', ')}]`);
 
   if (!APPLY) { console.log('\nDry run only. Re-run with --apply to bundle, upload, and patch.'); return; }
 
