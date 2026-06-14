@@ -71,7 +71,7 @@ const schemas = [
         {/* Left rail: portrait + credentials */}
         <aside>
           <div class="h-0.5 w-full bg-gold"></div>
-          <div class="image-well aspect-[4/5] overflow-hidden">
+          <div class="image-well aspect-[4/5] overflow-hidden mx-auto w-full max-w-[240px] lg:max-w-none">
             {person.photo?.asset && (
               <SanityImage source={person.photo} width={600} loading="eager" sizes="(min-width:1024px) 300px, 90vw" class="h-full w-full object-cover" />
             )}

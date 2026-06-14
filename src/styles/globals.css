@@ -414,8 +414,19 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
+  /* Clip stray horizontal overflow so mobile never gets a sideways scrollbar.
+     The scroll-reveal classes shift not-yet-revealed elements 1.5rem off-screen
+     (.reveal-l/.reveal-r translate), which otherwise widens the page on small
+     viewports. `clip` (not `hidden`) preserves position: sticky (the
+     course-detail aside) and does not break Lenis's vertical smooth scroll.
+     Set on html AND body so neither the root nor the body becomes scrollable
+     sideways. */
+  html {
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
   }
   /* Visible keyboard focus everywhere. The shadcn-style `outline-ring/50`
      reset above is too faint to spot (~1.6:1 on cream); this gives every

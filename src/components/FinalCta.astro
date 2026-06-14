@@ -109,11 +109,13 @@ const { found: scriptFound, before: scriptBefore, word: scriptWord, after: scrip
   <div class:list={['h-0.5 bg-gold', hasBackground && 'relative z-10']} aria-hidden="true"></div>
 
   <div data-reveal class:list={['mx-auto max-w-content px-m py-section-lg text-center', hasBackground && 'relative z-10']}>
+    {/* Centered eyebrow + a single short brass rule beneath it (the Rule & Ledger
+        close mark). The eyebrow's own leading rule (.eyebrow ::before) is omitted
+        here on purpose: it is a left-aligned device and would double up with the
+        centered rule below. */}
     {eyebrow && (
-      <p class="eyebrow eyebrow-inverse text-xs uppercase tracking-eyebrow text-chapel-foreground/75">{eyebrow}</p>
+      <p class="text-xs uppercase tracking-eyebrow text-chapel-foreground/75">{eyebrow}</p>
     )}
-    {/* A short brass rule beneath the eyebrow — the Rule & Ledger close mark
-        that replaces the church's triple-arch ornament. */}
     {eyebrow && (
       <div class="mt-s mb-m mx-auto h-px w-12 bg-[#C7A875]/70" aria-hidden="true"></div>
     )}

@@ -86,11 +86,13 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
 
     {/* Photo column. Stacks above the text on mobile (md:order-2 swaps it on
         desktop so the eye lands on text first, photo balances right). */}
-    <figure class="order-first md:order-2">
+    <figure class="md:order-2">
       {/* Brass top rule + rectangular crop — the current "Rule & Ledger" frame.
-          The Romanesque arch was retired in the brand evolution. */}
+          The Romanesque arch was retired in the brand evolution. On mobile the
+          text comes first and the photo is a shorter landscape crop, so a lost
+          visitor lands on the message + links, not a screen-filling image. */}
       <div class="h-0.5 w-full bg-gold"></div>
-      <div class="overflow-hidden aspect-[5/6] bg-muted">
+      <div class="overflow-hidden aspect-[3/2] md:aspect-[5/6] bg-muted">
         {sanityPhoto ? (
           <SanityImage
             source={sanityPhoto}
