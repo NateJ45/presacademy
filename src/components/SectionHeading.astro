@@ -69,24 +69,13 @@ const toneHeadline = tone === 'inverse' ? 'text-bg' : 'text-foreground';
 const toneEyebrow = tone === 'inverse' ? 'text-bg/75' : 'text-foreground/80';
 const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-foreground/80';
 
-// Gold hairline accent beneath the eyebrow — design-direction.md assigns
-// "rules" to liturgical gold, and the hand-built home sections + footer
-// already use it; the shared component now matches instead of bronze. On
-// inverse tone (dark panels, photo scrims) it lifts to the dark-gold value
-// so it stays visible (decorative, no contrast requirement).
-const accentColor = tone === 'inverse' ? 'bg-[#C7A875]/60' : 'bg-gold/70';
-const accentAlign = align === 'center' ? 'mx-auto' : '';
+// Eyebrow now uses the shared `.eyebrow` rubric (a green leading rule; brass on
+// inverse surfaces) defined in globals.css, so every section eyebrow matches.
 ---
 
 <div class:list={[wrapperAlign, 'max-w-3xl', extraClass]}>
   {eyebrow && (
-    <>
-      <p class:list={['text-xs uppercase tracking-eyebrow', toneEyebrow]}>{eyebrow}</p>
-      <div
-        class:list={['mt-s mb-m h-px w-12', accentAlign, accentColor]}
-        aria-hidden="true"
-      ></div>
-    </>
+    <p class:list={['eyebrow', tone === 'inverse' && 'eyebrow-inverse', 'mb-m text-xs uppercase tracking-eyebrow', toneEyebrow]}>{eyebrow}</p>
   )}
   {headline && (
     level === 'h1' ? (
