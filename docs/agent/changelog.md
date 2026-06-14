@@ -3,6 +3,38 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-14 — Mobile audit + horizontal-scroll fix + footer/CTA tidy (commit
+54d6f2f). Four fixes, all verified in-browser (no sideways scroll, vertical
+scroll intact, images sized well):
+- **Mobile image audit.** The large single images that went full-width and huge
+  when their two-column sections collapse to one column on mobile are now
+  constrained. HOME split-hero image: `aspect-[3/2] lg:aspect-[4/5]` (landscape
+  on mobile, portrait from lg). FACULTY-DETAIL portrait: capped to
+  `mx-auto w-full max-w-[240px] lg:max-w-none` (centered 240px on mobile, full in
+  its 300px rail from lg). 404 photo: `aspect-[3/2] md:aspect-[5/6]`, and now
+  text-first on mobile (the figure dropped `order-first`, so a lost visitor lands
+  on the message + links). **CourseCard is now a compact row on mobile** — a
+  square cover thumbnail beside the text (`grid grid-cols-[7rem_1fr] ... sm:block`,
+  cover `aspect-square sm:aspect-[3/2]`, smaller `text-h5 sm:text-h4` title) so
+  the catalog and the home course strips stay quick to scroll; the full
+  cover-on-top card returns from `sm` up. (FacultyCard was already a compact
+  96px-thumbnail card; event + resources cards are text-only.)
+- **Site-wide horizontal-scroll fix.** The scroll-reveal classes use
+  `translate: ±1.5rem` (`.reveal-l` / `.reveal-r`), which shifts not-yet-revealed
+  elements off-screen and created an ~8-24px sideways scroll on mobile across
+  EVERY page. Fixed with `overflow-x: clip` on `html` AND `body` (globals.css,
+  `@layer base`). `clip` (NOT `hidden`) is deliberate: it preserves
+  `position: sticky` (the course-detail aside) and does not break Lenis's
+  vertical smooth scroll.
+- **Footer.** Removed the "Set in Fraunces & Source Sans 3" typeface credit from
+  the colophon (a printed-book touch that read as out of place). The colophon's
+  bottom row is now just the copyright, Pricing / Privacy, and the designer credit.
+- **FinalCta.** The centered eyebrow no longer uses the `.eyebrow` /
+  `.eyebrow-inverse` classes (which draw a left-aligned LEADING rule via
+  `::before`); it is now a plain centered label with just the single centered
+  brass "close mark" rule below it (the leading rule doubled up with the centered
+  one and looked off).*
+
 *2026-06-14 — Theme default flipped to LIGHT for new visitors (commit eb1ce88).
 A first-time visitor with no saved choice now gets light mode instead of
 following the OS. The OS preference is honored ONLY when the visitor explicitly

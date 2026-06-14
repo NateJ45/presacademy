@@ -128,6 +128,15 @@ semibold-small or large text; cream-on-chapel (green) is ~9:1+, always safe.
   sections, not a uniform stack. Asymmetry is on-brand; chaos is not.
 - Mobile first reality: most visitors are at ~375px. Anything new must be
   checked there before desktop.
+- Mobile responsive idioms (current): large two-column images are constrained
+  on mobile rather than left to go full-width and dominate the column. Constrain
+  with a shorter aspect ratio (the home split-hero is `aspect-[3/2] lg:aspect-[4/5]`,
+  the 404 photo `aspect-[3/2] md:aspect-[5/6]` + text-first) or a capped, centered
+  width (the faculty-detail portrait is `max-w-[240px]` centered on mobile).
+  Cover-on-top cards compact to a thumbnail + text row on mobile so card lists
+  scroll fast (CourseCard goes cover-on-top only from `sm` up). And `overflow-x: clip`
+  on `html` / `body` guards against the scroll-reveal animations' horizontal
+  overflow (see Motion below).
 
 ## Motion (refined kinetic editorial, CSS-first)
 

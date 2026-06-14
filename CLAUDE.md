@@ -46,6 +46,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 6. **Content is statically built.** A Sanity edit only goes live after a rebuild (push to `main`, or the publish webhook). Detail in `docs/agent/deployment.md`.
 7. **`npm run typegen` runs before `astro build`** as part of the build chain. `src/lib/sanity.types.ts` is committed so collaborators don't need to run typegen to see the schema types in code. Run it locally after any schema change.
 8. **`@astrojs/cloudflare` is pinned to exactly `13.5.5`.** Version `13.6.0` regressed Astro's image optimizer: optimized images write to `dist/client/_astro/` while the optimizer reads from `dist/_astro/`. Do not bump the adapter version without doing a verifying build.
+9. **`overflow-x: clip` on `html` + `body`** (in `globals.css`, `@layer base`) is the mobile horizontal-scroll guard: the scroll-reveal `.reveal-l`/`.reveal-r` `translate` would otherwise shift not-yet-revealed elements off-screen and let every page wobble sideways on phones. Don't remove it or swap it to `overflow: hidden` (which breaks the sticky course-detail aside and Lenis's smooth scroll).
 
 ---
 
