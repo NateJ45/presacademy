@@ -106,7 +106,10 @@ for (const page of SINGLETONS) {
   const doc = await client
     .fetch(`*[_type == $type][0]{ seoTitle, heroHeadline }`, { type: page.type })
     .catch(() => null);
-  const tagline = doc?.seoTitle || doc?.heroHeadline || page.defaultTitle;
+  // The OG card renders the WORDMARK separately, so the tagline must be the clean
+  // page headline -- NOT seoTitle, which is the <title>-tag value and carries the
+  // " · {brand}" suffix (using it would print the brand name twice on the card).
+  const tagline = doc?.heroHeadline || doc?.seoTitle || page.defaultTitle;
   await render(page.slug, tagline);
 }
 

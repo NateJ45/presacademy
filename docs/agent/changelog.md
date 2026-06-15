@@ -34,8 +34,15 @@ designer credit) and created 24 docs: the 5 missing singletons (contact, events,
 the `h3` style to match the static fallback), 5 faqCategory, 11 faqItem, 3
 recurring event docs. Dataset went 39 -> 63 published docs; /faq and /events now
 render from real editable content (the FAQ JSON-LD stops shipping invented prices
-baked into page code). NOT seeded: phone + socials (need real values). Verified
-render-neutral against the built HTML (privacy PT headings, FAQ 5-category
+baked into page code). NOT seeded: phone + socials (need real values). A same-day follow-on seeded the
+SEO text fields (`seoTitle`/`seoDescription`) on the 11 page singletons + 8
+courses (render-neutral, mirroring each page's `.astro` fallback; `seoImage` left
+as the intentional optional since per-page OG images are generated at build
+time), unset the legacy `homePage.heroImage` orphan (it tripped a Studio "unknown
+field" warning; superseded by `heroImages[]`), and fixed `generate-og-pages.mjs`
+to use the clean `heroHeadline` for the OG-card tagline instead of the
+brand-suffixed `seoTitle` (no more doubled wordmark; the home + about cards
+refreshed). Verified render-neutral against the built HTML (privacy PT headings, FAQ 5-category
 grouping, events cards, pricing extraction) and the green production build (incl.
 3 new /events/[slug] detail pages from the recurring events). Note: a pre-
 existing dev-only React SSR "Invalid hook call" issue (two React copies in Vite's

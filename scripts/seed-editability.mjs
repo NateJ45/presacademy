@@ -246,6 +246,26 @@ const SETTINGS = {
   footerCreditUrl: 'https://www.nixoncreativestudio.com',
 };
 
+// ════════════════════════════════════════════════════════════════════════════
+// (D) SEO — seoTitle / seoDescription for the page singletons, mirroring each
+// page's `.astro` fallback exactly (render-neutral). seoImage stays unset (the
+// per-page OG image is generated at build time; it is an intentional optional).
+// faculty / event DETAIL pages have no per-doc SEO fields, so they are not here.
+// ════════════════════════════════════════════════════════════════════════════
+const SEO_DOCS = {
+  coursesPage: { seoTitle: 'Courses · The Presbyterian Academy', seoDescription: 'Reformed formation taught in person, in cohorts. Browse the catalog by topic or teacher.' },
+  facultyPage: { seoTitle: 'Faculty · The Presbyterian Academy', seoDescription: 'Every course is led by an ordained minister or a credentialed Reformed scholar. Meet the faculty of The Presbyterian Academy.' },
+  forYouPage: { seoTitle: 'For You · The Presbyterian Academy', seoDescription: 'However you lead or learn, there is a starting point here for you.' },
+  pricingPage: { seoTitle: 'Pricing & Scholarships · The Presbyterian Academy', seoDescription: 'What a course costs, said plainly, and how we keep Reformed formation within reach.' },
+  resourcesPage: { seoTitle: 'Resources · The Presbyterian Academy', seoDescription: 'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.' },
+  getStartedPage: { seoTitle: 'Get Started · The Presbyterian Academy', seoDescription: 'Request information, book a free intro, or download a course syllabus. No application fee, no pressure.' },
+  faqPage: { seoTitle: 'Frequently Asked Questions · The Presbyterian Academy', seoDescription: 'Common questions about courses, format, cost, scholarships, who it is for, and our Reformed identity.' },
+  contactPage: { seoTitle: 'Contact · The Presbyterian Academy', seoDescription: 'Reach The Presbyterian Academy. Address, phone, email, office hours, and how to find the West Chester campus.' },
+  eventsPage: { seoTitle: 'Events · The Presbyterian Academy', seoDescription: 'Info sessions, open lectures, workshops, and term start dates at The Presbyterian Academy. See what is coming up.' },
+  privacyPage: { seoTitle: 'Privacy Policy · The Presbyterian Academy', seoDescription: 'How we handle the information you share when you reach out or subscribe.' },
+  accessibilityPage: { seoTitle: 'Accessibility · The Presbyterian Academy', seoDescription: 'How we make this site usable for everyone, and how to tell us if something gets in your way.' },
+};
+
 const EXISTING = [
   ['homePage', HOME],
   ['aboutPage', ABOUT],
@@ -502,6 +522,41 @@ async function seedCreate(label, docs) {
   return n;
 }
 
+// Per-course SEO: seoTitle = "<title> · The Presbyterian Academy", seoDescription
+// = the course summary -- exactly what courses/[slug].astro renders as the
+// fallback. Only-empty per field.
+async function seedCourseSeo() {
+  console.log('\n(D) Course SEO (only-empty):');
+  const courses = await client.fetch(`*[_type == "course"]{ _id, title, summary, seoTitle, seoDescription }`);
+  let n = 0;
+  for (const c of courses) {
+    const toSet = {};
+    if (isEmpty(c.seoTitle)) toSet.seoTitle = `${c.title} · ${SITE_NAME}`;
+    if (isEmpty(c.seoDescription) && !isEmpty(c.summary)) toSet.seoDescription = c.summary;
+    const keys = Object.keys(toSet);
+    console.log(`  ${c.title}: ${keys.length ? keys.join(', ') : 'already set'}`);
+    if (APPLY && keys.length) await client.patch(c._id).set(toSet).commit();
+    n += keys.length;
+  }
+  return n;
+}
+
+// One-off orphan cleanup: homePage.heroImage is a legacy field replaced by
+// heroImages[] (no longer in the schema, not queried, not rendered). Unset the
+// stale value so Studio stops flagging it as an unknown field. The image ASSET is
+// preserved; idempotent (no-op once gone).
+async function cleanupOrphans() {
+  console.log('\n(E) Orphan cleanup:');
+  const home = await client.fetch(`*[_type == "homePage"][0]{ _id, "has": defined(heroImage) }`);
+  if (home?.has) {
+    console.log(`  ${APPLY ? 'unset' : 'would unset'}: homePage.heroImage (legacy orphan field)`);
+    if (APPLY) await client.patch(home._id).unset(['heroImage']).commit();
+    return 1;
+  }
+  console.log('  homePage.heroImage: already clean');
+  return 0;
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 async function main() {
   console.log(`Seeding editability -> ${projectId}/${dataset}  (${APPLY ? 'APPLY' : 'DRY RUN'})`);
@@ -530,6 +585,16 @@ async function main() {
   const createdCategories = await seedCreate('(C) FAQ categories', FAQ_CATEGORY_DOCS);
   const createdFaqs = await seedCreate('(C) FAQ items', FAQ_ITEM_DOCS);
   const createdEvents = await seedCreate('(C) Recurring events', RECURRING_EVENT_DOCS);
+
+  // (D) SEO -- only-empty patches on the page singletons + per-course SEO.
+  console.log('\n(D) SEO (only-empty):');
+  for (const [type, seo] of Object.entries(SEO_DOCS)) {
+    patched += await seedDoc(type, seo);
+  }
+  patched += await seedCourseSeo();
+
+  // (E) Orphan cleanup (homePage.heroImage legacy field).
+  patched += await cleanupOrphans();
 
   const created = createdSingletons + createdCategories + createdFaqs + createdEvents;
   console.log(`\n${APPLY ? 'Done' : 'Dry run complete'}.`);

@@ -50,12 +50,10 @@ const heroSubhead =
   page?.heroSubhead ??
   'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
 // The hero accepts one image (static) or several (a slow Ken Burns slideshow).
-// Prefer the heroImages array; fall back to the legacy single heroImage field.
-const heroImages = page?.heroImages?.length
-  ? page.heroImages
-  : page?.heroImage
-    ? [page.heroImage]
-    : [];
+// homePage.heroImages is the source; the legacy single `heroImage` field was
+// dropped from the schema in the home re-schema (and its stale doc value unset
+// by seed-editability.mjs), so there is no single-image fallback to read.
+const heroImages = page?.heroImages?.length ? page.heroImages : [];
 
 function fmtDate(d?: string): string {
   if (!d) return '';
