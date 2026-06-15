@@ -65,8 +65,8 @@ export function bgField() {
           list: [
             { title: 'Default (paper)', value: 'default' },
             { title: 'Warm', value: 'warm' },
-            { title: 'Chapel green', value: 'chapel' },
-            { title: 'Chapel deep', value: 'chapelDeep' },
+            { title: 'Forest green', value: 'chapel' },
+            { title: 'Forest deep', value: 'chapelDeep' },
           ],
           layout: 'radio',
         },
@@ -151,12 +151,11 @@ export const sectionImageText = defineType({
       options: { list: [{ title: 'Left', value: 'left' }, { title: 'Right', value: 'right' }], layout: 'radio' },
       initialValue: 'right',
     }),
-    defineField({ name: 'arched', title: 'Arched image (church motif)', type: 'boolean', initialValue: true }),
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'body', title: 'Body', ...richBody }),
     defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
-    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/give" or a full URL.' }),
+    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
     bgField(),
   ],
   preview: { select: { title: 'heading', media: 'image' }, prepare: ({ title, media }) => ({ title: title || 'Image + text', media }) },
@@ -220,7 +219,7 @@ export const sectionCtaBand = defineType({
     defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
     defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
     defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
-    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/worship" or a full URL.' }),
+    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
     bgField(),
   ],
   preview: { select: { title: 'headline' }, prepare: ({ title }) => ({ title: title || 'CTA band' }) },
@@ -253,7 +252,6 @@ export const sectionFeatureCards = defineType({
       options: { list: ['2', '3', '4'], layout: 'radio' },
       initialValue: '3',
     }),
-    defineField({ name: 'arched', title: 'Arched card images (church motif)', type: 'boolean', initialValue: false }),
     defineField({
       name: 'cards',
       title: 'Cards',
@@ -310,7 +308,7 @@ export const sectionStats = defineType({
           type: 'object',
           name: 'stat',
           fields: [
-            defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "1901", "600", "9". Free text so you can write "600+".', validation: (R) => R.required() }),
+            defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "9", "100%", "6 weeks". Free text so you can write "200+".', validation: (R) => R.required() }),
             defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
             defineField({ name: 'note', title: 'Note (optional)', type: 'string' }),
           ],
@@ -493,6 +491,7 @@ export const sectionDynamicList = defineType({
           { title: 'Featured courses', value: 'featuredCourses' },
           { title: 'Upcoming events', value: 'upcomingEvents' },
           { title: 'Faculty', value: 'faculty' },
+          { title: 'Testimonials', value: 'testimonials' },
         ],
       },
       initialValue: 'featuredCourses',
@@ -504,12 +503,12 @@ export const sectionDynamicList = defineType({
   preview: { select: { title: 'heading', source: 'source' }, prepare: ({ title, source }) => ({ title: title || 'Dynamic list', subtitle: source }) },
 });
 
-export const sectionArchShowcase = defineType({
-  name: 'sectionArchShowcase',
-  title: 'Arched showcase (slideshow / video)',
+export const sectionMediaShowcase = defineType({
+  name: 'sectionMediaShowcase',
+  title: 'Media showcase (slideshow / video)',
   type: 'object',
   description:
-    'One arched photo frame, like the home hero. It either cross-fades through several photos (a slow slideshow with a gentle zoom) or loops a short, silent video. Choose which below.',
+    'One framed photo or video. It either cross-fades through several photos (a slow slideshow with a gentle zoom) or loops a short, silent video. Choose which below.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
@@ -573,7 +572,7 @@ export const sectionArchShowcase = defineType({
   ],
   preview: {
     select: { title: 'heading', media: 'images.0' },
-    prepare: ({ title, media }) => ({ title: title || 'Arched showcase', media }),
+    prepare: ({ title, media }) => ({ title: title || 'Media showcase', media }),
   },
 });
 
@@ -582,7 +581,7 @@ export const sectionFaqList = defineType({
   title: 'FAQ list (from collection)',
   type: 'object',
   description:
-    'Pulls FAQ items from the faqItem collection into the page. Optionally filtered to one category. Use this when you want to embed a subset of the FAQ collection (e.g. Weddings questions on the Weddings page) rather than authoring inline Q+As.',
+    'Pulls FAQ items from the faqItem collection into the page. Optionally filtered to one category. Use this when you want to embed a subset of the FAQ collection (e.g. Admissions questions on the Admissions page) rather than authoring inline Q+As.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'headline', title: 'Headline', type: 'string' }),
@@ -601,7 +600,7 @@ export const sectionFaqList = defineType({
       name: 'categoryString',
       title: 'Filter by category (plain text)',
       type: 'string',
-      description: 'Optional. Used only when the reference above is not set. Match the exact category name, e.g. "Giving".',
+      description: 'Optional. Used only when the reference above is not set. Match the exact category name, e.g. "Tuition".',
     }),
     defineField({
       name: 'limit',
@@ -623,6 +622,91 @@ export const sectionFaqList = defineType({
   },
 });
 
+export const sectionResources = defineType({
+  name: 'sectionResources',
+  title: 'Resources / downloads',
+  type: 'object',
+  description:
+    'A list of downloadable documents: syllabi, reading lists, forms. Each row links to an uploaded file or an external URL.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'items',
+      title: 'Files',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'resource',
+          fields: [
+            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required() }),
+            defineField({ name: 'description', title: 'Description', type: 'text', rows: 2, description: 'Optional. One line on what this document is.' }),
+            defineField({ name: 'file', title: 'File (upload)', type: 'file', description: 'The document to download. Takes priority over the link below.' }),
+            defineField({ name: 'url', title: 'External link (alternative)', type: 'url', description: 'Used only when no file is uploaded. A link to a document hosted elsewhere.' }),
+          ],
+          preview: { select: { title: 'title', subtitle: 'description' } },
+        }),
+      ],
+    }),
+    bgField(),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Resources / downloads' }) },
+});
+
+export const sectionKeyDates = defineType({
+  name: 'sectionKeyDates',
+  title: 'Key dates / deadlines',
+  type: 'object',
+  description:
+    'A ruled list of dated items: application deadlines, term starts, orientation. Shown in the order you set.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'items',
+      title: 'Dates',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'keyDate',
+          fields: [
+            defineField({ name: 'date', title: 'Date', type: 'date', options: { dateFormat: 'MMM D, YYYY' }, validation: (R) => R.required() }),
+            defineField({ name: 'endDate', title: 'End date (optional)', type: 'date', options: { dateFormat: 'MMM D, YYYY' }, description: 'For a range, such as a term that runs several weeks.' }),
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required(), description: 'What happens on this date. Example: "Fall term begins".' }),
+            defineField({ name: 'description', title: 'Description', type: 'text', rows: 2 }),
+            defineField({ name: 'ctaLabel', title: 'Link label (optional)', type: 'string' }),
+            defineField({ name: 'ctaUrl', title: 'Link URL (optional)', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'date' } },
+        }),
+      ],
+    }),
+    bgField(),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Key dates' }) },
+});
+
+export const sectionPricingTiers = defineType({
+  name: 'sectionPricingTiers',
+  title: 'Tuition tiers',
+  type: 'object',
+  description:
+    'Shows the pricing tiers (from your Pricing tier documents) as cards, the same look as the Pricing page. Use it on a program or landing page.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({ name: 'ctaLabel', title: 'Card button label', type: 'string', description: 'The button on each tier card. Leave empty for "Express interest".' }),
+    defineField({ name: 'ctaUrl', title: 'Card button link', type: 'string', description: 'Where each tier button goes. Leave empty for "/get-started".' }),
+    bgField(),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Tuition tiers' }) },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -639,8 +723,11 @@ export const sectionBlocks = [
   sectionLogos,
   sectionMediaFeature,
   sectionDynamicList,
-  sectionArchShowcase,
+  sectionMediaShowcase,
   sectionFaqList,
+  sectionResources,
+  sectionKeyDates,
+  sectionPricingTiers,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -651,7 +738,7 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionFeatureCards' },
   { type: 'sectionCardGrid' },
   { type: 'sectionStats' },
-  { type: 'sectionArchShowcase' },
+  { type: 'sectionMediaShowcase' },
   { type: 'sectionGallery' },
   { type: 'sectionAccordion' },
   { type: 'sectionMediaFeature' },
@@ -662,5 +749,8 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionCtaBand' },
   { type: 'sectionForm' },
   { type: 'sectionFaqList' },
+  { type: 'sectionResources' },
+  { type: 'sectionKeyDates' },
+  { type: 'sectionPricingTiers' },
   { type: 'embed' },
 ];

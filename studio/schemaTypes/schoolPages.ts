@@ -143,6 +143,9 @@ export const coursesPage = definePageSingleton('coursesPage', 'Courses', {
     defineField({ name: 'startHereEyebrow', title: '"Start here" eyebrow', type: 'string', group: 'content' }),
     defineField({ name: 'startHereHeadline', title: '"Start here" headline', type: 'string', group: 'content' }),
     defineField({ name: 'emptyState', title: 'Empty-state line', type: 'string', description: 'Shown when no courses match the filters.', group: 'content' }),
+    defineField({ name: 'detailTrustLine', title: 'Course page: trust line', type: 'string', description: 'The reassurance line under the buttons on a single course page. Example: "You can visit the first session free before you decide."', group: 'content' }),
+    defineField({ name: 'detailExpressLabel', title: 'Course page: primary button', type: 'string', description: 'The main aside button on a course page. Leave empty for "Express interest".', group: 'content' }),
+    defineField({ name: 'detailRequestLabel', title: 'Course page: secondary button', type: 'string', description: 'The secondary aside button on a course page. Leave empty for "Request information".', group: 'content' }),
     ...finalCtaText(),
   ],
 });
@@ -173,6 +176,24 @@ export const pricingPage = definePageSingleton('pricingPage', 'Pricing & Scholar
     defineField({ name: 'scholarshipHeadline', title: 'Scholarships headline', type: 'string', group: 'content' }),
     defineField({ name: 'scholarshipBody', title: 'Scholarships body', type: 'text', rows: 4, group: 'content' }),
     defineField({ name: 'footnote', title: 'Footnote', type: 'text', rows: 2, group: 'content' }),
+    defineField({
+      name: 'stats',
+      title: 'Heritage band stats',
+      type: 'array',
+      group: 'content',
+      description: 'The small row of value + label pairs near the bottom of the page (for example "Free / Sit in on a class first").',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'pricingStat',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string', validation: (R) => R.required() }),
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+    }),
     ...finalCtaText(),
   ],
 });
@@ -255,6 +276,7 @@ export const resourcesPage = definePageSingleton('resourcesPage', 'Resources', {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
     defineField({ name: 'listIntro', title: 'List intro', type: 'text', rows: 2, group: 'content' }),
+    defineField({ name: 'emptyStateBody', title: 'Empty-state body', type: 'text', rows: 2, description: 'Shown when there are no resources or sections added yet.', group: 'content' }),
     ...finalCtaText(),
   ],
 });

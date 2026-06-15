@@ -1,0 +1,77 @@
+---
+// Resources / downloads block (page builder). Inner content only; SectionShell
+// provides the background. A list of document rows: each links to an uploaded
+// file (preferred) or an external URL, with a file-type badge and a
+// human-readable size. The file asset is dereferenced in the SECTION_MEMBERS
+// GROQ fragment (src/lib/queries.ts).
+const { block } = Astro.props as { block: any };
+
+// Human-readable byte size (e.g. "1.2 MB"). Returns '' when the size is unknown.
+function fmtSize(bytes?: number): string {
+  if (!bytes || bytes <= 0) return '';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let n = bytes;
+  let u = 0;
+  while (n >= 1024 && u < units.length - 1) {
+    n /= 1024;
+    u++;
+  }
+  return `${n >= 10 || u === 0 ? Math.round(n) : n.toFixed(1)} ${units[u]}`;
+}
+
+// Keep only rows that have a title and somewhere to point (uploaded file or URL),
+// then resolve each to a flat shape the markup can render.
+const rows = (block?.items ?? [])
+  .filter((it: any) => it?.title && (it?.file?.asset?.url || it?.url))
+  .map((it: any) => {
+    const asset = it?.file?.asset;
+    const external = !asset?.url && !!it?.url;
+    const rawExt = asset?.extension || (it?.url ? (it.url.split('.').pop() || '').split(/[?#]/)[0] : '');
+    const ext = String(rawExt || '').toUpperCase();
+    return {
+      title: it.title,
+      description: it.description,
+      href: asset?.url ?? it?.url ?? '#',
+      external,
+      ext: ext && ext.length <= 4 ? ext : '',
+      size: fmtSize(asset?.size),
+    };
+  });
+---
+
+{
+  block && rows.length > 0 && (
+    <div class="mx-auto max-w-content px-m">
+      {(block.eyebrow || block.heading || block.intro) && (
+        <div class="max-w-2xl mb-l">
+          {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
+          {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
+          {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
+        </div>
+      )}
+      <ul class="mt-l grid grid-cols-1 gap-s list-none p-0" data-stagger-grid>
+        {rows.map((r: any) => (
+          <li>
+            <a
+              href={r.href}
+              class="card-lift group flex items-center gap-m rounded-lg border border-border-soft bg-card p-m no-underline"
+              {...(r.external ? { target: '_blank', rel: 'noopener' } : { download: true })}
+            >
+              <span class="shrink-0 inline-flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-[0.7rem] font-semibold uppercase tracking-wide text-primary" aria-hidden="true">
+                {r.ext || 'DOC'}
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-h4 text-foreground">{r.title}</span>
+                {r.description && <span class="mt-xs block text-sm text-foreground/75 leading-relaxed">{r.description}</span>}
+                <span class="mt-xs block text-xs uppercase tracking-eyebrow text-foreground/55">
+                  {r.external ? 'Open link' : 'Download'}{r.size ? ` · ${r.size}` : ''}
+                </span>
+              </span>
+              <span class="shrink-0 text-foreground/40 transition-colors group-hover:text-primary" aria-hidden="true">{r.external ? '↗' : '↓'}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

@@ -1,0 +1,48 @@
+---
+// Pricing tier cards. Shared by the Pricing page (pricing.astro) and the
+// "Tuition tiers" page-builder block (PricingTiersBlock.astro), so the tier card
+// look stays identical wherever it appears. Pass the resolved tiers in; the CTA
+// label/href and the tier-name heading level are configurable.
+interface Props {
+  tiers?: any[];
+  ctaLabel?: string;
+  ctaUrl?: string;
+  /** Heading tag for the tier name: h2 on the Pricing page, h3 inside a section block. */
+  headingTag?: 'h2' | 'h3';
+}
+const {
+  tiers = [],
+  ctaLabel = 'Express interest',
+  ctaUrl = '/get-started',
+  headingTag = 'h3',
+} = Astro.props as Props;
+// Astro renders a capitalized identifier holding a tag-name string as that HTML tag.
+const Heading = headingTag as any;
+
+function priceLabel(t: any): string {
+  return t?.amount != null ? `$${t.amount.toLocaleString('en-US')}` : 'Free';
+}
+---
+
+{tiers.length > 0 && (
+  <ul class="grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+    {tiers.map((t: any) => (
+      <li class:list={['list-none border border-border-soft', t.featured ? 'border-t-2 border-t-primary' : 'border-t-2 border-t-gold']}>
+        <div class="p-l">
+          {t.featured && <span class="mb-2 inline-block rounded-[2px] bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground">Most chosen</span>}
+          <Heading class="font-display text-h4 text-foreground">{t.name}</Heading>
+          <p class="mt-2 font-display text-h2 text-chapel-ink">{priceLabel(t)}<span class="ml-1 align-middle text-sm font-normal text-foreground/60">{t.unit}</span></p>
+          {t.summary && <p class="mt-3 text-sm text-foreground/75">{t.summary}</p>}
+          {t.includes?.length > 0 && (
+            <ul class="mt-l space-y-2 border-t border-border-soft pt-l text-sm text-foreground/80">
+              {t.includes.map((inc: string) => (
+                <li class="flex gap-2"><span class="text-gold-ink" aria-hidden="true">&middot;</span><span>{inc}</span></li>
+              ))}
+            </ul>
+          )}
+          <a href={ctaUrl} class="press-tactile mt-l inline-flex w-full items-center justify-center min-h-[44px] rounded-full border border-foreground px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-foreground hover:bg-accent">{ctaLabel}</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+)}

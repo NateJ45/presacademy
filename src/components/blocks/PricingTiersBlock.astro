@@ -1,0 +1,28 @@
+---
+// Tuition tiers block (page builder). Inner content only; SectionShell provides
+// the background. Fetches the pricing tiers at build time and renders them with
+// the shared PricingTierCards component, so a director can drop the tier cards on
+// any program or landing page, the same look as the Pricing page.
+import PricingTierCards from '@/components/PricingTierCards.astro';
+import { getPricingTiers } from '@/lib/queries';
+
+const { block } = Astro.props as { block: any };
+const tiers = await getPricingTiers().catch(() => []);
+const ctaLabel = block?.ctaLabel || 'Express interest';
+const ctaUrl = block?.ctaUrl || '/get-started';
+---
+
+{
+  block && tiers.length > 0 && (
+    <div class="mx-auto max-w-content px-m">
+      {(block.eyebrow || block.heading || block.intro) && (
+        <div class="max-w-2xl mb-l">
+          {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
+          {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
+          {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
+        </div>
+      )}
+      <PricingTierCards tiers={tiers} ctaLabel={ctaLabel} ctaUrl={ctaUrl} headingTag="h3" />
+    </div>
+  )
+}

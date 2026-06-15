@@ -11,6 +11,7 @@ import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import FinalCta from '@/components/FinalCta.astro';
+import PricingTierCards from '@/components/PricingTierCards.astro';
 import Sections from '@/components/Sections.astro';
 
 const [page, tiers, siteSettings] = await Promise.all([
@@ -30,15 +31,15 @@ const heroHeadline = page?.heroHeadline ?? 'Pricing and scholarships';
 const heroSubhead =
   page?.heroSubhead ?? 'What a course costs, said plainly, and how we keep formation within reach.';
 
-function priceLabel(t: any): string {
-  return t.amount != null ? `$${t.amount.toLocaleString('en-US')}` : 'Free';
-}
-
-const stats = [
-  { value: 'Free', label: 'Sit in on a class first' },
-  { value: 'Per course', label: 'Pay as you go, no degree debt' },
-  { value: 'Need-based', label: 'Scholarships every term' },
-];
+// The heritage band stats: editor-driven (pricingPage.stats), with the built-in
+// trio as the fallback so the page is unchanged until an editor sets them.
+const stats = page?.stats?.length
+  ? page.stats
+  : [
+      { value: 'Free', label: 'Sit in on a class first' },
+      { value: 'Per course', label: 'Pay as you go, no degree debt' },
+      { value: 'Need-based', label: 'Scholarships every term' },
+    ];
 
 const schemas = [
   breadcrumbSchema([
@@ -65,26 +66,7 @@ const schemas = [
   {tiers.length > 0 && (
     <section class="bg-background">
       <div class="mx-auto max-w-content px-m pb-section-md">
-        <ul class="grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
-          {tiers.map((t: any) => (
-            <li class:list={['list-none border border-border-soft', t.featured ? 'border-t-2 border-t-primary' : 'border-t-2 border-t-gold']}>
-              <div class="p-l">
-                {t.featured && <span class="mb-2 inline-block rounded-[2px] bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground">Most chosen</span>}
-                <h2 class="font-display text-h4 text-foreground">{t.name}</h2>
-                <p class="mt-2 font-display text-h2 text-chapel-ink">{priceLabel(t)}<span class="ml-1 align-middle text-sm font-normal text-foreground/60">{t.unit}</span></p>
-                {t.summary && <p class="mt-3 text-sm text-foreground/75">{t.summary}</p>}
-                {t.includes?.length > 0 && (
-                  <ul class="mt-l space-y-2 border-t border-border-soft pt-l text-sm text-foreground/80">
-                    {t.includes.map((inc: string) => (
-                      <li class="flex gap-2"><span class="text-gold-ink" aria-hidden="true">&middot;</span><span>{inc}</span></li>
-                    ))}
-                  </ul>
-                )}
-                <a href="/get-started" class="press-tactile mt-l inline-flex w-full items-center justify-center min-h-[44px] rounded-full border border-foreground px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-foreground hover:bg-accent">Express interest</a>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <PricingTierCards tiers={tiers} headingTag="h2" />
       </div>
     </section>
   )}

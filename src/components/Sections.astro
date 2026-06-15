@@ -22,8 +22,11 @@ import StepsBlock from '@/components/blocks/StepsBlock.astro';
 import LogosBlock from '@/components/blocks/LogosBlock.astro';
 import MediaFeatureBlock from '@/components/blocks/MediaFeatureBlock.astro';
 import DynamicListBlock from '@/components/blocks/DynamicListBlock.astro';
-import ArchShowcaseBlock from '@/components/blocks/ArchShowcaseBlock.astro';
+import MediaShowcaseBlock from '@/components/blocks/MediaShowcaseBlock.astro';
 import FaqListBlock from '@/components/blocks/FaqListBlock.astro';
+import ResourcesBlock from '@/components/blocks/ResourcesBlock.astro';
+import KeyDatesBlock from '@/components/blocks/KeyDatesBlock.astro';
+import PricingTiersBlock from '@/components/blocks/PricingTiersBlock.astro';
 import EmbedBlock from '@/components/EmbedBlock.astro';
 
 interface Props {
@@ -48,8 +51,11 @@ const MAP: Record<string, any> = {
   sectionLogos: LogosBlock,
   sectionMediaFeature: MediaFeatureBlock,
   sectionDynamicList: DynamicListBlock,
-  sectionArchShowcase: ArchShowcaseBlock,
+  sectionMediaShowcase: MediaShowcaseBlock,
   sectionFaqList: FaqListBlock,
+  sectionResources: ResourcesBlock,
+  sectionKeyDates: KeyDatesBlock,
+  sectionPricingTiers: PricingTiersBlock,
   embed: EmbedBlock,
 };
 
@@ -58,7 +64,8 @@ const SHELL_AWARE = new Set([
   'sectionRichText', 'sectionImageText', 'sectionCardGrid', 'sectionQuote', 'sectionCtaBand',
   'sectionFeatureCards', 'sectionStats', 'sectionAccordion', 'sectionGallery',
   'sectionSteps', 'sectionLogos', 'sectionMediaFeature', 'sectionDynamicList',
-  'sectionArchShowcase', 'sectionFaqList',
+  'sectionMediaShowcase', 'sectionFaqList', 'sectionResources', 'sectionKeyDates',
+  'sectionPricingTiers',
 ]);
 
 // Default background tone when the editor hasn't chosen one (the quote + CTA

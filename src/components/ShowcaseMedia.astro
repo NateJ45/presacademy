@@ -1,24 +1,23 @@
 ---
 // Safe to edit by hand
-// Arched-frame media: the inner content of a `.arch-top` photo frame. Renders
-// ONE of three things, in priority order:
+// Showcase media: the inner content of a framed media slot. Renders ONE of three
+// things, in priority order:
 //   1. a looping, muted background video (when a video src is given), or
 //   2. a slow cross-fading Ken Burns slideshow (2+ images), or
 //   3. a single static image.
-// It does NOT draw the arch frame itself — the caller supplies the framed,
-// position:relative container (the home hero and the ArchShowcase block both do).
+// It does NOT draw the frame itself: the caller supplies the framed,
+// position:relative container (the Media showcase block does).
 //
-// Used by the home hero (src/pages/index.astro) and the `sectionArchShowcase`
-// page-builder block (src/components/blocks/ArchShowcaseBlock.astro), so a single
-// component keeps the look identical wherever an editor places it. Supersedes the
-// old HeroArchSlideshow.astro.
+// Used by the `sectionMediaShowcase` page-builder block
+// (src/components/blocks/MediaShowcaseBlock.astro). Supersedes the old
+// HeroArchSlideshow.astro.
 //
 // The slideshow reuses the global `.hero-slideshow` / `.hero-slide` CSS (absolute
 // fill + opacity cross-fade + `hero-kb` Ken Burns zoom) from globals.css. The
 // advance script below is multi-instance safe: it drives EVERY [data-arch-slideshow]
-// on the page with its own timer, so the home hero and a showcase block (or two
-// blocks) can animate independently. It also plays/pauses videos by the same
-// prefers-reduced-motion rule, and re-wires after Astro View Transitions.
+// on the page with its own timer, so two showcase blocks can animate
+// independently. It also plays/pauses videos by the same prefers-reduced-motion
+// rule, and re-wires after Astro View Transitions.
 //
 // Images are requested at a generous width (1600) so the constant Ken Burns zoom
 // (which magnifies the photo past 100%) still looks crisp on retina displays.

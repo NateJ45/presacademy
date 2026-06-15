@@ -12,7 +12,6 @@ const COLS: Record<string, string> = {
   '4': 'sm:grid-cols-2 lg:grid-cols-4',
 };
 const colClass = COLS[block?.columns ?? '3'] ?? COLS['3'];
-const archCls = block?.arched ? 'arch-top-sm' : 'rounded-md';
 ---
 
 {
@@ -31,7 +30,7 @@ const archCls = block?.arched ? 'arch-top-sm' : 'rounded-md';
           const inner = (
             <Fragment>
               {hasImg && (
-                <div class={`overflow-hidden mb-m img-zoom group aspect-[4/3] ${archCls}`}>
+                <div class="overflow-hidden mb-m img-zoom group aspect-[4/3] rounded-md">
                   <SanityImage
                     source={c.image}
                     width={700}

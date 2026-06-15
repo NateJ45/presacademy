@@ -1,10 +1,10 @@
 ---
 // Safe to edit by hand
-// Arched showcase block (page builder). Inner content only; SectionShell provides
+// Media showcase block (page builder). Inner content only; SectionShell provides
 // the section background + padding. Renders an optional centered heading, then a
-// single arched frame holding either a cross-fading photo slideshow or a looping
-// video, via the shared ArchMedia component (same look as the home hero).
-import ArchMedia from '@/components/ArchMedia.astro';
+// single framed media slot holding either a cross-fading photo slideshow or a
+// looping video, via the shared ShowcaseMedia component.
+import ShowcaseMedia from '@/components/ShowcaseMedia.astro';
 
 const { block } = Astro.props as { block: any; defaultTone?: string };
 
@@ -31,8 +31,8 @@ const animated = !!videoSrc || images.length >= 2;
       </div>
     )}
     <div class="mx-auto mt-l w-full max-w-md sm:max-w-lg">
-      <div class:list={['group arch-top overflow-hidden ring-1 ring-primary/40 dark:ring-[#C7A875]/40 shadow-sm aspect-[4/5] sm:aspect-[5/6]', animated ? 'relative' : 'img-zoom']}>
-        <ArchMedia
+      <div class:list={['group rounded-lg overflow-hidden ring-1 ring-primary/40 dark:ring-[#C7A875]/40 shadow-sm aspect-[4/5] sm:aspect-[5/6]', animated ? 'relative' : 'img-zoom']}>
+        <ShowcaseMedia
           images={images}
           videoSrc={videoSrc}
           videoType={videoType}

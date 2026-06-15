@@ -116,17 +116,17 @@ export type SectionStatsBackgroundImage = {
   _type: 'image';
 };
 
-export type SectionArchShowcaseBackground = {
+export type SectionMediaShowcaseBackground = {
   tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
-  image?: SectionArchShowcaseBackgroundImage;
+  image?: SectionMediaShowcaseBackgroundImage;
   videoUrl?: string;
   overlay?: number;
   padding?: 'compact' | 'normal' | 'spacious';
 };
 
-export type SectionArchShowcaseBackgroundImage = {
+export type SectionMediaShowcaseBackgroundImage = {
   asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionArchShowcase.background.image.media" in schema
+  media?: unknown; // Unable to locate the referenced type "sectionMediaShowcase.background.image.media" in schema
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
   alt?: string;
@@ -286,6 +286,70 @@ export type SectionFaqListBackgroundImage = {
   _type: 'image';
 };
 
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset';
+};
+
+export type ResourceFile = {
+  asset?: SanityFileAssetReference;
+  media?: unknown; // Unable to locate the referenced type "file.media" in schema
+  _type: 'file';
+};
+
+export type SectionResourcesBackground = {
+  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  image?: SectionResourcesBackgroundImage;
+  videoUrl?: string;
+  overlay?: number;
+  padding?: 'compact' | 'normal' | 'spacious';
+};
+
+export type SectionResourcesBackgroundImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "sectionResources.background.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
+export type SectionKeyDatesBackground = {
+  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  image?: SectionKeyDatesBackgroundImage;
+  videoUrl?: string;
+  overlay?: number;
+  padding?: 'compact' | 'normal' | 'spacious';
+};
+
+export type SectionKeyDatesBackgroundImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "sectionKeyDates.background.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
+export type SectionPricingTiersBackground = {
+  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  image?: SectionPricingTiersBackgroundImage;
+  videoUrl?: string;
+  overlay?: number;
+  padding?: 'compact' | 'normal' | 'spacious';
+};
+
+export type SectionPricingTiersBackgroundImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "sectionPricingTiers.background.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type CourseReference = {
   _ref: string;
   _type: 'reference';
@@ -422,13 +486,6 @@ export type FacultyMemberReference = {
   _type: 'reference';
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: 'facultyMember';
-};
-
-export type SanityFileAssetReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset';
 };
 
 export type TermReference = {
@@ -670,13 +727,11 @@ export type FaqItem = {
     _key: string;
   }>;
   category?:
-    | 'Visiting'
-    | 'Worship'
-    | 'Kids & Family'
-    | 'Getting Involved'
-    | 'Giving'
-    | 'Weddings & Space'
-    | 'Food Ministry';
+    | 'Courses & Format'
+    | 'Cost & Scholarships'
+    | "Who It's For"
+    | 'Reformed Identity'
+    | 'Getting Started';
   categoryRef?: FaqCategoryReference;
   displayOrder?: number;
 };
@@ -747,7 +802,7 @@ export type AccessibilityPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -778,6 +833,15 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -850,7 +914,7 @@ export type PrivacyPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -881,6 +945,15 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -1008,6 +1081,50 @@ export type SiteSettings = {
   };
 };
 
+export type SectionPricingTiers = {
+  _type: 'sectionPricingTiers';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  background?: SectionPricingTiersBackground;
+};
+
+export type SectionKeyDates = {
+  _type: 'sectionKeyDates';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  items?: Array<{
+    date?: string;
+    endDate?: string;
+    label?: string;
+    description?: string;
+    ctaLabel?: string;
+    ctaUrl?: string;
+    _type: 'keyDate';
+    _key: string;
+  }>;
+  background?: SectionKeyDatesBackground;
+};
+
+export type SectionResources = {
+  _type: 'sectionResources';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  items?: Array<{
+    title?: string;
+    description?: string;
+    file?: ResourceFile;
+    url?: string;
+    _type: 'resource';
+    _key: string;
+  }>;
+  background?: SectionResourcesBackground;
+};
+
 export type SectionFaqList = {
   _type: 'sectionFaqList';
   eyebrow?: string;
@@ -1032,8 +1149,8 @@ export type FaqCategory = {
   displayOrder?: number;
 };
 
-export type SectionArchShowcase = {
-  _type: 'sectionArchShowcase';
+export type SectionMediaShowcase = {
+  _type: 'sectionMediaShowcase';
   eyebrow?: string;
   heading?: string;
   intro?: string;
@@ -1061,7 +1178,7 @@ export type SectionArchShowcase = {
     alt?: string;
     _type: 'image';
   };
-  background?: SectionArchShowcaseBackground;
+  background?: SectionMediaShowcaseBackground;
 };
 
 export type SectionDynamicList = {
@@ -1069,7 +1186,7 @@ export type SectionDynamicList = {
   eyebrow?: string;
   heading?: string;
   intro?: string;
-  source?: 'featuredCourses' | 'upcomingEvents' | 'faculty';
+  source?: 'featuredCourses' | 'upcomingEvents' | 'faculty' | 'testimonials';
   count?: number;
   background?: SectionDynamicListBackground;
 };
@@ -1181,7 +1298,6 @@ export type SectionFeatureCards = {
   heading?: string;
   intro?: string;
   columns?: '2' | '3' | '4';
-  arched?: boolean;
   cards?: Array<{
     image?: FeatureCardImage;
     eyebrow?: string;
@@ -1254,7 +1370,6 @@ export type SectionImageText = {
     _type: 'image';
   };
   imageSide?: 'left' | 'right';
-  arched?: boolean;
   eyebrow?: string;
   heading?: string;
   body?: Array<{
@@ -1461,7 +1576,7 @@ export type Page = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1492,6 +1607,15 @@ export type Page = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -1554,7 +1678,7 @@ export type ResourcesPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1587,10 +1711,20 @@ export type ResourcesPage = {
       } & SectionFaqList)
     | ({
         _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
   listIntro?: string;
+  emptyStateBody?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -1642,7 +1776,7 @@ export type ForYouPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1673,6 +1807,15 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -1737,7 +1880,7 @@ export type GetStartedPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1768,6 +1911,15 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -1841,7 +1993,7 @@ export type PricingPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1874,6 +2026,15 @@ export type PricingPage = {
       } & SectionFaqList)
     | ({
         _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -1882,6 +2043,12 @@ export type PricingPage = {
   scholarshipHeadline?: string;
   scholarshipBody?: string;
   footnote?: string;
+  stats?: Array<{
+    value?: string;
+    label?: string;
+    _type: 'pricingStat';
+    _key: string;
+  }>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -1933,7 +2100,7 @@ export type FacultyPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -1964,6 +2131,15 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2023,7 +2199,7 @@ export type CoursesPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2056,6 +2232,15 @@ export type CoursesPage = {
       } & SectionFaqList)
     | ({
         _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
       } & Embed)
   >;
   finalCta?: CtaBlock;
@@ -2063,6 +2248,9 @@ export type CoursesPage = {
   startHereEyebrow?: string;
   startHereHeadline?: string;
   emptyState?: string;
+  detailTrustLine?: string;
+  detailExpressLabel?: string;
+  detailRequestLabel?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -2129,7 +2317,7 @@ export type EventsPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2160,6 +2348,15 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2232,7 +2429,7 @@ export type ContactPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2263,6 +2460,15 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2366,7 +2572,7 @@ export type FaqPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2397,6 +2603,15 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2451,7 +2666,7 @@ export type AboutPage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2482,6 +2697,15 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2574,7 +2798,7 @@ export type HomePage = {
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionArchShowcase)
+      } & SectionMediaShowcase)
     | ({
         _key: string;
       } & SectionGallery)
@@ -2605,6 +2829,15 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
     | ({
         _key: string;
       } & Embed)
@@ -2752,8 +2985,8 @@ export type AllSanitySchemaTypes =
   | SectionCardGridBackgroundImage
   | SectionStatsBackground
   | SectionStatsBackgroundImage
-  | SectionArchShowcaseBackground
-  | SectionArchShowcaseBackgroundImage
+  | SectionMediaShowcaseBackground
+  | SectionMediaShowcaseBackgroundImage
   | SectionGalleryBackground
   | SectionGalleryBackgroundImage
   | SectionAccordionBackground
@@ -2772,6 +3005,14 @@ export type AllSanitySchemaTypes =
   | SectionCtaBandBackgroundImage
   | SectionFaqListBackground
   | SectionFaqListBackgroundImage
+  | SanityFileAssetReference
+  | ResourceFile
+  | SectionResourcesBackground
+  | SectionResourcesBackgroundImage
+  | SectionKeyDatesBackground
+  | SectionKeyDatesBackgroundImage
+  | SectionPricingTiersBackground
+  | SectionPricingTiersBackgroundImage
   | CourseReference
   | Testimonial
   | SanityImageCrop
@@ -2780,7 +3021,6 @@ export type AllSanitySchemaTypes =
   | FacultyMember
   | Slug
   | FacultyMemberReference
-  | SanityFileAssetReference
   | TermReference
   | PricingTierReference
   | Course
@@ -2795,9 +3035,12 @@ export type AllSanitySchemaTypes =
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | SectionPricingTiers
+  | SectionKeyDates
+  | SectionResources
   | SectionFaqList
   | FaqCategory
-  | SectionArchShowcase
+  | SectionMediaShowcase
   | SectionDynamicList
   | SectionMediaFeature
   | SectionLogos

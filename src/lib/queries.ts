@@ -41,7 +41,7 @@ const SECTION_MEMBERS = `{
   _type == "sectionImageText" => { image${IMAGE_PROJECTION} },
   _type == "sectionFeatureCards" => { cards[]{ ..., image${IMAGE_PROJECTION} } },
   _type == "sectionGallery" => { images[]${IMAGE_PROJECTION} },
-  _type == "sectionArchShowcase" => {
+  _type == "sectionMediaShowcase" => {
     images[]${IMAGE_PROJECTION},
     video{ asset->{ url, mimeType } },
     videoPoster${IMAGE_PROJECTION}
@@ -50,6 +50,9 @@ const SECTION_MEMBERS = `{
   _type == "sectionFaqList" => {
     // Resolve the optional categoryRef so the block component gets the title.
     "categoryFilter": coalesce(categoryRef->title, categoryString)
+  },
+  _type == "sectionResources" => {
+    items[]{ ..., file{ asset->{ url, originalFilename, size, extension, mimeType } } }
   }
 }`;
 

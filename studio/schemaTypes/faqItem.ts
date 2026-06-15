@@ -78,13 +78,11 @@ export const faqItem = defineType({
       description: 'Legacy hardcoded category string. Preserved for data safety; use Category (reference) below instead.',
       options: {
         list: [
-          { title: 'Visiting', value: 'Visiting' },
-          { title: 'Worship', value: 'Worship' },
-          { title: 'Kids & Family', value: 'Kids & Family' },
-          { title: 'Getting Involved', value: 'Getting Involved' },
-          { title: 'Giving', value: 'Giving' },
-          { title: 'Weddings & Space', value: 'Weddings & Space' },
-          { title: 'Food Ministry', value: 'Food Ministry' },
+          { title: 'Courses & Format', value: 'Courses & Format' },
+          { title: 'Cost & Scholarships', value: 'Cost & Scholarships' },
+          { title: "Who It's For", value: "Who It's For" },
+          { title: 'Reformed Identity', value: 'Reformed Identity' },
+          { title: 'Getting Started', value: 'Getting Started' },
         ],
       },
     }),

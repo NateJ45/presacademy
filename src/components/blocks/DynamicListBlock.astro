@@ -2,7 +2,7 @@
 // Dynamic list: pulls live content (featured courses, upcoming events, or
 // faculty) into any page. Fetches at build time based on the chosen source.
 // Cards are light surfaces; section heading inherits the tone color.
-import { getFeaturedCourses, getUpcomingEvents, getFaculty } from '@/lib/queries';
+import { getFeaturedCourses, getUpcomingEvents, getFaculty, getTestimonials } from '@/lib/queries';
 
 const { block } = Astro.props as { block: any };
 const count = Math.min(12, Math.max(1, Number(block?.count ?? 3)));
@@ -11,7 +11,7 @@ const source = block?.source ?? 'featuredCourses';
 const fmt = (d: string) =>
   d ? new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
 
-type Item = { title: string; meta?: string; summary?: string; href?: string | null };
+type Item = { title: string; meta?: string; summary?: string; href?: string | null; isQuote?: boolean };
 let items: Item[] = [];
 
 if (source === 'featuredCourses') {
@@ -38,6 +38,13 @@ if (source === 'featuredCourses') {
     summary: x.topDegree ? `${x.topDegree.degree}, ${x.topDegree.institution}` : '',
     href: x.slug ? `/faculty/${x.slug}` : null,
   }));
+} else if (source === 'testimonials') {
+  const t = await getTestimonials().catch(() => []);
+  items = t.slice(0, count).map((x: any) => ({
+    title: x.quote,
+    meta: [x.name, x.role, x.city].filter(Boolean).join(' · '),
+    isQuote: true,
+  }));
 }
 ---
 
@@ -53,7 +60,12 @@ if (source === 'featuredCourses') {
       )}
       <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-m list-none p-0" data-stagger-grid>
         {items.map((it) => {
-          const inner = (
+          const inner = it.isQuote ? (
+            <Fragment>
+              <blockquote class="font-display text-lg italic leading-snug text-foreground">{it.title}</blockquote>
+              {it.meta && <p class="mt-m text-xs uppercase tracking-eyebrow text-foreground/70">{it.meta}</p>}
+            </Fragment>
+          ) : (
             <Fragment>
               <h3 class="font-display text-h4 text-foreground">{it.title}</h3>
               {it.meta && <p class="mt-xs text-sm text-foreground/70">{it.meta}</p>}

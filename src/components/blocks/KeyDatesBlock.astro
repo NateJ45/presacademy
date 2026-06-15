@@ -1,0 +1,50 @@
+---
+// Key dates / deadlines block (page builder). Inner content only; SectionShell
+// provides the background. A ruled "ledger" list of dated items (date on the
+// left, label + detail on the right), sorted ascending by date. Tone-adaptive:
+// all text inherits the SectionShell color via text-current.
+const { block } = Astro.props as { block: any };
+
+// Format a YYYY-MM-DD date string as "Mar 3, 2026". Anchored at local midnight so
+// the day never slips across a timezone boundary.
+const fmt = (d?: string) =>
+  d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+const items = (block?.items ?? [])
+  .filter((it: any) => it?.date && it?.label)
+  .slice()
+  .sort((a: any, b: any) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+---
+
+{
+  block && items.length > 0 && (
+    <div class="mx-auto max-w-content px-m">
+      {(block.eyebrow || block.heading || block.intro) && (
+        <div class="max-w-2xl mb-l">
+          {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
+          {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
+          {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
+        </div>
+      )}
+      <ul class="mt-l list-none p-0 border-t border-gold/40" data-stagger-grid>
+        {items.map((it: any) => (
+          <li class="grid grid-cols-1 gap-xs border-b border-gold/40 py-m sm:grid-cols-[11rem_1fr] sm:gap-m">
+            <p class="font-display text-h4 leading-tight text-current/90">
+              {fmt(it.date)}
+              {it.endDate && <span class="text-current/60"> &ndash; {fmt(it.endDate)}</span>}
+            </p>
+            <div>
+              <p class="font-semibold text-current">{it.label}</p>
+              {it.description && <p class="mt-xs text-sm leading-relaxed opacity-75">{it.description}</p>}
+              {it.ctaLabel && it.ctaUrl && (
+                <a href={it.ctaUrl} class="mt-s inline-flex items-center gap-xs text-xs font-semibold uppercase tracking-eyebrow text-current underline decoration-gold underline-offset-4">
+                  {it.ctaLabel} <span aria-hidden="true">&rarr;</span>
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
