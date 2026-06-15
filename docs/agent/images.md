@@ -57,6 +57,15 @@ node scripts/seed-placeholder-images.mjs --apply  # actually uploads + patches
 
 The initial `--apply` run patched 22 documents (8 course covers, 5 faculty portraits, 9 page heroes including the home hero). **These are placeholders — the editor swaps in real photography later** (the same idempotent script then leaves the now-populated fields alone). Note the static deployment only shows the placeholders after a rebuild; the dev server shows them immediately.
 
+#### School update: academic photos (`scripts/seed-academic-images.mjs`, 2026-06-14)
+
+The pools above are church-era (`teach-*` / `study-*` / `community-*`), off-brand for a school. `seed-academic-images.mjs` supersedes them: it sets the home hero slideshow (`homePage.heroImages`, 6 images) and REPLACES every empty OR church-era course cover + page hero with an academic CC0 / public-domain photo from `src/assets/placeholders/acad-*.jpg` (people learning, campus, library, study). Unlike the only-empty seeder, it also overwrites the known church placeholders, but it still protects real editor images and already-seeded `acad-*`, so it stays idempotent. Faculty headshots (pravatar) are left as-is. Sourced via Openverse (rawpixel / Wikimedia / StockSnap), all public-domain, so no attribution is owed. (CC0 is thin on smiling-students / teacher-at-work stock, which lives on key-gated Pexels/Unsplash, so the set leans toward engaged-people + places + study details.) The one-off curation tooling is gitignored scratch under `scripts/_*`.
+
+```
+node scripts/seed-academic-images.mjs          # dry run — what it would set/replace
+node scripts/seed-academic-images.mjs --apply  # set hero slideshow + replace covers/heroes
+```
+
 ### Portrait orientation caps
 
 The journal inline image block detects orientation from the Sanity asset `_ref` (it encodes `{W}x{H}` in the filename) via `parseSanityAssetDimensions()`. When `height > width`:

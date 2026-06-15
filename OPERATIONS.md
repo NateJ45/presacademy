@@ -167,6 +167,17 @@ node scripts/seed-page-copy.mjs --apply    # patch them
 
 It patches only the `homePage`, `aboutPage`, `getStartedPage`, `facultyPage`, and `siteSettings` (the `funder` line) docs, fills **only empty fields** (`setIfMissing` semantics, never clobbers edited copy), and is idempotent — re-running once the fields are set does nothing. The built-in copy lives in the `HOME` / `ABOUT` / `GET_STARTED` / `FACULTY` / `SETTINGS` blocks at the top of the script; keep those in sync with the `.astro` fallbacks if you change one.
 
+### Set the hero slideshow + academic photos (`seed-academic-images.mjs`)
+
+The school's placeholder-photo seeder. It sets the home hero to its 6-image Ken Burns slideshow (`homePage.heroImages`) and REPLACES every empty or church-era (`teach-*` / `study-*` / `community-*` / `place-*`) course cover and page hero with an academic CC0 photo from `src/assets/placeholders/acad-*.jpg`. It protects real editor images and already-seeded `acad-*` (so it is idempotent), and leaves faculty headshots (pravatar) alone. Supersedes the church pools in `seed-placeholder-images.mjs` for the school look.
+
+```bash
+node scripts/seed-academic-images.mjs            # dry run: what it would set/replace
+node scripts/seed-academic-images.mjs --apply    # set hero + replace covers/heroes
+```
+
+The curated picks are bundled in `src/assets/placeholders/acad-*.jpg`; the one-off Openverse curation tooling (probe + collector + downloads) is gitignored scratch under `scripts/_*`. The photos are public-domain placeholders for real Academy photography. CC0 has little smiling-students / teacher-at-work stock, so for warmer faces supply a Pexels/Unsplash key or real photography.
+
 ---
 
 ## Routes inventory

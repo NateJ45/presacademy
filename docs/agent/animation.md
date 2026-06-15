@@ -119,11 +119,13 @@ Don't apply this class to other components -- the per-child delays are tuned for
 
 ---
 
-## Home hero slideshow (`HeroBackground.astro`)
+## Hero slideshows (`HeroSlideshow.astro` for the home split-hero, `HeroBackground.astro` for full-bleed heroes)
 
-The home hero can be a single static image (default) or a slow cross-fading slideshow with a subtle Ken Burns zoom. `homePage.heroImages` in Sanity controls this: one image renders the static hero, two or more render the slideshow.
+Two different hero layouts can show a slow Ken Burns slideshow off an images array. Both default to a single static image, only animate with two or more images, and both go still under `prefers-reduced-motion`. They are SEPARATE components because the layouts differ (a framed image beside text vs. a full-bleed background behind text).
 
-`HeroBackground.astro` owns the background markup (single `SanityImage` for 0-1 images, or stacked `.hero-slide` images for 2+) plus the readability overlays.
+**Home split-hero — `HeroSlideshow.astro` (CSS-only, no JS).** The home page (`index.astro`) renders its framed hero image (the `aspect-[3/2] lg:aspect-[4/5]` box beside the headline) with `HeroSlideshow`, fed `homePage.heroImages`. It is pure CSS: one `@keyframes` whose fade/zoom stops and each slide's `animation-delay` are GENERATED from the image count, so the cross-fade hands off cleanly for any number of slides with no interval timer. Each slide zooms `scale(1.04)` -> `scale(1.15)` from a rotating `transform-origin` (the pan). The keyframes are injected per-instance via `<style is:inline set:html>` under a `hkb-<id>` class so multiple instances never collide. First slide eager/high-priority (LCP), the rest lazy + decorative (`alt=""`). `0` images -> the empty well, `1` -> static, `2+` -> slideshow. (Built 2026-06-14; the home split-hero previously rendered only `heroImages[0]`.)
+
+**Full-bleed page heroes — `HeroBackground.astro` (JS-driven).** Used by `Hero.astro` for the full-bleed heroes on the interior pages. It owns the background markup (single `SanityImage` for 0-1 images, or stacked `.hero-slide` images for 2+) plus the readability overlays.
 
 **Why the slide CSS lives in `globals.css` (not a scoped component style):** the slides are rendered by the child `SanityImage` component and would not inherit a scoped style. Same reasoning as `.img-zoom` and `.hero-entry-stagger`.
 

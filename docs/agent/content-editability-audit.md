@@ -21,6 +21,7 @@ The goal state: every visitor-facing string is `{page?.field ?? 'inline fallback
 | **Events** (index/detail) | section eyebrows, event data | Mixed: recurring fallback list hardcoded; church orphans (`specialEyebrow/Headline`) |
 | **Courses / Faculty index** | hero, intros, empty states | Good-ish: filter labels in React islands hardcoded; `catalogIntro`/`directoryIntro` orphans |
 | **Contact / FAQ / Privacy / 404** | most copy | Good wiring, but **stale church defaults** seed wrong examples; `seoImage` ignored on contact+faq |
+| **Accessibility** (`accessibility.astro`, new 2026-06) | hero, SEO, body, last-reviewed date, sections | **Reference pattern.** Editable `accessibilityPage` singleton + complete static fallback (twin of Privacy); barrier-report contact single-sourced from `siteSettings` |
 | **Pricing / For You / Resources** | nearly all | **Reference pattern.** Only pricing stats band + 2 labels hardcoded |
 
 ## Per-page findings + fixes

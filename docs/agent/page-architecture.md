@@ -25,7 +25,7 @@ The starter ships these routes. Each is backed by a Sanity page singleton (conte
 | `/give` | giving singleton | |
 | `/faq` | `src/pages/faq.astro` | FAQ singleton + `faqItem` collection |
 | `/contact` | `src/pages/contact.astro` | Contact singleton + `form` |
-| `/privacy`, `/404` | privacy singleton; custom 404 | |
+| `/privacy`, `/accessibility`, `/404` | privacy + accessibility singletons (each with a complete static fallback); custom 404 | |
 | `/<slug>` | `src/pages/[slug].astro` | Generic `page` type -- editor-built pages from the block library (reserved-slug guard; zero pages = zero routes) |
 
 The interior-designer starter's opt-in modules (portfolio, journal, shop, e-design, etc.) are NOT active in this build; their docs under `docs/modules/` remain for template reuse only.
