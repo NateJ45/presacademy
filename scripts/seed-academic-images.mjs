@@ -32,6 +32,9 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const APPLY = process.argv.includes('--apply');
+// Re-set the home hero even when heroImages is already populated (used when
+// swapping in higher-resolution hero photos).
+const FORCE_HERO = process.argv.includes('--force-hero');
 
 function parseEnv(p) {
   if (!existsSync(p)) return {};
@@ -64,6 +67,9 @@ const IMAGES = {
   'acad-library-room':      { alt: 'A university library reading room',             from: '_stock/img_17.jpg' },
   'acad-table-group':       { alt: 'A small group studying around a table',         from: '_stock3/img_2.jpg' },
   'acad-writing-notes':     { alt: 'Taking notes by hand during study',             from: '_stock3/img_19.jpg' },
+  // High-resolution hero image (full-res; the rawpixel/stocksnap people shots
+  // above are only ~960px and pixelate in the large 4:5 hero crop).
+  'acad-students-canal':    { alt: 'Students walking across a university campus',     from: '_hires/img_10.jpg' },
   'acad-lecture-hall':      { alt: 'Students in a lecture hall',                     from: '_stock/img_2.jpg' },
   'acad-markers-notebooks': { alt: 'Notebooks and markers laid out for study',      from: '_stock/img_7.jpg' },
   'acad-campus-quad':       { alt: 'A green campus quad',                            from: '_stock/img_22.jpg' },
@@ -73,8 +79,9 @@ const IMAGES = {
   'acad-write-desk':        { alt: 'A desk set up for writing and study',           from: '_stock3/img_27.jpg' },
 };
 
-// The home hero slideshow, in fade order.
-const HERO = ['acad-friends-talking', 'acad-campus-walk', 'acad-study-overhead', 'acad-library-room', 'acad-table-group', 'acad-writing-notes'];
+// The home hero slideshow, in fade order. All six are high-resolution so the
+// large 4:5 desktop crop stays crisp on retina.
+const HERO = ['acad-campus-quad', 'acad-library-room', 'acad-campus-walk', 'acad-writing-notes', 'acad-campus-building', 'acad-students-canal'];
 // Pool used to fill empty covers / page heroes / event images (varied subjects).
 const POOL = ['acad-table-group', 'acad-study-overhead', 'acad-lecture-hall', 'acad-markers-notebooks', 'acad-library-room', 'acad-campus-quad', 'acad-campus-building', 'acad-reading-together', 'acad-woman-reading', 'acad-write-desk', 'acad-campus-walk', 'acad-writing-notes', 'acad-friends-talking'];
 const PORTRAITS = [3, 5, 8, 11, 12, 14, 15, 25, 32, 33, 40, 47, 52, 60, 68]; // pravatar.cc ids
@@ -127,7 +134,7 @@ async function main() {
   ]);
   const courses = allCourses.filter((c) => replaceable(c.f));
   const pages = allPages.filter((p) => replaceable(p.f));
-  const homeNeedsHero = !home || !home.n;
+  const homeNeedsHero = FORCE_HERO || !home || !home.n;
   console.log(`  home hero slideshow needed    : ${homeNeedsHero ? 'YES (6 images)' : 'no (already set)'}`);
   console.log(`  course covers to replace      : ${courses.length} of ${allCourses.length}`);
   console.log(`  faculty needing a portrait    : ${faculty.length}`);

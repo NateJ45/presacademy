@@ -39,7 +39,7 @@ const {
   aspectClass = 'aspect-[3/2] lg:aspect-[4/5]',
   sizes = '(min-width: 1024px) 520px, 90vw',
   eager = false,
-  width = 1200,
+  width = 1400,
   id = 'hero',
   class: extra = '',
 } = Astro.props;
@@ -47,6 +47,12 @@ const {
 const slides = (images ?? []).filter((im) => im?.asset);
 const n = slides.length;
 const uid = `hkb-${id}`;
+
+// Serve images already cropped to the desktop 4:5 aspect (height = width * 1.25).
+// Otherwise Sanity serves wide variants whose HEIGHT is too small for the tall
+// portrait crop, and object-cover upscales them so they look soft even from a
+// high-res source. The shorter 3:2 mobile box simply crops the 4:5 image's middle.
+const cropHeight = Math.round(width * 1.25);
 
 // Each image is the "front" image for ~7s; the loop is n * 7s long. Every image
 // owns 100/n% of the timeline, with a short cross-fade overlapping into the next.
@@ -97,6 +103,7 @@ ${slides
       <SanityImage
         source={slides[0]}
         width={width}
+        height={cropHeight}
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={eager ? 'high' : undefined}
         sizes={sizes}
@@ -111,10 +118,11 @@ ${slides
           <SanityImage
             source={img}
             width={width}
+            height={cropHeight}
             loading={eager && i === 0 ? 'eager' : 'lazy'}
             fetchpriority={eager && i === 0 ? 'high' : undefined}
             sizes={sizes}
-            quality={65}
+            quality={72}
             alt={i === 0 ? undefined : ''}
             class="h-full w-full object-cover"
           />
