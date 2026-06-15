@@ -59,11 +59,12 @@ The initial `--apply` run patched 22 documents (8 course covers, 5 faculty portr
 
 #### School update: academic photos (`scripts/seed-academic-images.mjs`, 2026-06-14)
 
-The pools above are church-era (`teach-*` / `study-*` / `community-*`), off-brand for a school. `seed-academic-images.mjs` supersedes them: it sets the home hero slideshow (`homePage.heroImages`, 6 images) and REPLACES every empty OR church-era course cover + page hero with an academic CC0 / public-domain photo from `src/assets/placeholders/acad-*.jpg` (people learning, campus, library, study). Unlike the only-empty seeder, it also overwrites the known church placeholders, but it still protects real editor images and already-seeded `acad-*`, so it stays idempotent. Faculty headshots (pravatar) are left as-is. Sourced via Openverse (rawpixel / Wikimedia / StockSnap), all public-domain, so no attribution is owed. (CC0 is thin on smiling-students / teacher-at-work stock, which lives on key-gated Pexels/Unsplash, so the set leans toward engaged-people + places + study details.) The one-off curation tooling is gitignored scratch under `scripts/_*`.
+The pools above are church-era (`teach-*` / `study-*` / `community-*`), off-brand for a school. `seed-academic-images.mjs` supersedes them: it sets the home hero slideshow (`homePage.heroImages`, 6 images) and REPLACES every empty OR church-era course cover + page hero with an academic CC0 / public-domain photo from `src/assets/placeholders/acad-*.jpg` (people learning, campus, library, study). Unlike the only-empty seeder, it also overwrites the known church placeholders, but it still protects real editor images and already-seeded `acad-*`, so it stays idempotent. Faculty headshots (pravatar) are left as-is. Sourced via Openverse (rawpixel / Wikimedia / StockSnap), all public-domain, so no attribution is owed. (CC0 is thin on smiling-students / teacher-at-work stock, which lives on key-gated Pexels/Unsplash, so the set leans toward engaged-people + places + study details.) The one-off curation tooling is gitignored scratch under `scripts/_*`. **Hero images must be HIGH-RES** (~2000px+): the home hero's 4:5 portrait crop magnifies low-res sources into visible pixelation (the first pass shipped ~960px rawpixel/stocksnap people shots that pixelated; the fix re-sourced full-res Wikimedia images and made `HeroSlideshow` serve 4:5-cropped variants). Use `--force-hero` to overwrite an already-set hero.
 
 ```
 node scripts/seed-academic-images.mjs          # dry run — what it would set/replace
 node scripts/seed-academic-images.mjs --apply  # set hero slideshow + replace covers/heroes
+node scripts/seed-academic-images.mjs --apply --force-hero  # also overwrite an already-set hero
 ```
 
 ### Portrait orientation caps

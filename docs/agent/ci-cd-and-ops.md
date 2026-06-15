@@ -64,9 +64,9 @@ Hourly, confirms the live site's key pages return 200; a failed run notifies you
 `FormRenderer.tsx` renders a Turnstile widget and requires + sends its token to Web3Forms, but ONLY when `PUBLIC_TURNSTILE_SITEKEY` is set. With no key the form behaves exactly as before (the honeypot still runs), so this is safe to ship dark.
 
 **To activate:**
-1. Create a Turnstile site at Cloudflare (dash.cloudflare.com -> Turnstile). You get a **sitekey** (public) and a **secret key**.
-2. Set `PUBLIC_TURNSTILE_SITEKEY=<sitekey>` in your local `.env` AND in the Cloudflare build environment (where the production build runs), so the widget renders in the deployed site.
-3. In the Web3Forms dashboard, enable Cloudflare Turnstile and paste your **secret key** so the token is actually verified server-side.
+1. Create a Turnstile site at Cloudflare (dash.cloudflare.com -> Turnstile). You get a **sitekey** (public) and a **secret key**. Add your production hostname to the site's **allowed domains** (and `localhost` if you want to test locally), or the widget renders but shows "Unable to connect to website" off-domain.
+2. Set `PUBLIC_TURNSTILE_SITEKEY=<sitekey>` in your local `.env` AND in the Cloudflare build environment (where the production build runs). The `PUBLIC_` prefix is REQUIRED: Astro/Vite only exposes `PUBLIC_*` vars to the browser, so a server-only name like `CLOUDFLARE_TURNSTILE_SITE_KEY` never reaches the widget and it won't render.
+3. In the Web3Forms dashboard, enable Cloudflare Turnstile and paste your **secret key** so the token is actually verified server-side. The secret does NOT go in `.env`.
 4. Also worth doing once: a manual end-to-end submission test after launch (a synthetic test would send real submissions, so keep it manual or route it to a test inbox).
 
 ## Secrets & variables summary

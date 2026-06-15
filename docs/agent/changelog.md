@@ -3,6 +3,25 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-14 — Home hero pixelation fix (commit 1d942b7). The slideshow looked
+pixelated because (a) three of the six placeholder images were only ~960px
+(rawpixel/stocksnap cap their hotlink downloads) and (b) `HeroSlideshow.astro`
+requested landscape-width variants that object-cover then upscaled ~1.85x to fill
+the tall 4:5 portrait crop. Two fixes: re-sourced the hero from high-res CC0 only
+(2000-5327px, Wikimedia full-res), and made `HeroSlideshow` request 4:5-CROPPED
+variants (`height = width * 1.25`) so Sanity serves tall portrait images rather
+than short landscapes (upscale dropped to 1.06x); also bumped width 1200->1400,
+quality 65->72, the declared desktop size 520->600px. Several otherwise-high-res
+CC0 people shots were rejected for incongruous content (a Wikipedia globe logo,
+Japanese festival banners, a clinical PT lab) — high-res CC0 has no warm
+"happy faces" academic stock, so the hero is campus + study + places (a warmer set
+needs a Pexels/Unsplash key or real photography). `seed-academic-images.mjs` gained
+a `--force-hero` flag to overwrite an already-populated hero. **Lesson:** hero
+images need high-res sources because the 4:5 portrait crop magnifies any shortfall.
+Turnstile aside: the sitekey env var must be `PUBLIC_TURNSTILE_SITEKEY` — the
+`PUBLIC_` prefix is what exposes it to the browser, so a `CLOUDFLARE_*`-named var
+stays server-side and the widget never renders.*
+
 *2026-06-14 — CI/CD + operational hardening to pair with the staging workflow
 (full reference: docs/agent/ci-cd-and-ops.md). All committed and ready; the pieces
 that need an external account stay inert (warn + skip) until their secret/variable

@@ -174,6 +174,7 @@ The school's placeholder-photo seeder. It sets the home hero to its 6-image Ken 
 ```bash
 node scripts/seed-academic-images.mjs            # dry run: what it would set/replace
 node scripts/seed-academic-images.mjs --apply    # set hero + replace covers/heroes
+node scripts/seed-academic-images.mjs --apply --force-hero  # also OVERWRITE an already-set hero
 ```
 
 The curated picks are bundled in `src/assets/placeholders/acad-*.jpg`; the one-off Openverse curation tooling (probe + collector + downloads) is gitignored scratch under `scripts/_*`. The photos are public-domain placeholders for real Academy photography. CC0 has little smiling-students / teacher-at-work stock, so for warmer faces supply a Pexels/Unsplash key or real photography.
