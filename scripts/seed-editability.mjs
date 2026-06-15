@@ -541,20 +541,28 @@ async function seedCourseSeo() {
   return n;
 }
 
-// One-off orphan cleanup: homePage.heroImage is a legacy field replaced by
-// heroImages[] (no longer in the schema, not queried, not rendered). Unset the
-// stale value so Studio stops flagging it as an unknown field. The image ASSET is
-// preserved; idempotent (no-op once gone).
+// Orphan cleanup: homePage and aboutPage were both re-schema'd and no longer
+// define a `heroImage` field (homePage uses heroImages[]; aboutPage has a
+// text-only hero). seed-academic-images.mjs had set heroImage on them anyway,
+// leaving a stale value that Studio flags as an "unknown field". Unset it on any
+// document of a type that no longer defines heroImage (the image ASSET is
+// preserved). Idempotent (no-op once gone). The other page singletons keep their
+// heroImage -- it is a valid field in their schema.
+const HERO_IMAGE_ORPHAN_TYPES = ['homePage', 'aboutPage'];
 async function cleanupOrphans() {
-  console.log('\n(E) Orphan cleanup:');
-  const home = await client.fetch(`*[_type == "homePage"][0]{ _id, "has": defined(heroImage) }`);
-  if (home?.has) {
-    console.log(`  ${APPLY ? 'unset' : 'would unset'}: homePage.heroImage (legacy orphan field)`);
-    if (APPLY) await client.patch(home._id).unset(['heroImage']).commit();
-    return 1;
+  console.log('\n(E) Orphan cleanup (heroImage on re-schema\'d pages):');
+  let n = 0;
+  for (const type of HERO_IMAGE_ORPHAN_TYPES) {
+    const doc = await client.fetch(`*[_type == $type][0]{ _id, "has": defined(heroImage) }`, { type });
+    if (doc?.has) {
+      console.log(`  ${APPLY ? 'unset' : 'would unset'}: ${doc._id}.heroImage (legacy orphan field)`);
+      if (APPLY) await client.patch(doc._id).unset(['heroImage']).commit();
+      n += 1;
+    } else {
+      console.log(`  ${type}.heroImage: already clean`);
+    }
   }
-  console.log('  homePage.heroImage: already clean');
-  return 0;
+  return n;
 }
 
 // ════════════════════════════════════════════════════════════════════════════

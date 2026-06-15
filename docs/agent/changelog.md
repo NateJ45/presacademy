@@ -50,8 +50,11 @@ baked into page code). NOT seeded: phone + socials (need real values). A same-da
 SEO text fields (`seoTitle`/`seoDescription`) on the 11 page singletons + 8
 courses (render-neutral, mirroring each page's `.astro` fallback; `seoImage` left
 as the intentional optional since per-page OG images are generated at build
-time), unset the legacy `homePage.heroImage` orphan (it tripped a Studio "unknown
-field" warning; superseded by `heroImages[]`), and fixed `generate-og-pages.mjs`
+time), unset the legacy `heroImage` orphan on the two re-schema'd pages,
+`homePage` and `aboutPage` (both tripped a Studio "unknown field" warning -- those
+pages no longer define the field, so seed-academic-images.mjs had left a stale
+value; the other singletons keep their valid `heroImage`), and fixed
+`generate-og-pages.mjs`
 to use the clean `heroHeadline` for the OG-card tagline instead of the
 brand-suffixed `seoTitle` (no more doubled wordmark; the home + about cards
 refreshed). Verified render-neutral against the built HTML (privacy PT headings, FAQ 5-category
