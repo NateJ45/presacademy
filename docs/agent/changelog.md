@@ -3,6 +3,18 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 (later) — OG / social-card restyle to match the header logo.
+`scripts/lib/render-og.mjs` now renders the wordmark in the site's two-line logo
+style: ink "The" + green "Presbyterian" (the keyword-emphasis device) with a
+smaller, muted "Academy" tucked beneath, instead of one flat near-black line. The
+whole group (wordmark + brass rule + tagline) is vertically centered so cards with
+1 to 3 tagline lines stay balanced. The flat `wordmark` string is parsed into the
+header's lead/keyword/sub structure (mirrors Header.astro), so both OG generators
+pick it up. Also de-churched the DEFAULT card's tagline in
+`scripts/generate-og-default.mjs` ("Equipping tomorrow's church" ->
+"Reformed theological formation for everyday leaders"). All 13 OG PNGs
+regenerated and visually verified.*
+
 *2026-06-15 — Page-builder blocks overhaul + editability seeding remediation
 (commits c800211, 2fe3ce2, 296750f).
 
