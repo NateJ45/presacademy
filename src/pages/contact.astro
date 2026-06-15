@@ -79,10 +79,12 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
             <MapPin size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
             <span>{addressLine}<br />{cityStateZip}</span>
           </li>
-          <li class="flex items-start gap-s">
-            <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-            <a href={telHref(settings.phone)} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors">{settings.phone}</a>
-          </li>
+          {settings.phone && (
+            <li class="flex items-start gap-s">
+              <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+              <a href={telHref(settings.phone)} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors">{settings.phone}</a>
+            </li>
+          )}
           <li class="flex items-start gap-s">
             <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
             <a href={`mailto:${settings.email}`} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors break-all">{settings.email}</a>

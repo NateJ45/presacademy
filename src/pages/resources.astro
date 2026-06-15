@@ -53,10 +53,14 @@ const schemas = [
   {!hasSections && (
     <section class="bg-background">
       <div class="mx-auto max-w-content px-m pb-section-lg">
-        <p class="max-w-2xl text-foreground/80 italic">
-          New essays are on the way. In the meantime, the best way to learn from our faculty is{' '}
-          <a href="/courses" class="text-link underline underline-offset-2">in a course</a>.
-        </p>
+        {page?.emptyStateBody ? (
+          <p class="max-w-2xl text-foreground/80 italic">{page.emptyStateBody}</p>
+        ) : (
+          <p class="max-w-2xl text-foreground/80 italic">
+            New essays are on the way. In the meantime, the best way to learn from our faculty is{' '}
+            <a href="/courses" class="text-link underline underline-offset-2">in a course</a>.
+          </p>
+        )}
       </div>
     </section>
   )}

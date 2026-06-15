@@ -158,10 +158,10 @@ const pillGhost =
             </div>
 
             <div class="mt-l flex flex-col gap-3">
-              <a href="/get-started" class={pillPrimary}>Express interest</a>
-              <a href="/get-started" class={pillGhost}>Request information</a>
+              <a href="/get-started" class={pillPrimary}>{coursesPage?.detailExpressLabel ?? 'Express interest'}</a>
+              <a href="/get-started" class={pillGhost}>{coursesPage?.detailRequestLabel ?? 'Request information'}</a>
             </div>
-            <p class="mt-3 text-center text-sm text-foreground/70">You can visit the first session free before you decide.</p>
+            <p class="mt-3 text-center text-sm text-foreground/70">{coursesPage?.detailTrustLine ?? 'You can visit the first session free before you decide.'}</p>
             {course.syllabusUrl && (
               <a href={course.syllabusUrl} target="_blank" rel="noopener noreferrer" class="link-underline mt-3 block text-center text-sm font-semibold text-link hover:text-primary-dark transition-colors">Download the syllabus</a>
             )}
