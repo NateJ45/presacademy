@@ -3,6 +3,44 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 — Page-builder blocks overhaul + editability seeding remediation
+(commits c800211, 2fe3ce2, 296750f).
+
+**Page builder:** stripped the retired Romanesque arch from the block library.
+Removed the `arched` toggle from Image+text and Feature cards (images are now
+always soft-rounded), renamed `sectionArchShowcase` -> `sectionMediaShowcase`
+(zero dataset usage made the type rename data-safe) and its components
+(`ArchMedia` -> `ShowcaseMedia`, `ArchShowcaseBlock` -> `MediaShowcaseBlock`),
+and swapped the `arch-top` frame for `rounded-lg`. De-churched the editor-facing
+copy (Stats/CTA-band/Image+text/FAQ-list examples, and the "Chapel green/deep"
+background tones -> "Forest green/deep"). Added four school blocks:
+**Resources/downloads** (`sectionResources`, with a file-asset deref in the
+SECTION_MEMBERS GROQ fragment), **Key dates / deadlines** (`sectionKeyDates`),
+**Tuition tiers** (`sectionPricingTiers`, reusing a new shared
+`PricingTierCards.astro` extracted from pricing.astro), and **Testimonials** as a
+Dynamic-list source (quote-shaped card).
+
+**Editability seeding:** the schemas were mostly complete but the live dataset
+was under-seeded — many pages rendered code fallbacks while Studio looked blank,
+and five live routes had no document at all. Added the last fields
+(pricingPage.stats, coursesPage.detail{TrustLine,ExpressLabel,RequestLabel},
+resourcesPage.emptyStateBody), aligned the FAQ categories to the school set,
+fixed the /contact blank-phone `tel:` bug, and reworded the church-era /privacy
+fallback. Then `scripts/seed-editability.mjs` (render-neutral, only-empty +
+createIfNotExists, dry-run by default) patched 40 empty fields across the 10
+existing singletons (closing-CTA bands, the new fields, nav/footer menus +
+designer credit) and created 24 docs: the 5 missing singletons (contact, events,
+404, privacy, accessibility — the legal bodies seeded as Portable Text sized via
+the `h3` style to match the static fallback), 5 faqCategory, 11 faqItem, 3
+recurring event docs. Dataset went 39 -> 63 published docs; /faq and /events now
+render from real editable content (the FAQ JSON-LD stops shipping invented prices
+baked into page code). NOT seeded: phone + socials (need real values). Verified
+render-neutral against the built HTML (privacy PT headings, FAQ 5-category
+grouping, events cards, pricing extraction) and the green production build (incl.
+3 new /events/[slug] detail pages from the recurring events). Note: a pre-
+existing dev-only React SSR "Invalid hook call" issue (two React copies in Vite's
+deps_ssr) hangs the preview screenshot tool; the build is unaffected.*
+
 *2026-06-14 — Home hero pixelation fix (commit 1d942b7). The slideshow looked
 pixelated because (a) three of the six placeholder images were only ~960px
 (rawpixel/stocksnap cap their hotlink downloads) and (b) `HeroSlideshow.astro`
