@@ -258,6 +258,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Performance budgets + Lighthouse | `docs/agent/performance.md` |
 | Content data + Sanity integration | `docs/agent/sanity.md` |
 | Deployment + env vars + rebuild model | `docs/agent/deployment.md` |
+| CI/CD, staging preview, Sanity backups, uptime, Turnstile (ops hardening) | `docs/agent/ci-cd-and-ops.md` |
 | Editor-driven vs hardcoded | `docs/agent/editor-vs-hardcoded.md` |
 | Change history | `docs/agent/changelog.md` |
 | New-project setup runbook + pre-launch checklist | `docs/bootstrap/NEW-PROJECT.md`, `docs/bootstrap/setup-checklist.md` |

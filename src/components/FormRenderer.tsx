@@ -6,7 +6,7 @@
 // || fallbackEmail) so a freshly-seeded keyless form still reaches the church.
 // A11y + honeypot patterns match NewsletterSignup.tsx.
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Embed from './Embed';
 import { site } from '@/data/site';
 
@@ -46,6 +46,23 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const ENV_WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
+
+// Cloudflare Turnstile (anti-spam). Inert until PUBLIC_TURNSTILE_SITEKEY is set:
+// no key means no widget and the form behaves exactly as before. When set, the
+// widget renders, a token is required, and it is sent to Web3Forms. (Enable
+// Turnstile in the Web3Forms dashboard with your SECRET key for it to actually
+// be verified server-side.)
+const TURNSTILE_SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY as string | undefined;
+const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+
+declare global {
+  interface Window {
+    turnstile?: {
+      reset: (widget?: string) => void;
+      getResponse: (widget?: string) => string | undefined;
+    };
+  }
+}
 
 const inputCls =
   'w-full px-s py-s border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring min-h-[44px]';
@@ -87,6 +104,20 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const formRef = useRef<HTMLFormElement | null>(null);
+
+  // Load the Turnstile script once when a sitekey is configured. The widget div
+  // rendered below auto-renders; its hidden `cf-turnstile-response` input holds
+  // the token we read on submit.
+  useEffect(() => {
+    if (!TURNSTILE_SITEKEY || typeof document === 'undefined') return;
+    if (document.getElementById('cf-turnstile-script')) return;
+    const s = document.createElement('script');
+    s.id = 'cf-turnstile-script';
+    s.src = TURNSTILE_SCRIPT;
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  }, []);
 
   function setField(name: string, value: string | boolean) {
     setValues((v) => ({ ...v, [name]: value }));
@@ -132,6 +163,17 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       return;
     }
 
+    // Cloudflare Turnstile gate (only when a sitekey is configured).
+    let turnstileToken = '';
+    if (TURNSTILE_SITEKEY) {
+      turnstileToken =
+        formRef.current?.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value || '';
+      if (!turnstileToken) {
+        setErrorMsg('Please complete the verification challenge and try again.');
+        return;
+      }
+    }
+
     setStatus('submitting');
     try {
       let ok = false;
@@ -150,6 +192,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
             access_key: accessKey,
             subject: `${form.title || 'Website'} inquiry`,
             from_name: `${site.name} website`,
+            ...(turnstileToken ? { 'cf-turnstile-response': turnstileToken } : {}),
             ...plainValues(values),
           }),
         });
@@ -160,10 +203,12 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       else {
         setStatus('error');
         setErrorMsg('Something went wrong sending your message. Please try again, or email us directly.');
+        if (TURNSTILE_SITEKEY) window.turnstile?.reset(); // tokens are single-use
       }
     } catch {
       setStatus('error');
       setErrorMsg('Could not reach the server. Check your connection and try again.');
+      if (TURNSTILE_SITEKEY) window.turnstile?.reset();
     }
   }
 
@@ -278,6 +323,9 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
             );
           })}
         </div>
+
+        {/* Cloudflare Turnstile widget — only when a sitekey is configured. */}
+        {TURNSTILE_SITEKEY && <div className="mt-m cf-turnstile" data-sitekey={TURNSTILE_SITEKEY} />}
 
         <button
           type="submit"

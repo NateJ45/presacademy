@@ -1,0 +1,62 @@
+name: Sanity dataset backup
+
+# Nightly export of the production Sanity dataset (documents + assets) so a bad
+# mutation or an accidental "Remove field" in Studio is always recoverable.
+# Activates once the SANITY_AUTH_TOKEN secret is set (a read token is enough);
+# until then it logs a warning and skips. Restore steps: docs/agent/ci-cd-and-ops.md.
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # daily 07:00 UTC
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SANITY_AUTH_TOKEN not set; skipping backup. See docs/agent/ci-cd-and-ops.md."
+          fi
+
+  export:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install studio dependencies
+        run: npm ci --prefix studio
+
+      - name: Export production dataset
+        working-directory: studio
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          # This project's PUBLIC Sanity id (not a secret; it ships in the client bundle).
+          SANITY_STUDIO_PROJECT_ID: uz2sl3zp
+          SANITY_STUDIO_DATASET: production
+        run: |
+          STAMP=$(date -u +%Y-%m-%d)
+          npx sanity dataset export production "../sanity-backup-$STAMP.tar.gz"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-backup
+          path: sanity-backup-*.tar.gz
+          # GitHub keeps artifacts 90 days. For longer or off-site retention,
+          # push the tarball to R2/S3 here instead.
+          retention-days: 90

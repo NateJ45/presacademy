@@ -3,6 +3,32 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-14 — CI/CD + operational hardening to pair with the staging workflow
+(full reference: docs/agent/ci-cd-and-ops.md). All committed and ready; the pieces
+that need an external account stay inert (warn + skip) until their secret/variable
+is added.
+- **CI gates** (`.github/workflows/ci.yml`): added a Sanity-types FRESHNESS check
+  (fails if `npm run typegen` would change the committed `sanity.types.ts`, the
+  bug that shipped earlier today), `npm run lint`, and a Lighthouse-CI job
+  (`lighthouserc.json`, desktop budgets; a11y/SEO/best-practices hard, performance
+  a warning; `continue-on-error` until consistently green). Now also runs on pushes
+  to `staging`.
+- **Staging preview** (`deploy-staging.yml`): pushes to `staging` deploy a separate
+  `presacademy-staging` Worker, leaving production untouched (needs
+  `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`).
+- **Nightly Sanity backup** (`sanity-backup.yml`): `sanity dataset export` to an
+  artifact (needs `SANITY_AUTH_TOKEN`); restore runbook in the ops doc.
+- **Uptime check** (`uptime.yml`): hourly 200-check of the key pages (needs the
+  `SITE_URL` variable).
+- **Form spam protection**: `FormRenderer.tsx` renders + enforces a Cloudflare
+  Turnstile token, gated behind `PUBLIC_TURNSTILE_SITEKEY` (inert with no key, so no
+  regression; the honeypot still runs).
+- **PR template** (`.github/pull_request_template.md`) codifies the definition of
+  done (CI green, types regenerated + studio:deploy on schema changes, both
+  themes/viewports, Lighthouse held, docs updated, no em-dashes/AI-tells).
+Deliberately skipped for now as overkill at this scale: Sentry, Renovate/Dependabot,
+a full alerting stack.*
+
 *2026-06-14 — Accessibility page, AA contrast fix, Ken Burns hero slideshow, and
 an academic-photo placeholder sweep (commits c803da6 -> 491215e, merged to main).
 Adopted a **staging-first git workflow**: work lands on `staging`, gets verified
