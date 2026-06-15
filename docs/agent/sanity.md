@@ -63,6 +63,14 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 > the companion to the editability pass: the new fields are empty until this runs, so
 > Studio would otherwise show blanks where the live site shows real copy.
 
+> **Full editability seed (2026-06-15).** `scripts/seed-editability.mjs` extended this across the whole
+> site: it seeded the closing-CTA bands + the new fields on all singletons and **created the
+> previously-missing docs** — the `contactPage` / `eventsPage` / `notFoundPage` / `privacyPage` /
+> `accessibilityPage` singletons (legal bodies as Portable Text), 5 `faqCategory`, 11 `faqItem`, and 3
+> recurring `event` docs — taking the dataset 39 -> 63 published docs. Render-neutral, only-empty +
+> `createIfNotExists`, idempotent. So `/faq` and `/events` now render from real editable content rather
+> than copy hardcoded in the page. See `OPERATIONS.md` and the 2026-06-15 changelog.
+
 **Settings and globals:**
 - `siteSettings` (singleton) — school name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links; a **`funder`** string (renders the footer line "Made possible by the [name]" on every page; clear it to hide the line); a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
 
@@ -80,7 +88,7 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 - `ctaBlock` — reusable object type (label + linkType + target) embedded in other schemas.
 
 **Page singletons:**
-- Core: `homePage`, `aboutPage`, `faqPage`, `contactPage`, `eventsPage`, `privacyPage`, `notFoundPage`. `homePage` and `aboutPage` were rewritten to school fields in the 2026-06-14 editability pass — see the field groups below.
+- Core: `homePage`, `aboutPage`, `faqPage`, `contactPage`, `eventsPage`, `privacyPage`, `accessibilityPage`, `notFoundPage` (all created + seeded as of 2026-06-15). `homePage` and `aboutPage` were rewritten to school fields in the 2026-06-14 editability pass — see the field groups below.
 - Per-page school singletons (via the `definePageSingleton` factory, in `schoolPages.ts`): `coursesPage`, `facultyPage`, `pricingPage`, `getStartedPage`, `forYouPage`, `resourcesPage`.
 - `page` — generic type for brand-new pages at `/<slug>`, built entirely from the block library.
 

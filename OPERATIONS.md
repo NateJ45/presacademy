@@ -179,6 +179,15 @@ node scripts/seed-academic-images.mjs --apply --force-hero  # also OVERWRITE an 
 
 The curated picks are bundled in `src/assets/placeholders/acad-*.jpg`; the one-off Openverse curation tooling (probe + collector + downloads) is gitignored scratch under `scripts/_*`. The photos are public-domain placeholders for real Academy photography. CC0 has little smiling-students / teacher-at-work stock, so for warmer faces supply a Pexels/Unsplash key or real photography.
 
+### Mirror the FULL editability pass into Studio (`seed-editability.mjs`)
+
+The broader companion to `seed-page-copy.mjs` (added 2026-06-15). Render-neutral (it seeds the exact `.astro` fallback copy, so the live site does not change) and idempotent. It does only-empty `setIfMissing` patches on the 10 existing singletons (closing-CTA bands + the pricing stats / course-detail labels / resources empty-state + the nav/footer menus + designer credit), PLUS `createIfNotExists` for the docs that were missing entirely: the 5 singletons `contactPage` / `eventsPage` / `notFoundPage` / `privacyPage` / `accessibilityPage` (the legal bodies as Portable Text), 5 `faqCategory`, 11 `faqItem`, and 3 recurring `event` docs. It took the dataset 39 -> 63 published docs so Studio mirrors the live site, and made `/faq` + `/events` render from real editable content. NOT seeded: `siteSettings.phone` + socials (need real values).
+
+```bash
+node scripts/seed-editability.mjs            # dry run: 40 field patches + 24 new docs
+node scripts/seed-editability.mjs --apply    # write to the live dataset, then studio:deploy + rebuild
+```
+
 ---
 
 ## Routes inventory
