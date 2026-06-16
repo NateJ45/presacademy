@@ -58,14 +58,19 @@ const ENV_WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undef
 const WEB3FORMS_SHARED_HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2';
 const HCAPTCHA_SITEKEY =
   (import.meta.env.PUBLIC_HCAPTCHA_SITEKEY as string | undefined) || WEB3FORMS_SHARED_HCAPTCHA_SITEKEY;
-const HCAPTCHA_SCRIPT = 'https://js.hcaptcha.com/1/api.js';
+// Explicit render (render=explicit) so we control the theme and can re-render the
+// widget when the visitor toggles light/dark; the onload callback flips a ready flag.
+const HCAPTCHA_SCRIPT = 'https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHcaptchaLoad';
 
 declare global {
   interface Window {
     hcaptcha?: {
-      reset: (widget?: string) => void;
-      getResponse: (widget?: string) => string | undefined;
+      render: (container: HTMLElement, params: { sitekey: string; theme?: 'light' | 'dark' }) => string;
+      remove: (widgetId: string) => void;
+      reset: (widgetId?: string) => void;
+      getResponse: (widgetId?: string) => string | undefined;
     };
+    onHcaptchaLoad?: () => void;
   }
 }
 
@@ -111,12 +116,33 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const formRef = useRef<HTMLFormElement | null>(null);
+  // hCaptcha: ready flag (script loaded), resolved theme, the widget container,
+  // and the rendered widget id (undefined until it renders).
+  const [hcaptchaReady, setHcaptchaReady] = useState(false);
+  const [hcaptchaDark, setHcaptchaDark] = useState(false);
+  const hcaptchaRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | undefined>(undefined);
 
-  // Load the hCaptcha script once on the Web3Forms path. The widget div rendered
-  // below auto-renders; its hidden `h-captcha-response` textarea holds the token
-  // we read on submit.
+  // Track the resolved theme (the `dark` class ThemeToggle toggles on <html>) so
+  // the widget renders in a matching theme and recolors live on a toggle.
   useEffect(() => {
     if (!useHcaptcha || typeof document === 'undefined') return;
+    const read = () => setHcaptchaDark(document.documentElement.classList.contains('dark'));
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, [useHcaptcha]);
+
+  // Load the hCaptcha script once on the Web3Forms path. Explicit render, so the
+  // onload callback only flips the ready flag; the next effect does the rendering.
+  useEffect(() => {
+    if (!useHcaptcha || typeof document === 'undefined') return;
+    if (window.hcaptcha) {
+      setHcaptchaReady(true);
+      return;
+    }
+    window.onHcaptchaLoad = () => setHcaptchaReady(true);
     if (document.getElementById('hcaptcha-script')) return;
     const s = document.createElement('script');
     s.id = 'hcaptcha-script';
@@ -125,6 +151,24 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
     s.defer = true;
     document.head.appendChild(s);
   }, [useHcaptcha]);
+
+  // Render the widget once ready, and re-render it (remove + render) whenever the
+  // theme flips, since hCaptcha only reads the theme at render time.
+  useEffect(() => {
+    if (!useHcaptcha || !hcaptchaReady || !window.hcaptcha || !hcaptchaRef.current) return;
+    if (widgetIdRef.current !== undefined) {
+      try {
+        window.hcaptcha.remove(widgetIdRef.current);
+      } catch {
+        /* widget already gone */
+      }
+      widgetIdRef.current = undefined;
+    }
+    widgetIdRef.current = window.hcaptcha.render(hcaptchaRef.current, {
+      sitekey: HCAPTCHA_SITEKEY,
+      theme: hcaptchaDark ? 'dark' : 'light',
+    });
+  }, [useHcaptcha, hcaptchaReady, hcaptchaDark]);
 
   function setField(name: string, value: string | boolean) {
     setValues((v) => ({ ...v, [name]: value }));
@@ -170,12 +214,13 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       return;
     }
 
-    // hCaptcha gate (Web3Forms submit path only). Read the token hCaptcha wrote
-    // into its hidden textarea; Web3Forms verifies it server-side for free.
+    // hCaptcha gate (Web3Forms submit path only). Read the token via the API. Only
+    // block when the widget actually rendered: if hCaptcha failed to load we let the
+    // post through (the honeypot still runs, and Web3Forms rejects a tokenless
+    // submission server-side once hCaptcha is enabled there).
     let hcaptchaToken = '';
-    if (useHcaptcha) {
-      hcaptchaToken =
-        formRef.current?.querySelector<HTMLTextAreaElement>('[name="h-captcha-response"]')?.value || '';
+    if (useHcaptcha && widgetIdRef.current !== undefined) {
+      hcaptchaToken = (window.hcaptcha?.getResponse(widgetIdRef.current) || '').trim();
       if (!hcaptchaToken) {
         setErrorMsg('Please complete the verification challenge and try again.');
         return;
@@ -211,12 +256,12 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       else {
         setStatus('error');
         setErrorMsg('Something went wrong sending your message. Please try again, or email us directly.');
-        if (useHcaptcha) window.hcaptcha?.reset(); // tokens are single-use
+        if (useHcaptcha) window.hcaptcha?.reset(widgetIdRef.current); // tokens are single-use
       }
     } catch {
       setStatus('error');
       setErrorMsg('Could not reach the server. Check your connection and try again.');
-      if (useHcaptcha) window.hcaptcha?.reset();
+      if (useHcaptcha) window.hcaptcha?.reset(widgetIdRef.current);
     }
   }
 
@@ -332,8 +377,9 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
           })}
         </div>
 
-        {/* hCaptcha widget: Web3Forms submit path only; verified free by Web3Forms. */}
-        {useHcaptcha && <div className="mt-m h-captcha" data-sitekey={HCAPTCHA_SITEKEY} data-captcha="true" />}
+        {/* hCaptcha renders explicitly into this container (effects above) so it
+            matches and follows the site theme. Web3Forms submit path only. */}
+        {useHcaptcha && <div ref={hcaptchaRef} className="mt-m" />}
 
         <button
           type="submit"

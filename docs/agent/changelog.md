@@ -3,6 +3,19 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 (later) — hCaptcha now matches and follows the site theme.
+`FormRenderer.tsx` switched from auto-render to explicit render (`render=explicit`
++ an `onHcaptchaLoad` ready flag): a MutationObserver watches the `dark` class on
+<html> and re-renders the widget with `theme: 'light' | 'dark'` whenever the
+visitor toggles, since hCaptcha only reads its theme at render time. The submit
+gate now reads the token via `hcaptcha.getResponse(widgetId)` and only blocks when
+the widget actually rendered (graceful if the script fails to load: the honeypot
+still runs and Web3Forms rejects a tokenless post server-side). Verified on the
+production build in both themes with Playwright (light page -> light widget;
+toggling to dark live re-renders the iframe with `theme=dark`). Also removed the
+now-dead `PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` lines from
+local `.env`.*
+
 *2026-06-15 (later) — Swapped form spam protection from Cloudflare Turnstile to
 hCaptcha, because Web3Forms gates Turnstile behind a paid plan but verifies
 hCaptcha for free. `FormRenderer.tsx` now loads the hCaptcha script
