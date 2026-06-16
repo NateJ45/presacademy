@@ -59,15 +59,16 @@ For off-site or longer-than-90-day retention, push the tarball to R2/S3 in the w
 
 Hourly, confirms the live site's key pages return 200; a failed run notifies you through GitHub. **To activate:** set the repo variable `SITE_URL` to the live origin (e.g. `https://www.presbyterianacademy.org`). GitHub's scheduler is best-effort, so for real monitoring also point a dedicated service (UptimeRobot's free tier) at the homepage.
 
-## Form spam protection — Cloudflare Turnstile
+## Form spam protection — hCaptcha (via Web3Forms)
 
-`FormRenderer.tsx` renders a Turnstile widget and requires + sends its token to Web3Forms, but ONLY when `PUBLIC_TURNSTILE_SITEKEY` is set. With no key the form behaves exactly as before (the honeypot still runs), so this is safe to ship dark.
+`FormRenderer.tsx` renders an hCaptcha widget and requires + sends its token on the Web3Forms submit path. Web3Forms gates Cloudflare Turnstile behind a paid plan but verifies **hCaptcha for free** via its shared sitekey, so that is what we use. The widget defaults to Web3Forms' shared hCaptcha sitekey (`50b2fe65-b00b-4b9e-ad62-3ba471098be2`): zero-config, because Web3Forms verifies the token with its own secret server-side, so there is no hCaptcha account to create and no secret for us to store. Mailto / Formspree fallbacks skip the widget (only the Web3Forms path is gated).
 
 **To activate:**
-1. Create a Turnstile site at Cloudflare (dash.cloudflare.com -> Turnstile). You get a **sitekey** (public) and a **secret key**. Add your production hostname to the site's **allowed domains** (and `localhost` if you want to test locally), or the widget renders but shows "Unable to connect to website" off-domain.
-2. Set `PUBLIC_TURNSTILE_SITEKEY=<sitekey>` in your local `.env` AND in the Cloudflare build environment (where the production build runs). The `PUBLIC_` prefix is REQUIRED: Astro/Vite only exposes `PUBLIC_*` vars to the browser, so a server-only name like `CLOUDFLARE_TURNSTILE_SITE_KEY` never reaches the widget and it won't render.
-3. In the Web3Forms dashboard, enable Cloudflare Turnstile and paste your **secret key** so the token is actually verified server-side. The secret does NOT go in `.env`.
-4. Also worth doing once: a manual end-to-end submission test after launch (a synthetic test would send real submissions, so keep it manual or route it to a test inbox).
+1. In the Web3Forms dashboard (app.web3forms.com), open the form for your access key and switch its spam protection to **hCaptcha**. This is the step that makes Web3Forms actually enforce the token. Without it the puzzle renders client-side, but a submission posted directly with a missing or bad token is still accepted.
+2. Nothing else is required: no env var, no Cloudflare build var, no secret. (To use your own hCaptcha account instead of the shared key, set `PUBLIC_HCAPTCHA_SITEKEY=<your sitekey>` in `.env` + the Cloudflare build env, and paste your hCaptcha **secret** into the Web3Forms dashboard.)
+3. Also worth doing once: a manual end-to-end submission test after launch (a synthetic test would send real submissions, so keep it manual or route it to a test inbox).
+
+Note: hCaptcha's image puzzles are more intrusive than Turnstile's checkbox; we accept that as the cost of free server-side verification. The old `PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` vars are no longer read by anything and can be deleted from `.env` and the Cloudflare build env.
 
 ## Secrets & variables summary
 
@@ -79,9 +80,9 @@ Hourly, confirms the live site's key pages return 200; a failed run notifies you
 | `PUBLIC_SANITY_PROJECT_ID` | variable | deploy-staging | real content in the preview (optional) |
 | `PUBLIC_SANITY_DATASET` | variable | deploy-staging | real content in the preview (optional) |
 | `SITE_URL` | variable | uptime | hourly uptime check |
-| `PUBLIC_TURNSTILE_SITEKEY` | build env (`.env` + Cloudflare) | the contact form | render + enforce Turnstile |
+| `PUBLIC_HCAPTCHA_SITEKEY` | build env (`.env` + Cloudflare), OPTIONAL | the forms | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
 
-Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. `PUBLIC_TURNSTILE_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare).
+Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. The optional `PUBLIC_HCAPTCHA_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare). The default hCaptcha protection needs no var at all.
 
 ## Not done on purpose (revisit with scale)
 

@@ -47,17 +47,22 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const ENV_WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
 
-// Cloudflare Turnstile (anti-spam). Inert until PUBLIC_TURNSTILE_SITEKEY is set:
-// no key means no widget and the form behaves exactly as before. When set, the
-// widget renders, a token is required, and it is sent to Web3Forms. (Enable
-// Turnstile in the Web3Forms dashboard with your SECRET key for it to actually
-// be verified server-side.)
-const TURNSTILE_SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY as string | undefined;
-const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+// hCaptcha anti-spam, verified for FREE by Web3Forms. (Web3Forms gates Cloudflare
+// Turnstile behind a paid plan but validates hCaptcha at no cost via its shared
+// sitekey.) We default to that shared Web3Forms sitekey: zero-config, because
+// Web3Forms verifies the token with its own secret server-side, so there is no
+// hCaptcha account to create and no secret for us to store. Override with
+// PUBLIC_HCAPTCHA_SITEKEY if you bring your own hCaptcha account. IMPORTANT: also
+// switch the form's spam protection to hCaptcha in the Web3Forms dashboard, or
+// the puzzle renders but is not enforced server-side.
+const WEB3FORMS_SHARED_HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2';
+const HCAPTCHA_SITEKEY =
+  (import.meta.env.PUBLIC_HCAPTCHA_SITEKEY as string | undefined) || WEB3FORMS_SHARED_HCAPTCHA_SITEKEY;
+const HCAPTCHA_SCRIPT = 'https://js.hcaptcha.com/1/api.js';
 
 declare global {
   interface Window {
-    turnstile?: {
+    hcaptcha?: {
       reset: (widget?: string) => void;
       getResponse: (widget?: string) => string | undefined;
     };
@@ -98,6 +103,8 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
   const service = form.provider?.service || 'web3forms';
   const accessKey = form.provider?.accessKey || ENV_WEB3FORMS_KEY;
   const notifyEmail = form.provider?.notifyEmail || fallbackEmail;
+  // hCaptcha only gates the Web3Forms submit path; mailto / Formspree skip it.
+  const useHcaptcha = service === 'web3forms' && !!accessKey;
 
   const [values, setValues] = useState<Record<string, string | boolean>>({});
   const [botcheck, setBotcheck] = useState('');
@@ -105,19 +112,19 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
   const [errorMsg, setErrorMsg] = useState('');
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  // Load the Turnstile script once when a sitekey is configured. The widget div
-  // rendered below auto-renders; its hidden `cf-turnstile-response` input holds
-  // the token we read on submit.
+  // Load the hCaptcha script once on the Web3Forms path. The widget div rendered
+  // below auto-renders; its hidden `h-captcha-response` textarea holds the token
+  // we read on submit.
   useEffect(() => {
-    if (!TURNSTILE_SITEKEY || typeof document === 'undefined') return;
-    if (document.getElementById('cf-turnstile-script')) return;
+    if (!useHcaptcha || typeof document === 'undefined') return;
+    if (document.getElementById('hcaptcha-script')) return;
     const s = document.createElement('script');
-    s.id = 'cf-turnstile-script';
-    s.src = TURNSTILE_SCRIPT;
+    s.id = 'hcaptcha-script';
+    s.src = HCAPTCHA_SCRIPT;
     s.async = true;
     s.defer = true;
     document.head.appendChild(s);
-  }, []);
+  }, [useHcaptcha]);
 
   function setField(name: string, value: string | boolean) {
     setValues((v) => ({ ...v, [name]: value }));
@@ -163,12 +170,13 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       return;
     }
 
-    // Cloudflare Turnstile gate (only when a sitekey is configured).
-    let turnstileToken = '';
-    if (TURNSTILE_SITEKEY) {
-      turnstileToken =
-        formRef.current?.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value || '';
-      if (!turnstileToken) {
+    // hCaptcha gate (Web3Forms submit path only). Read the token hCaptcha wrote
+    // into its hidden textarea; Web3Forms verifies it server-side for free.
+    let hcaptchaToken = '';
+    if (useHcaptcha) {
+      hcaptchaToken =
+        formRef.current?.querySelector<HTMLTextAreaElement>('[name="h-captcha-response"]')?.value || '';
+      if (!hcaptchaToken) {
         setErrorMsg('Please complete the verification challenge and try again.');
         return;
       }
@@ -192,7 +200,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
             access_key: accessKey,
             subject: `${form.title || 'Website'} inquiry`,
             from_name: `${site.name} website`,
-            ...(turnstileToken ? { 'cf-turnstile-response': turnstileToken } : {}),
+            ...(hcaptchaToken ? { 'h-captcha-response': hcaptchaToken } : {}),
             ...plainValues(values),
           }),
         });
@@ -203,12 +211,12 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       else {
         setStatus('error');
         setErrorMsg('Something went wrong sending your message. Please try again, or email us directly.');
-        if (TURNSTILE_SITEKEY) window.turnstile?.reset(); // tokens are single-use
+        if (useHcaptcha) window.hcaptcha?.reset(); // tokens are single-use
       }
     } catch {
       setStatus('error');
       setErrorMsg('Could not reach the server. Check your connection and try again.');
-      if (TURNSTILE_SITEKEY) window.turnstile?.reset();
+      if (useHcaptcha) window.hcaptcha?.reset();
     }
   }
 
@@ -324,8 +332,8 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
           })}
         </div>
 
-        {/* Cloudflare Turnstile widget — only when a sitekey is configured. */}
-        {TURNSTILE_SITEKEY && <div className="mt-m cf-turnstile" data-sitekey={TURNSTILE_SITEKEY} />}
+        {/* hCaptcha widget: Web3Forms submit path only; verified free by Web3Forms. */}
+        {useHcaptcha && <div className="mt-m h-captcha" data-sitekey={HCAPTCHA_SITEKEY} data-captcha="true" />}
 
         <button
           type="submit"

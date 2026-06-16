@@ -3,6 +3,21 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 (later) — Swapped form spam protection from Cloudflare Turnstile to
+hCaptcha, because Web3Forms gates Turnstile behind a paid plan but verifies
+hCaptcha for free. `FormRenderer.tsx` now loads the hCaptcha script
+(`js.hcaptcha.com/1/api.js`), renders the `h-captcha` widget with Web3Forms'
+shared sitekey (`50b2fe65-b00b-4b9e-ad62-3ba471098be2`, overridable via
+`PUBLIC_HCAPTCHA_SITEKEY`), reads the `h-captcha-response` textarea token, and
+sends it to Web3Forms; the gate is scoped to the Web3Forms submit path so
+mailto / Formspree fallbacks skip it. Zero-config: no hCaptcha account, no secret
+stored by us, and no Cloudflare build var needed (Web3Forms verifies the token
+with its own secret). The one manual step is switching the form's spam protection
+to hCaptcha in the Web3Forms dashboard so the token is enforced. The now-dead
+`PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` vars can be removed
+from `.env` + the Cloudflare build env. Supersedes the Turnstile note in the entry
+below. Docs updated (ci-cd-and-ops.md, CLAUDE.md topic index).*
+
 *2026-06-15 (later) — Web3Forms wired into the live forms (`scripts/seed-forms.mjs`,
 idempotent). The Express-interest form (on /get-started) had `provider.service =
 web3forms` but no access key, so it was silently falling back to a mailto; set its
