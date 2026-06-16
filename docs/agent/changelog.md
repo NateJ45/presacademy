@@ -3,6 +3,16 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 (later) — Web3Forms wired into the live forms (`scripts/seed-forms.mjs`,
+idempotent). The Express-interest form (on /get-started) had `provider.service =
+web3forms` but no access key, so it was silently falling back to a mailto; set its
+`provider.accessKey` so it now posts to Web3Forms. Added a simple Contact form
+(name / email / message, `form.contact`) with the same key and linked it to
+`contactPage.contactForm`, so /contact now renders a real form instead of the
+"Email the Office" mailto pill. Both deliver to the one Web3Forms inbox tied to the
+key (a PUBLIC form id, so it lives in the Sanity form doc). Turnstile still gates
+both when `PUBLIC_TURNSTILE_SITEKEY` is set.*
+
 *2026-06-15 (later) — OG / social-card restyle to match the header logo.
 `scripts/lib/render-og.mjs` now renders the wordmark in the site's two-line logo
 style: ink "The" + green "Presbyterian" (the keyword-emphasis device) with a
