@@ -3,6 +3,19 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+*2026-06-15 (later) — Fix: hCaptcha was blocked by the site CSP on the live build,
+so the widget never appeared even though the form asked for it. The
+Content-Security-Policy in `public/_headers` allowed YouTube/Vimeo/Maps for
+frame-src and only Cloudflare for script-src, so hCaptcha's `api.js` and challenge
+iframe (newassets.hcaptcha.com) were silently blocked. Added
+`https://hcaptcha.com https://*.hcaptcha.com` to script-src, frame-src, connect-src,
+and style-src. This gap predated hCaptcha (Turnstile would have been blocked the
+same way). Root cause of the miss: the earlier theme verification used a plain
+static file server, which sends no CSP; re-verified here by serving the build under
+the EXACT production CSP (a throwaway node server) and confirming the widget renders
+with no CSP violations. Added a maintainer note to `_headers` to check captchas
+against `wrangler dev` / live, not a static server.*
+
 *2026-06-15 (later) — hCaptcha now matches and follows the site theme.
 `FormRenderer.tsx` switched from auto-render to explicit render (`render=explicit`
 + an `onHcaptchaLoad` ready flag): a MutationObserver watches the `dark` class on

@@ -13,6 +13,12 @@
 #     add its origin to script-src / frame-src.
 #   - connect-src covers the contact forms (Web3Forms) + analytics; add a newsletter or
 #     Formspree origin here if one is enabled.
+#   - hCaptcha (form anti-spam) needs https://hcaptcha.com + https://*.hcaptcha.com in
+#     script-src (api.js pulls helpers from newassets.hcaptcha.com), frame-src (the
+#     challenge iframe), connect-src (its API), and style-src. Without these the widget
+#     is silently blocked and never appears. NOTE: a plain local static preview does NOT
+#     send these headers, so always sanity-check captcha rendering against `wrangler dev`
+#     (npm run preview) or the live site, not just a static file server.
 #   - frame-ancestors is 'self' (the Studio iframe "Preview" was removed, so the live site
 #     no longer needs to be embedded by the Studio).
 #   - Trusted Types is intentionally NOT enabled: require-trusted-types-for would break the
@@ -24,4 +30,4 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; media-src 'self' https:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; connect-src 'self' https://api.web3forms.com https://cloudflareinsights.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.google.com https://maps.google.com; form-action 'self' https://api.web3forms.com; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; media-src 'self' https:; font-src 'self'; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://api.web3forms.com https://cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.google.com https://maps.google.com https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; upgrade-insecure-requests
