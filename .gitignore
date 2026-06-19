@@ -45,3 +45,6 @@ backups/
 # raw download pools + one-off probe scripts stay local.
 scripts/_*.mjs
 scripts/_stock*/
+
+# Impeccable live mode: ignore the local recovery journal; config.json stays tracked
+.impeccable/live/sessions/

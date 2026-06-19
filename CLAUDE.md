@@ -244,6 +244,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Area | Doc |
 |---|---|
 | **Design brief (one-file system: palette, type, motion, idioms, hard rules)** | `design.md` — attach it (plus screenshots) for any visual work. Live visual reference: the secret `/style-guide` route. |
+| **Product strategy (register, users, anti-references, design principles)** | `PRODUCT.md` (root) — strategic who/what/why; companion to `design.md`, read by the Impeccable design skill. |
 | Stack detail + astro.config landmines | `docs/agent/stack-and-config.md` |
 | Page + section architecture, nav, visibility toggles | `docs/agent/page-architecture.md` |
 | Brand colors + theme system (light/dark discipline) | `docs/agent/theme-and-color.md` |
