@@ -228,10 +228,13 @@ function isGroupActive(items: { href: string }[]) {
             <span class="hidden sm:inline tabular-nums">{phone}</span>
           </a>
         )}
-        <span class="hidden sm:inline h-3.5 w-px bg-chapel-foreground/25" aria-hidden="true"></span>
+        {/* Hidden on desktop (lg+): the primary "Request info" pill lives in the
+            nav row there, so this utility-bar link is the mobile/tablet CTA only.
+            That stops "Request info" from appearing twice in the desktop header. */}
+        <span class="hidden sm:inline lg:hidden h-3.5 w-px bg-chapel-foreground/25" aria-hidden="true"></span>
         <a
           href="/get-started"
-          class="uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
+          class="lg:hidden uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
         >
           Request info
         </a>
@@ -341,20 +344,15 @@ function isGroupActive(items: { href: string }[]) {
         )}
       </nav>
       <span class="h-6 w-px bg-border-soft" aria-hidden="true"></span>
-      <div class="flex items-center gap-2">
-        <a
-          href="/get-started"
-          class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold border border-foreground text-foreground hover:bg-accent"
-        >
-          Free intro
-        </a>
-        <a
-          href="/get-started"
-          class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold bg-primary text-primary-foreground hover:bg-primary-dark"
-        >
-          Request info
-        </a>
-      </div>
+      {/* One primary CTA in the desktop header. The "free intro" path is still
+          surfaced just below in the hero and in the footer, so the header stays
+          a single, unambiguous ask rather than two same-destination pills. */}
+      <a
+        href="/get-started"
+        class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold bg-primary text-primary-foreground hover:bg-primary-dark"
+      >
+        Request info
+      </a>
     </div>
 
     <MobileNav

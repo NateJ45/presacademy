@@ -166,7 +166,15 @@ const pillGhost =
           <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{startHereEyebrow}</p>
           <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">{startHereHeadline}</h2>
         </div>
-        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+        {/* Column count follows the number of cards: a 2-course rail uses two
+            columns rather than a 3-col grid with an empty third column. */}
+        <ul
+          class:list={[
+            'mt-l grid grid-cols-1 gap-l',
+            startHere.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : startHere.length === 2 ? 'sm:grid-cols-2' : '',
+          ]}
+          data-stagger-grid
+        >
           {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
         </ul>
       </div>
@@ -213,7 +221,11 @@ const pillGhost =
         </div>
         <div class="mt-l h-px w-full bg-gold/50"></div>
         <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
-          {featuredCourses.map((c: any) => <CourseCard course={c} />)}
+          {/* Drop any Start-here course so the home page never shows the same
+              course card in both rails. */}
+          {featuredCourses
+            .filter((c: any) => !startHere.slice(0, 3).some((s: any) => s.slug === c.slug))
+            .map((c: any) => <CourseCard course={c} />)}
         </ul>
       </div>
     </section>

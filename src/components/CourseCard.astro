@@ -61,17 +61,31 @@ const termSlug = no?.term?.slug ?? '';
       <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary"></div>
       <div class="img-zoom relative aspect-square sm:aspect-[3/2] overflow-hidden bg-muted">
         {course.coverImage?.asset ? (
-          <SanityImage
-            source={course.coverImage}
-            width={800}
-            loading={eager ? 'eager' : 'lazy'}
-            sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 7rem"
-            class="h-full w-full object-cover"
-          />
+          <>
+            <SanityImage
+              source={course.coverImage}
+              width={800}
+              loading={eager ? 'eager' : 'lazy'}
+              sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 7rem"
+              class="h-full w-full object-cover"
+            />
+            {/* Hover green-duotone wash: photos only. */}
+            <div class="img-tint img-tint-evergreen" aria-hidden="true"></div>
+          </>
         ) : (
-          <div class="image-well h-full w-full"></div>
+          <div class="image-well grid h-full w-full place-items-center p-2 text-center sm:p-4" aria-hidden="true">
+            {/* No cover photo: a typographic "subject plate" on the brass-hatch
+                well so a cover-less course still reads as an intentional catalog
+                card, not a missing image. Decorative (the subject also shows as
+                the card-body eyebrow below); collapses to the PA monogram on the
+                compact mobile thumbnail. */}
+            <div>
+              <span class="font-display text-base text-foreground/55 sm:hidden">PA</span>
+              <span class="hidden font-display text-h4 leading-tight text-foreground/85 sm:block">{area || 'The Presbyterian Academy'}</span>
+              {area && <span class="mt-2 hidden text-gold-ink sm:block">&#10022;</span>}
+            </div>
+          </div>
         )}
-        <div class="img-tint img-tint-evergreen" aria-hidden="true"></div>
       </div>
     </div>
     <div class="sm:mt-3">
