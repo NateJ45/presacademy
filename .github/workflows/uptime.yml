@@ -10,8 +10,13 @@ name: Uptime check
 # plenty) at the homepage.
 
 on:
-  schedule:
-    - cron: '17 * * * *' # hourly, offset off the top of the hour
+  # Schedule disabled 2026-07: SITE_URL was never set, so every hourly run
+  # billed a 1-minute minimum just to log "skipping" and exit — roughly 700
+  # wasted minutes a month against the 2000-minute private-repo quota. At
+  # launch, either uncomment this after setting the SITE_URL repo variable,
+  # or (better) skip it and point UptimeRobot's free tier at the homepage.
+  # schedule:
+  #   - cron: '17 * * * *' # hourly, offset off the top of the hour
   workflow_dispatch:
 
 jobs:
