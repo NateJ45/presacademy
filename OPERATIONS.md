@@ -108,7 +108,7 @@ The live site rebuilds automatically when the scheduled publish fires. You can s
 
 ### Field comments
 
-Sanity Studio includes a built-in Comments feature (the speech-bubble icon that appears next to field labels when you hover). Available by default in Sanity v5, no plugin or config needed.
+Sanity Studio includes a built-in Comments feature (the speech-bubble icon that appears next to field labels when you hover). Available by default, no plugin or config needed.
 
 **How to use it:**
 
@@ -344,7 +344,7 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 | "Avoid long main-thread tasks (78 ms found)" | Radix Sheet hydration on `MobileNav` | Fires after LCP/FCP. Real-user INP is fine. Accept. |
 | "Render-blocking SanityImage.css (18 KiB)" | The whole Tailwind output is chunked under that name | Extracting critical CSS is high effort for marginal LCP benefit at current scores. Skip. |
 | "Uses third-party cookies (sanitySession)" | Sanity CDN sets a session cookie | `crossorigin="anonymous"` BREAKS Sanity images. Skip. |
-| "No CSP" | Astro 6's `security.csp` would satisfy this | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md → Stack → Astro config don'ts. |
+| "No CSP" | Astro's `security.csp` would satisfy this | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md → Stack → Astro config don'ts. |
 
 ---
 
@@ -401,7 +401,7 @@ Every page-document form in Studio shows a help banner at the top with a deep li
 | Playwright `fullPage` screenshot is mostly blank | `[data-reveal]` elements start at `opacity: 0` until the IntersectionObserver fires | `page.evaluate(() => document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible')))` before screenshot. |
 | Build fails on fresh clone with Sanity query errors | `PUBLIC_SANITY_PROJECT_ID` is not set | Expected — `sanityFetch` returns fallbacks when unconfigured. Set the env var to connect a real project. |
 | Studio shows a field empty but the live site shows a value (or vice versa) | Three different layers can disagree: the published doc (what builds read), a draft overlay (what Studio shows), and the last build's HTML (what visitors see). A stale Studio tab is a fourth suspect. | Run `node scripts/sanity-audit.mjs` — it prints drafts vs published. If published has the value: hard-refresh the Studio tab. If published is right but the site is wrong: trigger a rebuild (`/rebuild`). Never "fix" by re-typing content until you know which layer disagrees. |
-| Image optimizer path mismatch after adapter upgrade | `@astrojs/cloudflare` upgraded past `13.5.5` | Revert to exactly `13.5.5`. See CLAUDE.md gotcha #8. |
+| Image optimizer path mismatch after adapter upgrade | `@astrojs/cloudflare` bumped without verifying | Run a build and check pages reference files that exist under `dist/client/_astro/`. See CLAUDE.md gotcha #8. |
 | Featured section shows wrong item as the hero | Falling back to date-based default | Toggle `featured: true` on the item to pin. Sections sort `featured desc, publishedAt desc`. |
 | Copy implies the school is long-established | The school was **founded in 2026** | Do NOT add a founding year, "Est." line, or "decades of" framing. The founding-year stats and "Est. 1998" were scrubbed (commits f2b71fa, 82bb126); keep stats honest for a new school (credentialed faculty, in-person cohorts, scholarships, Westminster grounding). |
 

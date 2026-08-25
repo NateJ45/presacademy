@@ -7,7 +7,9 @@
   "name": "presacademy",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
-    "directory": "./dist",
+    // @astrojs/cloudflare v14 splits the build into dist/client (static assets)
+    // + dist/server (SSR bundle; empty while the site is fully static).
+    "directory": "./dist/client",
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   },
