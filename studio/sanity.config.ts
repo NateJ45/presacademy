@@ -94,7 +94,7 @@ export const SITE_URL_FOR_PREVIEW = process.env.SANITY_STUDIO_PREVIEW_URL || 'ht
 // The live (production) site base used by the "View on the live site" help
 // banner. Deliberately INDEPENDENT of SITE_URL_FOR_PREVIEW (which may point at
 // localhost during local Studio dev) so faculty in the deployed Studio are
-// always sent to the real site. Stamp this with the project's domain at rebrand.
+// always sent to the real site.
 export const LIVE_SITE_URL = 'https://www.presbyterianacademy.org';
 
 // Map doc _type → live-site PATH (no host). Singletons get a fixed path;
@@ -137,9 +137,9 @@ export function urlForDoc(schemaType: string, doc: any): string | null {
 }
 
 export default defineConfig({
-  name: 'churchstarter',
-  // Short title shown in the browser tab when editing. REPLACE with the
-  // church's name (rebrand.mjs stamps this).
+  name: 'presacademy',
+  // Short title shown in the browser tab when editing.
+  // school's name.
   title: 'The Presbyterian Academy',
 
   // Set SANITY_STUDIO_PROJECT_ID and SANITY_STUDIO_DATASET in studio/.env

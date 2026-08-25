@@ -1,16 +1,13 @@
 // Safe to edit by hand
 // Static identity values that don't change between deploys.
-// REPLACE the two placeholders below before launch (or run `node scripts/rebrand.mjs`
-// with your bootstrap.config.json — see docs/bootstrap/NEW-PROJECT.md).
 // Content editors update everything else through Sanity — see studio/ and src/lib/queries.ts.
 
 /**
- * Derive a localStorage key prefix from the church name.
- * "The Presbyterian Academy" -> "first-church-of-springfield"
+ * Derive a localStorage key prefix from the school name.
+ * "The Presbyterian Academy" -> "the-presbyterian-academy"
  *
  * This keeps storageKeyPrefix and themeStorageKey in sync with the name
- * automatically. rebrand.mjs does not need to stamp these fields separately
- * and they can never drift apart across reskins.
+ * automatically, so they can never drift apart.
  */
 function slugifyName(s: string): string {
   return s
@@ -19,10 +16,8 @@ function slugifyName(s: string): string {
     .replace(/^-|-$/g, '');
 }
 
-// rebrand.mjs rewrites the two quoted strings on `name:` and `domain:` below.
 // All derived fields (studio, url, storageKeyPrefix, themeStorageKey) are
-// computed from those two values at module load time and are never rewritten
-// by the script.
+// computed from the two quoted values below at module load time.
 const _name   = "The Presbyterian Academy";
 const _domain = "presbyterianacademy.org";
 const _slug   = slugifyName(_name);
@@ -34,9 +29,8 @@ export const site = {
   domain: _domain,
   url: `https://www.${_domain}`,
   /**
-   * localStorage key prefix derived from the church name — e.g.
-   * "first-church-of-springfield". Never needs to be touched by rebrand.mjs;
-   * updates automatically when the name is stamped.
+   * localStorage key prefix derived from the school name — e.g.
+   * "the-presbyterian-academy". Updates automatically if the name changes.
    */
   storageKeyPrefix: _slug,
   /**

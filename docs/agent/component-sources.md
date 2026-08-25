@@ -1,6 +1,6 @@
 # Component sources
 
-The sourcing guide for adding UI components to this church-website starter. Every source listed here is compatible with the repo's semantic token system. The church starter uses `rebrand.mjs` (not `apply-brand`) to stamp a new church's identity into `globals.css`; any component that uses the semantic token set below propagates the new brand automatically once `rebrand.mjs` runs.
+The sourcing guide for adding UI components to this repo. Every source listed here is compatible with the repo's semantic token system: any component that uses the semantic token set below picks up the brand automatically from `globals.css`.
 
 ---
 
@@ -34,7 +34,7 @@ Browse, copy, token-remap (see cheat sheet below), and paste into `src/component
 
 ## Token-remap cheat sheet
 
-When pasting from HyperUI, Tailark, react-bits, or any palette-first source, replace hardcoded Tailwind colors with the semantic tokens this repo uses. `rebrand.mjs` and the design-system `:root` / `.dark` blocks in `globals.css` rewrite the values behind these tokens on every brand application.
+When pasting from HyperUI, Tailark, react-bits, or any palette-first source, replace hardcoded Tailwind colors with the semantic tokens this repo uses. The design-system `:root` / `.dark` blocks in `globals.css` define the values behind these tokens.
 
 **Church-specific brand tokens** (static, never theme-flip):
 
@@ -107,6 +107,6 @@ Know these before adding a component with heavy dependencies:
 
 **Do not use as general component sources:** Mantine, Chakra UI, Ant Design.
 
-All three require a mandatory React Context Provider per island, impose a parallel CSS variable namespace (`--mantine-*`, `--chakra-*`, etc.) that `rebrand.mjs` does not touch, and add 80-140 kB gzipped even with tree-shaking. Using any of them alongside the shadcn semantic token system requires maintaining two parallel theme configurations that must be manually synchronized on every brand application. This breaks the one-pass rebrand guarantee.
+All three require a mandatory React Context Provider per island, impose a parallel CSS variable namespace (`--mantine-*`, `--chakra-*`, etc.) outside the repo token system, and add 80-140 kB gzipped even with tree-shaking. Using any of them alongside the shadcn semantic token system requires maintaining two parallel theme configurations that must be manually synchronized on every brand change.
 
-**Sanctioned escape hatch:** PrimeReact v10 in unstyled/passthrough mode. In unstyled mode, PrimeReact is styled entirely with Tailwind classes referencing the repo's semantic tokens, so `rebrand.mjs` propagates automatically. Reserve it for complex behavior-heavy widgets (DataTable, TreeSelect, FileUpload, complex calendar) that have no Radix/shadcn equivalent.
+**Sanctioned escape hatch:** PrimeReact v10 in unstyled/passthrough mode. In unstyled mode, PrimeReact is styled entirely with Tailwind classes referencing the repo's semantic tokens, so brand changes propagate automatically. Reserve it for complex behavior-heavy widgets (DataTable, TreeSelect, FileUpload, complex calendar) that have no Radix/shadcn equivalent.

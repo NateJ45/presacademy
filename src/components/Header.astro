@@ -114,10 +114,8 @@ const mobileNavSettings = {
 // CTA at the right of the nav row does that job, and the MobileNav drawer also
 // surfaces the CTA at the top.
 //
-// Core nav: /, /about, /services, /faq, /journal, /contact (CTA button).
-// Module routes (/portfolio, /process, /e-design, /shop, /gift-certificates,
-// /quiz, /calculator, /guides, /press, /resources) are opt-in via modules/
-// and are NOT linked from the core nav.
+// Core nav lives in Sanity (navigation singleton); the entries below are the
+// safety-net fallback for the school routes.
 
 type NavItem =
   | { kind: 'flat'; label: string; href: string }

@@ -11,7 +11,7 @@ The starter has two parallel content sources:
 Hardcoded constants that don't change between deploys: domain name, GitHub repo URL, Web3Forms access key reference, Calendly URL template, brand asset paths, the `localStorage` key prefix for the theme system. A developer edits these in code when something structural shifts.
 
 ```ts
-// rebrand.mjs stamps `_name` and `_domain`; derived fields auto-update.
+// `_name` and `_domain` are set once; derived fields auto-update.
 const _name   = "The Presbyterian Academy";
 const _domain = "presbyterianacademy.org";
 const _slug   = slugifyName(_name); // "the-presbyterian-academy"
@@ -26,7 +26,7 @@ export const site = {
 } as const;
 ```
 
-`rebrand.mjs` only needs to stamp the two quoted `_name` and `_domain` literals.
+Only the two quoted `_name` and `_domain` literals ever need editing.
 `storageKeyPrefix` and `themeStorageKey` are derived from `_name` at module load
 time, so they are always in sync and do not appear in `bootstrap.config.json`.
 The domain feeds the canonical URL, OG tags, and the sitemap reference in `robots.txt`.
@@ -147,7 +147,7 @@ All GROQ queries live in `src/lib/queries.ts`. Each page has a typed query funct
 
 **No document preview.** This is a static site (`output: 'static'`) with no draft-preview environment, so documents show the **form only** — there is no iframe "Preview" tab. The old one loaded the last PUBLISHED build (not the editor's draft) and only changed after a rebuild, which misled editors. `urlForDoc` / `SITE_URL_FOR_PREVIEW` stay in `sanity.config.ts` as hooks if a real preview (SSR deploy + Sanity's Presentation tool + draft-mode `sanityFetch`) is added later.
 
-**"View on the live site" help banner (2026-06-14).** Standing in for the missing preview tab, a per-document banner sits at the top of every form: "You are editing: [title]", the publish-to-live reminder, and a button that opens that document's page on the live site. It is `studio/components/PageHelpBanner.tsx`, wired through `studio/components/StudioFormInput.tsx` — Sanity allows only ONE component at `form.components.input`, so `StudioFormInput` composes two aids in that single slot: at the document root (`props.id === 'root'`) it prepends the banner; for every other field it delegates to the existing `CharacterCountInput`. The banner links via `LIVE_SITE_URL` in `sanity.config.ts`, a constant kept deliberately independent of `SITE_URL_FOR_PREVIEW` (which may point at localhost in dev) so the deployed Studio always sends editors to the real site. `urlForDoc` was split into `pathForDoc(type, doc)` (path only, shared with the banner) + the base URL. `PageHelpBanner` returns null for docs with no public page (e.g. Site Settings). Stamp `LIVE_SITE_URL` with the project domain at rebrand.
+**"View on the live site" help banner (2026-06-14).** Standing in for the missing preview tab, a per-document banner sits at the top of every form: "You are editing: [title]", the publish-to-live reminder, and a button that opens that document's page on the live site. It is `studio/components/PageHelpBanner.tsx`, wired through `studio/components/StudioFormInput.tsx` — Sanity allows only ONE component at `form.components.input`, so `StudioFormInput` composes two aids in that single slot: at the document root (`props.id === 'root'`) it prepends the banner; for every other field it delegates to the existing `CharacterCountInput`. The banner links via `LIVE_SITE_URL` in `sanity.config.ts`, a constant kept deliberately independent of `SITE_URL_FOR_PREVIEW` (which may point at localhost in dev) so the deployed Studio always sends editors to the real site. `urlForDoc` was split into `pathForDoc(type, doc)` (path only, shared with the banner) + the base URL. `PageHelpBanner` returns null for docs with no public page (e.g. Site Settings). `LIVE_SITE_URL` carries the production domain.
 
 **Document badges fix.** `studio/components/documentBadges.tsx` (the "Featured" / "Needs a photo" / "Add SEO" status pills, registered via `document.badges`) had its `SEO_PAGE_TYPES` and `PHOTO_FIELD` lists pointing at deleted church types. They now list the live SCHOOL types (`homePage`, `aboutPage`, `coursesPage`, `facultyPage`, `pricingPage`, `getStartedPage`, `forYouPage`, `resourcesPage`, `eventsPage`, `faqPage`, `contactPage`, `privacyPage` for SEO; `course.coverImage` / `facultyMember.photo` / `event.image` for the photo check).
 

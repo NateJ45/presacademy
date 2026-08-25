@@ -1,8 +1,8 @@
-# NCS Church Starter — Operations Playbook
+# The Presbyterian Academy — Operations Playbook
 
 Tactical reference for common tasks. `CLAUDE.md` is the architecture and design reference; this file is the "how do I actually do X" guide.
 
-If you are a future Claude session and you can only read one doc, read `CLAUDE.md`. This file is the second one to open when you need to do something specific (deploy, patch, audit, regenerate). New-project spin-up lives in `docs/bootstrap/NEW-PROJECT.md`.
+If you are a future Claude session and you can only read one doc, read `CLAUDE.md`. This file is the second one to open when you need to do something specific (deploy, patch, audit, regenerate). This repo was cut loose from the church starter it was forked from (2026-08-25); the starter machinery (rebrand, modules, starter seed) is gone.
 
 > **Sanity is the single source of truth for all site content.** Every content field (page copy, headings, buttons/links, images, nav menus, SEO, the worship service time, contact details) should be populated on a launched site, so the Studio mirrors the live site. The inline strings in `src/pages/*.astro` are safety-net fallbacks (placeholder-church copy in the template), not the live content. To change anything a visitor sees, edit it in Sanity Studio and rebuild — do not edit the `.astro` copy expecting it to change the site. Repeated values are single-sourced: worship time = `siteSettings.worshipService`, address/phone/email = `siteSettings`. Field-by-field map: `docs/agent/editor-vs-hardcoded.md`.
 
@@ -169,7 +169,7 @@ It patches only the `homePage`, `aboutPage`, `getStartedPage`, `facultyPage`, an
 
 ### Set the hero slideshow + academic photos (`seed-academic-images.mjs`)
 
-The school's placeholder-photo seeder. It sets the home hero to its 6-image Ken Burns slideshow (`homePage.heroImages`) and REPLACES every empty or church-era (`teach-*` / `study-*` / `community-*` / `place-*`) course cover and page hero with an academic CC0 photo from `src/assets/placeholders/acad-*.jpg`. It protects real editor images and already-seeded `acad-*` (so it is idempotent), and leaves faculty headshots (pravatar) alone. Supersedes the church pools in `seed-placeholder-images.mjs` for the school look.
+The school's placeholder-photo seeder. It sets the home hero to its 6-image Ken Burns slideshow (`homePage.heroImages`) and REPLACES every empty or church-era (`teach-*` / `study-*` / `community-*` / `place-*`) course cover and page hero with an academic CC0 photo from `src/assets/placeholders/acad-*.jpg`. It protects real editor images and already-seeded `acad-*` (so it is idempotent), and leaves faculty headshots (pravatar) alone.
 
 ```bash
 node scripts/seed-academic-images.mjs            # dry run: what it would set/replace

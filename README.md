@@ -1,72 +1,49 @@
-# NCS Church Starter
+# The Presbyterian Academy
 
-A production-ready church website starter: **Astro 6 + Sanity v5 + Cloudflare Workers**,
-by [Nixon Creative Studio](https://nixoncreativestudio.com). Fork it, stamp a new
-church's identity onto it, import the starter content, and you have a polished,
-editor-friendly church site in an afternoon instead of a month.
+The website for **The Presbyterian Academy**, a Reformed lay-formation school
+funded by the Presbytery of Cincinnati. Live at
+[presbyterianacademy.org](https://www.presbyterianacademy.org).
 
-This is not a minimal scaffold. It was extracted from a finished, live church
-build (a historic congregation in Chicago) and keeps everything that made that
-site good: a Lighthouse 100/100/100/100 baseline, a warm editorial design
-system with light + dark themes, a complete Sanity content model where the
-Studio mirrors the live site exactly, and the gotchas of production documented
-where you'll trip on them.
+**Stack:** Astro + Sanity + Cloudflare Workers, by
+[Nixon Creative Studio](https://nixoncreativestudio.com).
 
-## What a church gets out of the box
+The repo began life as a fork of the NCS church starter and was cut loose from
+it on 2026-08-25: the rebrand machinery, opt-in church modules, and starter
+seed are gone. What remains is a single-purpose school site: a course catalog
+(courses, faculty, terms, pricing tiers, teaching areas, testimonials, events),
+a 19-block page builder for custom pages, a "Direction A" green-anchored
+bookish design system with light + dark themes, and a themed Sanity Studio
+with an in-Studio help center where every visible string is editable.
 
-- **Pages**: home, plan-a-visit ("I'm New"), what we believe, music, pastor &
-  staff, grow, serve, kids, food ministry, events (+detail), sermons (+detail),
-  weddings, use our space, give, contact, FAQ, privacy, 404, and a generic
-  page-builder for anything else.
-- **Worship plumbing**: one canonical service time that updates the header,
-  footer, home, visit page, and Google's structured data together; a "This
-  Sunday" module; a seasonal hero for Christmas/Easter.
-- **Sermons**: livestream CTA, optional podcast links, featured message, and a
-  per-service archive on every sermon (bulletin PDF, sermon notes, hymns,
-  choir/organ music, who served, liturgical day).
-- **Events**: recurring rhythms + one-time events with categories, special
-  services band, registration links.
-- **Connect**: configurable forms (general contact, connect card, prayer
-  request ship as examples), newsletter signup hooks, announcement banner.
-- **Editor experience**: a themed Sanity Studio with an in-Studio help center,
-  status badges, singleton enforcement, and every visible string editable.
-- **Design system**: serif editorial type, arch-top image signature, structural
-  accent color bands, keyword gold emphasis, restrained CSS-only motion, all
-  documented in `design.md`.
-
-## Quick start (new church project)
+## Working on it
 
 ```bash
-# 1. Clone, install, and prove the empty-state build works
+# install both packages (the Studio is a nested package in studio/)
 npm install && npm --prefix studio install
-npm run build        # builds with placeholder content, no Sanity needed
 
-# 2. Stamp the church's identity
-cp bootstrap.config.example.json bootstrap.config.json
-#    ...fill it in...
-npm run rebrand -- --apply
-npm run typegen && npm run og
-
-# 3. Create the Sanity project (sanity.io/manage), then
-cp .env.example .env                 # fill in project ID + tokens
-cp studio/.env.example studio/.env   # same project ID
-npm run seed -- --apply              # imports starter content, pre-stamped
-
-# 4. Run it
+# run it
 npm run dev            # site on :4321
-npm run studio:dev     # Studio for content editing
+npm run studio:dev     # Sanity Studio for content editing
+
+# ship it
+npm run build          # OG cards + astro build (static output in dist/)
+npm run deploy         # build + wrangler deploy to the production Worker
 ```
 
-Full setup, including Cloudflare deploy, webhooks, and the pre-launch
-checklist: **`docs/bootstrap/NEW-PROJECT.md`**.
+Content lives in Sanity (project `uz2sl3zp`). The site is statically built:
+a Sanity publish goes live after a rebuild (push to `main`, or the publish
+webhook). Work lands on `staging`, then fast-forwards to `main`.
 
-## The three files that orient you
+## The files that orient you
 
 | File | What it is |
 |---|---|
 | `CLAUDE.md` | The constitution: stack, conventions, landmines, content model |
 | `design.md` | The one-file design brief (palette, type, motion, signature moves) |
 | `OPERATIONS.md` | The tactical runbook (deploy, audit content, patch data, gotchas) |
+| `docs/PENDING.md` | The live registry of open loops: queued work, waiting-on-human items |
+| `docs/TESTING.md` | Which test suite covers what |
+| `docs/agent/` | Deep-dives per area (theme, components, Sanity, deployment, ...) |
 
 AI-assisted workflow: project slash commands ship in `.claude/commands/`
 (`/sanity-audit`, `/rebuild`, `/visual-verify`), and `design.md` plus
@@ -74,7 +51,8 @@ screenshots is the intended input for any visual work.
 
 ## Provenance
 
-Extracted 2026-06 from the Second Presbyterian Church of Chicago build (itself
-built on the NCS Astro + Sanity starter). Photography in `src/assets/` is from
-that build and is **placeholder-only: replace every photo before launching a
-client site** (see the checklist).
+Reid Design build → ncs-astro-sanity-starter → Second Presbyterian Church of
+Chicago build → ncs-church-starter → this repo (forked 2026-05, de-churched
+2026-06, cut loose 2026-08). Photography in `src/assets/placeholders/` is
+license-clean Pexels stock standing in until real Academy photography exists
+(see `src/assets/placeholders/MANIFEST.md`).

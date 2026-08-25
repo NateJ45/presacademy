@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 
 import cloudflare from '@astrojs/cloudflare';
-import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
@@ -20,7 +19,7 @@ export default defineConfig({
   adapter: cloudflare({ imageService: 'compile' }),
   // The /style-guide route is an internal brand reference: kept out of the
   // sitemap (and noindex'd in BaseLayout) so it stays unlinked and unindexed.
-  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/style-guide') }), react()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/style-guide') }), react()],
   vite: {
     plugins: [tailwindcss()],
   },

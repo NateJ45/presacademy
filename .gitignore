@@ -48,3 +48,6 @@ scripts/_stock*/
 
 # Impeccable live mode: ignore the local recovery journal; config.json stays tracked
 .impeccable/live/sessions/
+
+# seed uploader asset-id cache (scripts/lib/sanity-lib.mjs)
+scripts/.asset-map.json
