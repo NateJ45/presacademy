@@ -1,0 +1,4 @@
+# Worker runtime secrets for the SSR preview routes (wrangler dev reads this;
+# production uses `wrangler secret put SANITY_TOKEN`).
+# A Sanity token with read access to drafts (Viewer is enough).
+SANITY_TOKEN=

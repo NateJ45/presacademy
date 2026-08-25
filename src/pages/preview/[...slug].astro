@@ -1,0 +1,142 @@
+---
+/* ============================================================================
+   Preview route — draft-aware pages for the Studio Presentation tool
+   (ported from the WCP site, 2026-08-25)
+   ============================================================================
+   One SSR route renders ANY page in draft mode for the Presentation Tool:
+   reads the perspective cookie, fetches the doc draft-aware (stega on), and
+   renders it.
+
+    - `/preview` and the fixed paths (/preview/about, /preview/courses, ...)
+      render the matching SINGLETON's generic editable surface: hero fields,
+      the flexibleSections page-builder blocks, and the closing CTA. The
+      code-owned middle of those pages (course rails, stats, filters) renders
+      only on the live site — a note in the preview says so.
+    - Any other slug renders the matching custom `page` doc (hero + sections),
+      the full page-builder surface.
+
+   Keep the path→type map in sync with SINGLETON_PREVIEW_PATHS in
+   studio/resolve.ts. noindex via PreviewLayout.
+   ============================================================================ */
+export const prerender = false;
+
+import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
+import PreviewLayout from '@/layouts/PreviewLayout.astro';
+import Hero from '@/components/Hero.astro';
+import Sections from '@/components/Sections.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import { previewFetch } from '@/lib/cms-preview';
+import { IMAGE_PROJECTION, SECTION_MEMBERS } from '@/lib/queries';
+
+const draftMode = Astro.cookies.has(perspectiveCookieName);
+const slug = (Astro.params.slug as string | undefined) || '';
+
+// Fixed preview path → singleton type. Mirror of studio/resolve.ts.
+const SINGLETON_BY_PATH: Record<string, string> = {
+  '': 'homePage',
+  about: 'aboutPage',
+  faq: 'faqPage',
+  contact: 'contactPage',
+  privacy: 'privacyPage',
+  accessibility: 'accessibilityPage',
+  events: 'eventsPage',
+  courses: 'coursesPage',
+  faculty: 'facultyPage',
+  pricing: 'pricingPage',
+  'get-started': 'getStartedPage',
+  'for-you': 'forYouPage',
+  resources: 'resourcesPage',
+  '404': 'notFoundPage',
+};
+
+// Every hero/builder/CTA field any of the page types may carry; absent fields
+// come back null and the components skip them.
+const PREVIEW_FIELDS = `{
+  _id, _type, title,
+  heroEyebrow, heroHeadline, heroSubhead, heroKeyword,
+  heroImage${IMAGE_PROJECTION},
+  heroImages[]${IMAGE_PROJECTION},
+  seoTitle,
+  flexibleSections[]${SECTION_MEMBERS},
+  sections[]${SECTION_MEMBERS},
+  finalCtaEyebrow, finalCtaHeadline, finalCtaSubhead, finalCta
+}`;
+
+interface PreviewDoc {
+  _id: string;
+  _type: string;
+  title?: string;
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: unknown;
+  heroImages?: unknown[];
+  seoTitle?: string;
+  flexibleSections?: any[];
+  sections?: any[];
+  finalCtaEyebrow?: string;
+  finalCtaHeadline?: string;
+  finalCtaSubhead?: string;
+  finalCta?: any;
+}
+
+const singletonType = SINGLETON_BY_PATH[slug];
+const doc = await previewFetch<PreviewDoc | null>(
+  draftMode,
+  singletonType
+    ? `*[_type == $type][0]${PREVIEW_FIELDS}`
+    : `*[_type == "page" && slug.current == $slug][0]${PREVIEW_FIELDS}`,
+  singletonType ? { type: singletonType } : { slug },
+);
+
+if (!doc) {
+  return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
+}
+
+// The doc id the overlay + /preview/live listen on, read from the QUERY (a
+// Studio-created page has a random id). Draft perspective can return the
+// drafts. twin's id; strip it so the listen filter matches both twins.
+const pageId = doc._id.replace(/^drafts\./, '');
+
+const heroHeadline = doc.heroHeadline || doc.title || doc.seoTitle || '';
+const builderSections = singletonType ? doc.flexibleSections : doc.sections;
+const hasFinalCta = Boolean(doc.finalCtaHeadline || doc.finalCta);
+---
+
+<PreviewLayout title={`${doc.title ?? heroHeadline ?? slug} — Preview`} {draftMode} {pageId}>
+  {
+    heroHeadline && (
+      <Hero
+        eyebrow={doc.heroEyebrow ?? ''}
+        headline={heroHeadline}
+        subhead={doc.heroSubhead ?? ''}
+        backgroundImage={(doc.heroImage as never) ?? null}
+        backgroundImages={(doc.heroImages as never) ?? null}
+        headingId="preview-hero"
+        size="short"
+      />
+    )
+  }
+  {
+    singletonType && (
+      <div class="mx-auto max-w-3xl px-4 py-6">
+        <p class="rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm text-ink/80">
+          The built-in sections of this page (course rails, stats, filters, contact details) render
+          on the live site only. What previews here is what you can edit: the hero above, the
+          flexible sections below, and the closing call to action.
+        </p>
+      </div>
+    )
+  }
+  <Sections sections={builderSections} />
+  {
+    hasFinalCta && (
+      <FinalCta
+        eyebrow={doc.finalCtaEyebrow}
+        headline={doc.finalCtaHeadline}
+        subhead={doc.finalCtaSubhead}
+        cta={doc.finalCta ?? null}
+      />
+    )
+  }
+</PreviewLayout>

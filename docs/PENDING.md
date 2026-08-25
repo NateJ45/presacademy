@@ -10,6 +10,22 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Set the `SANITY_TOKEN` Worker secret before the next deploy.** The new
+  SSR preview routes read it at request time. Locally it lives in
+  `.dev.vars` (gitignored, already written). In production:
+  `npx wrangler secret put SANITY_TOKEN` (a Viewer token with draft read
+  access is enough). Without it the preview routes fail closed: the live
+  public site is unaffected.
+- **Add the site origin to Sanity CORS.** The embedded Studio at
+  `/studio` talks to the Sanity API from the site's own origin, so
+  `https://www.presbyterianacademy.org` (and any workers.dev preview
+  origin you use) must be listed under Project → API → CORS origins with
+  credentials allowed. sanity.io/manage.
+- **Retire the hosted Studio.** `presbyterian-academy.sanity.studio` is
+  no longer built or deployed from this repo and will serve an
+  increasingly stale schema. Delete it in sanity.io/manage once the
+  embedded `/studio` is confirmed working in production, and tell any
+  editor who has it bookmarked.
 - **Real Academy photography.** The whole dataset still runs on Pexels
   CC0 placeholders (`acad-*`). Editors can swap photos in Studio any time;
   until then the site is presentable but generic. Unblocks: a photo shoot
@@ -45,6 +61,20 @@ that section when it gets long.
 
 ## Recently closed
 
+- 2026-08-25 — **Live draft preview shipped.** Studio embedded at
+  `/studio`; Presentation tool with a page navigator; SSR `/preview/**`
+  routes rendering drafts with click-to-edit stega; SSE auto-refresh
+  proxy; fingerprint-gated draft-mode cookie. Deploy now uses the
+  adapter-generated `dist/server/wrangler.json`.
+- 2026-08-25 — **Automated test safety net ported from WCP**: 109
+  Playwright tests (smoke, axe light+dark, focus indicators, 320-1440
+  reflow), theme-token contrast unit tests, Lighthouse accessibility
+  hard-gated at 1.0, CI wired. Fixed 4 real a11y bugs it caught.
+- 2026-08-25 — **Studio editor-experience port**: 18 guides with
+  clickable breadcrumbs, Welcome launcher, soft-delete Trash, grouped
+  section insert menu, SEO + "Used on" tabs, "+ New" templates,
+  drag-to-reorder lists, Checkup + New term setup tools, real dark mode.
+- 2026-08-25 — **Upgraded to Astro 7 + Sanity Studio v6.**
 - 2026-08-25 — **Cut loose from the church starter**: removed `modules/`
   + `docs/modules/`, `rebrand.mjs` + bootstrap configs,
   `seed-starter-content.mjs`, `seed-placeholder-images.mjs`,

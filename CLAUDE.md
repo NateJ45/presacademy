@@ -19,12 +19,28 @@ Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. 
 Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-and-config.md`. The must-knows:
 
 - **Astro**, TypeScript strict, `output: 'static'`. Node 22.12+.
-- **Sanity v6** is the CMS (schemas in `studio/schemaTypes/`; the Studio is a nested npm package in `studio/`, deployed to `presbyterian-academy.sanity.studio`). All editable content lives in Sanity.
+- **Sanity v6** is the CMS (schemas in `studio/schemaTypes/`). The Studio is **embedded at `/studio`** via `@sanity/astro` (mounted in `astro.config.mjs`; the root `sanity.config.ts` re-exports `studio/sanity.config.ts` so the embedded Studio and the nested `studio/` package can never drift). It rebuilds with every deploy. The old hosted `presbyterian-academy.sanity.studio` is retired: a hosted Studio drifts stale between schema deploys. The nested package still exists for `typegen` / `schema extract`.
 - **Tailwind 4 via `@tailwindcss/vite`.** There is no `tailwind.config.mjs`. Brand tokens live in `@theme` blocks in `src/styles/globals.css`.
 - **React 19 islands** for interactivity; Astro components for everything static.
 - **Cloudflare Workers** for hosting, not Pages (Pages is in maintenance mode). Deploy with `wrangler deploy`.
 - **Web3Forms** contact + express-interest forms with **hCaptcha**, **Calendly** intro calls, **Cloudflare Web Analytics** (cookieless, no banner).
 - **`sanityFetch(query, params, fallback)`** in `src/lib/sanity.ts` is the single chokepoint for all Sanity reads. When `PUBLIC_SANITY_PROJECT_ID` is absent or set to the placeholder value, it returns the fallback without any network call, so `npm run build` succeeds with no Sanity project configured; pages render empty-state content.
+
+## Live draft preview (`/preview/**`)
+
+Editors see their **unpublished drafts** rendered in the real design, live, inside the Studio: open the **Presentation** tool at `/studio`, and the page list on the left drives an iframe of the site.
+
+How it fits together (ported from the WCP site 2026-08-25; that repo's architecture notes are the reference):
+
+- `/preview/**` and `/api/draft-mode/*` are the site's only **SSR** routes (`prerender = false`). Everything else stays statically built. They are `noindex` and never appear in the sitemap.
+- `src/lib/cms-preview.ts` is a THIRD Sanity client, separate from `src/lib/sanity.ts` (build-time): it reads the token from the **Worker runtime env** per request, uses `perspective: 'drafts'`, and turns on **stega** so click-to-edit works.
+- **Never compare a stega-encoded string in logic.** Stega hides ~1KB of invisible markers inside every string it touches, so `tone === 'chapel'` is `false` on an encoded value and the component silently picks the wrong branch, in preview only. Every enum that drives rendering is excluded via `NON_STEGA_FIELDS` in `cms-preview.ts`. **Add any new logic-driving dropdown field to that list.**
+- `src/pages/preview/live.ts` is an **SSE proxy**: it holds ONE long-lived connection to Sanity's listen API server-side (the token never reaches the browser) and forwards a tiny "change" signal. `VisualEditingOverlay` soft-refetches the page and swaps `#main`. It is event-driven on purpose. **Never replace it with an interval poll** (that is what burned the WCP Sanity quota).
+- The preview cookie carries an **unforgeable fingerprint** of the server-side token (`src/lib/preview-auth.ts`), not the package's default `'true'`.
+- Preview pages render chrome-less (a slim bar says so). The real Header/Footer link to the live site and would bounce the editor's iframe out of the preview.
+- Singleton pages preview their **editable surface only**: hero, the `flexibleSections` builder blocks, and the closing CTA. The code-owned middle (course rails, filters, stats) renders on the live site only, and a note in the preview says so. Custom `page` docs preview in full.
+- Path→type mapping lives in TWO places that must stay in sync: `SINGLETON_PREVIEW_PATHS` in `studio/resolve.ts` and `SINGLETON_BY_PATH` in `src/pages/preview/[...slug].astro`.
+- Runtime secret: `SANITY_TOKEN` (`.dev.vars` locally, `wrangler secret put SANITY_TOKEN` in production). Without it the preview routes fail closed.
 
 ## Keep the docs in sync
 
@@ -40,18 +56,22 @@ Stale docs in this repo have already shipped real bugs (the 2026-06-14 stale-typ
 
 Each entry carries the date it bit (or was decided) and the symptom, so future sessions can judge whether it still applies.
 
-1. **Run `npm run studio:deploy` after ANY schema change** (2026-06). Skip it and the hosted Studio shows "unknown fields" next to a "Remove field" prompt. **Never click "Remove field":** it deletes that field's data across every document and cannot be undone without a dataset restore. Correct sequence: edit schema, `npm run typegen`, `npm run studio:deploy`, commit.
+1. **Never click "Remove field" in the Studio** (2026-06). It deletes that field's data across every document and cannot be undone without a dataset restore. It appears when the Studio's schema is older than the data. Since the Studio is now embedded (it ships with the site build), the sequence after a schema change is: edit schema, `npm run typegen`, commit, deploy. No separate `studio:deploy` step.
 2. **`npm run build` does NOT run typegen** (bit 2026-06-14: schema changed, committed `src/lib/sanity.types.ts` went stale, build used old types). Run `npm run typegen` manually after any schema change, or use `npm run build:full`. CI fails if the committed types are stale; that guard is the durable fix, keep it.
 3. **No em-dashes in public-facing site copy** (standing rule). Use commas, colons, or restructure. Code comments, commit messages, and internal docs are exempt, but avoid them there too.
 4. **Build in both light AND dark mode** on every UI change (standing rule). **Light is the default** (a new visitor does not follow the OS; "system" is opt-in). Detail in `docs/agent/theme-and-color.md`.
 5. **Desktop nav is server-rendered** in `Header.astro` (standing rule). Do not regress it to a client-only island. Detail in `docs/agent/page-architecture.md`.
 6. **The Lenis scroll reset on navigation** (forward goes to top, back/forward restores) lives in the BaseLayout Lenis init. Do not remove it. Detail in `docs/agent/polish-layer.md`.
-7. **Content is statically built** (standing). A Sanity edit only goes live after a rebuild (push to `main`, or the publish webhook). Detail in `docs/agent/deployment.md`.
+7. **The PUBLIC site is statically built** (standing). A Sanity edit only reaches visitors after a rebuild (push to `main`, or the publish webhook). Editors do not have to wait to SEE their work, though: the `/preview` routes are SSR and draft-aware, so the Presentation tool shows unpublished edits immediately. Detail in `docs/agent/deployment.md`.
 8. **Verify image output paths after any `@astrojs/cloudflare` bump** (2026-06: `13.6.0` regressed Astro's image optimizer and the adapter sat pinned at `13.5.5` until the 2026-08-25 Astro 7 upgrade moved it to `^14`; the upgrade also removed the old `overrides: {vite: "^7"}` pin, which broke Astro 7's prerender step). The v14 adapter splits output into `dist/client` + `dist/server`; `wrangler.jsonc` points assets at `./dist/client`.
 9. **`overflow-x: clip` on `html` + `body`** (in `globals.css`, `@layer base`) is the mobile horizontal-scroll guard: the scroll-reveal `.reveal-l`/`.reveal-r` `translate` would otherwise shift not-yet-revealed elements off-screen and let every page wobble sideways on phones. Don't remove it or swap it to `overflow: hidden` (which breaks the sticky course-detail aside and Lenis's smooth scroll).
 10. **The CSP is hand-maintained in `public/_headers`** (2026-06: Astro's `security.csp` missed runtime inline scripts and broke theme bootstrap + islands; it was reverted). Any new embed origin (video host, captcha, analytics) must be added there manually or the widget silently fails to render (bit 2026-06-15 with hCaptcha).
 11. **Dev-server React `Invalid hook call` noise is a known dev-only Cloudflare-adapter bug** (astro#16529). The production build is clean. Don't chase it.
-12. **`src/components/ui/accordion.tsx` is customized** (removed the `h-(--radix-accordion-content-height)` lock, dropped `text-sm font-medium` from the trigger). Reinstalling via `npx shadcn add` reverts it; reapply the changes.
+12. **`react` and `react-dom` must be the EXACT same version, in both packages** (bit 2026-08-25: installing Sanity into the root pulled react to 19.2.8 while react-dom stayed 19.2.6, and the build died inside workerd with a wall of Miniflare stack frames; the real message, `Incompatible React versions`, was buried above them). Both are pinned exact (no caret) in `package.json` and `studio/package.json`. When a Miniflare/workerd failure looks unexplainable, read the lines ABOVE the `MiniflareCoreError` wrapper.
+13. **`wrangler` is pinned to `~4.110.0`** (2026-08-25). `@astrojs/cloudflare` v14 writes `legacy_env: true` into the generated `dist/server/wrangler.json`, and wrangler 4.126+ rejects that field outright ("no longer supported"), so every `wrangler dev`/`deploy` against the generated config fails. Revisit when a newer adapter stops emitting it.
+14. **Deploy with the generated config: `wrangler deploy -c dist/server/wrangler.json`** (baked into `npm run deploy`). The build is now hybrid static + SSR; a bare `wrangler deploy` reads the root `wrangler.jsonc`, which knows nothing about the SSR entrypoint, and every sub-route 404s.
+15. **`session: false` in `astro.config.mjs` is load-bearing.** Left on, the Cloudflare adapter auto-declares a `SESSION` KV binding in the generated config, and a KV binding with no namespace id fails the deploy. This site has no login, so there is nothing to keep.
+16. **`src/components/ui/accordion.tsx` is customized** (removed the `h-(--radix-accordion-content-height)` lock, dropped `text-sm font-medium` from the trigger). Reinstalling via `npx shadcn add` reverts it; reapply the changes.
 
 ---
 
@@ -63,7 +83,7 @@ Standalone scripts:
 
 - `npm run typegen` regenerates `src/lib/sanity.types.ts` from the schemas (committed, CI-guarded).
 - `npm run og` regenerates `public/og-default.png` (after changing brand colors, tagline, or wordmark inputs in `scripts/generate-og-default.mjs`).
-- `npm run studio:dev` / `npm run studio:deploy` for the Studio (see gotcha #1).
+- `npm run studio:dev` runs the Studio standalone (rarely needed; the embedded `/studio` is the real one). There is no `studio:deploy`: deploying the site deploys the Studio.
 - Content seeds, all **dry-run by default** (add `--apply` to write), all idempotent:
   - `node scripts/seed-academic-images.mjs` sets the home hero slideshow and fills empty course covers + page heroes with academic placeholders. Protects real editor images.
   - `node scripts/seed-page-copy.mjs` patches the built-in inline-fallback copy into any EMPTY home / about / get-started / faculty / `siteSettings.funder` field, so Studio mirrors the live site. Never clobbers an editor's copy.
@@ -104,6 +124,10 @@ Standalone scripts:
 | `/accessibility` | `src/pages/accessibility.astro` | Accessibility statement singleton + static fallback; barrier-report contact from `siteSettings` |
 | `/[slug]` | `src/pages/[slug].astro` | Custom pages: the `page` collection + the 19-block page builder (with a `RESERVED` slug guard) |
 | `/style-guide` | `src/pages/style-guide.astro` | SECRET internal brand reference: noindex, unlinked, sitemap-excluded |
+| `/studio` | `@sanity/astro` (mounted) | The embedded Sanity Studio (SSR shell) |
+| `/preview/**` | `src/pages/preview/[...slug].astro` | SSR draft preview for the Studio's Presentation tool. noindex, sitemap-excluded |
+| `/preview/live` | `src/pages/preview/live.ts` | SSE proxy for preview auto-refresh (403 without the Studio cookie) |
+| `/api/draft-mode/*` | `src/pages/api/draft-mode/` | Turns draft mode on/off for the preview |
 | `/sitemap-index.xml` | `@astrojs/sitemap` (auto) | Production sitemap |
 | `/404` | `src/pages/404.astro` | Custom 404 |
 

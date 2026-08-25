@@ -60,7 +60,7 @@ Set in Cloudflare -> **Workers & Pages -> your-project -> Settings -> Variables*
 
 ### Studio: deploy after schema changes
 
-When you change a Sanity schema (`studio/schemaTypes/**`), run `npm run studio:deploy` after merging. Skipping this leaves the hosted Studio serving a stale schema definition -- editors may see fields that don't match the current types, or miss newly added fields. The deploy is a one-command operation and takes under a minute. Make it part of the schema-change checklist.
+When you change a Sanity schema (`studio/schemaTypes/**`), run `npm run typegen` and commit the regenerated types. The Studio itself needs no separate deploy step: it is embedded at `/studio` and rebuilds with the site, so a site deploy always ships the current schema. (Before 2026-08-25 this repo used a hosted Studio that had to be deployed separately, which is what made stale-schema warnings possible.)
 
 ### Security headers
 

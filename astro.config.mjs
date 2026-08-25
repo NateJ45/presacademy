@@ -5,12 +5,18 @@ import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import sanity from '@sanity/astro';
 
 // https://astro.build/config
 export default defineConfig({
   // REPLACE before launch (rebrand.mjs stamps this): the canonical production URL.
   site: 'https://www.presbyterianacademy.org',
   output: 'static',
+  // No sessions anywhere on this site (there is no gated area or login), so
+  // opt out. Left on, @astrojs/cloudflare auto-declares a "SESSION" KV binding
+  // in the generated dist/server/wrangler.json, and a KV binding with no
+  // namespace id fails the deploy.
+  session: false,
   // `imageService: 'compile'` tells @astrojs/cloudflare to process images
   // with Sharp at build time and ship plain static files — no Cloudflare
   // Images runtime, no per-transform fees, no Workers binding required.
@@ -19,7 +25,30 @@ export default defineConfig({
   adapter: cloudflare({ imageService: 'compile' }),
   // The /style-guide route is an internal brand reference: kept out of the
   // sitemap (and noindex'd in BaseLayout) so it stays unlinked and unindexed.
-  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/style-guide') }), react()],
+  integrations: [
+    // Embedded Sanity Studio at /studio (the ONE studio — the old hosted
+    // *.sanity.studio deploy is retired; an embedded studio rebuilds with
+    // every deploy so it can never drift stale). The config it loads is the
+    // root sanity.config.ts, which re-exports studio/sanity.config.ts.
+    // The project id is public by design (it ships in every client bundle).
+    sanity({
+      projectId: 'uz2sl3zp',
+      dataset: 'production',
+      useCdn: false,
+      studioBasePath: '/studio',
+    }),
+    sitemap({
+      // /preview and /studio are Studio plumbing (SSR/noindex) — mostly
+      // excluded already because the sitemap only walks prerendered routes,
+      // but the filter makes it explicit and future-proof.
+      filter: (page) =>
+        !page.includes('/404') &&
+        !page.includes('/style-guide') &&
+        !page.includes('/preview') &&
+        !page.includes('/studio'),
+    }),
+    react(),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

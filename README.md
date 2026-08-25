@@ -22,17 +22,23 @@ with an in-Studio help center where every visible string is editable.
 npm install && npm --prefix studio install
 
 # run it
-npm run dev            # site on :4321
-npm run studio:dev     # Sanity Studio for content editing
+npm run dev            # site on :4321 (Studio at /studio)
+npm run preview        # the real Worker locally (wrangler; needed for /preview/**)
 
 # ship it
-npm run build          # OG cards + astro build (static output in dist/)
-npm run deploy         # build + wrangler deploy to the production Worker
+npm run build          # OG cards + astro build (dist/client static, dist/server SSR)
+npm run deploy         # build + wrangler deploy -c dist/server/wrangler.json
 ```
 
-Content lives in Sanity (project `uz2sl3zp`). The site is statically built:
-a Sanity publish goes live after a rebuild (push to `main`, or the publish
-webhook). Work lands on `staging`, then fast-forwards to `main`.
+Content lives in Sanity (project `uz2sl3zp`), edited in the Studio embedded
+at **`/studio`**. The public site is statically built, so a publish reaches
+visitors after a rebuild (push to `main`, or the publish webhook) — but
+editors see unpublished drafts immediately in the Studio's Presentation tool,
+which previews the SSR `/preview/**` routes with click-to-edit. Work lands on
+`staging`, then fast-forwards to `main`.
+
+Testing: `npm test` (unit + theme-token contrast), `npm run test:e2e`
+(Playwright: smoke, axe in both themes, reflow). See `docs/TESTING.md`.
 
 ## The files that orient you
 

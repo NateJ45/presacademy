@@ -12,7 +12,7 @@
 import { sanityFetch } from './sanity';
 
 // Common Portable Text + image projection shorthand
-const IMAGE_PROJECTION = `{
+export const IMAGE_PROJECTION = `{
   ...,
   asset->,
   "alt": coalesce(alt, asset->altText, "")
@@ -35,7 +35,7 @@ const FORM_PROJECTION = `{
 
 // Page-builder block members (flexibleSections[] / page.sections[]). Resolves
 // image + form references; other blocks carry their fields via the spread.
-const SECTION_MEMBERS = `{
+export const SECTION_MEMBERS = `{
   ...,
   background{ ..., image${IMAGE_PROJECTION} },
   _type == "sectionImageText" => { image${IMAGE_PROJECTION} },

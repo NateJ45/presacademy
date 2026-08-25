@@ -2,7 +2,10 @@
   // Cloudflare Workers configuration for this project.
   // Cloudflare merged Pages into Workers in early 2026; Workers is the path forward.
   "compatibility_date": "2026-05-26",
-  "compatibility_flags": ["global_fetch_strictly_public"],
+  // nodejs_compat: the SSR preview routes' render graph can touch process.env
+  // (React internals, Sanity client) — without the flag those reads throw at
+  // request time. global_fetch_strictly_public predates it.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   // Cloudflare Worker name. Must match the Worker created in the Cloudflare dashboard.
   "name": "presacademy",
   "main": "@astrojs/cloudflare/entrypoints/server",

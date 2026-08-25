@@ -7,6 +7,7 @@
 
 import { defineConfig, type Tool } from 'sanity';
 import { structureTool, type DefaultDocumentNodeResolver } from 'sanity/structure';
+import { presentationTool } from 'sanity/presentation';
 import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
@@ -15,6 +16,8 @@ import DocumentsPane from 'sanity-plugin-documents-pane';
 import { schemaTypes } from './schemaTypes';
 import { ARCHIVABLE_TYPES } from './schemaTypes/archived';
 import { deskStructure } from './structure';
+import { resolve } from './resolve';
+import { PreviewNavigator } from './components/PreviewNavigator';
 import { STARTING_TEMPLATES } from './templates';
 import StudioLogo from './components/StudioLogo';
 import StudioLayout from './components/StudioLayout';
@@ -47,6 +50,26 @@ import { ArchiveAction, RestoreAction, DeleteForeverAction } from './actions/arc
 const DISPLAY_STACK = "'Fraunces', Georgia, 'Times New Roman', serif";
 const BODY_STACK = "'Source Sans 3', system-ui, -apple-system, sans-serif";
 
+// -----------------------------------------------------------------------------
+// Env access that works in BOTH bundlers. The sanity CLI defines
+// process.env.SANITY_STUDIO_*; the EMBEDDED /studio (bundled by Astro/Vite)
+// has no `process` global at all in the browser and exposes PUBLIC_* vars on
+// import.meta.env instead. A bare `process.env.X` read would throw a
+// ReferenceError the moment the embedded studio chunk evaluates.
+// -----------------------------------------------------------------------------
+const envVal = (...names: string[]): string | undefined => {
+  for (const n of names) {
+    const fromProcess = typeof process !== 'undefined' ? process.env?.[n] : undefined;
+    if (fromProcess) return fromProcess;
+    const fromVite = (import.meta as { env?: Record<string, string | undefined> }).env?.[n];
+    if (fromVite) return fromVite;
+  }
+  return undefined;
+};
+const IS_DEV =
+  (import.meta as { env?: { DEV?: boolean } }).env?.DEV === true ||
+  (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
+
 function withFamily(font: ThemeFont, family: string): ThemeFont {
   return { ...font, family };
 }
@@ -66,7 +89,8 @@ const studioTheme: RootTheme = buildTheme({
 // Preview/site base used by urlForDoc (kept for a future preview pane; see
 // structure.ts). Defaults to production; override with SANITY_STUDIO_PREVIEW_URL
 // (e.g. a workers.dev preview, or http://localhost:4321 for local Studio + site dev).
-export const SITE_URL_FOR_PREVIEW = process.env.SANITY_STUDIO_PREVIEW_URL || 'https://www.presbyterianacademy.org';
+export const SITE_URL_FOR_PREVIEW =
+  envVal('SANITY_STUDIO_PREVIEW_URL') || 'https://www.presbyterianacademy.org';
 
 // The live (production) site base used by the "View on the live site" help
 // banner. Deliberately INDEPENDENT of SITE_URL_FOR_PREVIEW (which may point at
@@ -205,8 +229,9 @@ export default defineConfig({
 
   // Set SANITY_STUDIO_PROJECT_ID and SANITY_STUDIO_DATASET in studio/.env
   // (or as env vars) after creating your Sanity project at sanity.io/manage.
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'placeholder-project-id',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+  projectId:
+    envVal('SANITY_STUDIO_PROJECT_ID', 'PUBLIC_SANITY_PROJECT_ID') || 'placeholder-project-id',
+  dataset: envVal('SANITY_STUDIO_DATASET', 'PUBLIC_SANITY_DATASET') || 'production',
 
   // Brand theme — Geneva Green primary + near-white paper.
   theme: studioTheme,
@@ -237,13 +262,33 @@ export default defineConfig({
   plugins: [
     structureTool({
       structure: deskStructure,
-      // Extra per-type tabs (SEO preview, "Used on"). Deliberately NO iframe
-      // "Preview" tab: this is a static site with no live draft preview, so an
-      // iframe would load the last PUBLISHED build (not the editor's current
-      // draft) and mislead editors. Changes go live after Publish + the site
-      // rebuild; see the "How This Works" guide. (urlForDoc /
-      // SITE_URL_FOR_PREVIEW are kept above if a real preview is added later.)
+      // Extra per-type tabs (SEO preview, "Used on"). Still no iframe tab on
+      // documents: the live draft preview is the Presentation tool below,
+      // which renders the SSR /preview/* routes with click-to-edit.
       defaultDocumentNode,
+    }),
+    // Click-to-edit live preview against the Studio-only /preview/* routes
+    // (never the real public pages — see studio/resolve.ts and the site's
+    // src/pages/preview/). previewMode only sets `enable`: `disable` is a
+    // documented no-op in this Sanity version, so exiting preview is a plain
+    // link to /api/draft-mode/disable (see PreviewLayout.astro). The relative
+    // URLs assume the EMBEDDED /studio (same origin as the site); the old
+    // hosted *.sanity.studio is retired.
+    presentationTool({
+      resolve,
+      previewUrl: {
+        initial: '/preview',
+        previewMode: { enable: '/api/draft-mode/enable' },
+      },
+      // The Squarespace-style page list beside the preview: click a page,
+      // the preview jumps there and the edit panel follows.
+      components: {
+        unstable_navigator: {
+          component: PreviewNavigator,
+          minWidth: 160,
+          maxWidth: 280,
+        },
+      },
     }),
     // Unsplash plugin — adds an "Unsplash" tab to every image picker. The
     // package's correct registration is via the plugins array (not
@@ -256,7 +301,7 @@ export default defineConfig({
     media(),
     // Vision (GROQ query runner) is a developer tool, not an editor tool.
     // Gate it to local dev so it doesn't clutter the deployed Studio.
-    ...(process.env.NODE_ENV !== 'production' ? [visionTool()] : []),
+    ...(IS_DEV ? [visionTool()] : []),
   ],
 
   schema: {
