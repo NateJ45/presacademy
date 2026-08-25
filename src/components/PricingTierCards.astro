@@ -31,7 +31,9 @@ function priceLabel(t: any): string {
         <div class="p-l">
           {t.featured && <span class="mb-2 inline-block rounded-[2px] bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground">Most chosen</span>}
           <Heading class="font-display text-h4 text-foreground">{t.name}</Heading>
-          <p class="mt-2 font-display text-h2 text-chapel-ink">{priceLabel(t)}<span class="ml-1 align-middle text-sm font-normal text-foreground/60">{t.unit}</span></p>
+          <p class="mt-2 font-display text-h2 text-chapel-ink">{priceLabel(t)}{/* muted-foreground, NOT foreground/60: the 60% composite on the near-white
+    page measures ~4.4:1 at 14px — an axe color-contrast fail caught by
+    tests/a11y.spec.ts (2026-08-25). */}<span class="ml-1 align-middle text-sm font-normal text-muted-foreground">{t.unit}</span></p>
           {t.summary && <p class="mt-3 text-sm text-foreground/75">{t.summary}</p>}
           {t.includes?.length > 0 && (
             <ul class="mt-l space-y-2 border-t border-border-soft pt-l text-sm text-foreground/80">

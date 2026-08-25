@@ -16,6 +16,8 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+# Worker runtime secrets for wrangler dev (SANITY_TOKEN for the preview routes)
+.dev.vars
 
 # wrangler local cache (Cloudflare adapter)
 .wrangler/
@@ -51,3 +53,8 @@ scripts/_stock*/
 
 # seed uploader asset-id cache (scripts/lib/sanity-lib.mjs)
 scripts/.asset-map.json
+
+# Playwright + Lighthouse CI local artifacts (docs/TESTING.md)
+test-results/
+playwright-report/
+.lighthouseci/

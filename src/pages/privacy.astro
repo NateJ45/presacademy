@@ -62,12 +62,15 @@ const hasSanityBody = Boolean(page?.body);
     subhead={heroSubhead}
     backgroundImage={page?.heroImage ?? null}
     localImage={heroPrivacy}
-    localImageAlt="An open Bible, reading glasses, and a notebook laid out for study"
+    localImageAlt="A university library reading room"
     headingId="privacy-hero-heading"
     size="short"
   />
 
-  <section class="bg-background" aria-label="Privacy policy">
+  {/* aria-label must differ from the hero region's accessible name (its h1
+      reads "Privacy policy"): two region landmarks with the same name are an
+      axe landmark-unique violation, caught by tests/a11y.spec.ts (2026-08-25). */}
+  <section class="bg-background" aria-label="Privacy policy contents">
     <div class="mx-auto max-w-3xl px-m py-section-lg">
       {lastUpdated && (
         <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-l">

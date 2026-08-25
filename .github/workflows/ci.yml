@@ -63,13 +63,50 @@ jobs:
           path: dist/client
           retention-days: 1
 
+  playwright:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install root dependencies
+        run: npm ci
+
+      # Both projects from playwright.config.ts: chromium (desktop) AND
+      # webkit-iphone. Installing only chromium makes every webkit test die
+      # with "Executable doesn't exist".
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      # Runs the smoke, axe a11y (light + dark), and reflow (320/768/1024/1440)
+      # suites against a fresh production build (the config's webServer runs
+      # `npm run build`). The empty PUBLIC_SANITY_PROJECT_ID triggers the
+      # same no-credentials fallback path as the build job above: every fixed
+      # route renders with fallback content, so no secrets are needed. The
+      # dynamic-detail smoke test skips itself when the sitemap has no detail
+      # pages, which is exactly this case.
+      - name: Run Playwright suites (smoke · a11y · reflow)
+        env:
+          PUBLIC_SANITY_PROJECT_ID: ""
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
   lighthouse:
     needs: build
     runs-on: ubuntu-latest
-    # Informative for now: the build/type/lint/test gates above are the hard
-    # blockers. Once Lighthouse is consistently green in CI, drop this line to
-    # make a score regression block the merge too.
-    continue-on-error: true
+    # A REAL gate since 2026-08-25 (accessibility asserts as an error in
+    # lighthouserc.json): a score regression blocks the merge.
 
     steps:
       - uses: actions/checkout@v4

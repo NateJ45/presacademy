@@ -20,6 +20,8 @@
     "studio:dev": "npm --prefix studio run dev",
     "studio:deploy": "npm --prefix studio run deploy",
     "test": "node --experimental-strip-types --test src/lib/*.test.ts",
+    "test:e2e": "playwright test",
+    "serve:dist": "http-server dist/client -p 4321 -c-1 --silent",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
@@ -55,9 +57,12 @@
     "wrangler": "^4.110.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.0",
     "eslint": "^10.5.0",
     "eslint-plugin-astro": "^1.7.0",
+    "http-server": "^14.1.1",
     "opentype.js": "^2.0.0",
     "prettier": "^3.8.4",
     "tailwindcss": "^4.3.0",

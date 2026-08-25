@@ -97,7 +97,11 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
                   className="accent-[#33503F]"
                 />
                 <span>{o.label}</span>
-                <span className="text-secondary">({o.count})</span>
+                {/* muted-foreground, NOT text-secondary: Cloister Stone (#B7A99B)
+                    as 14px text on the page measures 2.16:1 — an axe color-contrast
+                    fail caught by tests/a11y.spec.ts (2026-08-25). secondary is a
+                    border/eyebrow token, not a text token. */}
+                <span className="text-muted-foreground">({o.count})</span>
               </label>
             ))}
           </div>
@@ -117,7 +121,11 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
                   className="accent-[#33503F]"
                 />
                 <span>{o.label}</span>
-                <span className="text-secondary">({o.count})</span>
+                {/* muted-foreground, NOT text-secondary: Cloister Stone (#B7A99B)
+                    as 14px text on the page measures 2.16:1 — an axe color-contrast
+                    fail caught by tests/a11y.spec.ts (2026-08-25). secondary is a
+                    border/eyebrow token, not a text token. */}
+                <span className="text-muted-foreground">({o.count})</span>
               </label>
             ))}
           </div>

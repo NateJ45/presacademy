@@ -103,6 +103,21 @@ type RenderedItem =
   | { kind: 'html'; html: string }
   | { kind: 'listItem'; listType: 'bullet' | 'number'; html: string };
 
+// Heading normalization: editors sometimes start a document at h3 (picking
+// heading levels for their SIZE), which leaves the page jumping h1 -> h3 — an
+// axe `heading-order` violation caught by tests/a11y.spec.ts on /privacy and
+// /accessibility (2026-08-25). Rendered pages put their h1 in the hero, so the
+// document's SMALLEST heading level should land at h2; shift every heading up
+// by the same amount so the relative structure is preserved. Same pattern as
+// the WCP repo's Portable Text heading normalization.
+const HEADING_LEVELS: Record<string, number> = { h2: 2, h3: 3, h4: 4 };
+const usedLevels = value
+  .filter((b) => b._type === 'block' && b.style && HEADING_LEVELS[b.style])
+  .map((b) => HEADING_LEVELS[b.style as string]);
+const headingShift = usedLevels.length > 0 ? Math.min(...usedLevels) - 2 : 0;
+const normalizeStyle = (style: string): string =>
+  HEADING_LEVELS[style] ? `h${HEADING_LEVELS[style] - headingShift}` : style;
+
 const items: RenderedItem[] = value.map((block) => {
   if (block._type !== 'block') {
     // Non-block types (inlineImage, etc.) are silently skipped in the static renderer.
@@ -119,7 +134,7 @@ const items: RenderedItem[] = value.map((block) => {
     };
   }
 
-  const style = block.style ?? 'normal';
+  const style = normalizeStyle(block.style ?? 'normal');
   let html: string;
   if (style === 'h2') {
     html = `<h2 class="mt-section-md mb-m font-display text-h2 text-foreground scroll-mt-24">${inner}</h2>`;
