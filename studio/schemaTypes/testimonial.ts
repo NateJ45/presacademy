@@ -5,12 +5,18 @@
 // without the banned hype words (see docs/brand/voice.md).
 
 import { defineType, defineField } from 'sanity';
+import { archivedField } from './archived';
+import { orderRankField } from '@sanity/orderable-document-list';
 
 export const testimonial = defineType({
   name: 'testimonial',
   title: 'Testimonial',
   type: 'document',
   fields: [
+    // Drag-to-reorder rank (managed by the orderable desk list; hidden).
+    orderRankField({ type: 'testimonial' }),
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'quote',
       title: 'Quote',

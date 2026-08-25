@@ -4,7 +4,8 @@
 // singletons; this is for one-off additions.
 
 import { defineType, defineField } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { archivedField } from './archived';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const page = defineType({
   name: 'page',
@@ -17,6 +18,8 @@ export const page = defineType({
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Page title',
@@ -51,6 +54,8 @@ export const page = defineType({
       group: 'content',
       description: 'Build the page from blocks. Add, remove, and drag to reorder.',
       of: FLEXIBLE_SECTION_MEMBERS,
+
+      options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
     defineField({
       name: 'seoTitle',

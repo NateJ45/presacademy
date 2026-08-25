@@ -4,12 +4,15 @@
 // "upcoming" list once their date passes (on the next build).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { archivedField } from './archived';
 
 export const event = defineType({
   name: 'event',
   title: 'Event',
   type: 'document',
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Event title',

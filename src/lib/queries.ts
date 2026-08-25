@@ -117,7 +117,7 @@ export async function getSiteSettings() {
 export async function getActiveAnnouncement() {
   const now = new Date().toISOString();
   return sanityFetch(
-    `*[_type == "announcement" && enabled == true
+    `*[_type == "announcement" && archived != true && enabled == true
       && (!defined(startDate) || startDate <= $now)
       && (!defined(endDate) || endDate >= $now)]
       | order(select(style == "urgent" => 0, style == "special" => 1, 2) asc, endDate asc)[0]{
@@ -260,7 +260,7 @@ export async function getFaqPage() {
     // coalesce: prefer the new categoryRef document title; fall back to the
     // legacy hardcoded string so existing items keep grouping correctly until
     // editors migrate them to the reference field.
-    "faqs": *[_type == "faqItem"] | order(coalesce(categoryRef->title, category) asc, displayOrder asc){
+    "faqs": *[_type == "faqItem" && archived != true] | order(coalesce(categoryRef->title, category) asc, displayOrder asc){
       question, answer,
       "category": coalesce(categoryRef->title, category),
       displayOrder
@@ -283,7 +283,7 @@ export async function getFaqItems(opts: { category?: string; limit?: number } = 
   // fetch all items ordered by category then display order.
   if (category) {
     return sanityFetch(
-      `*[_type == "faqItem" && coalesce(categoryRef->title, category) == $category]
+      `*[_type == "faqItem" && archived != true && coalesce(categoryRef->title, category) == $category]
         | order(displayOrder asc)
         [0...$limit]{
           question, answer,
@@ -295,7 +295,7 @@ export async function getFaqItems(opts: { category?: string; limit?: number } = 
     );
   }
   return sanityFetch(
-    `*[_type == "faqItem"] | order(coalesce(categoryRef->title, category) asc, displayOrder asc)
+    `*[_type == "faqItem" && archived != true] | order(coalesce(categoryRef->title, category) asc, displayOrder asc)
       [0...$limit]{
         question, answer,
         "category": coalesce(categoryRef->title, category),
@@ -342,12 +342,12 @@ export async function getUseOurSpacePage() {
 
 // Standalone form fetch by slug (page-builder formRef block, ad-hoc embeds).
 export async function getForm(slug: string) {
-  return sanityFetch(`*[_type == "form" && slug.current == $slug][0]${FORM_PROJECTION}`, { slug }, null);
+  return sanityFetch(`*[_type == "form" && archived != true && slug.current == $slug][0]${FORM_PROJECTION}`, { slug }, null);
 }
 
 // ---- Generic custom pages (/[slug], page-builder blocks) ------------------
 export async function getPageBySlug(slug: string) {
-  return sanityFetch(`*[_type == "page" && slug.current == $slug][0]{
+  return sanityFetch(`*[_type == "page" && archived != true && slug.current == $slug][0]{
     title, "slug": slug.current,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
@@ -358,7 +358,7 @@ export async function getPageBySlug(slug: string) {
 
 export async function getAllPageSlugs(): Promise<string[]> {
   const list: Array<{ slug: string }> = await sanityFetch(
-    `*[_type == "page" && defined(slug.current)]{ "slug": slug.current }`,
+    `*[_type == "page" && archived != true && defined(slug.current)]{ "slug": slug.current }`,
     {},
     [],
   );
@@ -475,7 +475,7 @@ export async function getEventsPage() {
 // representative start time then title.
 export async function getRecurringEvents() {
   return sanityFetch(
-    `*[_type == "event" && eventType == "recurring"] | order(start asc, title asc) ${EVENT_CARD}`,
+    `*[_type == "event" && archived != true && eventType == "recurring"] | order(start asc, title asc) ${EVENT_CARD}`,
     {},
     [],
   );
@@ -486,7 +486,7 @@ export async function getRecurringEvents() {
 export async function getUpcomingEvents() {
   const now = new Date().toISOString();
   return sanityFetch(
-    `*[_type == "event" && eventType == "oneTime" && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
+    `*[_type == "event" && archived != true && eventType == "oneTime" && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
       | order(featured desc, start asc) ${EVENT_CARD}`,
     { now },
     [],
@@ -499,7 +499,7 @@ export async function getUpcomingEvents() {
 export async function getSpecialServices() {
   const now = new Date().toISOString();
   return sanityFetch(
-    `*[_type == "event" && specialService == true && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
+    `*[_type == "event" && archived != true && specialService == true && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
       | order(start asc) ${EVENT_CARD}`,
     { now },
     [],
@@ -510,7 +510,7 @@ export async function getSpecialServices() {
 export async function getHomeFeaturedEvents() {
   const now = new Date().toISOString();
   return sanityFetch(
-    `*[_type == "event" && featuredOnHome == true && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
+    `*[_type == "event" && archived != true && featuredOnHome == true && coalesce(end, start, "9999-12-31T00:00:00Z") >= $now]
       | order(start asc) ${EVENT_CARD}`,
     { now },
     [],
@@ -519,7 +519,7 @@ export async function getHomeFeaturedEvents() {
 
 export async function getEventBySlug(slug: string) {
   return sanityFetch(
-    `*[_type == "event" && slug.current == $slug][0]{
+    `*[_type == "event" && archived != true && slug.current == $slug][0]{
       _id, title, slug, eventType, category, audience,
       scheduleLabel, start, end, allDay, location,
       summary, cost, registrationUrl, registrationLabel, contactName, contactEmail,
@@ -534,7 +534,7 @@ export async function getEventBySlug(slug: string) {
 
 export async function getAllEventSlugs(): Promise<string[]> {
   const list: Array<{ slug: { current: string } }> = await sanityFetch(
-    `*[_type == "event" && defined(slug.current)]{ slug }`,
+    `*[_type == "event" && archived != true && defined(slug.current)]{ slug }`,
     {},
     [],
   );
@@ -636,7 +636,7 @@ export async function getCoursesPage() {
 
 export async function getCourses() {
   return sanityFetch(
-    `*[_type == "course"] | order(startHere desc, featured desc, displayOrder asc, title asc) ${COURSE_CARD}`,
+    `*[_type == "course" && archived != true] | order(startHere desc, featured desc, displayOrder asc, title asc) ${COURSE_CARD}`,
     { today: TODAY() },
     [],
   );
@@ -645,7 +645,7 @@ export async function getCourses() {
 // Featured courses for the home catalog preview.
 export async function getFeaturedCourses(limit = 6) {
   return sanityFetch(
-    `*[_type == "course" && featured == true] | order(displayOrder asc, title asc)[0...$limit] ${COURSE_CARD}`,
+    `*[_type == "course" && archived != true && featured == true] | order(displayOrder asc, title asc)[0...$limit] ${COURSE_CARD}`,
     { today: TODAY(), limit },
     [],
   );
@@ -654,7 +654,7 @@ export async function getFeaturedCourses(limit = 6) {
 // The recommended starting courses (the "Start here" rail).
 export async function getStartHereCourses() {
   return sanityFetch(
-    `*[_type == "course" && startHere == true] | order(displayOrder asc, title asc) ${COURSE_CARD}`,
+    `*[_type == "course" && archived != true && startHere == true] | order(displayOrder asc, title asc) ${COURSE_CARD}`,
     { today: TODAY() },
     [],
   );
@@ -662,7 +662,7 @@ export async function getStartHereCourses() {
 
 export async function getCourseBySlug(slug: string) {
   return sanityFetch(
-    `*[_type == "course" && slug.current == $slug][0]{
+    `*[_type == "course" && archived != true && slug.current == $slug][0]{
       _id, title, "slug": slug.current, summary, level, format, location, whoFor,
       coverImage${IMAGE_PROJECTION},
       seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
@@ -686,7 +686,7 @@ export async function getCourseBySlug(slug: string) {
 
 export async function getAllCourseSlugs(): Promise<string[]> {
   const list: Array<{ slug: string }> = await sanityFetch(
-    `*[_type == "course" && defined(slug.current)]{ "slug": slug.current }`,
+    `*[_type == "course" && archived != true && defined(slug.current)]{ "slug": slug.current }`,
     {},
     [],
   );
@@ -714,7 +714,7 @@ export async function getFacultyPage() {
 
 export async function getFaculty() {
   return sanityFetch(
-    `*[_type == "facultyMember"] | order(displayOrder asc, name asc) ${FACULTY_CARD}`,
+    `*[_type == "facultyMember" && archived != true] | order(orderRank asc, displayOrder asc, name asc) ${FACULTY_CARD}`,
     {},
     [],
   );
@@ -723,7 +723,7 @@ export async function getFaculty() {
 // A few faculty for the home faculty strip.
 export async function getFeaturedFaculty(limit = 4) {
   return sanityFetch(
-    `*[_type == "facultyMember"] | order(displayOrder asc, name asc)[0...$limit] ${FACULTY_CARD}`,
+    `*[_type == "facultyMember" && archived != true] | order(orderRank asc, displayOrder asc, name asc)[0...$limit] ${FACULTY_CARD}`,
     { limit },
     [],
   );
@@ -731,7 +731,7 @@ export async function getFeaturedFaculty(limit = 4) {
 
 export async function getFacultyBySlug(slug: string) {
   return sanityFetch(
-    `*[_type == "facultyMember" && slug.current == $slug][0]{
+    `*[_type == "facultyMember" && archived != true && slug.current == $slug][0]{
       _id, name, honorific, title, "slug": slug.current,
       ordination, denomination, yearsTeaching, humanLine, bio, email, specializations,
       photo${IMAGE_PROJECTION},
@@ -740,7 +740,7 @@ export async function getFacultyBySlug(slug: string) {
       degrees[]{ _key, degree, field, institution, year },
       affiliations[]{ _key, role, organization },
       publications[]{ _key, title, publisher, year, url },
-      "coursesTaught": *[_type == "course" && references(^._id)] | order(displayOrder asc, title asc){
+      "coursesTaught": *[_type == "course" && archived != true && references(^._id)] | order(displayOrder asc, title asc){
         _id, title, "slug": slug.current,
         "teachingArea": teachingAreas[0]->title
       }
@@ -752,7 +752,7 @@ export async function getFacultyBySlug(slug: string) {
 
 export async function getAllFacultySlugs(): Promise<string[]> {
   const list: Array<{ slug: string }> = await sanityFetch(
-    `*[_type == "facultyMember" && defined(slug.current)]{ "slug": slug.current }`,
+    `*[_type == "facultyMember" && archived != true && defined(slug.current)]{ "slug": slug.current }`,
     {},
     [],
   );
@@ -763,7 +763,7 @@ export async function getAllFacultySlugs(): Promise<string[]> {
 
 export async function getTeachingAreas() {
   return sanityFetch(
-    `*[_type == "teachingArea"] | order(displayOrder asc, title asc){ _id, title, "slug": slug.current, description }`,
+    `*[_type == "teachingArea" && archived != true] | order(displayOrder asc, title asc){ _id, title, "slug": slug.current, description }`,
     {},
     [],
   );
@@ -775,7 +775,7 @@ export async function getTeachingAreas() {
 // cue (derived, not stored on siteSettings).
 export async function getNextTerm() {
   return sanityFetch(
-    `*[_type == "term" && startDate >= $today] | order(startDate asc)[0]{
+    `*[_type == "term" && archived != true && startDate >= $today] | order(startDate asc)[0]{
       _id, title, startDate, registrationDeadline, note
     }`,
     { today: TODAY() },
@@ -785,7 +785,7 @@ export async function getNextTerm() {
 
 export async function getTerms() {
   return sanityFetch(
-    `*[_type == "term"] | order(startDate asc){ _id, title, startDate, endDate, registrationDeadline, status, note }`,
+    `*[_type == "term" && archived != true] | order(startDate asc){ _id, title, startDate, endDate, registrationDeadline, status, note }`,
     {},
     [],
   );
@@ -805,7 +805,7 @@ export async function getPricingPage() {
 
 export async function getPricingTiers() {
   return sanityFetch(
-    `*[_type == "pricingTier"] | order(displayOrder asc){ _id, name, amount, unit, summary, includes, isAudit, featured }`,
+    `*[_type == "pricingTier" && archived != true] | order(orderRank asc, displayOrder asc){ _id, name, amount, unit, summary, includes, isAudit, featured }`,
     {},
     [],
   );
@@ -821,7 +821,7 @@ const TESTIMONIAL_CARD = `{
 
 export async function getTestimonials() {
   return sanityFetch(
-    `*[_type == "testimonial"] | order(displayOrder asc) ${TESTIMONIAL_CARD}`,
+    `*[_type == "testimonial" && archived != true] | order(orderRank asc, displayOrder asc) ${TESTIMONIAL_CARD}`,
     {},
     [],
   );
@@ -829,7 +829,7 @@ export async function getTestimonials() {
 
 export async function getFeaturedTestimonials(limit = 3) {
   return sanityFetch(
-    `*[_type == "testimonial" && featured == true] | order(displayOrder asc)[0...$limit] ${TESTIMONIAL_CARD}`,
+    `*[_type == "testimonial" && archived != true && featured == true] | order(displayOrder asc)[0...$limit] ${TESTIMONIAL_CARD}`,
     { limit },
     [],
   );

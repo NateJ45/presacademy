@@ -5,12 +5,18 @@
 // amount + unit. Express-interest only — no checkout is wired to these.
 
 import { defineType, defineField } from 'sanity';
+import { archivedField } from './archived';
+import { orderRankField } from '@sanity/orderable-document-list';
 
 export const pricingTier = defineType({
   name: 'pricingTier',
   title: 'Pricing tier',
   type: 'document',
   fields: [
+    // Drag-to-reorder rank (managed by the orderable desk list; hidden).
+    orderRankField({ type: 'pricingTier' }),
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'name',
       title: 'Tier name',

@@ -11,8 +11,11 @@ import { useEffect } from 'react';
 import type { LayoutProps } from 'sanity';
 
 const FONT_LINK_ID = 'brand-fonts';
+// Fraunces carries 600/700 too: the theme's heading slots (buildTheme in
+// sanity.config.ts) use semibold/bold weights, which would otherwise be
+// faux-bolded by the browser.
 const FONT_HREF =
-  'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Source+Sans+3:wght@400;500;600&display=swap';
+  'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Sans+3:wght@400;500;600;700&display=swap';
 
 export default function StudioLayout(props: LayoutProps) {
   useEffect(() => {

@@ -8,12 +8,15 @@
 // end. Build-time evaluation; a scheduled rebuild refreshes the window.
 
 import { defineType, defineField } from 'sanity';
+import { archivedField } from './archived';
 
 export const announcement = defineType({
   name: 'announcement',
   title: 'Announcement',
   type: 'document',
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Internal name',

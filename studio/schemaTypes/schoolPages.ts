@@ -9,7 +9,7 @@
 // sanity.config.ts (SINGLETON_TYPES set + urlForDoc case).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 interface PageDefaults {
   heroEyebrow?: string;
@@ -111,6 +111,8 @@ export function definePageSingleton(
         group: 'sections',
         description: 'Add on-brand sections to this page. They render below the built-in page content. Drag to reorder.',
         of: FLEXIBLE_SECTION_MEMBERS,
+
+        options: FLEXIBLE_SECTIONS_OPTIONS,
       }),
       defineField({
         name: 'finalCta',

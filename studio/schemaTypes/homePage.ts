@@ -11,7 +11,7 @@
 // document held no data in them, so removal is clean (no "unknown field" warnings).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const homePage = defineType({
   name: 'homePage',
@@ -98,7 +98,7 @@ export const homePage = defineType({
     defineField({ name: 'testimonialsHeadline', title: 'Testimonials strip — headline', type: 'string', group: 'content' }),
 
     // ---- Page sections ----
-    defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: 'Add on-brand sections below the built-in content. Drag to reorder.', of: FLEXIBLE_SECTION_MEMBERS }),
+    defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: 'Add on-brand sections below the built-in content. Drag to reorder.', of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
 
     // ---- Final CTA ----
     defineField({ name: 'finalCtaEyebrow', title: 'Final CTA — eyebrow', type: 'string', group: 'final' }),

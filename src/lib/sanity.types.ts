@@ -363,6 +363,8 @@ export type Testimonial = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  orderRank?: string;
+  archived?: boolean;
   quote?: string;
   name?: string;
   role?: string;
@@ -409,6 +411,8 @@ export type FacultyMember = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  orderRank?: string;
+  archived?: boolean;
   name?: string;
   honorific?: string;
   slug?: Slug;
@@ -508,6 +512,7 @@ export type Course = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   summary?: string;
@@ -576,6 +581,8 @@ export type PricingTier = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  orderRank?: string;
+  archived?: boolean;
   name?: string;
   slug?: Slug;
   amount?: number;
@@ -593,6 +600,7 @@ export type Term = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   startDate?: string;
@@ -609,6 +617,7 @@ export type TeachingArea = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   description?: string;
@@ -621,6 +630,7 @@ export type Announcement = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   message?: string;
   style?: 'info' | 'special' | 'urgent';
@@ -639,6 +649,7 @@ export type Event = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   eventType?: 'recurring' | 'oneTime';
@@ -706,6 +717,7 @@ export type FaqItem = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   question?: string;
   answer?: Array<{
     children?: Array<{
@@ -1144,6 +1156,7 @@ export type FaqCategory = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  orderRank?: string;
   title?: string;
   slug?: Slug;
   displayOrder?: number;
@@ -1545,6 +1558,7 @@ export type Page = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   heroEyebrow?: string;
@@ -2481,6 +2495,7 @@ export type Form = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  archived?: boolean;
   title?: string;
   slug?: Slug;
   heading?: string;

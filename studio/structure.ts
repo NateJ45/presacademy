@@ -1,17 +1,26 @@
-// Studio Desk structure. Pins Site Settings at the top, then ALL page singletons
-// (one document each) under "Pages", then the catalog, people, and reusable
-// content collections. Every document type is placed explicitly so nothing
-// floats loose at the desk root. The trailing default-list filter is a safety
-// net for any future type that hasn't been placed (and hides media.tag).
+// Studio Desk structure. Pins the Welcome landing pane and the "How This Works"
+// help center on top, then Site Settings, all page singletons under "Pages",
+// then the catalog, people, and reusable content collections. Every document
+// type is placed explicitly so nothing floats loose at the desk root; the
+// trailing default-list filter is a safety net for any future type that hasn't
+// been placed (and hides media.tag).
 //
-// Revamp note: the church singletons + collections (staffMember, ministry,
-// sermon, worshipResource and the per-page church pages) were retired and
-// replaced by the school catalog (course, facultyMember, term, pricingTier,
-// teachingArea, testimonial) and the new page singletons.
+// Two conventions the rest of the Studio leans on:
+//  - Pane IDS are load-bearing: guide "Take me there" cards and Welcome task
+//    cards navigate to `structure/<id>` paths (nested panes join with ';', e.g.
+//    'catalog;course'). Rename an id here and grep guides/content.tsx +
+//    components/WelcomePane.tsx for it.
+//  - Every collection list filters `archived != true` (the soft-delete flag,
+//    schemaTypes/archived.ts); trashed docs surface only in "Recently deleted"
+//    at the bottom, where the Restore / Delete forever actions live.
 
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
-import GuideView from './components/GuideView';
-import { guides } from './guides/content';
+import type { ComponentType } from 'react';
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
+import { makeGuideView } from './components/GuideView';
+import { WelcomePane } from './components/WelcomePane';
+import { guides, GUIDE_CATEGORIES } from './guides/content';
+import { ARCHIVABLE_TYPES, NOT_ARCHIVED } from './schemaTypes/archived';
 import {
   CogIcon,
   HomeIcon,
@@ -29,7 +38,17 @@ import {
   BellIcon,
   DocumentsIcon,
   TagIcon,
+  TrashIcon,
+  CommentIcon,
 } from '@sanity/icons';
+
+const API_VERSION = '2025-01-01';
+
+// Guide icons are emoji strings (friendly, and they match the guide data).
+const emoji =
+  (glyph: string): ComponentType =>
+  () =>
+    glyph;
 
 const SINGLETON_TYPES = [
   'siteSettings',
@@ -84,15 +103,50 @@ function singleton(
 ) {
   return S.listItem()
     .title(title)
+    .id(schemaType)
     .icon(icon)
     .child(S.document().schemaType(schemaType).documentId(schemaType));
 }
 
 /**
+ * A collection list that keeps soft-deleted documents out of sight. Falls back
+ * to the plain documentTypeList for types without the archived flag.
+ */
+function collection(S: StructureBuilder, schemaType: string, title: string, icon: any) {
+  if (!ARCHIVABLE_TYPES.has(schemaType)) {
+    return S.documentTypeListItem(schemaType).title(title).icon(icon);
+  }
+  return S.listItem()
+    .id(schemaType)
+    .title(title)
+    .icon(icon)
+    .child(
+      S.documentTypeList(schemaType)
+        .id(schemaType)
+        .title(title)
+        .filter(`_type == $type && ${NOT_ARCHIVED}`)
+        .params({ type: schemaType })
+        .apiVersion(API_VERSION),
+    );
+}
+
+/**
  * "How This Works" — a pinned, read-only help center built from repo data
- * (studio/guides/content.tsx), rendered by GuideView.
+ * (studio/guides/content.tsx), rendered by GuideView. Guides are grouped under
+ * titled dividers by category (GUIDE_CATEGORIES order).
  */
 function howThisWorks(S: StructureBuilder) {
+  const guideItem = (g: (typeof guides)[number]) =>
+    S.listItem()
+      .id(`guide-${g.slug}`)
+      .title(g.title)
+      .icon(emoji(g.icon))
+      .child(
+        // Cast: our pane ignores props, but S.component wants the pane type.
+        S.component(makeGuideView(g.slug) as never)
+          .id(`guide-view-${g.slug}`)
+          .title(g.title),
+      );
   return S.listItem()
     .id('how-this-works')
     .title('How This Works')
@@ -102,27 +156,33 @@ function howThisWorks(S: StructureBuilder) {
         .id('how-this-works-list')
         .title('How This Works')
         .items(
-          guides.map((g) =>
-            S.listItem()
-              .id(`guide-${g.slug}`)
-              .title(g.title)
-              .icon(g.icon)
-              .child(
-                S.component(GuideView)
-                  .id(`guide-view-${g.slug}`)
-                  .title(g.title)
-                  .options({ guideSlug: g.slug }),
-              ),
-          ),
+          GUIDE_CATEGORIES.flatMap((category) => [
+            S.divider().title(category),
+            ...guides.filter((g) => g.category === category).map(guideItem),
+          ]),
         ),
     );
 }
 
-export const deskStructure = (S: StructureBuilder, _context: StructureResolverContext) =>
+// The Welcome landing pane — the first thing an editor sees.
+function welcomeItem(S: StructureBuilder) {
+  return S.listItem()
+    .id('welcome')
+    .title('Welcome')
+    .icon(HomeIcon)
+    .child(
+      S.component(WelcomePane as never)
+        .id('welcome-pane')
+        .title('Welcome'),
+    );
+}
+
+export const deskStructure = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
     .title('The Presbyterian Academy')
     .items([
-      // How This Works — pinned help center (first thing editors see).
+      // Welcome + How This Works — pinned on top.
+      welcomeItem(S),
       howThisWorks(S),
 
       S.divider(),
@@ -135,9 +195,11 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
       // Pages — every page singleton lives here.
       S.listItem()
         .title('Pages')
+        .id('pages')
         .icon(DocumentTextIcon)
         .child(
           S.list()
+            .id('pages')
             .title('Pages')
             .items([
               singleton(S, 'homePage', 'Home', HomeIcon),
@@ -167,7 +229,7 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
               S.divider(),
 
               // Custom pages (collection): build new pages at /<slug> with blocks.
-              S.documentTypeListItem('page').title('Custom Pages').icon(DocumentTextIcon),
+              collection(S, 'page', 'Custom Pages', DocumentTextIcon),
             ]),
         ),
 
@@ -176,43 +238,95 @@ export const deskStructure = (S: StructureBuilder, _context: StructureResolverCo
       // Catalog — the course library and its supporting types.
       S.listItem()
         .title('Catalog')
+        .id('catalog')
         .icon(BookIcon)
         .child(
           S.list()
+            .id('catalog')
             .title('Catalog')
             .items([
-              S.documentTypeListItem('course').title('Courses').icon(BookIcon),
-              S.documentTypeListItem('term').title('Terms').icon(CalendarIcon),
-              S.documentTypeListItem('teachingArea').title('Teaching Areas').icon(ThListIcon),
-              S.documentTypeListItem('pricingTier').title('Pricing Tiers').icon(TagIcon),
+              collection(S, 'course', 'Courses', BookIcon),
+              collection(S, 'term', 'Terms', CalendarIcon),
+              collection(S, 'teachingArea', 'Teaching Areas', ThListIcon),
+              // Drag-to-reorder: the order set here is the order the site
+              // shows tiers in. The list itself hides archived tiers.
+              orderableDocumentListDeskItem({
+                type: 'pricingTier',
+                id: 'pricingTier',
+                title: 'Pricing Tiers',
+                icon: TagIcon,
+                filter: NOT_ARCHIVED,
+                S,
+                context,
+              }),
             ]),
         ),
 
-      // People — faculty.
-      S.documentTypeListItem('facultyMember').title('Faculty').icon(UsersIcon),
+      // People — faculty. Drag-to-reorder; the order is the site's order.
+      orderableDocumentListDeskItem({
+        type: 'facultyMember',
+        id: 'facultyMember',
+        title: 'Faculty',
+        icon: UsersIcon,
+        filter: NOT_ARCHIVED,
+        S,
+        context,
+      }),
 
       S.divider(),
 
       // Content — reusable collections.
       S.listItem()
         .title('Content')
+        .id('content')
         .icon(ThListIcon)
         .child(
           S.list()
+            .id('content')
             .title('Content')
             .items([
-              S.documentTypeListItem('testimonial').title('Testimonials').icon(StarIcon),
-              S.documentTypeListItem('faqCategory').title('FAQ Categories').icon(HelpCircleIcon),
-              S.documentTypeListItem('faqItem').title('FAQ Items').icon(HelpCircleIcon),
-              S.documentTypeListItem('form').title('Forms').icon(EnvelopeIcon),
-              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
+              orderableDocumentListDeskItem({
+                type: 'testimonial',
+                id: 'testimonial',
+                title: 'Testimonials',
+                icon: CommentIcon,
+                filter: NOT_ARCHIVED,
+                S,
+                context,
+              }),
+              orderableDocumentListDeskItem({
+                type: 'faqCategory',
+                id: 'faqCategory',
+                title: 'FAQ Categories',
+                icon: ThListIcon,
+                S,
+                context,
+              }),
+              collection(S, 'faqItem', 'FAQ Items', HelpCircleIcon),
+              collection(S, 'form', 'Forms', EnvelopeIcon),
+              collection(S, 'announcement', 'Announcements', BellIcon),
             ]),
         ),
 
       S.divider(),
 
       // Events — info sessions, lectures, workshops, term starts shown on /events
-      S.documentTypeListItem('event').title('Events').icon(CalendarIcon),
+      collection(S, 'event', 'Events', CalendarIcon),
+
+      // ── Recently deleted ── soft-deleted content; restore or empty for good.
+      S.divider().title('Trash'),
+      S.listItem()
+        .id('trash')
+        .title('Recently deleted')
+        .icon(TrashIcon)
+        .child(
+          S.documentList()
+            .id('trash')
+            .title('Recently deleted')
+            .filter('archived == true')
+            .apiVersion(API_VERSION)
+            .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }]),
+        ),
 
       // Safety net: surface any document type we have NOT explicitly placed above
       // (and keep the hidden set, including media.tag, out of the desk root).

@@ -10,6 +10,7 @@
 // and the two never desync.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { archivedField } from './archived';
 
 export const course = defineType({
   name: 'course',
@@ -22,6 +23,8 @@ export const course = defineType({
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Course title',

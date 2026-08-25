@@ -2,12 +2,15 @@
 // removed interior-designer Process page inclusion flag during church remodel.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { archivedField } from './archived';
 
 export const faqItem = defineType({
   name: 'faqItem',
   title: 'FAQ Item',
   type: 'document',
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'question',
       title: 'Question',

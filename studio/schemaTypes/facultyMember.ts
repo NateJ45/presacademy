@@ -7,6 +7,8 @@
 // GROQ, so it is intentionally not a field here.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { archivedField } from './archived';
+import { orderRankField } from '@sanity/orderable-document-list';
 
 export const facultyMember = defineType({
   name: 'facultyMember',
@@ -18,6 +20,10 @@ export const facultyMember = defineType({
     { name: 'writing', title: 'Bio & writing' },
   ],
   fields: [
+    // Drag-to-reorder rank (managed by the orderable desk list; hidden).
+    orderRankField({ type: 'facultyMember' }),
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'name',
       title: 'Name',

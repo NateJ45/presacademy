@@ -2,7 +2,7 @@
 // Form field options (project types) are wired in the Astro component, not Sanity.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const contactPage = defineType({
   name: 'contactPage',
@@ -152,6 +152,8 @@ export const contactPage = defineType({
       group: 'sections',
       description: 'Add on-brand sections to this page (text, image + text, cards, quote, CTA band, form, embed). They render below the built-in content. Drag to reorder.',
       of: FLEXIBLE_SECTION_MEMBERS,
+
+      options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
   ],
   preview: { prepare: () => ({ title: 'Contact Page' }) },

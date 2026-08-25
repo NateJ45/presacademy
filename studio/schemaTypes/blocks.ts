@@ -754,3 +754,73 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionPricingTiers' },
   { type: 'embed' },
 ];
+
+// =============================================================================
+// The grouped "+ Add section" picker
+// =============================================================================
+// The raw picker is a 20-item alphabet soup; these groups let an editor scan
+// four named bands in plain school language instead. Every member of
+// FLEXIBLE_SECTION_MEMBERS must appear in exactly one group — the dev-time
+// check below throws at Studio load if a new section is added without a group,
+// so the picker can never silently hide a section.
+const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
+  {
+    name: 'words',
+    title: 'Words, photos & video',
+    of: [
+      'sectionRichText',
+      'sectionImageText',
+      'sectionQuote',
+      'sectionGallery',
+      'sectionMediaFeature',
+      'sectionMediaShowcase',
+    ],
+  },
+  {
+    name: 'facts',
+    title: 'Cards, facts & lists',
+    of: [
+      'sectionCardGrid',
+      'sectionFeatureCards',
+      'sectionStats',
+      'sectionSteps',
+      'sectionAccordion',
+      'sectionKeyDates',
+      'sectionLogos',
+    ],
+  },
+  {
+    name: 'catalog',
+    title: 'From your catalog (auto-updating)',
+    of: ['sectionDynamicList', 'sectionFaqList', 'sectionPricingTiers'],
+  },
+  {
+    name: 'extras',
+    title: 'Banners, forms & extras',
+    of: ['sectionCtaBand', 'sectionForm', 'sectionResources', 'embed'],
+  },
+];
+
+// Fail loudly at Studio load when the groups and the palette drift apart.
+{
+  const grouped = INSERT_MENU_GROUPS.flatMap((g) => g.of);
+  const groupedSet = new Set(grouped);
+  if (grouped.length !== groupedSet.size) {
+    throw new Error('A section appears in more than one insert-menu group.');
+  }
+  const missing = FLEXIBLE_SECTION_MEMBERS.map((m) => m.type).filter((n) => !groupedSet.has(n));
+  if (missing.length > 0) {
+    throw new Error(`Section(s) missing from the insert-menu groups: ${missing.join(', ')}`);
+  }
+}
+
+/**
+ * Ready-made array `options` for every flexibleSections field: the grouped,
+ * searchable "+ Add" menu. Spread or assign as the array field's `options`.
+ */
+export const FLEXIBLE_SECTIONS_OPTIONS = {
+  insertMenu: {
+    filter: true,
+    groups: INSERT_MENU_GROUPS,
+  },
+};

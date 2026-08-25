@@ -4,12 +4,15 @@
 // Spiritual Life"). Keep the list small and plain-English, ~8 to 11 entries.
 
 import { defineType, defineField } from 'sanity';
+import { archivedField } from './archived';
 
 export const teachingArea = defineType({
   name: 'teachingArea',
   title: 'Teaching area',
   type: 'document',
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Name',

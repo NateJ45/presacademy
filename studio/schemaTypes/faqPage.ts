@@ -2,7 +2,7 @@
 // grouped by category in the order specified by categoryOrder.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const faqPage = defineType({
   name: 'faqPage',
@@ -131,6 +131,8 @@ export const faqPage = defineType({
       group: 'sections',
       description: 'Add on-brand sections to this page (text, image + text, cards, quote, CTA band, form, embed). They render below the built-in content. Drag to reorder.',
       of: FLEXIBLE_SECTION_MEMBERS,
+
+      options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
   ],
   preview: { prepare: () => ({ title: 'FAQ Page' }) },

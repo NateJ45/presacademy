@@ -5,12 +5,15 @@
 // never broken; the coalesced query on the FAQ page merges both.
 
 import { defineType, defineField } from 'sanity';
+import { orderRankField } from '@sanity/orderable-document-list';
 
 export const faqCategory = defineType({
   name: 'faqCategory',
   title: 'FAQ Category',
   type: 'document',
   fields: [
+    // Drag-to-reorder rank (managed by the orderable desk list; hidden).
+    orderRankField({ type: 'faqCategory' }),
     defineField({
       name: 'title',
       title: 'Category title',

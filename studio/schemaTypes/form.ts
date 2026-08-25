@@ -4,6 +4,7 @@
 // (contact, weddings, use-our-space) and, in Phase 4, droppable as a page block.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { archivedField } from './archived';
 
 export const form = defineType({
   name: 'form',
@@ -17,6 +18,8 @@ export const form = defineType({
     { name: 'embed', title: 'External embed' },
   ],
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Internal name',

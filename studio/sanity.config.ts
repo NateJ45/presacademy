@@ -5,86 +5,63 @@
 // manually). Studio reads it via the cli config — see sanity.cli.ts for
 // runtime overrides.
 
-import { defineConfig, buildLegacyTheme } from 'sanity';
-import { structureTool } from 'sanity/structure';
+import { defineConfig, type Tool } from 'sanity';
+import { structureTool, type DefaultDocumentNodeResolver } from 'sanity/structure';
+import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
 import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
+import DocumentsPane from 'sanity-plugin-documents-pane';
 import { schemaTypes } from './schemaTypes';
+import { ARCHIVABLE_TYPES } from './schemaTypes/archived';
 import { deskStructure } from './structure';
+import { STARTING_TEMPLATES } from './templates';
 import StudioLogo from './components/StudioLogo';
 import StudioLayout from './components/StudioLayout';
 import { StudioFormInput } from './components/StudioFormInput';
 import { documentBadges } from './components/documentBadges';
+import { SeoPreviewPane } from './components/SeoPreviewPane';
+import { HealthTool } from './components/HealthTool';
+import { SetupWizard } from './components/SetupWizard';
+import { ArchiveAction, RestoreAction, DeleteForeverAction } from './actions/archive';
 
-// Brand theme for the Studio UI. Uses Sanity's legacy theme builder which
-// maps a handful of CSS custom properties to the Studio's full internal design
-// system (it derives the complete light + dark palette from these inputs).
+// =============================================================================
+// Studio theme — brand fonts + a real light AND dark mode
+// =============================================================================
+// @sanity/ui's buildTheme() ships BOTH a light and a dark color scheme (tested
+// and accessible), so the Studio's Appearance toggle in the avatar menu
+// (System / Light / Dark) works properly. We keep only the brand FONTS on top:
+// Fraunces for headings, Source Sans 3 for text and labels.
 //
-// These values mirror the website's own design tokens (src/styles/globals.css)
-// so the Studio shares the site's "Direction A" feel: deep Reformed GREEN as
-// the interactive accent, near-white warm-paper surfaces, soft near-black ink,
-// brass for warnings, and a deep forest-green top bar with cream text — the
-// same green the site uses for its utility bar, footer, and closing CTA. The
-// fonts are patched on below.
-const studioThemeProps = {
-  // Foundation — neutrals everything else derives from.
-  '--black': '#1F1B18',   // Soft near-black — darkest text / ink
-  '--white': '#FFFFFF',   // White — lightest surface
-  '--gray-base': '#6E6357', // Warm taupe — tints every neutral warm, not cool
-
-  // Brand accent — Geneva Green.
-  '--brand-primary': '#33503F',
-  '--brand-primary--inverted': '#ffffff',
-  '--focus-color': '#33503F',
-
-  // Near-white warm-paper component surfaces; white inputs sit crisply on top.
-  '--input-bg': '#FFFFFF',
-  '--component-bg': '#FAF8F4',
-  '--component-text-color': '#1F1B18',
-
-  // Buttons — green accent; brass warning; red danger.
-  '--default-button-color': '#33503F',
-  '--default-button-primary-color': '#33503F',
-  '--default-button-success-color': '#3E7C66',
-  '--default-button-warning-color': '#A87C3E',
-  '--default-button-danger-color': '#C0392B',
-
-  // Validation + status states.
-  '--state-success-color': '#3E7C66',
-  '--state-warning-color': '#A87C3E',
-  '--state-danger-color': '#C0392B',
-
-  // Top navigation bar — deep forest green with cream text, echoing the site's
-  // utility bar, footer, and closing CTA band.
-  '--main-navigation-color': '#2A4233',
-  '--main-navigation-color--inverted': '#F1EAD9',
-};
-
-// Patch the brand fonts onto the legacy theme. buildLegacyTheme returns a full
-// theme object whose `fonts` map (@sanity/ui) carries a `family` per role; we
-// override the heading + text families with the site's faces (Fraunces for
-// display, Source Sans 3 for body). The font files themselves are injected via
-// the StudioLayout component (a Google Fonts <link>), so these names resolve.
-// Optional chaining keeps a future @sanity/ui shape change from throwing.
+// This replaced the old `buildLegacyTheme` approach, which was light-ONLY: it
+// hard-codes white component backgrounds and dark text, so flipping the Studio
+// to Dark leaves every panel white (effectively no dark mode). The Geneva
+// Green surface tinting that legacy theme carried is gone with it; the brand
+// now lives in the logo, the Welcome/guide card accents, and the fonts.
+//
+// The font FILES are loaded by components/StudioLayout.tsx (a Google Fonts
+// <link>); this only points the theme's font families at them. The families
+// have to go INTO buildTheme({ font }) — it bakes the CSS at build time; a
+// post-hoc `theme.fonts.family` patch is ignored.
+// =============================================================================
 const DISPLAY_STACK = "'Fraunces', Georgia, 'Times New Roman', serif";
 const BODY_STACK = "'Source Sans 3', system-ui, -apple-system, sans-serif";
 
-const baseTheme = buildLegacyTheme(studioThemeProps);
-const studioTheme = {
-  ...baseTheme,
-  fonts: baseTheme.fonts
-    ? {
-        ...baseTheme.fonts,
-        heading: baseTheme.fonts.heading
-          ? { ...baseTheme.fonts.heading, family: DISPLAY_STACK }
-          : baseTheme.fonts.heading,
-        text: baseTheme.fonts.text
-          ? { ...baseTheme.fonts.text, family: BODY_STACK }
-          : baseTheme.fonts.text,
-      }
-    : baseTheme.fonts,
-};
+function withFamily(font: ThemeFont, family: string): ThemeFont {
+  return { ...font, family };
+}
+
+// Build the default theme once to inherit its font SIZES, then rebuild with
+// the brand families fed back through `buildTheme({ font })`.
+const themeDefaults = buildTheme();
+const studioTheme: RootTheme = buildTheme({
+  font: {
+    ...themeDefaults.fonts,
+    text: withFamily(themeDefaults.fonts.text, BODY_STACK),
+    label: withFamily(themeDefaults.fonts.label, BODY_STACK),
+    heading: withFamily(themeDefaults.fonts.heading, DISPLAY_STACK),
+  },
+});
 
 // Preview/site base used by urlForDoc (kept for a future preview pane; see
 // structure.ts). Defaults to production; override with SANITY_STUDIO_PREVIEW_URL
@@ -136,6 +113,90 @@ export function urlForDoc(schemaType: string, doc: any): string | null {
   return path === null ? null : `${SITE_URL_FOR_PREVIEW}${path}`;
 }
 
+// =============================================================================
+// Extra document views (tabs), added by type via defaultDocumentNode below.
+// =============================================================================
+// - SEO preview: a read-only "how this looks in Google / when shared" tab on
+//   every document with seoTitle/seoDescription fields. NOT an iframe preview
+//   (this is a static site with no live draft preview), so it can't mislead —
+//   it renders straight from the draft's own fields.
+// - "Used on": a reverse-reference panel listing the documents that point at
+//   this one (answers "is it safe to change or delete?"). Kept on the types
+//   other documents genuinely reference.
+
+const SEO_PREVIEW_TYPES = [
+  'homePage',
+  'aboutPage',
+  'faqPage',
+  'contactPage',
+  'eventsPage',
+  'notFoundPage',
+  'privacyPage',
+  'accessibilityPage',
+  'coursesPage',
+  'facultyPage',
+  'pricingPage',
+  'getStartedPage',
+  'forYouPage',
+  'resourcesPage',
+  'page',
+  'course',
+];
+
+const USED_ON_TYPES = [
+  'course',        // testimonial.courseCompleted
+  'facultyMember', // course.instructors
+  'term',          // course.offerings[].term
+  'teachingArea',  // course.teachingAreas, facultyMember.teachingAreas
+  'pricingTier',   // course.priceTier
+  'form',          // sectionForm.form
+  'faqCategory',   // faqItem.categoryRef, sectionFaqList.categoryRef
+];
+
+function usedOnView(S: Parameters<DefaultDocumentNodeResolver>[0]) {
+  return S.view
+    .component(DocumentsPane)
+    .options({
+      query: `*[references($id)]{ _id, _type, title, name }`,
+      params: { id: `_id` },
+      options: { perspective: 'previewDrafts' },
+    })
+    .title('Used on')
+    .icon(() => '🔗');
+}
+
+const defaultDocumentNode: DefaultDocumentNodeResolver = (S, { schemaType }) => {
+  return S.document().views([
+    S.view.form(),
+    ...(SEO_PREVIEW_TYPES.includes(schemaType)
+      ? [
+          S.view
+            .component(SeoPreviewPane)
+            .title('SEO preview')
+            .icon(() => '🔎'),
+        ]
+      : []),
+    ...(USED_ON_TYPES.includes(schemaType) ? [usedOnView(S)] : []),
+  ]);
+};
+
+// Custom Studio tools (navbar entries).
+// Checkup — read-only "what needs attention?" report.
+const checkupTool: Tool = {
+  name: 'checkup',
+  title: 'Checkup',
+  component: HealthTool,
+  icon: () => '🩺',
+};
+// New term setup — a read-only guided checklist for the term rollover, each
+// card jumping straight to the thing to update.
+const setupTool: Tool = {
+  name: 'term-setup',
+  title: 'New term setup',
+  component: SetupWizard,
+  icon: () => '🍂',
+};
+
 export default defineConfig({
   name: 'presacademy',
   // Short title shown in the browser tab when editing.
@@ -170,15 +231,19 @@ export default defineConfig({
     },
   },
 
+  // Navbar tools: the built-ins plus Checkup and New term setup.
+  tools: (prev) => [...prev, checkupTool, setupTool],
+
   plugins: [
     structureTool({
       structure: deskStructure,
-      // No defaultDocumentNode override: documents show the form only. This is a
-      // static site with no live draft preview, so an iframe "Preview" tab would
-      // load the last PUBLISHED build (not the editor's current draft) and
-      // mislead editors. Changes go live after Publish + the site rebuild; see
-      // the "How This Works" guide. (urlForDoc / SITE_URL_FOR_PREVIEW are kept
-      // above for reference if a real preview environment is added later.)
+      // Extra per-type tabs (SEO preview, "Used on"). Deliberately NO iframe
+      // "Preview" tab: this is a static site with no live draft preview, so an
+      // iframe would load the last PUBLISHED build (not the editor's current
+      // draft) and mislead editors. Changes go live after Publish + the site
+      // rebuild; see the "How This Works" guide. (urlForDoc /
+      // SITE_URL_FOR_PREVIEW are kept above if a real preview is added later.)
+      defaultDocumentNode,
     }),
     // Unsplash plugin — adds an "Unsplash" tab to every image picker. The
     // package's correct registration is via the plugins array (not
@@ -196,6 +261,9 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+    // Pre-filled "+ New" starting points for pages, courses, and events (the
+    // blank options stay available too).
+    templates: (prev) => [...prev, ...STARTING_TEMPLATES],
   },
 
   // Singleton enforcement: hide these from the global "+" create menu so editors
@@ -211,11 +279,25 @@ export default defineConfig({
       }
       return prev;
     },
+    // Action wiring, in priority order:
+    //  - singletons: keep only editing actions (no unpublish/delete/duplicate).
+    //  - archivable content: swap the destructive Delete for the soft-delete
+    //    Archive ("move to trash"), and append Restore + Delete forever (each
+    //    renders only when the document is actually in the trash). Everything
+    //    else (publish, duplicate, ...) stays.
     actions: (prev, { schemaType }) => {
       if (SINGLETON_TYPES.has(schemaType)) {
         return prev.filter(
           ({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action || ''),
         );
+      }
+      if (ARCHIVABLE_TYPES.has(schemaType)) {
+        return [
+          ...prev.filter(({ action }) => action !== 'delete'),
+          ArchiveAction,
+          RestoreAction,
+          DeleteForeverAction,
+        ];
       }
       return prev;
     },

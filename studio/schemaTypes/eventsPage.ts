@@ -1,7 +1,7 @@
 // Events index page singleton. Drives the hero copy + SEO on /events.
 
 import { defineType, defineField } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const eventsPage = defineType({
   name: 'eventsPage',
@@ -55,6 +55,8 @@ export const eventsPage = defineType({
       type: 'array',
       description: 'Add on-brand sections below the hero (text, image + text, cards, quote, CTA band, form, embed). Drag to reorder.',
       of: FLEXIBLE_SECTION_MEMBERS,
+
+      options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
   ],
   preview: { prepare: () => ({ title: 'Events (index page)' }) },

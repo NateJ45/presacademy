@@ -5,12 +5,15 @@
 // (the soonest term with a future startDate), not stored anywhere.
 
 import { defineType, defineField } from 'sanity';
+import { archivedField } from './archived';
 
 export const term = defineType({
   name: 'term',
   title: 'Term',
   type: 'document',
   fields: [
+    // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
+    archivedField(),
     defineField({
       name: 'title',
       title: 'Term name',
