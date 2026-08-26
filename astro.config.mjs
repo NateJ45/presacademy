@@ -51,31 +51,21 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
-    // -------------------------------------------------------------------------
-    // Keep styled-components to ONE instance in the client bundle.
-    // -------------------------------------------------------------------------
-    // Defensive, not the cure. The Studio's styled-components error #18
-    // ("Accessing useTheme hook outside of a <ThemeProvider>") was ultimately
-    // caused by MIXED @sanity/ui majors in the dependency tree, not by chunk
-    // splitting (the whole story is in CLAUDE.md). Grouping still guarantees a
-    // single styled-components instance, which is cheap insurance against a
-    // second ThemeContext ever reappearing.
+    // @sanity/ui ships an ESM build that Vite's dependency pre-bundler
+    // mis-scans on this stack (MISSING_EXPORT errors for styled-components).
+    // Excluding it from pre-bundling matches the WCP repo's working config;
+    // it is still bundled correctly by `astro build`.
     //
-    //   grep -l "errors.md#" dist/client/_astro/*.js   # must list exactly ONE
-    // -------------------------------------------------------------------------
-    build: {
-      rollupOptions: {
-        output: {
-          advancedChunks: {
-            groups: [
-              {
-                name: 'sanity-ui-runtime',
-                test: /[\\/]node_modules[\\/](styled-components|@sanity[\\/]ui)[\\/]/,
-              },
-            ],
-          },
-        },
-      },
+    // Deliberately NO custom chunking here. An `advancedChunks` group that
+    // forced styled-components + @sanity/ui into one chunk was tried on
+    // 2026-08-26 (chasing a theming crash) and made things worse: merging
+    // those modules changes evaluation order and broke @sanity/ui's theme
+    // initialization, surfacing as
+    //   TypeError: Cannot read properties of undefined (reading 'v2')
+    // from inside styled-components' generateAndInjectStyles. Leave the
+    // bundler's default chunking alone.
+    optimizeDeps: {
+      exclude: ['@sanity/ui', 'styled-components'],
     },
   },
   // NOTE: A previous attempt at `security.csp` shipped a hash-based CSP

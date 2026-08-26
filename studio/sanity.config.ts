@@ -11,7 +11,8 @@ import { presentationTool } from 'sanity/presentation';
 import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
-import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
+// Temporarily unused — see the disabled unsplashImageAsset() below.
+// import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
 import DocumentsPane from 'sanity-plugin-documents-pane';
 import { schemaTypes } from './schemaTypes';
 import { ARCHIVABLE_TYPES } from './schemaTypes/archived';
@@ -66,9 +67,14 @@ const envVal = (...names: string[]): string | undefined => {
   }
   return undefined;
 };
+// Dev detection must FAIL CLOSED. An earlier version also treated
+// `process.env.NODE_ENV !== 'production'` as dev, but the Astro/Vite client
+// bundle injects `globalThis.process ??= {}`, so `process` exists with an
+// empty env and NODE_ENV is undefined — which made this true in PRODUCTION
+// and shipped the Vision tool to editors.
 const IS_DEV =
   (import.meta as { env?: { DEV?: boolean } }).env?.DEV === true ||
-  (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
+  (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development');
 
 function withFamily(font: ThemeFont, family: string): ThemeFont {
   return { ...font, family };
@@ -290,11 +296,13 @@ export default defineConfig({
         },
       },
     }),
-    // Unsplash plugin — adds an "Unsplash" tab to every image picker. The
-    // package's correct registration is via the plugins array (not
-    // form.image.assetSources — that was my earlier bug). Picking a photo
-    // uploads it to the Sanity library + attaches to the field in one shot.
-    unsplashImageAsset(),
+    // Unsplash plugin — TEMPORARILY DISABLED (2026-08-26).
+    // It adds an "Unsplash" tab to every image picker. It is the only Studio
+    // plugin the proven-working WCP repo does NOT run, so while chasing the
+    // Studio theming crash it was pulled out to remove the last unverified
+    // variable. Re-enable it (uncomment) once the Studio is confirmed healthy
+    // in production, and check the desk still renders after doing so.
+    // unsplashImageAsset(),
     // Media browser — adds a top-level "Media" icon in the Studio sidebar
     // for browsing every uploaded image at once with tag + filter + bulk-edit.
     // Much better than the inline image picker for "what's in our library".
