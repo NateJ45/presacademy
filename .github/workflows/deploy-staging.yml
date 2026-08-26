@@ -46,9 +46,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: |
-          npm ci
-          npm ci --prefix studio
+        run: npm ci
 
       - name: Generate Sanity types
         run: npm run typegen

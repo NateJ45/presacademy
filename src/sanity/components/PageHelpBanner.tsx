@@ -13,7 +13,7 @@ import { LaunchIcon } from '@sanity/icons';
 // pathForDoc maps a doc type (+ slug) to its site path; LIVE_SITE_URL is the
 // production base. Imported from the config — a safe ES-module cycle because
 // both are used only at render time, long after the modules finish loading.
-import { pathForDoc, LIVE_SITE_URL } from '../sanity.config';
+import { pathForDoc, LIVE_SITE_URL } from '../urls';
 
 export function PageHelpBanner({
   schemaType,

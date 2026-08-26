@@ -254,7 +254,7 @@ church-era schema fields. Full page-by-page map + fix plan in
 docs/agent/content-editability-audit.md, which SUPERSEDES the "everything
 editable" claim in editor-vs-hardcoded.md. What landed:
 - **Editor-UX** (commit 7c046b3) — a per-document "View this page on the live
-  site" help banner at the top of every Studio form (studio/components/PageHelpBanner.tsx
+  site" help banner at the top of every Studio form (src/sanity/components/PageHelpBanner.tsx
   + StudioFormInput.tsx, composed with CharacterCountInput into the single
   form.components.input slot; deep-links via a dedicated LIVE_SITE_URL in
   sanity.config.ts; urlForDoc split into pathForDoc + base). Fixed

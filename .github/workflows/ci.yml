@@ -20,9 +20,6 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
-      - name: Install studio dependencies
-        run: npm ci --prefix studio
-
       - name: Generate Sanity types
         run: npm run typegen
 
@@ -50,9 +47,8 @@ jobs:
           PUBLIC_SANITY_PROJECT_ID: ""
         run: npm run build
 
-      - name: Build Sanity Studio
-        run: npm --prefix studio run build
-
+      # (No separate Studio build: the studio folded into the root package
+      # 2026-08-26 and is bundled into /studio by the Astro build above.)
       - name: Run tests
         run: npm test
 

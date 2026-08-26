@@ -38,11 +38,10 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install studio dependencies
-        run: npm ci --prefix studio
+      - name: Install dependencies
+        run: npm ci
 
       - name: Export production dataset
-        working-directory: studio
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           # This project's PUBLIC Sanity id (not a secret; it ships in the client bundle).
@@ -50,7 +49,7 @@ jobs:
           SANITY_STUDIO_DATASET: production
         run: |
           STAMP=$(date -u +%Y-%m-%d)
-          npx sanity dataset export production "../sanity-backup-$STAMP.tar.gz"
+          npx sanity dataset export production "sanity-backup-$STAMP.tar.gz"
 
       - name: Upload backup artifact
         uses: actions/upload-artifact@v4

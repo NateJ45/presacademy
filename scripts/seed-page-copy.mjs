@@ -19,7 +19,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const APPLY = process.argv.includes('--apply');
 
-// --- env: parse studio/.env + root .env (root wins), then process.env ---------
+// --- env: parse root .env, then process.env -----------------------------------
 function parseEnv(p) {
   if (!existsSync(p)) return {};
   const out = {};
@@ -34,7 +34,7 @@ function parseEnv(p) {
   }
   return out;
 }
-const env = { ...parseEnv(resolve(root, 'studio/.env')), ...parseEnv(resolve(root, '.env')), ...process.env };
+const env = { ...parseEnv(resolve(root, '.env')), ...process.env };
 const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;

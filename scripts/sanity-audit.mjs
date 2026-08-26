@@ -38,7 +38,7 @@ if (!PROJECT || !TOKEN) {
 }
 
 // Expected document types. Keep in sync with SINGLETON_TYPES in
-// studio/sanity.config.ts and the collection schemas in studio/schemaTypes/.
+// sanity.config.ts (repo root) and the collection schemas in src/sanity/schemaTypes/.
 const EXPECTED_SINGLETONS = [
   'siteSettings', 'homePage', 'aboutPage', 'faqPage', 'contactPage', 'notFoundPage', 'privacyPage',
   'eventsPage', 'sermonsPage', 'worshipPage', 'beliefsPage', 'musicPage', 'staffPage',

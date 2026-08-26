@@ -23,9 +23,13 @@ that section when it gets long.
   credentials allowed. sanity.io/manage.
 - **Retire the hosted Studio.** `presbyterian-academy.sanity.studio` is
   no longer built or deployed from this repo and will serve an
-  increasingly stale schema. Delete it in sanity.io/manage once the
-  embedded `/studio` is confirmed working in production, and tell any
-  editor who has it bookmarked.
+  increasingly stale schema. The embedded `/studio` is confirmed working
+  in production (2026-08-26), so this is ready to run. Easiest path:
+  sanity.io/manage → project `uz2sl3zp` → Studios → delete the hosted
+  one. (CLI alternative needs the retired ids, kept here on purpose
+  since `sanity.cli.ts` deliberately no longer carries them:
+  studioHost `presbyterian-academy`, appId `usl3ubscklxyewmtgfv3v4xy`.)
+  Tell any editor who has the old URL bookmarked.
 - **Real Academy photography.** The whole dataset still runs on Pexels
   CC0 placeholders (`acad-*`). Editors can swap photos in Studio any time;
   until then the site is presentable but generic. Unblocks: a photo shoot
@@ -43,7 +47,7 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Re-enable the Unsplash plugin** (`studio/sanity.config.ts`, the commented
+- **Re-enable the Unsplash plugin** (`sanity.config.ts`, the commented
   `unsplashImageAsset()`). It was pulled out 2026-08-26 while chasing the
   Studio theming crash, because it is the only Studio plugin the
   proven-working WCP repo does not run. Re-enable it once the Studio is
@@ -68,6 +72,13 @@ that section when it gets long.
   edit there.
 
 ## Recently closed
+
+- 2026-08-26 — **Studio folded into the root package** (the WCP shape):
+  `studio/` is gone; sources live in `src/sanity/`, config at the root
+  `sanity.config.ts` + `sanity.cli.ts`, one node_modules. This
+  permanently ends the dual-module-tree class of bug behind the day's
+  Studio crashes. CI/backup/staging workflows updated; typegen runs
+  from the root.
 
 - 2026-08-25 — **Live draft preview shipped.** Studio embedded at
   `/studio`; Presentation tool with a page navigator; SSR `/preview/**`

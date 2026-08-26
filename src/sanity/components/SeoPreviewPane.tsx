@@ -1,5 +1,5 @@
 import { Card, Stack, Text, Box, Flex, Label } from '@sanity/ui';
-import { pathForDoc } from '../sanity.config';
+import { pathForDoc } from '../urls';
 
 // =============================================================================
 // SeoPreviewPane — a "see how it looks when searched/shared" document view

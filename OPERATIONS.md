@@ -118,31 +118,26 @@ Sanity Studio includes a built-in Comments feature (the speech-bubble icon that 
 
 Comments stay attached to the specific field until resolved. Comments do not affect published content in any way.
 
-### Studio deploy
+### Studio deploys with the site
 
-Studio code (schemas, structure, plugins) deploys separately from the site:
+There is no separate Studio deploy (since the 2026-08-26 fold into the root
+package): the Studio is embedded at `/studio` and ships with every
+`npm run deploy`. The old `studio:deploy` script is gone, and running
+`npx sanity deploy` is FORBIDDEN — it would recreate a separate hosted Studio
+that silently drifts stale (see sanity.cli.ts).
 
-```bash
-npm run studio:deploy
-# = npm --prefix studio run deploy
-```
+The one Studio-specific rule that remains: **never click "Remove field" in
+the Studio.** It deletes that field's data across every document with the
+field populated and cannot be undone without a dataset restore. It appears
+when the running Studio's schema is older than the data — which, with the
+embedded Studio, only happens between editing a schema and deploying.
 
-Run this after any change in `studio/schemaTypes/`, `studio/structure.ts`, or `studio/sanity.config.ts` — otherwise the hosted Studio doesn't see the new schema fields.
+The sequence after any schema edit:
 
-Always run `npm run typegen` after schema changes so `src/lib/sanity.types.ts` is fresh, then commit.
-
-### Critical: run studio:deploy after every schema change
-
-If you add or rename a field in a schema file and forget to run `npm run studio:deploy`, the hosted Studio will show "unknown fields" warnings next to the new data, and editors will see a prompt offering to "Remove field." **Do NOT click "Remove field" in Studio.** That action deletes the actual Sanity document data for every document that has that field populated. It cannot be undone without a dataset restore.
-
-The correct sequence after any schema edit:
-
-1. Edit the schema file in `studio/schemaTypes/`.
-2. `npm run typegen` to regenerate `src/lib/sanity.types.ts`.
-3. `npm run studio:deploy` to push the schema update to the hosted Studio.
-4. Commit + push.
-
-The site build can run any time after step 1. The Studio deploy (step 3) is what clears the "unknown fields" warning.
+1. Edit the schema file in `src/sanity/schemaTypes/`.
+2. `npm run typegen` to regenerate `src/lib/sanity.types.ts` (CI fails if you
+   forget to commit it).
+3. Commit + deploy. The deploy ships site and Studio together.
 
 ---
 
@@ -372,11 +367,11 @@ The PNGs land in `src/assets/` (NOT `public/`) so Astro's `<Image>` / `getImage(
 
 ### The "View this page on the live site" banner
 
-Every page-document form in Studio shows a help banner at the top with a deep link to that page on the live site, plus the publish-then-rebuild reminder. It is a root-input component (`studio/components/PageHelpBanner.tsx` + `StudioFormInput.tsx`) composed with `CharacterCountInput` into the single `form.components.input` slot, and the link is built from a dedicated `LIVE_SITE_URL` in `studio/sanity.config.ts` (the doc path comes from `pathForDoc`). If a new page type or route should show the banner, wire its path into `pathForDoc`; if the live domain changes, update `LIVE_SITE_URL`. Adding the banner does NOT enable Sanity's click-to-edit Presentation tool — that needs SSR and cannot run on this static build (see `content-editability-audit.md`).
+Every page-document form in Studio shows a help banner at the top with a deep link to that page on the live site, plus the publish-then-rebuild reminder. It is a root-input component (`src/sanity/components/PageHelpBanner.tsx` + `StudioFormInput.tsx`) composed with `CharacterCountInput` into the single `form.components.input` slot, and the link is built from a dedicated `LIVE_SITE_URL` in `sanity.config.ts` (the doc path comes from `pathForDoc`). If a new page type or route should show the banner, wire its path into `pathForDoc`; if the live domain changes, update `LIVE_SITE_URL`. Adding the banner does NOT enable Sanity's click-to-edit Presentation tool — that needs SSR and cannot run on this static build (see `content-editability-audit.md`).
 
 ### Add a new field to a page singleton
 
-1. Edit `studio/schemaTypes/<page>.ts` — add `defineField(...)`.
+1. Edit `src/sanity/schemaTypes/<page>.ts` — add `defineField(...)`.
 2. `npm run typegen` (runs schema-extract + sanity typegen).
 3. Add the field to the GROQ projection in `src/lib/queries.ts`.
 4. Use the field in the corresponding Astro page with a sensible fallback.

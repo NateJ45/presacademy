@@ -27,8 +27,7 @@ pnpm-debug.log*
 
 # generated artifacts
 tmp/
-studio/schema.json
-studio/dist/
+schema.json
 
 # transient commit message files
 .git-commit-msg.tmp

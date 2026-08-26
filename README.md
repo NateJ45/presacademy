@@ -18,8 +18,8 @@ with an in-Studio help center where every visible string is editable.
 ## Working on it
 
 ```bash
-# install both packages (the Studio is a nested package in studio/)
-npm install && npm --prefix studio install
+# one package, one install (the Studio folded into the root on 2026-08-26)
+npm install
 
 # run it
 npm run dev            # site on :4321 (Studio at /studio)

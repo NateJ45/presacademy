@@ -35,7 +35,7 @@ function parseEnv(p) {
   }
   return out;
 }
-const env = { ...parseEnv(resolve(root, 'studio/.env')), ...parseEnv(resolve(root, '.env')), ...process.env };
+const env = { ...parseEnv(resolve(root, '.env')), ...process.env };
 const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;

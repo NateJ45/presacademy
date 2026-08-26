@@ -5,7 +5,7 @@
 // (2026-08-25). Gives every script the same three things so they stop
 // re-inlining them:
 //
-//   1. A token-authed client built from studio/.env + root .env (root wins).
+//   1. A token-authed client built from the root .env.
 //   2. A DRY-RUN-BY-DEFAULT apply gate: scripts print exactly what they would
 //      change and write nothing unless run with --apply (the convention the
 //      existing presacademy seeds already use).
@@ -30,7 +30,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(__dirname, '..', '..');
 const ASSET_MAP_PATH = resolve(__dirname, '..', '.asset-map.json');
 
-// --- env: parse studio/.env + root .env (root wins), then process.env --------
+// --- env: parse root .env, then process.env -----------------------------------
 function parseEnv(p) {
   if (!existsSync(p)) return {};
   const out = {};
@@ -46,7 +46,7 @@ function parseEnv(p) {
   }
   return out;
 }
-const env = { ...parseEnv(resolve(ROOT, 'studio/.env')), ...parseEnv(resolve(ROOT, '.env')), ...process.env };
+const env = { ...parseEnv(resolve(ROOT, '.env')), ...process.env };
 
 export const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 export const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
