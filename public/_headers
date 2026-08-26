@@ -23,7 +23,9 @@
 #     EMBEDDED same-origin /studio, so 'self' is exactly right.
 #   - The embedded Sanity Studio (/studio) needs: Sanity API + websocket origins in
 #     connect-src, Google Fonts (Fraunces/Source Sans studio chrome) in style-src +
-#     font-src, and blob: workers in worker-src.
+#     font-src, design-system-static.sanity.io in font-src (the Studio's own Inter
+#     webfont -- blocked fonts showed up as console CSP errors on the first deploy),
+#     and blob: workers in worker-src.
 #   - Trusted Types is intentionally NOT enabled: require-trusted-types-for would break the
 #     YouTube / Vimeo / Maps / analytics / embed scripts.
 
@@ -33,4 +35,4 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://api.web3forms.com https://cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com https://api.sanity.io https://*.api.sanity.io wss://*.api.sanity.io https://*.apicdn.sanity.io; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.google.com https://maps.google.com https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; worker-src 'self' blob:; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://design-system-static.sanity.io; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://api.web3forms.com https://cloudflareinsights.com https://hcaptcha.com https://*.hcaptcha.com https://api.sanity.io https://*.api.sanity.io wss://*.api.sanity.io https://*.apicdn.sanity.io; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.google.com https://maps.google.com https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; worker-src 'self' blob:; upgrade-insecure-requests
