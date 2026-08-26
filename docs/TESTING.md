@@ -102,7 +102,18 @@ darkening `--input` in both themes first.
   `netstat -ano | findstr :4321` and `taskkill /F /PID <pid>` before trusting
   a surprising local run. Relatedly, a running `wrangler dev` holds a lock on
   `dist/client` and makes the build itself fail with EPERM while emptying
-  `dist` — kill it first.
+  `dist`. **Killing `workerd.exe` alone is NOT enough** — the parent
+  `wrangler`/node process keeps the handle (and can respawn the child), so
+  the lock survives and the next build still fails. Find and kill the whole
+  set by command line:
+
+  ```powershell
+  Get-CimInstance Win32_Process -Filter "Name='node.exe' OR Name='workerd.exe'" |
+    Where-Object { $_.CommandLine -match 'wrangler|miniflare|http-server|sanity' } |
+    ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+  ```
+
+  Never blanket-kill `node.exe`: the editor/agent session is itself node.
 - **Static-server trailing slashes.** `http-server` (the e2e server) serves
   `/about` via a redirect to `/about/` — tests follow it and assert the final
   200. It has NO clean-URL mapping, so the 404 page is addressed as
