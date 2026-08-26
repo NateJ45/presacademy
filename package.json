@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/generate-og-pages.mjs && astro build",
+    "build": "node scripts/generate-og-pages.mjs && node scripts/with-workerd.mjs astro build",
     "build:full": "npm run typegen && npm run build",
     "preview": "wrangler dev -c dist/server/wrangler.json",
     "astro": "astro",

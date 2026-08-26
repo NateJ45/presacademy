@@ -75,26 +75,26 @@ darkening `--input` in both themes first.
 
 ## Gotchas (each cost real time)
 
-- **`npm run build` crashes on this Windows machine with the pinned workerd —
-  set `MINIFLARE_WORKERD_PATH` to the newer binary.** Since the Astro 7 +
-  @astrojs/cloudflare 14 upgrade (2026-08-25), the build prerenders through
-  the @cloudflare/vite-plugin's miniflare, whose pinned workerd 1.20260526.1
-  aborts on startup here (`std::terminate() called with no exception`,
-  surfaced as `MiniflareCoreError ERR_RUNTIME_FAILURE` at "generating static
-  routes"). It is NOT shell-dependent (fails from Git Bash and PowerShell
-  alike) and not config-dependent (minimal miniflare configs with the same
-  binary work — only the full prerender config crashes). The workerd that
-  ships nested under wrangler, 1.20260825.1, runs the identical config fine:
+- **On Windows the build needs wrangler's workerd, not the plugin's — this is
+  now automatic.** Since the Astro 7 + @astrojs/cloudflare 14 upgrade
+  (2026-08-25), the build prerenders through @cloudflare/vite-plugin's
+  miniflare, whose pinned workerd 1.20260526.1 aborts on startup here
+  (`std::terminate() called with no exception`, surfaced as
+  `MiniflareCoreError ERR_RUNTIME_FAILURE` right after "prerendering static
+  routes"). It is NOT shell-dependent (Git Bash and PowerShell fail alike)
+  and not config-dependent (minimal miniflare configs with the same binary
+  work; only the full prerender config crashes). The workerd nested under
+  wrangler, 1.20260825.1, runs the identical config fine.
 
-  ```powershell
-  $env:MINIFLARE_WORKERD_PATH = "$PWD\node_modules\wrangler\node_modules\@cloudflare\workerd-windows-64\bin\workerd.exe"
-  npm run build
-  ```
-
-  `playwright.config.ts` sets this automatically for the webServer build when
-  the nested binary exists, so `npx playwright test` just works. Remove the
-  workaround when @astrojs/cloudflare bumps its miniflare/workerd. Linux CI
-  is unaffected so far (verify on the first post-upgrade CI run).
+  `npm run build` now routes through `scripts/with-workerd.mjs`, which points
+  `MINIFLARE_WORKERD_PATH` at wrangler's binary on win32 when the caller has
+  not set one. So `npm run build`, `npm run deploy`, and `npx playwright test`
+  all just work with no manual env setup. (This bit a real deploy on
+  2026-08-26: the workaround was documented but not wired into the build, so
+  `npm run deploy` died at prerender.) `playwright.config.ts` keeps its own
+  copy of the same logic. Linux CI is unaffected and stays on the stock
+  binary. Delete the wrapper when @astrojs/cloudflare bumps its
+  miniflare/workerd.
 - **Anything stale holding :4321 silently invalidates the e2e run.** The
   Playwright webServer has `reuseExistingServer` locally, so an orphaned
   server (a forgotten `wrangler dev`/`npm run preview`, an old http-server)
