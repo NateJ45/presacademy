@@ -67,6 +67,40 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ['@sanity/ui', 'styled-components'],
     },
+    // -------------------------------------------------------------------------
+    // ONE module instance per package — the fix for the signed-in Studio crash
+    // -------------------------------------------------------------------------
+    // The studio is a NESTED npm package (studio/ has its own node_modules).
+    // The embedded /studio therefore mixes two resolution roots: the Studio
+    // shell (@sanity/astro) imports sanity/styled-components from the ROOT
+    // node_modules, while every file under studio/ (structure, custom panes,
+    // actions) resolves them from studio/node_modules — same versions, two
+    // module instances, two React contexts. The ThemeProvider mounted by one
+    // styled-components is invisible to useTheme in the other, so the desk
+    // died on first render of our custom components (styled-components error
+    // #18, then `Cannot read properties of undefined (reading 'v2')`) while
+    // the login screen — core code only — rendered fine. WCP never hits this
+    // because its studio lives in the same package as the site.
+    //
+    // @sanity/icons is deliberately NOT here: sanity core wants v5 while
+    // @sanity/ui v3 wants v3.8, and icons are stateless SVG components with no
+    // React context, so two instances are harmless. Deduping them broke the
+    // build (CogIcon is gone in v5).
+    // dedupe forces every import of these packages to the root copy, whatever
+    // directory the importing file sits in. Verify after any dependency work:
+    //   grep -l "errors.md#" dist/client/_astro/*.js   # must list ONE file
+    resolve: {
+      dedupe: [
+        'react',
+        'react-dom',
+        'react-is',
+        'styled-components',
+        '@sanity/ui',
+        '@sanity/client',
+        'sanity',
+        'rxjs',
+      ],
+    },
   },
   // NOTE: A previous attempt at `security.csp` shipped a hash-based CSP
   // meta tag. It got past Lighthouse's csp-xss check on paper, but Astro
