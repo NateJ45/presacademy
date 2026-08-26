@@ -1,0 +1,88 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// NumberedCardsBlock — the 01/02/03 ledger cards (2026-08-26)
+// =============================================================================
+// Phase 1 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// card markup below was CUT from for-you.astro, not rewritten.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the surface is fixed in code and
+// there is no tone field.
+//
+// WHAT IS PROVEN AND WHAT IS NOT
+// The `top2` variant reproduces the For You personas byte for byte (the parity
+// harness holds it there). `full` and `ledger` are declared for the pages that
+// convert in Phase 2 (about beliefs, get-started steps) and have NOT been
+// checked against those pages yet: verify them with the harness before you
+// trust them. The optional heading block above the cards is in the same
+// position, so it is written to the established Rule & Ledger pattern rather
+// than measured against a page.
+//
+// HEADING LEVELS
+// The cards' titles are h2 when the section carries no heading of its own (they
+// are then the top-level headings of that band, which is exactly how For You
+// reads today) and h3 when it does, so the section never skips a level. That
+// keeps the Studio Checkup's "page body starts at h2, no skipped levels" rule
+// satisfied whichever way an editor fills the section in.
+import CtaLink from '@/components/CtaLink.astro';
+
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const cards = block?.cards ?? [];
+const heading = block?.heading;
+const hasHeader = Boolean(block?.eyebrow || heading || block?.intro);
+
+// Only label the landmark when there IS a heading to label it with: the pages
+// that carry a bare grid of cards render a plain <section>, and adding an
+// aria-labelledby pointing at nothing would be worse than nothing.
+const headingId = hasHeader && heading ? (block?.headingId || undefined) : undefined;
+
+// See the heading-levels note above.
+const CardHeading = heading ? 'h3' : 'h2';
+
+// The three border treatments. Only `top2` is parity-proven; see the header.
+const BORDERS: Record<string, string> = {
+  top2: 'list-none border border-t-2 border-border-soft border-t-gold p-l',
+  full: 'list-none border border-t-2 border-gold p-l',
+  ledger: 'list-none border-t-2 border-gold pt-4',
+};
+const cardClass = BORDERS[block?.variant as string] ?? BORDERS.top2;
+---
+
+{
+  cards.length > 0 && (
+    <section class="bg-background" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m pb-section-lg">
+        {hasHeader && (
+          <div class="mb-l" data-reveal>
+            {block.eyebrow && (
+              <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+            )}
+            {heading && (
+              <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">{heading}</h2>
+            )}
+            {block.intro && <p class="mt-m max-w-2xl text-foreground/80">{block.intro}</p>}
+          </div>
+        )}
+        <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+          {cards.map((c: any, i: number) => (
+            <li class={cardClass}>
+              <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
+              <CardHeading class="mt-2 font-display text-h3 text-foreground">{c.title}</CardHeading>
+              {c.body && <p class="mt-2 text-foreground/80">{c.body}</p>}
+              {c.cta && (
+                <div class="mt-m">
+                  <CtaLink cta={c.cta} variant="secondary" fallbackHref="/get-started" fallbackLabel="Learn more" />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+        {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
+      </div>
+    </section>
+  )
+}

@@ -857,6 +857,12 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
 };
 
@@ -969,6 +975,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
 };
 
@@ -1091,6 +1103,50 @@ export type SiteSettings = {
     successMessage?: string;
     consentNote?: string;
   };
+};
+
+export type SectionNumberedCards = {
+  _type: 'sectionNumberedCards';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+  intro?: string;
+  cards?: Array<{
+    title?: string;
+    body?: string;
+    cta?: CtaBlock;
+    _type: 'numberedCard';
+    _key: string;
+  }>;
+  variant?: 'top2' | 'full' | 'ledger';
+  footnote?: string;
+};
+
+export type SectionLegalBody = {
+  _type: 'sectionLegalBody';
+  landmarkLabel?: string;
+  dateLabel?: string;
+  lastUpdated?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal' | 'h2' | 'h3';
+    listItem?: 'bullet' | 'number';
+    markDefs?: Array<{
+      href?: string;
+      openInNewTab?: boolean;
+      _type: 'link';
+      _key: string;
+    }>;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  fallbackStatement?: 'none' | 'privacy' | 'accessibility';
 };
 
 export type SectionPricingTiers = {
@@ -1633,6 +1689,12 @@ export type Page = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -1735,6 +1797,12 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   listIntro?: string;
@@ -1833,6 +1901,12 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   personasIntro?: string;
@@ -1937,6 +2011,12 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   requestForm?: FormReference;
@@ -2050,6 +2130,12 @@ export type PricingPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   pricingIntro?: string;
@@ -2157,6 +2243,12 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   directoryIntro?: string;
@@ -2256,6 +2348,12 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCta?: CtaBlock;
   catalogIntro?: string;
@@ -2374,6 +2472,12 @@ export type EventsPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
 };
 
@@ -2486,6 +2590,12 @@ export type ContactPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
 };
 
@@ -2630,6 +2740,12 @@ export type FaqPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
 };
 
@@ -2724,6 +2840,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -2856,6 +2978,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3050,6 +3178,8 @@ export type AllSanitySchemaTypes =
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | SectionNumberedCards
+  | SectionLegalBody
   | SectionPricingTiers
   | SectionKeyDates
   | SectionResources

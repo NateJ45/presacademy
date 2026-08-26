@@ -28,13 +28,22 @@ import ResourcesBlock from '@/components/blocks/ResourcesBlock.astro';
 import KeyDatesBlock from '@/components/blocks/KeyDatesBlock.astro';
 import PricingTiersBlock from '@/components/blocks/PricingTiersBlock.astro';
 import EmbedBlock from '@/components/EmbedBlock.astro';
+// Ported page sections (Rule & Ledger), 2026-08-26. These render their own
+// fixed surfaces and stay OUT of SHELL_AWARE on purpose (decision D1).
+import LegalBodyBlock from '@/components/blocks/LegalBodyBlock.astro';
+import NumberedCardsBlock from '@/components/blocks/NumberedCardsBlock.astro';
 
 interface Props {
   sections?: any[] | null;
   /** Passed to form blocks for the keyless mailto fallback. */
   fallbackEmail?: string;
+  /**
+   * Passed to the legal statement block, whose built-in accessibility
+   * statement offers a phone number when siteSettings carries one.
+   */
+  fallbackPhone?: string;
 }
-const { sections = [], fallbackEmail } = Astro.props;
+const { sections = [], fallbackEmail, fallbackPhone } = Astro.props;
 
 const MAP: Record<string, any> = {
   sectionRichText: RichTextBlock,
@@ -57,6 +66,8 @@ const MAP: Record<string, any> = {
   sectionKeyDates: KeyDatesBlock,
   sectionPricingTiers: PricingTiersBlock,
   embed: EmbedBlock,
+  sectionLegalBody: LegalBodyBlock,
+  sectionNumberedCards: NumberedCardsBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.
@@ -88,6 +99,6 @@ const DEFAULT_TONE: Record<string, string> = {
         </SectionShell>
       );
     }
-    return <Cmp block={block} fallbackEmail={fallbackEmail} />;
+    return <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} />;
   })
 }

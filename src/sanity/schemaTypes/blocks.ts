@@ -707,6 +707,211 @@ export const sectionPricingTiers = defineType({
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Tuition tiers' }) },
 });
 
+// =============================================================================
+// Ported page sections (Rule & Ledger) — the page-builder conversion, 2026-08-26
+// =============================================================================
+// These types carry the art-directed markup lifted off the bespoke singleton
+// pages (docs/superpowers/plans/2026-08-26-page-builder-conversion.md). Two
+// things make them different from every block above, both on purpose (D1):
+//
+//   1. They have NO background/tone field. Their surfaces are fixed in code, so
+//      the pixels cannot drift from what the page looked like before it
+//      converted. Editors control WHICH sections appear IN WHAT ORDER, never
+//      how a section is painted.
+//   2. They render OUTSIDE SectionShell (Sections.astro keeps them out of the
+//      SHELL_AWARE set), because the shell's tone-adaptive colors and these
+//      pages' fixed Rule & Ledger surfaces are mutually exclusive.
+//
+// They live in their own insert-menu band ("Page sections (Rule & Ledger)").
+// =============================================================================
+
+/**
+ * The legal statement body: privacy #2 and accessibility #2, which are twins.
+ * A date line over a Portable Text body in a narrow measure.
+ *
+ * The two guards this type inherits from the pages are both test-guarded, so do
+ * not "simplify" them away:
+ *   - `landmarkLabel` must differ from the page's h1 text. Two region landmarks
+ *     with the same accessible name is an axe landmark-unique violation
+ *     (tests/a11y.spec.ts).
+ *   - the built-in statements link to the contact page when no email address is
+ *     set, because an <a> with empty text is an axe link-name violation, and
+ *     the credential-less CI build renders exactly that state.
+ */
+export const sectionLegalBody = defineType({
+  name: 'sectionLegalBody',
+  title: 'Legal statement body',
+  type: 'object',
+  description:
+    'The body of a policy or statement page: an optional "last updated" line over your text, in a narrow, readable measure. Used by the Privacy and Accessibility pages.',
+  fields: [
+    defineField({
+      name: 'landmarkLabel',
+      title: 'Screen-reader label for this section',
+      type: 'string',
+      description:
+        'Read aloud to describe this part of the page. It must NOT repeat the page headline word for word (say "Privacy policy contents", not "Privacy policy").',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'dateLabel',
+      title: 'Date label',
+      type: 'string',
+      description: 'The words before the date. Example: "Last updated" or "Last reviewed".',
+      initialValue: 'Last updated',
+    }),
+    defineField({
+      name: 'lastUpdated',
+      title: 'Date',
+      type: 'date',
+      description: 'Shown at the top of the statement. Leave empty to show no date line.',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Statement body',
+      type: 'array',
+      description: 'The full text. Use headings (H2/H3) to organize it.',
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [
+            { title: 'Paragraph', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+          ],
+          lists: [
+            { title: 'Bullet', value: 'bullet' },
+            { title: 'Numbered', value: 'number' },
+          ],
+          marks: {
+            decorators: [
+              { title: 'Bold', value: 'strong' },
+              { title: 'Italic', value: 'em' },
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
+                  { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false },
+                ],
+              },
+            ],
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'fallbackStatement',
+      title: 'Built-in statement to show when the body is empty',
+      type: 'string',
+      description:
+        'A safety net, not a choice you normally make. If the body above is empty, the site renders this built-in statement so a legal page is never blank.',
+      options: {
+        list: [
+          { title: 'None (show nothing)', value: 'none' },
+          { title: 'Built-in privacy policy', value: 'privacy' },
+          { title: 'Built-in accessibility statement', value: 'accessibility' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'none',
+    }),
+  ],
+  preview: {
+    select: { label: 'landmarkLabel', date: 'lastUpdated' },
+    prepare: ({ label, date }) => ({
+      title: label || 'Legal statement body',
+      subtitle: date ? `Dated ${date}` : 'No date shown',
+    }),
+  },
+});
+
+/**
+ * Numbered cards: the 01/02/03 ledger cards that appear on four pages
+ * (for-you personas, about beliefs, get-started steps, home wayfinding).
+ *
+ * `variant` picks which border treatment the cards wear. The three values are
+ * the three treatments already in the codebase, so later phases have a name for
+ * each. ONLY `top2` is exercised so far (for-you, converted 2026-08-26):
+ *
+ *   top2    a full hairline box with a heavier gold top rule (for-you personas)
+ *   full    the same box, gold on all four sides
+ *   ledger  no box at all, just the gold top rule over the card (about beliefs)
+ *
+ * When Phase 2 converts about and get-started, verify `ledger` and `full`
+ * against those pages with the parity harness before trusting them. They are
+ * declared, not yet proven.
+ */
+export const sectionNumberedCards = defineType({
+  name: 'sectionNumberedCards',
+  title: 'Numbered cards',
+  type: 'object',
+  description:
+    'A grid of numbered cards (01, 02, 03...), each with a title, a line of copy, and an optional button. Good for "who this is for", beliefs, or steps.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', description: 'Optional. Leave empty when the cards speak for themselves, as on the For You page.' }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed if you want to link straight to this section, e.g. /about#our-beliefs. Leave empty and one is made from the heading.',
+    }),
+    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'cards',
+      title: 'Cards',
+      type: 'array',
+      description: 'Numbered in the order you set here. Drag to reorder.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'numberedCard',
+          fields: [
+            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required(), description: 'Example: "The small-group leader".' }),
+            defineField({ name: 'body', title: 'Body', type: 'text', rows: 2, description: 'One line on what this card promises.' }),
+            defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
+          ],
+          preview: { select: { title: 'title', subtitle: 'body' } },
+        }),
+      ],
+      validation: (R) => R.min(1),
+    }),
+    defineField({
+      name: 'variant',
+      title: 'Card border',
+      type: 'string',
+      description: 'How the cards are framed. All three are brand-locked; pick the one that matches the page.',
+      options: {
+        list: [
+          { title: 'Boxed, gold top rule', value: 'top2' },
+          { title: 'Boxed, gold all round', value: 'full' },
+          { title: 'Ledger (gold top rule only)', value: 'ledger' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'top2',
+    }),
+    defineField({
+      name: 'footnote',
+      title: 'Footnote (optional)',
+      type: 'text',
+      rows: 2,
+      description: 'A quiet line under the cards.',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', cards: 'cards' },
+    prepare: ({ title, cards }) => ({
+      title: title || 'Numbered cards',
+      subtitle: `${cards?.length ?? 0} card(s)`,
+    }),
+  },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -728,6 +933,9 @@ export const sectionBlocks = [
   sectionResources,
   sectionKeyDates,
   sectionPricingTiers,
+  // Ported page sections (Rule & Ledger), 2026-08-26.
+  sectionLegalBody,
+  sectionNumberedCards,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -753,6 +961,9 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionKeyDates' },
   { type: 'sectionPricingTiers' },
   { type: 'embed' },
+  // Ported page sections (Rule & Ledger), 2026-08-26.
+  { type: 'sectionLegalBody' },
+  { type: 'sectionNumberedCards' },
 ];
 
 // =============================================================================
@@ -800,27 +1011,23 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
     of: ['sectionCtaBand', 'sectionForm', 'sectionResources', 'embed'],
   },
   // ---------------------------------------------------------------------------
-  // SCAFFOLD (2026-08-26), deliberately commented out until it has members.
+  // The fifth band, LIVE since 2026-08-26 (Phase 1 landed its first member).
   // ---------------------------------------------------------------------------
-  // The fifth band for the page-builder conversion (see docs/superpowers/plans/
-  // 2026-08-26-page-builder-conversion.md): the ~15 art-directed section types
-  // ported off the bespoke pages. They are brand-locked on purpose (decision
-  // D1: fixed surfaces, no tone field), so they get their own band rather than
-  // mixing into the tone-adaptive four above.
+  // The art-directed section types ported off the bespoke pages (see
+  // docs/superpowers/plans/2026-08-26-page-builder-conversion.md). They are
+  // brand-locked on purpose (decision D1: fixed surfaces, no tone field), so
+  // they get their own band rather than mixing into the tone-adaptive four
+  // above.
   //
-  // Why it is commented rather than shipped empty: the repo's own drift guard
-  // below is happy with `of: []` (it only checks for duplicates and for members
-  // with no group). @sanity/insert-menu is what objects — it renders one tab
-  // per group unconditionally, with no emptiness filter, so a live empty group
-  // would show editors a "Page sections (Rule & Ledger)" tab with nothing in
-  // it. Phase 0 ships no new section types, so there is nothing to put in it
-  // yet. Uncomment this block in the same commit as the FIRST ported type.
-  //
-  // {
-  //   name: 'ruleAndLedger',
-  //   title: 'Page sections (Rule & Ledger)',
-  //   of: ['sectionPageHeader' /* ...the rest, as each type lands */],
-  // },
+  // It was shipped commented out through Phase 0 because @sanity/insert-menu
+  // renders one tab per group unconditionally, with no emptiness filter: a
+  // group with `of: []` would have shown editors a tab with nothing in it. Add
+  // each new ported type here in the same commit that defines it.
+  {
+    name: 'ruleAndLedger',
+    title: 'Page sections (Rule & Ledger)',
+    of: ['sectionLegalBody', 'sectionNumberedCards'],
+  },
 ];
 
 // Fail loudly at Studio load when the groups and the palette drift apart.

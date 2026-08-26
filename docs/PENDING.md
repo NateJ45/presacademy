@@ -38,30 +38,43 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PHASE 0 LANDED 2026-08-26, Phase 1 next).**
+- **Page-builder conversion (PHASE 1 LANDED 2026-08-26, Phase 2 next).**
   Convert the 13 bespoke singleton pages to a sections-array page-builder
   with zero visual change. The full plan — governing decisions, the ~15
   new section types mapped to every page, phasing, parity harness, risks
   — is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
   Estimated 5–7 sessions; each phase lands deployed and verified.
-  Phase 0 built the foundations, all render-neutral (no page imports them
-  yet): `src/components/PageHeader.astro`,
-  `src/components/SingletonPage.astro`, `src/lib/heading-id.ts` (+ tests),
-  `src/lib/default-sections.ts`. Three carry-forwards for Phase 1:
+  Phase 0 built the foundations (`src/components/PageHeader.astro`,
+  `src/components/SingletonPage.astro`, `src/lib/heading-id.ts` + tests,
+  `src/lib/default-sections.ts`, `scripts/page-parity.mjs`).
+  **Phase 1 converted four pages** — resources, privacy, accessibility,
+  for-you — each verified at 13/13 page parity, 79 unit tests, 109
+  Playwright tests, plus the empty-env axe run. It added two section
+  types (`sectionLegalBody`, `sectionNumberedCards`), their components,
+  their DEFAULT_SECTIONS entries, three seed scripts
+  (`scripts/seed-builder-*.mjs`, all run against production), and
+  full-fidelity `/preview` for the four converted pages.
+  Carry-forwards for Phase 2:
   1. **about.astro's hero differs from the other six** rule-variant pages
      by two classes (`max-w-4xl` on the h1, `leading-relaxed` on the
      subhead). PageHeader renders the six-page form. Settle the About
      delta explicitly when About converts; do not widen the component by
      reflex. The full comparison is in PageHeader's header comment.
-  2. **The fifth insert-menu group is a commented-out scaffold** in
-     `blocks.ts`. The repo's own drift guard tolerates `of: []`, but
-     @sanity/insert-menu renders one tab per group with no emptiness
-     filter, so shipping it empty would show editors an empty
-     "Page sections (Rule & Ledger)" tab. Uncomment it in the same commit
-     as the first ported type.
-  3. **The Checkup rule `page-heading-ids` no-ops** until
-     `PORTED_SECTION_TYPES` in `HealthTool.tsx` lists a real type. Add
-     each ported type's name to it as that type lands.
+  2. **`sectionNumberedCards`' `full` and `ledger` variants are declared
+     but unproven.** Only `top2` (For You) has been checked against a
+     real page. Verify the other two with the parity harness when about
+     and get-started convert.
+  3. **The Checkup rule `page-heading-ids` still no-ops.** Neither Phase 1
+     type has a required `headingId` (the legal body names its landmark
+     with `landmarkLabel`; numbered cards are often headingless), so
+     listing them in `PORTED_SECTION_TYPES` would warn about correct
+     content. Add the first type with a mandatory heading instead.
+  4. **Photo heroes stay in their page files, not in SingletonPage.**
+     Astro collects CSS from the module graph, so importing `Hero.astro`
+     into the shared renderer injected its scoped `.hero-fill` style into
+     every text-hero page (the parity harness caught it). SingletonPage
+     renders `<slot name="hero" />` for image-hero pages; faq and contact
+     follow the privacy/accessibility pattern when they convert.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image

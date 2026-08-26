@@ -1,0 +1,212 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// LegalBodyBlock — the privacy / accessibility statement body (2026-08-26)
+// =============================================================================
+// Phase 1 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup below was CUT from privacy.astro and accessibility.astro, not
+// rewritten: those two pages were twins, and this is the shared original.
+//
+// Rendered OUTSIDE SectionShell (decision D1). The surface, the measure
+// (max-w-3xl) and the spacing are fixed in code; there is no tone field.
+//
+// THREE THINGS HERE ARE GUARDED BY TESTS. Read before editing:
+//
+//   1. `landmarkLabel` becomes this section's aria-label and must differ from
+//      the page's h1. Two region landmarks sharing an accessible name is an axe
+//      landmark-unique violation (tests/a11y.spec.ts, 2026-08-25).
+//   2. The built-in statements below link to /contact when no email address is
+//      set. An <a> with empty text is an axe link-name violation, and the
+//      credential-less CI build renders exactly that state.
+//   3. The date formatter is deliberately the same local-timezone
+//      toLocaleDateString the pages used. Changing it moves the rendered date
+//      by a day and breaks page parity.
+//
+// The built-in statements are the no-content fallback: they render only when
+// the body is empty AND `fallbackStatement` names one. On the live site the
+// body is populated (the seed copied it over), so what you see is Portable
+// Text; the fallbacks exist so a legal page is never blank, including in CI.
+import PortableTextStatic from '@/components/PortableTextStatic.astro';
+import { site } from '@/data/site';
+import { telHref } from '@/lib/phone';
+
+interface Props {
+  block: any;
+  /** Contact email from siteSettings, passed down by Sections.astro. */
+  fallbackEmail?: string;
+  /** Contact phone from siteSettings, passed down by Sections.astro. */
+  fallbackPhone?: string;
+}
+
+const { block, fallbackEmail, fallbackPhone } = Astro.props as Props;
+
+// Format the date from Sanity, or render no date line at all.
+function formatDate(d?: string): string {
+  if (!d) return '';
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+const formatted = formatDate(block?.lastUpdated);
+// One text node, so the rendered HTML matches the pre-conversion pages exactly.
+const dateLine = formatted ? `${block?.dateLabel ?? 'Last updated'}: ${formatted}` : '';
+
+const hasBody = Array.isArray(block?.body) ? block.body.length > 0 : Boolean(block?.body);
+const fallbackStatement = hasBody ? 'none' : (block?.fallbackStatement ?? 'none');
+
+const contactEmail = fallbackEmail;
+const contactPhone = fallbackPhone;
+
+const linkClass = 'text-link underline underline-offset-2 hover:text-primary transition-colors';
+---
+
+<section class="bg-background" aria-label={block?.landmarkLabel}>
+  <div class="mx-auto max-w-3xl px-m py-section-lg">
+    {dateLine && (
+      <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-l">{dateLine}</p>
+    )}
+
+    {hasBody && <PortableTextStatic value={block.body} className="prose-friendly" />}
+
+    {fallbackStatement === 'privacy' && (
+      <div class="space-y-l text-foreground leading-relaxed">
+        <p class="text-foreground/80">
+          This is the privacy policy for {site.name}. The goal here is to be
+          straightforward about what information we collect and why.
+        </p>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">What gets collected</h2>
+          <p class="text-foreground/80">
+            When you email us or send a message through this site, you share your name,
+            email address, and whatever details you include. We use that information only to
+            respond to you. Nothing else.
+          </p>
+          <p class="mt-s text-foreground/80">
+            If you subscribe to our newsletter, your email address goes to our email provider so
+            occasional news from the Academy can reach you. It is not shared with anyone else.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">What doesn't happen</h2>
+          <ul class="list-disc pl-l space-y-1 text-foreground/80">
+            <li>Your information is never sold.</li>
+            <li>There is no ad targeting or tracking pixels on this site.</li>
+            <li>Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">Unsubscribing from the newsletter</h2>
+          <p class="text-foreground/80">
+            Every email includes an unsubscribe link at the bottom. Click it and you're off the
+            list right away. If you run into any trouble, email directly and it'll be handled
+            promptly.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">Questions or data requests</h2>
+          <p class="text-foreground/80">
+            If you have questions about how your information is handled, or want your data
+            removed, reach out at{' '}
+            {/* Guard: the email is '' until an editor sets it (the CI empty-env
+                build renders that state), and an <a> with empty text is an axe
+                link-name violation. */}
+            {
+              contactEmail ? (
+                <a
+                  href={`mailto:${contactEmail}`}
+                  class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                >
+                  {contactEmail}
+                </a>
+              ) : (
+                <a
+                  href="/contact"
+                  class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                >
+                  the contact page
+                </a>
+              )
+            }.
+            You'll hear back within a few business days.
+          </p>
+        </div>
+
+        <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
+          This policy was last reviewed in June 2026 and will be updated if anything meaningful
+          changes about how this site handles your data.
+        </p>
+      </div>
+    )}
+
+    {fallbackStatement === 'accessibility' && (
+      <div class="space-y-l text-foreground leading-relaxed">
+        <p class="text-foreground/80">
+          {site.name} wants this website to work for everyone, including people who use a
+          screen reader, move through pages with a keyboard, or rely on other assistive
+          technology. We treat accessibility as part of building and maintaining the site,
+          not an afterthought.
+        </p>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">The standard we hold ourselves to</h2>
+          <p class="text-foreground/80">
+            We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1
+            at Level AA. That is the benchmark most widely used for the web, and we check our
+            work against it as the site grows.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">What that looks like here</h2>
+          <ul class="list-disc pl-l space-y-1 text-foreground/80">
+            <li>Clear, semantic headings and page landmarks, so assistive technology can move through each page in a logical order.</li>
+            <li>Full keyboard support, with a visible focus outline and a skip-to-content link at the top of every page.</li>
+            <li>Text and background colors chosen for sufficient contrast, checked in both light and dark modes.</li>
+            <li>Written descriptions for images that carry meaning, with decorative images hidden from screen readers.</li>
+            <li>Text that resizes cleanly and a layout that adapts down to small phone screens.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">Where we are still working</h2>
+          <p class="text-foreground/80">
+            A few parts of the site use tools from other companies, such as the scheduling
+            widget and the embedded map. We choose accessible options where we can, but we do
+            not control everything about how those tools behave. If one of them gets in your
+            way, tell us and we will get you the same information another way.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-h3 text-foreground mb-s">Found a barrier? Tell us.</h2>
+          <p class="text-foreground/80">
+            If anything on this site is hard to use, or you need a page in a different format,
+            please reach out and we will make it right.
+          </p>
+          <p class="mt-s text-foreground/80">
+            {contactEmail && (
+              <>Email us at <a href={`mailto:${contactEmail}`} class={linkClass}>{contactEmail}</a>. </>
+            )}
+            {contactPhone && (
+              <>You can also call <a href={telHref(contactPhone)} class={linkClass}>{contactPhone}</a>. </>
+            )}
+            Or send a note through our <a href="/contact" class={linkClass}>contact page</a>.
+          </p>
+          <p class="mt-s text-foreground/80">
+            Please include the address of the page and a short note about what went wrong. We
+            read every message, reply within a few business days, and will get you the
+            information you need.
+          </p>
+        </div>
+
+        <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
+          This statement was last reviewed in June 2026. We update it as the site changes.
+        </p>
+      </div>
+    )}
+  </div>
+</section>

@@ -7,11 +7,17 @@
    reads the perspective cookie, fetches the doc draft-aware (stega on), and
    renders it.
 
-    - `/preview` and the fixed paths (/preview/about, /preview/courses, ...)
-      render the matching SINGLETON's generic editable surface: hero fields,
-      the flexibleSections page-builder blocks, and the closing CTA. The
-      code-owned middle of those pages (course rails, stats, filters) renders
-      only on the live site — a note in the preview says so.
+    - `/preview` renders HOME through the shared HomeBody, in full fidelity.
+    - A page that has CONVERTED to the page builder (2026-08-26 onward:
+      privacy, accessibility, for-you, resources) renders through the shared
+      SingletonPage with draft data, also in full fidelity. Converting a page
+      upgrades its preview automatically; add its type to
+      CONVERTED_PAGE_FETCHERS below in the same commit.
+    - The remaining fixed paths (/preview/about, /preview/courses, ...) render
+      the matching SINGLETON's generic editable surface: hero fields, the
+      flexibleSections page-builder blocks, and the closing CTA. The code-owned
+      middle of those pages (course rails, stats, filters) renders only on the
+      live site — a note in the preview says so.
     - Any other slug renders the matching custom `page` doc (hero + sections),
       the full page-builder surface.
 
@@ -26,12 +32,17 @@ import Hero from '@/components/Hero.astro';
 import Sections from '@/components/Sections.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import HomeBody from '@/components/home/HomeBody.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
 import { previewFetch } from '@/lib/cms-preview';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import {
   IMAGE_PROJECTION,
   SECTION_MEMBERS,
   getHomePage,
+  getPrivacyPage,
+  getAccessibilityPage,
+  getForYouPage,
+  getResourcesPage,
   getSiteSettings,
   getFeaturedCourses,
   getStartHereCourses,
@@ -128,7 +139,38 @@ if (singletonType === 'homePage') {
   };
 }
 
-const doc = home
+// ---------------------------------------------------------------------------
+// CONVERTED SINGLETONS: full-fidelity preview, same deal as home (2026-08-26).
+// A page that has moved to the builder renders through SingletonPage here, with
+// DRAFT data pulled by the same query function the live page uses. That is what
+// makes the preview trustworthy: one template, so it cannot drift from the
+// page. Add a page's type here in the same commit that converts it.
+//
+// Two things preview differently from the live page, both accepted:
+//   - the photo heroes render without their LOCAL fallback image (the live
+//     pages import it as a build-time asset; this route is SSR). An editor who
+//     has set a hero image in Sanity sees that image, which is the thing they
+//     are previewing.
+//   - resources' empty state is a pinned code region in the page file, so it
+//     does not appear here.
+// ---------------------------------------------------------------------------
+const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = {
+  privacyPage: getPrivacyPage,
+  accessibilityPage: getAccessibilityPage,
+  forYouPage: getForYouPage,
+  resourcesPage: getResourcesPage,
+};
+
+let converted: { page: any; settings: any } | null = null;
+if (!home && singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
+  const [page, siteSettings] = await Promise.all([
+    CONVERTED_PAGE_FETCHERS[singletonType](draftFetch),
+    getSiteSettings(draftFetch),
+  ]);
+  converted = { page, settings: resolveSiteSettings(siteSettings) };
+}
+
+const doc = home || converted
   ? null
   : await previewFetch<PreviewDoc | null>(
   draftMode,
@@ -138,21 +180,34 @@ const doc = home
   singletonType ? { type: singletonType } : { slug },
 );
 
-if (!home && !doc) {
+if (!home && !converted && !doc) {
   return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
 }
+if (converted && !converted.page) {
+  return new Response(`No document found for "${slug}"`, { status: 404 });
+}
+
+const generic = !home && !converted;
 
 // The doc id the overlay + /preview/live listen on, read from the QUERY (a
 // Studio-created page has a random id). Draft perspective can return the
-// drafts. twin's id; strip it so the listen filter matches both twins.
-const pageId = home ? 'homePage' : doc!._id.replace(/^drafts\./, '');
+// drafts. twin's id; strip it so the listen filter matches both twins. The
+// converted singletons have fixed ids equal to their type, same as home.
+const pageId = home ? 'homePage' : converted ? singletonType : doc!._id.replace(/^drafts\./, '');
 
-const heroHeadline = home ? '' : doc!.heroHeadline || doc!.title || doc!.seoTitle || '';
-const builderSections = home ? [] : singletonType ? doc!.flexibleSections : doc!.sections;
-const hasFinalCta = home ? false : Boolean(doc!.finalCtaHeadline || doc!.finalCta);
+const heroHeadline = generic ? doc!.heroHeadline || doc!.title || doc!.seoTitle || '' : '';
+const builderSections = generic ? (singletonType ? doc!.flexibleSections : doc!.sections) : [];
+const hasFinalCta = generic ? Boolean(doc!.finalCtaHeadline || doc!.finalCta) : false;
 const title = home
   ? 'Home — Preview'
-  : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
+  : converted
+    ? `${converted.page?.heroHeadline ?? slug} — Preview`
+    : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
+
+// The two converted legal pages wear the photo hero, which SingletonPage leaves
+// to the page (its scoped style must not follow every text-hero page). Here the
+// slot is filled from the draft's own hero fields.
+const previewImageHero = converted && (singletonType === 'privacyPage' || singletonType === 'accessibilityPage');
 ---
 
 <PreviewLayout {title} {draftMode} {pageId}>
@@ -170,6 +225,27 @@ const title = home
     )
   }
   {
+    converted && (
+      <SingletonPage
+        pageType={singletonType}
+        page={converted.page}
+        settings={converted.settings}
+      >
+        {previewImageHero && (
+          <Hero
+            slot="hero"
+            eyebrow={converted.page?.heroEyebrow ?? ''}
+            headline={converted.page?.heroHeadline ?? ''}
+            subhead={converted.page?.heroSubhead ?? ''}
+            backgroundImage={converted.page?.heroImage ?? null}
+            headingId="preview-hero"
+            size="short"
+          />
+        )}
+      </SingletonPage>
+    )
+  }
+  {
     heroHeadline && (
       <Hero
         eyebrow={doc.heroEyebrow ?? ''}
@@ -183,7 +259,7 @@ const title = home
     )
   }
   {
-    !home && singletonType && (
+    generic && singletonType && (
       <div class="mx-auto max-w-3xl px-4 py-6">
         <p class="rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm text-ink/80">
           The built-in sections of this page (course rails, stats, filters, contact details) render
@@ -193,7 +269,7 @@ const title = home
       </div>
     )
   }
-  {!home && <Sections sections={builderSections} />}
+  {generic && <Sections sections={builderSections} />}
   {
     hasFinalCta && (
       <FinalCta

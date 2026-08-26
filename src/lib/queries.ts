@@ -53,6 +53,12 @@ export const SECTION_MEMBERS = `{
   },
   _type == "sectionResources" => {
     items[]{ ..., file{ asset->{ url, originalFilename, size, extension, mimeType } } }
+  },
+  // Ported page sections (Rule & Ledger), 2026-08-26. Each card carries its own
+  // CTA, so the internal-link reference has to be resolved per card or
+  // CtaLink.astro cannot map the document type to a route.
+  _type == "sectionNumberedCards" => {
+    cards[]{ ..., cta${CTA_PROJECTION} }
   }
 }`;
 
@@ -386,8 +392,13 @@ export async function getNotFoundPage() {
 
 // ---- Privacy page ---------------------------------------------------------
 
-export async function getPrivacyPage() {
-  return sanityFetch(`*[_type == "privacyPage"][0]{
+// The `fetcher` parameter is the draft-preview seam (the HomeBody contract,
+// generalized 2026-08-26 when this page converted to the builder): the page
+// passes nothing and reads published content at build time, while
+// src/pages/preview/[...slug].astro passes its draft-aware fetcher so the
+// Presentation tool renders the SAME template against unpublished edits.
+export async function getPrivacyPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "privacyPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -403,8 +414,9 @@ export async function getPrivacyPage() {
 // ---- Accessibility statement ----------------------------------------------
 // Route: /accessibility. Same shape as the privacy page; the page renders a
 // complete static fallback statement when this singleton is null.
-export async function getAccessibilityPage() {
-  return sanityFetch(`*[_type == "accessibilityPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage above.
+export async function getAccessibilityPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "accessibilityPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -852,8 +864,9 @@ export async function getGetStartedPage() {
   }`, {}, null);
 }
 
-export async function getForYouPage() {
-  return sanityFetch(`*[_type == "forYouPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage above.
+export async function getForYouPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "forYouPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
@@ -863,8 +876,9 @@ export async function getForYouPage() {
   }`, {}, null);
 }
 
-export async function getResourcesPage() {
-  return sanityFetch(`*[_type == "resourcesPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage above.
+export async function getResourcesPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "resourcesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},

@@ -1,18 +1,28 @@
 ---
 // Safe to edit by hand
-// Privacy policy page. Fetches the privacyPage singleton from Sanity for the
-// body and lastUpdated date. When the doc doesn't exist yet (or Sanity isn't
-// reachable), a plain-voice fallback policy is rendered so the page is always
-// live and accurate.
+// Privacy policy page.
 //
-// Reuses PortableText for the body when Sanity content is present; falls back
-// to static HTML copy for the period before the editor publishes the doc.
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 1 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md). The statement
+// body is now a `sectionLegalBody` block in the page's "Page sections" array,
+// rendered by SingletonPage. What stays here is what stays code by doctrine:
+// the queries, the SEO derivation, the breadcrumb JSON-LD, and the photo hero
+// (its scoped .hero-fill style has to live in the pages that use it, or every
+// text-hero page inherits the style tag; see the note in SingletonPage.astro).
+//
+// The old `body` and `lastUpdated` fields are deliberately left in place and
+// populated (decision D4, additive migration): reverting this file brings the
+// old page back with its content intact. They are unset in the cleanup phase,
+// never by clicking "Remove field" in the Studio.
+//
+// If the sections array is ever empty, DEFAULT_SECTIONS renders the same
+// built-in policy the page has always fallen back to, so the page is never
+// blank, including in the credential-less CI build.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import heroPrivacy from '@/assets/placeholders/acad-library-room.jpg';
-import PortableTextStatic from '@/components/PortableTextStatic.astro';
-import Sections from '@/components/Sections.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
 import { getPrivacyPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
@@ -31,133 +41,28 @@ const heroEyebrow  = page?.heroEyebrow  ?? 'Transparency first.';
 const heroHeadline = page?.heroHeadline ?? 'Privacy Policy';
 const heroSubhead  = page?.heroSubhead  ?? '';
 
-// Format the lastUpdated date from Sanity or fall back to a static string.
-function formatDate(d?: string): string {
-  if (!d) return '';
-  const date = new Date(d);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-const lastUpdated = formatDate(page?.lastUpdated);
-
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
     { name: 'Privacy Policy', url: `${site.url}/privacy` },
   ]),
 ];
-
-// Contact email for the fallback copy
-const contactEmail = settings.email;
-
-// Whether to use Sanity body content
-const hasSanityBody = Boolean(page?.body);
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
-  {/* Hero — text variant, short height. */}
-  <Hero
-    eyebrow={heroEyebrow}
-    headline={heroHeadline}
-    subhead={heroSubhead}
-    backgroundImage={page?.heroImage ?? null}
-    localImage={heroPrivacy}
-    localImageAlt="A university library reading room"
-    headingId="privacy-hero-heading"
-    size="short"
-  />
-
-  {/* aria-label must differ from the hero region's accessible name (its h1
-      reads "Privacy policy"): two region landmarks with the same name are an
-      axe landmark-unique violation, caught by tests/a11y.spec.ts (2026-08-25). */}
-  <section class="bg-background" aria-label="Privacy policy contents">
-    <div class="mx-auto max-w-3xl px-m py-section-lg">
-      {lastUpdated && (
-        <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-l">
-          Last updated: {lastUpdated}
-        </p>
-      )}
-
-      {hasSanityBody ? (
-        <PortableTextStatic
-          value={page!.body}
-          className="prose-friendly"
-        />
-      ) : (
-        <div class="space-y-l text-foreground leading-relaxed">
-          <p class="text-foreground/80">
-            This is the privacy policy for {site.name}. The goal here is to be
-            straightforward about what information we collect and why.
-          </p>
-
-          <div>
-            <h2 class="font-display text-h3 text-foreground mb-s">What gets collected</h2>
-            <p class="text-foreground/80">
-              When you email us or send a message through this site, you share your name,
-              email address, and whatever details you include. We use that information only to
-              respond to you. Nothing else.
-            </p>
-            <p class="mt-s text-foreground/80">
-              If you subscribe to our newsletter, your email address goes to our email provider so
-              occasional news from the Academy can reach you. It is not shared with anyone else.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-h3 text-foreground mb-s">What doesn't happen</h2>
-            <ul class="list-disc pl-l space-y-1 text-foreground/80">
-              <li>Your information is never sold.</li>
-              <li>There is no ad targeting or tracking pixels on this site.</li>
-              <li>Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.</li>
-            </ul>
-          </div>
-
-          <div>
-            <h2 class="font-display text-h3 text-foreground mb-s">Unsubscribing from the newsletter</h2>
-            <p class="text-foreground/80">
-              Every email includes an unsubscribe link at the bottom. Click it and you're off the
-              list right away. If you run into any trouble, email directly and it'll be handled
-              promptly.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-h3 text-foreground mb-s">Questions or data requests</h2>
-            <p class="text-foreground/80">
-              If you have questions about how your information is handled, or want your data
-              removed, reach out at{' '}
-              {/* Guard: the email is '' until an editor sets it (the CI empty-env
-                  build renders that state), and an <a> with empty text is an axe
-                  link-name violation. */}
-              {
-                contactEmail ? (
-                  <a
-                    href={`mailto:${contactEmail}`}
-                    class="text-link underline underline-offset-2 hover:text-primary transition-colors"
-                  >
-                    {contactEmail}
-                  </a>
-                ) : (
-                  <a
-                    href="/contact"
-                    class="text-link underline underline-offset-2 hover:text-primary transition-colors"
-                  >
-                    the contact page
-                  </a>
-                )
-              }.
-              You'll hear back within a few business days.
-            </p>
-          </div>
-
-          <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
-            This policy was last reviewed in June 2026 and will be updated if anything meaningful
-            changes about how this site handles your data.
-          </p>
-        </div>
-      )}
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+  <SingletonPage pageType="privacyPage" {page} {settings}>
+    {/* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */}
+    <Hero
+      slot="hero"
+      eyebrow={heroEyebrow}
+      headline={heroHeadline}
+      subhead={heroSubhead}
+      backgroundImage={page?.heroImage ?? null}
+      localImage={heroPrivacy}
+      localImageAlt="A university library reading room"
+      headingId="privacy-hero-heading"
+      size="short"
+    />
+  </SingletonPage>
 </BaseLayout>

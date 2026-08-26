@@ -40,6 +40,72 @@
 // heterogeneous and only the renderer's per-_type branch knows their fields).
 export const DEFAULT_SECTIONS: Record<string, any[]> = {
   // Populated page by page as the conversion proceeds. See the header comment.
+
+  // ---- privacy (converted 2026-08-26) --------------------------------------
+  // No `body` and no `lastUpdated` here on purpose: with no Sanity document at
+  // all, the old page rendered its built-in policy and no date line. The
+  // built-in copy itself lives in LegalBodyBlock.astro (it is markup, not data)
+  // and is selected by `fallbackStatement`.
+  privacyPage: [
+    {
+      _key: 'privacyBody',
+      _type: 'sectionLegalBody',
+      landmarkLabel: 'Privacy policy contents',
+      dateLabel: 'Last updated',
+      fallbackStatement: 'privacy',
+    },
+  ],
+
+  // ---- accessibility (converted 2026-08-26) --------------------------------
+  // Privacy's twin, with the two differences the pages actually had: the
+  // landmark label and the wording of the date line ("Last reviewed").
+  accessibilityPage: [
+    {
+      _key: 'accessibilityBody',
+      _type: 'sectionLegalBody',
+      landmarkLabel: 'Accessibility statement',
+      dateLabel: 'Last reviewed',
+      fallbackStatement: 'accessibility',
+    },
+  ],
+
+  // ---- for-you (converted 2026-08-26) --------------------------------------
+  // The four persona cards that for-you.astro used to carry as FALLBACK_PERSONAS.
+  // Same copy, same order, same CTAs; only the field names changed (label ->
+  // title, promise -> body) now that the type is a general numbered-cards block.
+  forYouPage: [
+    {
+      _key: 'forYouPersonas',
+      _type: 'sectionNumberedCards',
+      variant: 'top2',
+      cards: [
+        {
+          _key: 'persona1',
+          title: 'The small-group leader',
+          body: 'Lead a study with more depth and less guesswork.',
+          cta: { label: 'Courses for leaders', linkType: 'external', externalUrl: '/courses' },
+        },
+        {
+          _key: 'persona2',
+          title: 'The lifelong learner',
+          body: 'Finally read the whole Bible as one story.',
+          cta: { label: 'Start with Scripture', linkType: 'external', externalUrl: '/courses' },
+        },
+        {
+          _key: 'persona3',
+          title: 'New to Reformed thought',
+          body: 'Understand what we believe, in plain words.',
+          cta: { label: 'Explore the confessions', linkType: 'external', externalUrl: '/courses' },
+        },
+        {
+          _key: 'persona4',
+          title: 'Discerning a call',
+          body: 'Test the waters before seminary, in good company.',
+          cta: { label: 'Book a free intro', linkType: 'external', externalUrl: '/get-started' },
+        },
+      ],
+    },
+  ],
 };
 
 /** The sections a page should render: the editor's array, else the defaults. */

@@ -185,12 +185,19 @@ const CHECKS: Check[] = [
     // does NOT paper over: an EXPLICIT id an editor or seed script set, that
     // collides with another one, or that got emptied out.
     //
-    // It NO-OPS TODAY, on purpose. PORTED_SECTION_TYPES is empty because no
-    // ported section type exists yet (they arrive in Phase 1 onward), so the
-    // projection returns nothing and the check reports all-clear without
-    // false-flagging the 19 existing blocks, which have no headingId field at
-    // all and are not supposed to. Add each ported type's name to the list as
-    // it lands and the rule starts working with no other change.
+    // It STILL NO-OPS after Phase 1 (2026-08-26), and that is a judgement call,
+    // not an oversight. Only a type whose headingId is REQUIRED belongs in this
+    // list, or the rule warns about sections that are correct:
+    //   - sectionLegalBody has no headingId at all. Its landmark is named by
+    //     `landmarkLabel` (an aria-label), because the privacy and
+    //     accessibility bodies have no visible heading to point at.
+    //   - sectionNumberedCards' headingId is optional by design: a bare grid of
+    //     numbered cards (For You) carries no section heading, and pointing
+    //     aria-labelledby at an id that does not exist is worse than leaving
+    //     the landmark unlabelled.
+    // Add a type here when one lands whose heading is mandatory (the editorial
+    // and rail sections, Phase 2 onward) and the rule starts working with no
+    // other change.
     // -------------------------------------------------------------------------
     id: 'page-heading-ids',
     run: async (c) => {

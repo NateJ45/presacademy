@@ -311,7 +311,7 @@ export const guides: Guide[] = [
         kind: 'steps',
         items: [
           'Open a page and find **Page sections**.',
-          'Click `Add item`. The picker is grouped into four named bands (Words, photos & video · Cards, facts & lists · From your catalog · Banners, forms & extras) and has a search box, so type "photo" or "FAQ" to jump straight to it.',
+          'Click `Add item`. The picker is grouped into five named bands (Words, photos & video · Cards, facts & lists · From your catalog · Banners, forms & extras · Page sections) and has a search box, so type "photo" or "FAQ" to jump straight to it.',
           'Pick a section and fill in its boxes.',
           '`Publish`. The new section appears on the site after it rebuilds (a few minutes).',
         ],
@@ -324,6 +324,7 @@ export const guides: Guide[] = [
           '**Cards, facts & lists**: card grids, feature cards, big numbers, numbered steps, an inline FAQ accordion, key dates, and partner logos.',
           '**From your catalog (auto-updating)**: the dynamic list (featured courses, upcoming events, faculty, testimonials), the FAQ list, and the pricing tiers. These keep themselves up to date from your other documents.',
           '**Banners, forms & extras**: the call-to-action band, a form, downloadable resources, and embeds.',
+          '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages, now editable. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. So far: the legal statement body (Privacy, Accessibility) and numbered cards (For You).',
         ],
       },
       { kind: 'h', text: 'Reorder or remove' },

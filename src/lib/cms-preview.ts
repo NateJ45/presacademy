@@ -48,6 +48,11 @@ const NON_STEGA_FIELDS = new Set([
   'format',
   'overlay',
   'size',
+  // Ported page sections (Rule & Ledger), 2026-08-26. `variant` above already
+  // covers sectionNumberedCards' border choice; this one picks WHICH built-in
+  // legal statement renders when a sectionLegalBody has an empty body, so a
+  // stega-encoded value would silently render neither.
+  'fallbackStatement',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {
