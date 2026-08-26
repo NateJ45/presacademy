@@ -51,6 +51,38 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // -------------------------------------------------------------------------
+    // Keep styled-components (and @sanity/ui) to ONE instance in the bundle.
+    // -------------------------------------------------------------------------
+    // styled-components is a PEER dependency of both `sanity` and `@sanity/ui`,
+    // and there is exactly one copy on disk — but the bundler was emitting its
+    // code into two separate chunks for the embedded Studio. Two chunks means
+    // two module instances, so the styled-components ThemeProvider mounted by
+    // one copy is invisible to the `useTheme()` call in the other, and every
+    // @sanity/ui component that reads the theme throws styled-components error
+    // #18 ("Accessing useTheme hook outside of a <ThemeProvider>") the moment
+    // the structure tool renders. The Studio shell and the login screen render
+    // fine, so this only shows up AFTER signing in (found in production
+    // 2026-08-26).
+    //
+    // Pinning them to a named group guarantees a single shared chunk. If the
+    // Studio ever throws #18 again, re-check with:
+    //   grep -l "errors.md#" dist/client/_astro/*.js    # must list ONE file
+    // -------------------------------------------------------------------------
+    build: {
+      rollupOptions: {
+        output: {
+          advancedChunks: {
+            groups: [
+              {
+                name: 'sanity-ui-runtime',
+                test: /[\\/]node_modules[\\/](styled-components|@sanity[\\/]ui)[\\/]/,
+              },
+            ],
+          },
+        },
+      },
+    },
   },
   // NOTE: A previous attempt at `security.csp` shipped a hash-based CSP
   // meta tag. It got past Lighthouse's csp-xss check on paper, but Astro
