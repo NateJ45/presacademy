@@ -170,6 +170,61 @@ const CHECKS: Check[] = [
     },
   },
   {
+    // -------------------------------------------------------------------------
+    // Page body heading structure (added 2026-08-26, Phase 0 hook)
+    // -------------------------------------------------------------------------
+    // Once a page's body is an editor-ordered sections array, nothing stops two
+    // sections from claiming the same heading id, or a section from carrying
+    // none at all. Either one breaks the page quietly: `aria-labelledby` on the
+    // landmark points at the wrong heading, or two region landmarks end up with
+    // the same accessible name (an axe landmark-unique failure, and a confusing
+    // read for anyone using a screen reader's landmark list).
+    //
+    // The rendering side of this is src/lib/heading-id.ts, which derives a
+    // unique id per render. This check catches the case that helper deliberately
+    // does NOT paper over: an EXPLICIT id an editor or seed script set, that
+    // collides with another one, or that got emptied out.
+    //
+    // It NO-OPS TODAY, on purpose. PORTED_SECTION_TYPES is empty because no
+    // ported section type exists yet (they arrive in Phase 1 onward), so the
+    // projection returns nothing and the check reports all-clear without
+    // false-flagging the 19 existing blocks, which have no headingId field at
+    // all and are not supposed to. Add each ported type's name to the list as
+    // it lands and the rule starts working with no other change.
+    // -------------------------------------------------------------------------
+    id: 'page-heading-ids',
+    run: async (c) => {
+      const PORTED_SECTION_TYPES: string[] = [];
+      if (PORTED_SECTION_TYPES.length === 0) return null; // nothing to check yet
+
+      const pages = await c.fetch<{ label?: string; ids: (string | null)[] }[]>(
+        `*[_type in [
+            "homePage","aboutPage","coursesPage","facultyPage","pricingPage",
+            "getStartedPage","forYouPage","resourcesPage","faqPage","contactPage",
+            "eventsPage","privacyPage","accessibilityPage"
+          ] && ${LIVE} && count(flexibleSections) > 0]{
+            "label": coalesce(title, _type),
+            "ids": flexibleSections[_type in $ported].headingId
+          }`,
+        { ported: PORTED_SECTION_TYPES },
+      );
+
+      const bad = pages.filter((p) => {
+        const ids = p.ids ?? [];
+        const set = new Set(ids.filter(Boolean));
+        return ids.some((id) => !id) || set.size !== ids.length;
+      });
+
+      return bad.length
+        ? {
+            severity: 'warn',
+            label: `${bad.length} page${bad.length === 1 ? '' : 's'} with a missing or repeated section heading id`,
+            detail: `Two sections sharing a heading id (or a section with none) confuses screen readers and breaks in-page links: ${names(bad)}. Open each page's sections and give every one its own heading.`,
+          }
+        : null;
+    },
+  },
+  {
     // "Waiting to publish" — every document with unpublished edits, oldest first.
     id: 'drafts',
     run: async (c) => {

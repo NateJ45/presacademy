@@ -1,0 +1,262 @@
+---
+/* ============================================================================
+   SingletonPage — the one renderer every singleton page will run through
+   ============================================================================
+   Phase 0 skeleton, written 2026-08-26 alongside
+   docs/superpowers/plans/2026-08-26-page-builder-conversion.md.
+
+   WHY: the Studio's Presentation preview is only trustworthy when the page and
+   the preview render the SAME template. Home already earns full fidelity that
+   way (HomeBody.astro is rendered by index.astro with build-time published data
+   and by the preview route with draft data, through the same query functions).
+   This generalizes that contract to the other twelve singletons.
+
+   THE SHAPE (plan, "The renderer"):
+       hero            variant from the per-page HERO_VARIANTS map below
+       sections        page.flexibleSections, or DEFAULT_SECTIONS[pageType]
+       pinned regions  the <slot name="pinned" />, for the code-owned middles
+       final CTA       from the page's own fields, unless the page has none
+
+   NOT IMPORTED BY ANY PAGE YET. Phase 0 is render-neutral by contract: this
+   file has to COMPILE, not to render. Each page starts using it in its own
+   commit, verified against a pre-conversion HTML snapshot.
+
+   Heroes and the closing CTA stay PAGE-LEVEL FIELDS (decision D2). Only the
+   body converts to editor-owned sections, so there is no way for an editor to
+   delete a page's h1, and the fields editors already know do not move.
+   ========================================================================= */
+import type { ImageMetadata } from 'astro';
+import Hero from '@/components/Hero.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Sections from '@/components/Sections.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import { sectionsFor } from '@/lib/default-sections';
+
+/* The local fallback photo each image-hero page passes to Hero today. Privacy
+   and Accessibility share one image (the library reading room), so it is
+   imported once. Keep these in sync with the page files until they convert. */
+import heroFriendsTalking from '@/assets/placeholders/acad-friends-talking.jpg';
+import heroTableGroup from '@/assets/placeholders/acad-table-group.jpg';
+import heroLibraryRoom from '@/assets/placeholders/acad-library-room.jpg';
+
+/* ---------------------------------------------------------------------------
+   The hero map: code doctrine, not an editor choice
+   ---------------------------------------------------------------------------
+   Which SHAPE of hero a page wears is a design decision, so it lives in code
+   (mirroring how SINGLETON_BY_PATH already works in the preview route) rather
+   than as a dropdown an editor could set to something the page was not drawn
+   for. The CONTENT of the hero is still every bit a Sanity field.
+
+   Keys are Sanity document types, the same strings SINGLETON_BY_PATH maps
+   paths onto in src/pages/preview/[...slug].astro.
+--------------------------------------------------------------------------- */
+type HeroConfig =
+  | {
+      /* Home only: the two-column photo/copy hero. See the TODO below. */
+      kind: 'split';
+    }
+  | {
+      /* The Rule & Ledger text hero, rendered by PageHeader.astro. */
+      kind: 'text';
+      variant: 'rule' | 'trustLine';
+      /* Set ONLY where the page labels its hero landmark today (courses,
+         faculty). The other text-hero pages emit no id and no
+         aria-labelledby, and adding one would be a real HTML diff. */
+      headingId?: string;
+      /* The page's second, quieter intro paragraph, where it has one. */
+      introField?: 'pricingIntro' | 'personasIntro' | 'listIntro';
+      /* The faculty trust line's field name. */
+      trustLineField?: 'trustLine';
+    }
+  | {
+      /* The full-bleed photo hero, rendered by Hero.astro. */
+      kind: 'image';
+      localImage: ImageMetadata;
+      localImageAlt: string;
+      headingId: string;
+      /* faq and contact expose a gold keyword flourish; privacy and
+         accessibility deliberately do not. */
+      keyword: boolean;
+    };
+
+const HERO_VARIANTS: Record<string, HeroConfig> = {
+  /* Split (home). Phase 4. */
+  homePage: { kind: 'split' },
+
+  /* Text + gold rule. */
+  aboutPage: { kind: 'text', variant: 'rule' },
+  coursesPage: { kind: 'text', variant: 'rule', headingId: 'courses-hero' },
+  eventsPage: { kind: 'text', variant: 'rule' },
+  pricingPage: { kind: 'text', variant: 'rule', introField: 'pricingIntro' },
+  getStartedPage: { kind: 'text', variant: 'rule' },
+  forYouPage: { kind: 'text', variant: 'rule', introField: 'personasIntro' },
+  resourcesPage: { kind: 'text', variant: 'rule', introField: 'listIntro' },
+
+  /* Text + trust line (the rule becomes that paragraph's top border). */
+  facultyPage: {
+    kind: 'text',
+    variant: 'trustLine',
+    headingId: 'faculty-hero',
+    trustLineField: 'trustLine',
+  },
+
+  /* Full-bleed photo. localImage/localImageAlt copied verbatim from each page. */
+  faqPage: {
+    kind: 'image',
+    localImage: heroFriendsTalking,
+    localImageAlt: 'Three students talking together',
+    headingId: 'faq-hero',
+    keyword: true,
+  },
+  contactPage: {
+    kind: 'image',
+    localImage: heroTableGroup,
+    localImageAlt: 'A small group studying around a table',
+    headingId: 'contact-hero',
+    keyword: true,
+  },
+  privacyPage: {
+    kind: 'image',
+    localImage: heroLibraryRoom,
+    localImageAlt: 'A university library reading room',
+    headingId: 'privacy-hero-heading',
+    keyword: false,
+  },
+  accessibilityPage: {
+    kind: 'image',
+    localImage: heroLibraryRoom,
+    localImageAlt: 'A university library reading room',
+    headingId: 'accessibility-hero-heading',
+    keyword: false,
+  },
+};
+
+/* Privacy and Accessibility close on their statement body, with no CTA panel.
+   That is deliberate (a legal page should not sell), and the schemas carry no
+   finalCta fields for them at all. */
+const NO_FINAL_CTA = new Set(['privacyPage', 'accessibilityPage']);
+
+/* The literals a page falls back to when its Sanity fields are empty. They stay
+   with the PAGE (each page file passes its own), because they are that page's
+   copy, not this renderer's. Same D3 reasoning as DEFAULT_SECTIONS: the
+   credential-less CI build has to render a complete page. */
+interface HeroFallbacks {
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  intro?: string;
+  trustLine?: string;
+}
+
+interface FinalCtaFallbacks {
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  cta?: any;
+}
+
+interface Props {
+  /** Sanity document type, e.g. 'aboutPage'. Keys HERO_VARIANTS. */
+  pageType: string;
+  /** The singleton document (or its draft). */
+  page: any;
+  /** resolveSiteSettings() output. */
+  settings: any;
+  /**
+   * Collection data the page's auto sections need (upcoming events, faculty,
+   * testimonials, ...). Passed straight through to Sections; each auto block
+   * reads the keys it cares about. Empty for pages with no auto sections.
+   */
+  autoData?: Record<string, unknown>;
+  /** This page's inline hero fallback copy. */
+  heroFallbacks?: HeroFallbacks;
+  /** This page's inline closing-CTA fallback copy. */
+  finalCtaFallbacks?: FinalCtaFallbacks;
+}
+
+const {
+  pageType,
+  page,
+  settings,
+  autoData: _autoData = {},
+  heroFallbacks = {},
+  finalCtaFallbacks = {},
+} = Astro.props as Props;
+
+const hero = HERO_VARIANTS[pageType];
+
+const heroEyebrow = page?.heroEyebrow ?? heroFallbacks.eyebrow;
+const heroHeadline = page?.heroHeadline ?? heroFallbacks.headline ?? '';
+const heroSubhead = page?.heroSubhead ?? heroFallbacks.subhead;
+
+/* The intro and trust-line field names differ per page, so the map names them
+   rather than this component guessing. */
+const heroIntro =
+  hero?.kind === 'text' && hero.introField
+    ? (page?.[hero.introField] ?? heroFallbacks.intro)
+    : undefined;
+const heroTrustLine =
+  hero?.kind === 'text' && hero.trustLineField
+    ? (page?.[hero.trustLineField] ?? heroFallbacks.trustLine)
+    : undefined;
+
+const sections = sectionsFor(pageType, page?.flexibleSections);
+const showFinalCta = !NO_FINAL_CTA.has(pageType);
+---
+
+{
+  hero?.kind === 'split' ? (
+    /* TODO (Phase 4, home): the split hero is still owned by
+       src/components/home/HomeBody.astro, which renders it inline together
+       with the Ken Burns HeroSlideshow, the kinetic-words h1, the two pill
+       CTAs and the next-cohort line. It converts LAST, on purpose: home is
+       the heaviest page and HomeBody is already the shared page/preview
+       template, so it loses nothing by waiting. When it converts, lift that
+       markup into a HeroSplit.astro rendered from this branch, and delete the
+       HomeBody special case in src/pages/preview/[...slug].astro. Until then
+       this branch renders nothing and index.astro keeps using HomeBody. */
+    null
+  ) : hero?.kind === 'image' ? (
+    <Hero
+      eyebrow={heroEyebrow}
+      headline={heroHeadline}
+      subhead={heroSubhead}
+      keyword={hero.keyword ? page?.heroKeyword : undefined}
+      backgroundImage={page?.heroImage ?? null}
+      localImage={hero.localImage}
+      localImageAlt={hero.localImageAlt}
+      headingId={hero.headingId}
+      size="short"
+    />
+  ) : hero?.kind === 'text' ? (
+    <PageHeader
+      eyebrow={heroEyebrow}
+      headline={heroHeadline}
+      subhead={heroSubhead}
+      intro={heroIntro}
+      variant={hero.variant}
+      trustLine={heroTrustLine}
+      headingId={hero.headingId}
+    />
+  ) : null
+}
+
+<Sections sections={sections} fallbackEmail={settings?.email} />
+
+{/* Pinned code regions: the few middles that stay code on purpose (the courses
+    catalog with its React filter island, the faculty roster). They render
+    BETWEEN the sections array and the closing CTA, exactly where they sit
+    today. Phase 3 documents the pattern; the slot is here from the start so
+    the ordering contract is visible in one place. */}
+<slot name="pinned" />
+
+{
+  showFinalCta && (
+    <FinalCta
+      eyebrow={page?.finalCtaEyebrow ?? finalCtaFallbacks.eyebrow}
+      headline={page?.finalCtaHeadline ?? finalCtaFallbacks.headline}
+      subhead={page?.finalCtaSubhead ?? finalCtaFallbacks.subhead}
+      cta={page?.finalCta?.label ? page.finalCta : finalCtaFallbacks.cta}
+    />
+  )
+}

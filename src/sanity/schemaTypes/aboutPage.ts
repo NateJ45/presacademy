@@ -9,7 +9,7 @@
 // (no "unknown field" warnings).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const aboutPage = defineType({
   name: 'aboutPage',
@@ -68,7 +68,7 @@ export const aboutPage = defineType({
     defineField({ name: 'facultyBandCtaLabel', title: 'Faculty band — button label', type: 'string', group: 'content', description: 'The button links to the Faculty page. Leave empty for "Meet the faculty".' }),
 
     // ---- Page sections ----
-    defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: 'Add on-brand sections below the built-in content. Drag to reorder.', of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
+    defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: FLEXIBLE_SECTIONS_DESCRIPTION, of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
 
     // ---- Final CTA ----
     defineField({ name: 'finalCtaEyebrow', title: 'Final CTA — eyebrow', type: 'string', group: 'final' }),

@@ -799,6 +799,28 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
     title: 'Banners, forms & extras',
     of: ['sectionCtaBand', 'sectionForm', 'sectionResources', 'embed'],
   },
+  // ---------------------------------------------------------------------------
+  // SCAFFOLD (2026-08-26), deliberately commented out until it has members.
+  // ---------------------------------------------------------------------------
+  // The fifth band for the page-builder conversion (see docs/superpowers/plans/
+  // 2026-08-26-page-builder-conversion.md): the ~15 art-directed section types
+  // ported off the bespoke pages. They are brand-locked on purpose (decision
+  // D1: fixed surfaces, no tone field), so they get their own band rather than
+  // mixing into the tone-adaptive four above.
+  //
+  // Why it is commented rather than shipped empty: the repo's own drift guard
+  // below is happy with `of: []` (it only checks for duplicates and for members
+  // with no group). @sanity/insert-menu is what objects — it renders one tab
+  // per group unconditionally, with no emptiness filter, so a live empty group
+  // would show editors a "Page sections (Rule & Ledger)" tab with nothing in
+  // it. Phase 0 ships no new section types, so there is nothing to put in it
+  // yet. Uncomment this block in the same commit as the FIRST ported type.
+  //
+  // {
+  //   name: 'ruleAndLedger',
+  //   title: 'Page sections (Rule & Ledger)',
+  //   of: ['sectionPageHeader' /* ...the rest, as each type lands */],
+  // },
 ];
 
 // Fail loudly at Studio load when the groups and the palette drift apart.
@@ -813,6 +835,19 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
     throw new Error(`Section(s) missing from the insert-menu groups: ${missing.join(', ')}`);
   }
 }
+
+/**
+ * The one description shown under every "Page sections" field (2026-08-26).
+ *
+ * Each page used to word this differently ("below the hero", "below the
+ * statement", "below the built-in content"), which made the list read like an
+ * optional extra bolted onto the bottom of a page. It is not: the page-builder
+ * conversion is moving each page's whole body into this array, so the wording
+ * now says what the field IS. Kept in one place so the eight singletons plus
+ * the custom `page` type cannot drift apart again.
+ */
+export const FLEXIBLE_SECTIONS_DESCRIPTION =
+  'The page body is built here. Add a section, drag to reorder, remove what you do not need. Sections render in this order, below the page content that is built in above.';
 
 /**
  * Ready-made array `options` for every flexibleSections field: the grouped,

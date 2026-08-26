@@ -38,12 +38,30 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PLANNED, awaiting go).** Convert the 13
-  bespoke singleton pages to a sections-array page-builder with zero
-  visual change. The full plan — governing decisions, the ~15 new
-  section types mapped to every page, phasing, parity harness, risks —
-  is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
+- **Page-builder conversion (PHASE 0 LANDED 2026-08-26, Phase 1 next).**
+  Convert the 13 bespoke singleton pages to a sections-array page-builder
+  with zero visual change. The full plan — governing decisions, the ~15
+  new section types mapped to every page, phasing, parity harness, risks
+  — is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
   Estimated 5–7 sessions; each phase lands deployed and verified.
+  Phase 0 built the foundations, all render-neutral (no page imports them
+  yet): `src/components/PageHeader.astro`,
+  `src/components/SingletonPage.astro`, `src/lib/heading-id.ts` (+ tests),
+  `src/lib/default-sections.ts`. Three carry-forwards for Phase 1:
+  1. **about.astro's hero differs from the other six** rule-variant pages
+     by two classes (`max-w-4xl` on the h1, `leading-relaxed` on the
+     subhead). PageHeader renders the six-page form. Settle the About
+     delta explicitly when About converts; do not widen the component by
+     reflex. The full comparison is in PageHeader's header comment.
+  2. **The fifth insert-menu group is a commented-out scaffold** in
+     `blocks.ts`. The repo's own drift guard tolerates `of: []`, but
+     @sanity/insert-menu renders one tab per group with no emptiness
+     filter, so shipping it empty would show editors an empty
+     "Page sections (Rule & Ledger)" tab. Uncomment it in the same commit
+     as the first ported type.
+  3. **The Checkup rule `page-heading-ids` no-ops** until
+     `PORTED_SECTION_TYPES` in `HealthTool.tsx` lists a real type. Add
+     each ported type's name to it as that type lands.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image

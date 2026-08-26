@@ -1,0 +1,102 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// PageHeader — the shared Rule & Ledger text hero (extracted 2026-08-26)
+// =============================================================================
+// Phase 0 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup below was CUT from the existing pages, not rewritten: eight singletons
+// carry byte-identical copies of this block today, and the whole point of the
+// conversion is that the pixels do not move. If you need to change the look,
+// change it here once, and re-run the parity harness.
+//
+// Nothing imports this yet. Phase 0 is render-neutral by contract; each page
+// swaps its inline copy for this component in its own commit, verified against
+// its pre-conversion HTML snapshot.
+//
+// TWO VARIANTS, both already in the codebase:
+//   - variant="rule"      the gold hairline under the block (about, courses,
+//                         events, pricing, get-started, for-you, resources)
+//   - variant="trustLine" the hairline becomes the top border of a trust line
+//                         (faculty/index.astro)
+//   - variant="none"      neither, for a page that wants the header bare
+//
+// -----------------------------------------------------------------------------
+// The 2026-08-26 markup comparison across all seven rule-variant users
+// -----------------------------------------------------------------------------
+// Six of the seven (courses, events, pricing, get-started, for-you, resources)
+// are character-for-character identical, and that shared form is what renders
+// below. about.astro differs in exactly two ways, recorded here rather than
+// smoothed over, because either one is a real pixel diff:
+//
+//   1. Its <h1> carries `max-w-4xl` (the others let the headline run to the
+//      content width).
+//   2. Its subhead carries `leading-relaxed` (the others use the default line
+//      height for `text-lg`).
+//
+// Both look like drift from when About was written first rather than a
+// deliberate art-direction call, but Phase 0 does not get to decide that. When
+// about converts (Phase 2), settle it explicitly: either accept the two-class
+// diff as a real change and note it in the parity allowlist, or add narrow
+// opt-in props here. Do not quietly widen this component to cover both.
+//
+// -----------------------------------------------------------------------------
+// headingId is OPTIONAL, on purpose
+// -----------------------------------------------------------------------------
+// Only courses and faculty label their hero landmark today (`aria-labelledby`
+// on the <section>, matching `id` on the <h1>). The other six render neither.
+// Emitting an id everywhere would change six pages' HTML, so: pass headingId to
+// reproduce courses/faculty, omit it to reproduce the rest. The per-page hero
+// map in SingletonPage.astro records which is which.
+// =============================================================================
+
+interface Props {
+  /** Small uppercase label above the headline. */
+  eyebrow?: string;
+  /** The page's h1. */
+  headline: string;
+  /** Optional lead paragraph under the headline. */
+  subhead?: string;
+  /**
+   * Optional SECOND paragraph, one step quieter than the subhead. This is the
+   * per-page intro field: pricing.pricingIntro, for-you.personasIntro,
+   * resources.listIntro. The pages without one simply do not pass it.
+   */
+  intro?: string;
+  /** Which closing mark the header carries. See the variant notes above. */
+  variant?: 'rule' | 'trustLine' | 'none';
+  /** The line of copy that variant="trustLine" renders (faculty's). */
+  trustLine?: string;
+  /**
+   * Landmark id. When set, the <section> gets `aria-labelledby` and the <h1>
+   * gets the matching `id`. Omit for the six pages that carry neither today.
+   */
+  headingId?: string;
+}
+
+const {
+  eyebrow,
+  headline,
+  subhead,
+  intro,
+  variant = 'rule',
+  trustLine,
+  headingId,
+} = Astro.props as Props;
+---
+
+<section class="bg-background" aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
+    <div data-reveal>
+      {eyebrow && (
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{eyebrow}</p>
+      )}
+      <h1 id={headingId} class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{headline}</h1>
+      {subhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{subhead}</p>}
+      {intro && <p class="mt-m max-w-2xl text-foreground/75">{intro}</p>}
+    </div>
+    {variant === 'rule' && <div class="mt-l h-px w-full bg-gold/50"></div>}
+    {variant === 'trustLine' && trustLine && (
+      <p class="mt-l border-t border-gold/50 pt-l text-base text-foreground/75">{trustLine}</p>
+    )}
+  </div>
+</section>

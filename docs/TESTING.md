@@ -73,6 +73,36 @@ focused state gets the fully-passing ring, so the test pins the TRUE current
 floors with a TODO instead of failing; raising the floors to 3:1 requires
 darkening `--input` in both themes first.
 
+## How parity verification works
+
+`scripts/page-parity.mjs` guards the page-builder conversion's core promise:
+the 13 singleton pages must render byte-identical HTML before and after their
+markup moves into Sanity section types. It has two modes, and **neither one
+builds** (the caller builds; both read an existing `dist/client` and warn if
+that build is over an hour old):
+
+```powershell
+npm run build
+node scripts/page-parity.mjs capture            # snapshot all 13 pages
+# ...convert a page, then rebuild...
+npm run build
+node scripts/page-parity.mjs compare            # PASS/DIFF per page, exit 1 on any diff
+node scripts/page-parity.mjs compare privacy    # one page only
+```
+
+Before diffing, each page's HTML is normalized so two identical rebuilds match
+exactly: `/_astro/` asset content hashes collapse to `.HASH.`, Astro's
+generated scoped-style ids collapse to `astro-cid-CID`, and whitespace
+*between* tags plus trailing whitespace is dropped. Everything else (text,
+classes, ids, aria, inline styles, JSON-LD) stays byte-faithful, because that
+is exactly what must not drift. The script header explains each rule.
+
+Baselines live in `scripts/.parity/*.html` and **are committed**: git history
+is the record of when a baseline legitimately moved. Re-capture only when you
+mean to move it, and say so in the commit message. Verified 2026-08-26: a
+capture followed by a clean rebuild reports 13/13 PASS, and an injected
+one-attribute change is caught with a unified diff.
+
 ## Gotchas (each cost real time)
 
 - **On Windows the build needs wrangler's workerd, not the plugin's — this is
