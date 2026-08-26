@@ -64,9 +64,11 @@ export const SECTION_MEMBERS = `{
 // collapsing N per-page calls into a single network request.
 let _siteSettingsPromise: Promise<any> | null = null;
 
-export async function getSiteSettings() {
-  if (_siteSettingsPromise) return _siteSettingsPromise;
-  _siteSettingsPromise = sanityFetch(`*[_type == "siteSettings"][0]{
+export async function getSiteSettings(fetcher = sanityFetch) {
+  // A custom fetcher (the draft-aware preview) bypasses the build-time memo:
+  // preview requests must see the CURRENT draft, not a cached publish.
+  if (fetcher === sanityFetch && _siteSettingsPromise) return _siteSettingsPromise;
+  const result = fetcher(`*[_type == "siteSettings"][0]{
     title,
     tagline,
     mission,
@@ -107,7 +109,8 @@ export async function getSiteSettings() {
       links[]{ _key, label, href }
     }
   }`, {}, null);
-  return _siteSettingsPromise;
+  if (fetcher === sanityFetch) _siteSettingsPromise = result;
+  return result;
 }
 
 // ---- Announcement (site-wide banner; collection) --------------------------
@@ -197,8 +200,8 @@ export async function getBeliefsPage() {
 // page-builder array. The strip CARDS come from the catalog collections below.
 // Each field falls back to the literal in index.astro when empty.
 
-export async function getHomePage() {
-  return sanityFetch(`*[_type == "homePage"][0]{
+export async function getHomePage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "homePage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -643,8 +646,8 @@ export async function getCourses() {
 }
 
 // Featured courses for the home catalog preview.
-export async function getFeaturedCourses(limit = 6) {
-  return sanityFetch(
+export async function getFeaturedCourses(limit = 6, fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "course" && archived != true && featured == true] | order(displayOrder asc, title asc)[0...$limit] ${COURSE_CARD}`,
     { today: TODAY(), limit },
     [],
@@ -652,8 +655,8 @@ export async function getFeaturedCourses(limit = 6) {
 }
 
 // The recommended starting courses (the "Start here" rail).
-export async function getStartHereCourses() {
-  return sanityFetch(
+export async function getStartHereCourses(fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "course" && archived != true && startHere == true] | order(displayOrder asc, title asc) ${COURSE_CARD}`,
     { today: TODAY() },
     [],
@@ -721,8 +724,8 @@ export async function getFaculty() {
 }
 
 // A few faculty for the home faculty strip.
-export async function getFeaturedFaculty(limit = 4) {
-  return sanityFetch(
+export async function getFeaturedFaculty(limit = 4, fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "facultyMember" && archived != true] | order(orderRank asc, displayOrder asc, name asc)[0...$limit] ${FACULTY_CARD}`,
     { limit },
     [],
@@ -773,8 +776,8 @@ export async function getTeachingAreas() {
 
 // The soonest term that begins today or later — the global "next cohort begins"
 // cue (derived, not stored on siteSettings).
-export async function getNextTerm() {
-  return sanityFetch(
+export async function getNextTerm(fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "term" && archived != true && startDate >= $today] | order(startDate asc)[0]{
       _id, title, startDate, registrationDeadline, note
     }`,
@@ -827,8 +830,8 @@ export async function getTestimonials() {
   );
 }
 
-export async function getFeaturedTestimonials(limit = 3) {
-  return sanityFetch(
+export async function getFeaturedTestimonials(limit = 3, fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "testimonial" && archived != true && featured == true] | order(displayOrder asc)[0...$limit] ${TESTIMONIAL_CARD}`,
     { limit },
     [],

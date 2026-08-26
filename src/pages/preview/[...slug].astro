@@ -25,8 +25,20 @@ import PreviewLayout from '@/layouts/PreviewLayout.astro';
 import Hero from '@/components/Hero.astro';
 import Sections from '@/components/Sections.astro';
 import FinalCta from '@/components/FinalCta.astro';
+import HomeBody from '@/components/home/HomeBody.astro';
 import { previewFetch } from '@/lib/cms-preview';
-import { IMAGE_PROJECTION, SECTION_MEMBERS } from '@/lib/queries';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import {
+  IMAGE_PROJECTION,
+  SECTION_MEMBERS,
+  getHomePage,
+  getSiteSettings,
+  getFeaturedCourses,
+  getStartHereCourses,
+  getFeaturedFaculty,
+  getFeaturedTestimonials,
+  getNextTerm,
+} from '@/lib/queries';
 
 const draftMode = Astro.cookies.has(perspectiveCookieName);
 const slug = (Astro.params.slug as string | undefined) || '';
@@ -81,7 +93,44 @@ interface PreviewDoc {
 }
 
 const singletonType = SINGLETON_BY_PATH[slug];
-const doc = await previewFetch<PreviewDoc | null>(
+
+// ---------------------------------------------------------------------------
+// HOME: full-fidelity preview. The page body is the SHARED HomeBody component
+// (also rendered by index.astro), fed here with DRAFT data through the same
+// query functions — so what the editor sees IS the page, not an approximation.
+// The other singletons still get the generic editable-surface preview below;
+// convert them the same way (extract the body, pass a draft fetcher) as they
+// earn it.
+// ---------------------------------------------------------------------------
+const draftFetch = (q: string, p: Record<string, unknown> = {}, fallback: any = null) =>
+  previewFetch(draftMode, q, p).catch(() => fallback);
+
+let home: Record<string, any> | null = null;
+if (singletonType === 'homePage') {
+  const [page, siteSettings, featuredCourses, startHere, featuredFaculty, testimonials, nextTerm] =
+    await Promise.all([
+      getHomePage(draftFetch),
+      getSiteSettings(draftFetch),
+      getFeaturedCourses(6, draftFetch),
+      getStartHereCourses(draftFetch),
+      getFeaturedFaculty(3, draftFetch),
+      getFeaturedTestimonials(3, draftFetch),
+      getNextTerm(draftFetch),
+    ]);
+  home = {
+    page,
+    settings: resolveSiteSettings(siteSettings),
+    featuredCourses: featuredCourses ?? [],
+    startHere: startHere ?? [],
+    featuredFaculty: featuredFaculty ?? [],
+    testimonials: testimonials ?? [],
+    nextTerm,
+  };
+}
+
+const doc = home
+  ? null
+  : await previewFetch<PreviewDoc | null>(
   draftMode,
   singletonType
     ? `*[_type == $type][0]${PREVIEW_FIELDS}`
@@ -89,21 +138,37 @@ const doc = await previewFetch<PreviewDoc | null>(
   singletonType ? { type: singletonType } : { slug },
 );
 
-if (!doc) {
+if (!home && !doc) {
   return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
 }
 
 // The doc id the overlay + /preview/live listen on, read from the QUERY (a
 // Studio-created page has a random id). Draft perspective can return the
 // drafts. twin's id; strip it so the listen filter matches both twins.
-const pageId = doc._id.replace(/^drafts\./, '');
+const pageId = home ? 'homePage' : doc!._id.replace(/^drafts\./, '');
 
-const heroHeadline = doc.heroHeadline || doc.title || doc.seoTitle || '';
-const builderSections = singletonType ? doc.flexibleSections : doc.sections;
-const hasFinalCta = Boolean(doc.finalCtaHeadline || doc.finalCta);
+const heroHeadline = home ? '' : doc!.heroHeadline || doc!.title || doc!.seoTitle || '';
+const builderSections = home ? [] : singletonType ? doc!.flexibleSections : doc!.sections;
+const hasFinalCta = home ? false : Boolean(doc!.finalCtaHeadline || doc!.finalCta);
+const title = home
+  ? 'Home — Preview'
+  : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
 ---
 
-<PreviewLayout title={`${doc.title ?? heroHeadline ?? slug} — Preview`} {draftMode} {pageId}>
+<PreviewLayout {title} {draftMode} {pageId}>
+  {
+    home && (
+      <HomeBody
+        page={home.page}
+        settings={home.settings}
+        featuredCourses={home.featuredCourses}
+        startHere={home.startHere}
+        featuredFaculty={home.featuredFaculty}
+        testimonials={home.testimonials}
+        nextTerm={home.nextTerm}
+      />
+    )
+  }
   {
     heroHeadline && (
       <Hero
@@ -118,7 +183,7 @@ const hasFinalCta = Boolean(doc.finalCtaHeadline || doc.finalCta);
     )
   }
   {
-    singletonType && (
+    !home && singletonType && (
       <div class="mx-auto max-w-3xl px-4 py-6">
         <p class="rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm text-ink/80">
           The built-in sections of this page (course rails, stats, filters, contact details) render
@@ -128,7 +193,7 @@ const hasFinalCta = Boolean(doc.finalCtaHeadline || doc.finalCta);
       </div>
     )
   }
-  <Sections sections={builderSections} />
+  {!home && <Sections sections={builderSections} />}
   {
     hasFinalCta && (
       <FinalCta

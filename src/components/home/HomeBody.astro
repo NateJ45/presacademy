@@ -1,0 +1,269 @@
+---
+/* ============================================================================
+   HomeBody — the home page's entire rendered body, extracted so the REAL page
+   and the Studio's draft PREVIEW share one template (2026-08-26).
+   ============================================================================
+   src/pages/index.astro renders this with BUILD-TIME published data;
+   src/pages/preview/[...slug].astro renders the same component per request
+   with DRAFT data (the same query functions, draft-aware fetcher). Because
+   both surfaces use this one file, the preview can never drift from the page.
+   Edit the home page HERE, not in index.astro.
+   ============================================================================ */
+import HeroSlideshow from '@/components/HeroSlideshow.astro';
+import CourseCard from '@/components/CourseCard.astro';
+import FacultyCard from '@/components/FacultyCard.astro';
+import FinalCta from '@/components/FinalCta.astro';
+import Sections from '@/components/Sections.astro';
+
+interface Props {
+  /* The homePage singleton (or its draft); field fallbacks live below. */
+  page: any;
+  /* resolveSiteSettings() output. */
+  settings: any;
+  featuredCourses: any[];
+  startHere: any[];
+  featuredFaculty: any[];
+  testimonials: any[];
+  nextTerm: any;
+}
+const { page, settings, featuredCourses, startHere, featuredFaculty, testimonials, nextTerm } =
+  Astro.props;
+
+const heroEyebrow = page?.heroEyebrow ?? 'The Presbyterian Academy';
+const heroHeadline = page?.heroHeadline ?? 'Theological depth, taught for ordinary believers.';
+const heroSubhead =
+  page?.heroSubhead ??
+  'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
+// The hero accepts one image (static) or several (a slow Ken Burns slideshow).
+// homePage.heroImages is the source; the legacy single `heroImage` field was
+// dropped from the schema in the home re-schema (and its stale doc value unset
+// by seed-editability.mjs), so there is no single-image fallback to read.
+const heroImages = page?.heroImages?.length ? page.heroImages : [];
+
+function fmtDate(d?: string): string {
+  if (!d) return '';
+  return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+const cityLine = settings.addressLocality ?? 'West Chester, Ohio';
+
+// Home section copy: each reads the homePage singleton and falls back to these
+// literals when the field is empty. (The strip CARDS come from the catalog
+// collections fetched above.)
+const heroPrimaryLabel = page?.heroPrimaryLabel ?? 'Browse courses';
+const heroSecondaryLabel = page?.heroSecondaryLabel ?? 'Book a free intro';
+const nextCohortLabel = page?.nextCohortLabel ?? 'Next cohort begins';
+
+const wayfinding = page?.wayfinding?.length ? page.wayfinding : [
+  { title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
+  { title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
+  { title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
+  { title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
+];
+
+const startHereEyebrow = page?.startHereEyebrow ?? 'Start here';
+const startHereHeadline = page?.startHereHeadline ?? 'A few courses to begin with';
+
+// Stats for a NEW (2026) school: structure + standards, not a track record (no
+// founding year, no alumni counts). Only number values (count: true) animate.
+const stats = page?.stats?.length ? page.stats : [
+  { value: '100%', label: 'Ordained or credentialed faculty', count: true },
+  { value: 'In person', label: 'Taught in cohorts' },
+  { value: 'Need-based', label: 'Scholarships every term' },
+  { value: 'Reformed', label: 'Rooted in the Westminster Standards' },
+];
+
+const tickerTopics = page?.tickerTopics?.length ? page.tickerTopics : [
+  'Old Testament', 'Systematic Theology', 'Church History', 'Reformed Worship',
+  'Biblical Greek', 'Christian Ethics', 'Apologetics', 'Pastoral Care',
+  'The Confessions', 'Spiritual Formation',
+];
+
+const coursesEyebrow = page?.coursesEyebrow ?? 'Courses';
+const coursesHeadline = page?.coursesHeadline ?? 'Learn something worth knowing';
+const coursesLinkLabel = page?.coursesLinkLabel ?? 'See all courses';
+const facultyEyebrow = page?.facultyEyebrow ?? 'The faculty';
+const facultyHeadline = page?.facultyHeadline ?? 'Taught by ministers and scholars';
+const facultyLinkLabel = page?.facultyLinkLabel ?? 'Meet the faculty';
+const testimonialsEyebrow = page?.testimonialsEyebrow ?? 'In their words';
+const testimonialsHeadline = page?.testimonialsHeadline ?? 'From the people we serve';
+
+const pillPrimary =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
+const pillGhost =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-foreground text-foreground hover:bg-accent transition-colors';
+---
+
+  {/* Split hero */}
+  <section class="bg-background hero-atmos overflow-hidden" aria-labelledby="home-hero">
+    <div class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]">
+      <div class="hero-entry-stagger">
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">
+          <span class="kinetic-words">{heroHeadline.split(' ').map((word: string, i: number) => (
+            <><span class="w" style={`--i:${i}`}><span>{word}</span></span>{' '}</>
+          ))}</span>
+        </h1>
+        <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
+        <div class="mt-l flex flex-wrap gap-3">
+          <a href="/courses" class={pillPrimary}>{heroPrimaryLabel}</a>
+          <a href="/get-started" class={pillGhost}>{heroSecondaryLabel}</a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        {nextTerm && (
+          <p class="mt-4 text-sm text-foreground/75">
+            <span class="font-display tabular-nums uppercase tracking-[0.12em] text-gold-ink">{nextCohortLabel}</span>
+            &nbsp; {fmtDate(nextTerm.startDate)} &nbsp;·&nbsp; {nextTerm.title} &nbsp;·&nbsp; {cityLine}
+          </p>
+        )}
+      </div>
+      <div>
+        <div class="h-0.5 w-full bg-gold"></div>
+        <HeroSlideshow
+          images={heroImages}
+          eager
+          id="home"
+          aspectClass="aspect-[3/2] lg:aspect-[4/5]"
+          sizes="(min-width: 1024px) 600px, 90vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* Wayfinding ledger */}
+  <section class="border-y border-border-soft bg-background" aria-label="Where to begin">
+    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" data-stagger-grid>
+      {wayfinding.map((w, i) => (
+        <a href={w.href} class:list={['group block px-m py-l no-underline', i < wayfinding.length - 1 && 'lg:border-r border-border-soft']}>
+          <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
+          <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{w.title}</h2>
+          <p class="mt-1 text-sm text-foreground/70">{w.body}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {/* Start here */}
+  {startHere.length > 0 && (
+    <section class="bg-card" aria-labelledby="home-start">
+      <div class="mx-auto max-w-content px-m py-section-md">
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{startHereEyebrow}</p>
+          <h2 id="home-start" class="mt-2 font-display text-h3 text-foreground">{startHereHeadline}</h2>
+        </div>
+        {/* Column count follows the number of cards: a 2-course rail uses two
+            columns rather than a 3-col grid with an empty third column. */}
+        <ul
+          class:list={[
+            'mt-l grid grid-cols-1 gap-l',
+            startHere.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : startHere.length === 2 ? 'sm:grid-cols-2' : '',
+          ]}
+          data-stagger-grid
+        >
+          {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Stat band */}
+  <section class="border-b border-border-soft bg-background" aria-label="The Academy at a glance">
+    <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
+      {stats.map((s, i) => (
+        <div class:list={['px-m py-l', i < stats.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
+          <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
+          <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Topics ticker — a slow marquee of what the Academy teaches. Decorative. */}
+  <section class="border-b border-border-soft bg-card" aria-hidden="true">
+    <div class="marquee py-3.5">
+      <div class="marquee__track">
+        {[0, 1].map(() => (
+          <div class="marquee__group text-xs uppercase tracking-eyebrow text-foreground/70">
+            {tickerTopics.map((topic: string) => (
+              <span class="inline-flex items-center gap-3">{topic}<span class="text-gold-ink">&#10022;</span></span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Course catalog preview */}
+  {featuredCourses.length > 0 && (
+    <section class="bg-background" aria-labelledby="home-courses">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{coursesEyebrow}</p>
+            <h2 id="home-courses" class="mt-2 font-display text-h2 text-foreground">{coursesHeadline}</h2>
+          </div>
+          <a href="/courses" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{coursesLinkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+          {/* Drop any Start-here course so the home page never shows the same
+              course card in both rails. */}
+          {featuredCourses
+            .filter((c: any) => !startHere.slice(0, 3).some((s: any) => s.slug === c.slug))
+            .map((c: any) => <CourseCard course={c} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Faculty strip */}
+  {featuredFaculty.length > 0 && (
+    <section class="surface-warm bg-muted" aria-labelledby="home-faculty">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{facultyEyebrow}</p>
+            <h2 id="home-faculty" class="mt-2 font-display text-h2 text-foreground">{facultyHeadline}</h2>
+          </div>
+          <a href="/faculty" class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{facultyLinkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {featuredFaculty.map((f: any) => <FacultyCard person={f} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Testimonials */}
+  {testimonials.length > 0 && (
+    <section class="bg-background" aria-labelledby="home-stories">
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{testimonialsEyebrow}</p>
+          <h2 id="home-stories" class="mt-2 font-display text-h2 text-foreground">{testimonialsHeadline}</h2>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {testimonials.map((t: any) => (
+            <figure class="flex h-full flex-col">
+              <blockquote class="font-display text-xl italic leading-relaxed text-foreground/90">{t.quote}</blockquote>
+              <figcaption class="mt-auto pt-l">
+                <div class="h-px w-full bg-border-soft"></div>
+                <p class="mt-3 text-sm font-medium text-foreground">{t.name}</p>
+                <p class="text-sm text-foreground/70">{[t.role, t.city].filter(Boolean).join(', ')}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
+
+  <FinalCta
+    eyebrow={page?.finalCtaEyebrow ?? 'Begin your formation'}
+    headline={page?.finalCtaHeadline ?? 'Tell us what you want to learn'}
+    subhead={page?.finalCtaSubhead ?? 'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.'}
+    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+  />

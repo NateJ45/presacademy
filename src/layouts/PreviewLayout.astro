@@ -33,13 +33,54 @@ const { title, draftMode, pageId } = Astro.props;
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
   </head>
-  <body class="relative bg-bg text-ink">
+  <body class="relative bg-background text-foreground">
     <div
-      class="flex items-center justify-between border-b border-secondary/40 bg-bg px-4 py-1.5 text-xs text-ink/70"
+      class="border-border-soft bg-card text-foreground/70 flex items-center justify-between border-b px-4 py-1.5 text-xs"
     >
       <span>Draft preview — the site header and footer render on the live site only.</span>
     </div>
     <main id="main"><slot /></main>
+
+    {/* The motion system's END states, forced. BaseLayout's IntersectionObserver
+        script is not loaded here (this shell is deliberately minimal), and the
+        reveal/stagger/kinetic entrances hide content at opacity 0 until it
+        runs — so without this block, shared page bodies (HomeBody) would render
+        INVISIBLE sections in the preview. Mirrors the settle() CSS in
+        tests/helpers.ts; keep the two in sync when the motion vocabulary grows.
+        (Ken Burns / marquee loops are left running — they are keyframe-driven
+        and need no JS.) */}
+    <style is:global>
+      [data-reveal] {
+        opacity: 1 !important;
+        translate: 0 0 !important;
+      }
+      [data-reveal] .reveal-rise {
+        clip-path: none !important;
+        transform: none !important;
+      }
+      .eyebrow::before {
+        transform: scaleX(1) !important;
+      }
+      [data-stagger-grid] > * {
+        opacity: 1 !important;
+        translate: 0 0 !important;
+      }
+      .hero-entry-stagger > * {
+        opacity: 1 !important;
+        animation: none !important;
+        transform: none !important;
+      }
+      .kinetic-words .w > span {
+        transform: none !important;
+        animation: none !important;
+      }
+      .img-curtain {
+        display: none !important;
+      }
+      .step-connector::after {
+        transform: scaleY(1) !important;
+      }
+    </style>
 
     {
       draftMode && (
@@ -47,7 +88,7 @@ const { title, draftMode, pageId } = Astro.props;
           <VisualEditingOverlay client:only="react" pageId={pageId} />
           <a
             href="/api/draft-mode/disable"
-            class="fixed right-4 bottom-4 z-50 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg hover:bg-primary-dark"
+            class="bg-primary text-primary-foreground hover:bg-primary-dark fixed right-4 bottom-4 z-50 rounded-full px-4 py-2 text-sm font-bold shadow-lg"
           >
             Exit preview
           </a>
