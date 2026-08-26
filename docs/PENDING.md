@@ -47,14 +47,6 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Re-enable the Unsplash plugin** (`sanity.config.ts`, the commented
-  `unsplashImageAsset()`). It was pulled out 2026-08-26 while chasing the
-  Studio theming crash, because it is the only Studio plugin the
-  proven-working WCP repo does not run. Re-enable it once the Studio is
-  confirmed healthy in production, then reload the desk and confirm it still
-  renders. If it breaks again, that identifies the culprit and the plugin
-  stays out.
-
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image
   wells, and the faculty strip is text-only, which makes a polished page
@@ -73,6 +65,8 @@ that section when it gets long.
 
 ## Recently closed
 
+- 2026-08-26 — **Unsplash plugin re-enabled** after the Studio crash root
+  cause proved it innocent (held at 7.0.15 for @sanity/ui v3 compat).
 - 2026-08-26 — **Studio folded into the root package** (the WCP shape):
   `studio/` is gone; sources live in `src/sanity/`, config at the root
   `sanity.config.ts` + `sanity.cli.ts`, one node_modules. This

@@ -15,8 +15,7 @@ import { presentationTool } from 'sanity/presentation';
 import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
-// Temporarily unused — see the disabled unsplashImageAsset() below.
-// import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
+import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
 import DocumentsPane from 'sanity-plugin-documents-pane';
 import { schemaTypes } from './src/sanity/schemaTypes';
 import { ARCHIVABLE_TYPES } from './src/sanity/schemaTypes/archived';
@@ -230,13 +229,11 @@ export default defineConfig({
         },
       },
     }),
-    // Unsplash plugin — TEMPORARILY DISABLED (2026-08-26).
-    // It adds an "Unsplash" tab to every image picker. It was pulled while
-    // chasing the Studio theming crash (it was the one plugin the
-    // proven-working WCP repo does not run). Re-enable it (uncomment here and
-    // the import above) now that the desk is confirmed healthy, and check the
-    // desk still renders after doing so. Tracked in docs/PENDING.md.
-    // unsplashImageAsset(),
+    // Unsplash plugin — adds an "Unsplash" tab to every image picker.
+    // (Briefly disabled 2026-08-26 while chasing the Studio theming crash; it
+    // was innocent — the cause was the nested studio package's dual module
+    // trees. Held at 7.0.15: newer versions demand @sanity/ui ^3.4/v4.)
+    unsplashImageAsset(),
     // Media browser — adds a top-level "Media" icon in the Studio sidebar
     // for browsing every uploaded image at once with tag + filter + bulk-edit.
     media(),
