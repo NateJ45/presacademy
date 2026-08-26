@@ -52,22 +52,16 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     // -------------------------------------------------------------------------
-    // Keep styled-components (and @sanity/ui) to ONE instance in the bundle.
+    // Keep styled-components to ONE instance in the client bundle.
     // -------------------------------------------------------------------------
-    // styled-components is a PEER dependency of both `sanity` and `@sanity/ui`,
-    // and there is exactly one copy on disk — but the bundler was emitting its
-    // code into two separate chunks for the embedded Studio. Two chunks means
-    // two module instances, so the styled-components ThemeProvider mounted by
-    // one copy is invisible to the `useTheme()` call in the other, and every
-    // @sanity/ui component that reads the theme throws styled-components error
-    // #18 ("Accessing useTheme hook outside of a <ThemeProvider>") the moment
-    // the structure tool renders. The Studio shell and the login screen render
-    // fine, so this only shows up AFTER signing in (found in production
-    // 2026-08-26).
+    // Defensive, not the cure. The Studio's styled-components error #18
+    // ("Accessing useTheme hook outside of a <ThemeProvider>") was ultimately
+    // caused by MIXED @sanity/ui majors in the dependency tree, not by chunk
+    // splitting (the whole story is in CLAUDE.md). Grouping still guarantees a
+    // single styled-components instance, which is cheap insurance against a
+    // second ThemeContext ever reappearing.
     //
-    // Pinning them to a named group guarantees a single shared chunk. If the
-    // Studio ever throws #18 again, re-check with:
-    //   grep -l "errors.md#" dist/client/_astro/*.js    # must list ONE file
+    //   grep -l "errors.md#" dist/client/_astro/*.js   # must list exactly ONE
     // -------------------------------------------------------------------------
     build: {
       rollupOptions: {

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useClient, type DocumentActionComponent, type DocumentActionProps } from 'sanity';
-// @sanity/ui v4 moved the toast API to a subpath export.
-import { useToast } from '@sanity/ui/toast';
+// useToast lives on the package root in @sanity/ui v3 (the `@sanity/ui/toast`
+// subpath is v4-only, and importing it here broke `sanity schema extract`).
+import { useToast } from '@sanity/ui';
 
 // =============================================================================
 // Archive / Restore / Delete forever — the soft-delete ("Recently deleted")
