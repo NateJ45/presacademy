@@ -1,0 +1,77 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// FaqGroupedBlock — the FAQ page's grouped accordion (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup was CUT from faq.astro, not rewritten.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// DISTINCT FROM `sectionFaqList`. That block embeds a FLAT slice of the FAQ
+// collection on any page (optionally one category, optionally capped). This one
+// is the FAQ page itself: every question, grouped under category headings, in
+// the editor's category order.
+//
+// THINGS THAT LOOK OPTIONAL AND ARE NOT
+//   1. Answers may be Portable Text (from the collection) OR plain strings (the
+//      built-in starter set). Both branches must stay.
+//   2. The accordion is native <details>/<summary>: no JavaScript, works before
+//      hydration and with JS off. Do not swap in the React accordion.
+//   3. `landmarkLabel` becomes this section's aria-label and must differ from
+//      the page's h1, or axe flags two regions with the same accessible name
+//      (tests/a11y.spec.ts).
+//   4. The FAQPage JSON-LD is NOT emitted here. It stays in faq.astro's
+//      frontmatter with the rest of the page's structured data, built from the
+//      same list this block renders.
+import PortableTextStatic from '@/components/PortableTextStatic.astro';
+import { getGroupedFaqItems } from '@/lib/queries';
+import { FALLBACK_FAQS, DEFAULT_CATEGORY_ORDER, groupFaqs } from '@/lib/faq-fallback';
+
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+// Auto block: it fetches its own collection data at build time, so an editor
+// adding a question in Studio sees it here after the next rebuild without
+// touching the section.
+const items = await getGroupedFaqItems().catch(() => []);
+const faqs: any[] = items?.length ? items : FALLBACK_FAQS;
+const categoryOrder: string[] = block?.categoryOrder?.length
+  ? block.categoryOrder
+  : DEFAULT_CATEGORY_ORDER;
+
+const grouped = groupFaqs(faqs, categoryOrder);
+---
+
+{
+  grouped.length > 0 && (
+    <section class="bg-background" aria-label={block?.landmarkLabel ?? 'Frequently asked questions'}>
+      <div class="mx-auto max-w-3xl px-m py-section-lg space-y-section-md" data-stagger-grid>
+        {grouped.map((group) => (
+          <div>
+            <h2 class="font-display text-h3 text-foreground mb-m">{group.category}</h2>
+            <div class="divide-y divide-border-soft border-t border-b border-border-soft">
+              {group.items.map((f: any) => (
+                <details class="group py-m">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg text-foreground">
+                    {f.question}
+                    <span class="shrink-0 text-link transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                  </summary>
+                  {typeof f.answer === 'string' ? (
+                    <p class="mt-s text-foreground/85 leading-relaxed">{f.answer}</p>
+                  ) : (
+                    <div class="mt-s text-foreground/85 leading-relaxed [&>div>*:first-child]:mt-0">
+                      <PortableTextStatic value={f.answer} />
+                    </div>
+                  )}
+                </details>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}

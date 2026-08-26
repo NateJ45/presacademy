@@ -1,0 +1,36 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// InlineBandBlock — the thin signpost strip (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup was CUT from about.astro's faculty band, not rewritten.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// The button is hand-written markup rather than <CtaLink>, because the band's
+// pill is the page's own and CtaLink renders a different element. That is why
+// the schema takes a plain label + URL here instead of the shared ctaBlock.
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const href = block?.ctaUrl || '/faculty';
+---
+
+{
+  block?.headline && (
+    <section class="border-y border-border-soft bg-background">
+      <div class="mx-auto flex max-w-content flex-wrap items-center justify-between gap-m px-m py-l">
+        <div>
+          {block.eyebrow && (
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+          )}
+          <p class="mt-2 max-w-xl font-display text-h4 text-foreground">{block.headline}</p>
+        </div>
+        <a href={href} class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">{block.ctaLabel}</a>
+      </div>
+    </section>
+  )
+}

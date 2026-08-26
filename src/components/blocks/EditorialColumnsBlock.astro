@@ -1,0 +1,61 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// EditorialColumnsBlock — the About page's two prose layouts (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Both
+// branches were CUT from about.astro, not rewritten:
+//   labeled  the mission band: a 200px gold label beside one wide column.
+//   pair     "how we teach" and "why we exist", sliding in from opposite sides.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// TWO DETAILS THAT MATTER
+//   1. `reveal-l` / `reveal-r` on the pair columns are the scroll-reveal
+//      directions (see docs/agent/animation.md). They are what makes the two
+//      columns arrive from opposite sides, and the mobile horizontal-scroll
+//      guard in globals.css exists because of them. Keep them paired: two
+//      reveal-l columns would slide in as one block.
+//   2. The labeled layout's opening sentence is a PARAGRAPH set in display
+//      type, not a heading. About has no heading there, and inventing one would
+//      change the page's heading outline (a Checkup + axe concern, not a
+//      styling one).
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const columns: any[] = block?.columns ?? [];
+const pair = block?.variant === 'pair';
+const first = columns[0];
+---
+
+{
+  columns.length > 0 && (
+    pair ? (
+      <section class="bg-background">
+        <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m py-section-md lg:grid-cols-2">
+          {columns.slice(0, 2).map((col: any, i: number) => (
+            <div class:list={['max-w-prose', i === 0 ? 'reveal-l' : 'reveal-r']} data-reveal>
+              {col.eyebrow && (
+                <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{col.eyebrow}</p>
+              )}
+              {col.heading && <h2 class="mt-2 font-display text-h3 text-foreground">{col.heading}</h2>}
+              {col.body && <p class="mt-m leading-relaxed text-foreground/80">{col.body}</p>}
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : (
+      <section class="bg-background">
+        <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-md lg:grid-cols-[200px_1fr]">
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{first?.eyebrow}</p>
+          <div class="max-w-prose" data-reveal>
+            <p class="font-display text-h3 leading-snug text-foreground">{first?.heading}</p>
+            <p class="mt-m text-lg leading-relaxed text-foreground/80">{first?.body}</p>
+          </div>
+        </div>
+      </section>
+    )
+  )
+}

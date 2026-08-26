@@ -1,0 +1,39 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// ScholarshipBlock — the warm statement band (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup below was CUT from pricing.astro's scholarship section, not rewritten.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the warm surface is fixed in
+// code and there is no tone field. That is the point of the band, not an
+// oversight. It is the one warm interruption on an otherwise white page, so an
+// editor cannot recolor it into invisibility.
+//
+// The eyebrow, headline and body render UNCONDITIONALLY, exactly as the page
+// did. They always carry copy (the page fell back to literals, and now
+// DEFAULT_SECTIONS does), and making them conditional would change the rendered
+// HTML of a band an editor half-fills, which is drift the parity harness cannot
+// see but a reader can.
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+// Only label the landmark when an editor has asked for an anchor: pricing #3
+// carries neither an id nor aria-labelledby today, and emitting one would be a
+// real HTML diff on a page whose whole promise is that it did not change.
+const headingId = block?.headingId || undefined;
+---
+
+<section class="surface-warm bg-muted" aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    <div data-reveal>
+      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{block?.eyebrow}</p>
+      <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">{block?.headline}</h2>
+      <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{block?.body}</p>
+    </div>
+    {block?.footnote && <p class="mt-m max-w-2xl text-sm text-foreground/65">{block.footnote}</p>}
+  </div>
+</section>

@@ -1,0 +1,72 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// LedgerStatsBlock — the ruled stat band (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Both
+// layouts below were CUT from the pages that own them, not rewritten:
+//   trio  pricing.astro's heritage band (three cells).
+//   quad  home's stat band, out of src/components/home/HomeBody.astro.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the surface and the hairlines
+// are fixed in code, and there is no tone field.
+//
+// WHAT IS PROVEN AND WHAT IS NOT
+// `trio` reproduces the Pricing band byte for byte (the parity harness holds it
+// there, 2026-08-26). `quad` is the home markup copied ahead of time so Phase 4
+// has somewhere to land; it has NOT been held against home yet. Verify it with
+// the harness when home converts, the same way `trio` was.
+//
+// TWO THINGS THAT LOOK LIKE NOISE AND ARE NOT
+//   1. `data-countup` is per ITEM, and `data-countup-grid` appears on the grid
+//      only when at least one item asks for it. Pricing's values are words
+//      ("Free", "Per course"), so it carries neither attribute and the band
+//      renders exactly as before. Year-style numbers opt out on purpose: the
+//      BaseLayout animation would spin "2026" up from zero.
+//   2. The cell borders are written as the source pages wrote them, including
+//      the repeated `border-border-soft`. Tidying the class lists would change
+//      the rendered class attribute, which is precisely what parity forbids.
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const items: any[] = block?.items ?? [];
+const variant = block?.variant === 'quad' ? 'quad' : 'trio';
+
+// Present only when a stat opts in, so the pages that never animate keep their
+// grid attribute-for-attribute unchanged.
+const countupGrid = items.some((s) => s?.count) ? true : undefined;
+
+// Pricing's band has no accessible name (it sits under the page h1 and needs
+// none); home's is "The Academy at a glance".
+const landmarkLabel = block?.landmarkLabel || undefined;
+---
+
+{
+  items.length > 0 && (
+    variant === 'quad' ? (
+      <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
+        <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid={countupGrid}>
+          {items.map((s: any, i: number) => (
+            <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
+              <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
+              <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : (
+      <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
+        <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3" data-stagger-grid data-countup-grid={countupGrid}>
+          {items.map((s: any, i: number) => (
+            <div class:list={['px-m py-l', i < items.length - 1 && 'sm:border-r border-border-soft border-b sm:border-b-0']}>
+              <p class="font-display text-h3 text-chapel-ink" data-countup={s.count ? true : undefined}>{s.value}</p>
+              <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  )
+}

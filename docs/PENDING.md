@@ -38,7 +38,7 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PHASE 1 LANDED 2026-08-26, Phase 2 next).**
+- **Page-builder conversion (PHASES 1 AND 2 LANDED 2026-08-26, Phase 3 next).**
   Convert the 13 bespoke singleton pages to a sections-array page-builder
   with zero visual change. The full plan — governing decisions, the ~15
   new section types mapped to every page, phasing, parity harness, risks
@@ -54,27 +54,56 @@ that section when it gets long.
   their DEFAULT_SECTIONS entries, three seed scripts
   (`scripts/seed-builder-*.mjs`, all run against production), and
   full-fidelity `/preview` for the four converted pages.
-  Carry-forwards for Phase 2:
-  1. **about.astro's hero differs from the other six** rule-variant pages
-     by two classes (`max-w-4xl` on the h1, `leading-relaxed` on the
-     subhead). PageHeader renders the six-page form. Settle the About
-     delta explicitly when About converts; do not widen the component by
-     reflex. The full comparison is in PageHeader's header comment.
-  2. **`sectionNumberedCards`' `full` and `ledger` variants are declared
-     but unproven.** Only `top2` (For You) has been checked against a
-     real page. Verify the other two with the parity harness when about
-     and get-started convert.
-  3. **The Checkup rule `page-heading-ids` still no-ops.** Neither Phase 1
-     type has a required `headingId` (the legal body names its landmark
-     with `landmarkLabel`; numbered cards are often headingless), so
-     listing them in `PORTED_SECTION_TYPES` would warn about correct
-     content. Add the first type with a mandatory heading instead.
-  4. **Photo heroes stay in their page files, not in SingletonPage.**
-     Astro collects CSS from the module graph, so importing `Hero.astro`
+  **Phase 2 converted six more** — pricing, about, faq, events, contact,
+  get-started — each verified at 13/13 page parity, 79 unit tests, 109
+  Playwright tests, the empty-credential axe run (32 chromium tests,
+  light + dark), and all six `/preview/*` routes opened under
+  `wrangler dev`. It added nine section types (`sectionScholarship`,
+  `sectionLedgerStats`, `sectionEditorialColumns`, `sectionInlineBand`,
+  `sectionFaqGrouped`, `sectionEventGrid`, `sectionRuledList`,
+  `sectionContactDetails`, `sectionRequestPanel`), patched two existing
+  ones without changing their output for current users
+  (`sectionPricingTiers` gained `headingLevel` + `surface`, `sectionForm`
+  gained `variant`/`eyebrow`/`headingId`/`fallbackLabel`), and shipped six
+  seed scripts (`scripts/seed-builder-*.mjs`, all run against production
+  and re-run clean).
+  The four Phase 1 carry-forwards, settled:
+  1. **about.astro's hero delta is KEPT**, behind PageHeader's new
+     `emphasis="editorial"` prop (opt-in, set only by About in
+     SingletonPage's hero map). Unifying the seven heroes would have been
+     a real visual change; making the two classes unconditional would have
+     changed six pages. PageHeader's header comment records the call.
+  2. **`sectionNumberedCards`' variants: `ledger` and a new `steps` are
+     now PROVEN** (about's beliefs, get-started's steps). The type's
+     `variant` turned out to select a whole treatment, not just a border:
+     the three bands differ in surface, rhythm, grid, heading size and
+     header shape, so each renders its source markup verbatim. `full`
+     remains declared and unproven.
+  3. **The Checkup rule `page-heading-ids` is now actionable.** Phase 2
+     added types with a mandatory heading or landmark label
+     (`sectionEventGrid`, `sectionRuledList`, `sectionFaqGrouped`,
+     `sectionContactDetails`), so `PORTED_SECTION_TYPES` can list those
+     without warning about correct content. Still to do.
+  4. **Photo heroes stay in their page files, not in SingletonPage**
+     (Astro collects CSS from the module graph, so importing `Hero.astro`
      into the shared renderer injected its scoped `.hero-fill` style into
-     every text-hero page (the parity harness caught it). SingletonPage
-     renders `<slot name="hero" />` for image-hero pages; faq and contact
-     follow the privacy/accessibility pattern when they convert.
+     every text-hero page). faq and contact followed the
+     privacy/accessibility slot pattern in Phase 2.
+  Carry-forwards for Phase 3:
+  1. **`sectionLedgerStats`' `quad` variant is declared, not proven.** It
+     is home's stat band copied ahead of time; hold it against home with
+     the parity harness in Phase 4, the way `trio` was held against
+     pricing.
+  2. **Auto sections still preview PUBLISHED collection data** (FAQ items,
+     events, pricing tiers, site settings). Accepted at conversion time,
+     as the plan's risk register allows: parameterize each block's query
+     with the draft fetcher when it matters.
+  3. **The Events page's `upcomingEmpty` copy in Sanity already ends in a
+     full sentence** ("...is a course."), while the page appends a link
+     reading "course." to it. The seed carried the value across
+     faithfully, so nothing changed, but the live empty state reads
+     oddly. Worth an editor fixing the field (it is now
+     `sectionEventGrid.emptyCopy`).
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image

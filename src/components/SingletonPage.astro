@@ -74,6 +74,10 @@ type HeroConfig =
       introField?: 'pricingIntro' | 'personasIntro' | 'listIntro';
       /* The faculty trust line's field name. */
       trustLineField?: 'trustLine';
+      /* About only (2026-08-26): its hero holds the headline to a 4xl measure
+         and relaxes the subhead's leading. Why that two-class difference is
+         kept rather than smoothed either way: PageHeader.astro's header. */
+      emphasis?: 'editorial';
     }
   | {
       /* The full-bleed photo hero. The page renders <Hero slot="hero"> itself
@@ -93,7 +97,7 @@ const HERO_VARIANTS: Record<string, HeroConfig> = {
   homePage: { kind: 'split' },
 
   /* Text + gold rule. */
-  aboutPage: { kind: 'text', variant: 'rule' },
+  aboutPage: { kind: 'text', variant: 'rule', emphasis: 'editorial' },
   coursesPage: { kind: 'text', variant: 'rule', headingId: 'courses-hero' },
   eventsPage: { kind: 'text', variant: 'rule' },
   pricingPage: { kind: 'text', variant: 'rule', introField: 'pricingIntro' },
@@ -177,6 +181,14 @@ interface Props {
   heroFallbacks?: HeroFallbacks;
   /** This page's inline closing-CTA fallback copy. */
   finalCtaFallbacks?: FinalCtaFallbacks;
+  /**
+   * The photo behind the closing CTA. Passed explicitly by the ONE page that
+   * uses it (faq), rather than read off `page` here: every other singleton
+   * leaves the CTA on its brand surface even where the field exists in the
+   * schema, and reading it here would put a background behind CTAs that have
+   * never had one (2026-08-26).
+   */
+  finalCtaBackgroundImage?: any;
 }
 
 const {
@@ -186,6 +198,7 @@ const {
   autoData: _autoData = {},
   heroFallbacks = {},
   finalCtaFallbacks = {},
+  finalCtaBackgroundImage,
 } = Astro.props as Props;
 
 const hero = HERO_VARIANTS[pageType];
@@ -234,6 +247,7 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
       variant={hero.variant}
       trustLine={heroTrustLine}
       headingId={hero.headingId}
+      emphasis={hero.emphasis}
     />
   ) : null
 }
@@ -254,6 +268,7 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
       headline={page?.finalCtaHeadline ?? finalCtaFallbacks.headline}
       subhead={page?.finalCtaSubhead ?? finalCtaFallbacks.subhead}
       cta={page?.finalCta?.label ? page.finalCta : finalCtaFallbacks.cta}
+      backgroundImage={finalCtaBackgroundImage}
     />
   )
 }

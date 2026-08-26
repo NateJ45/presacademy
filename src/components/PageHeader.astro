@@ -39,6 +39,16 @@
 // diff as a real change and note it in the parity allowlist, or add narrow
 // opt-in props here. Do not quietly widen this component to cover both.
 //
+// SETTLED 2026-08-26, when About converted (Phase 2): the two classes are kept,
+// behind ONE named opt-in prop, `emphasis="editorial"`. Reasoning:
+//   - Changing About's hero to match the other six would be a real visual change
+//     on a live page, and this whole conversion promises none.
+//   - Making the two classes unconditional would change six other pages.
+// So the default output is byte-identical to the six-page form, About passes the
+// prop, and nothing else does. It is opt-in and narrow on purpose: if the design
+// call is ever made to unify the seven heroes, delete the prop and the branch,
+// and re-capture the parity baselines in that commit.
+//
 // -----------------------------------------------------------------------------
 // headingId is OPTIONAL, on purpose
 // -----------------------------------------------------------------------------
@@ -71,6 +81,12 @@ interface Props {
    * gets the matching `id`. Omit for the six pages that carry neither today.
    */
   headingId?: string;
+  /**
+   * About's two extra classes, opt-in (see the settled note above). "editorial"
+   * holds the headline to a 4xl measure and relaxes the subhead's line height.
+   * Omit it and this component renders the six-page form exactly.
+   */
+  emphasis?: 'editorial';
 }
 
 const {
@@ -81,7 +97,18 @@ const {
   variant = 'rule',
   trustLine,
   headingId,
+  emphasis,
 } = Astro.props as Props;
+
+const editorial = emphasis === 'editorial';
+// Written as whole class strings rather than appended fragments so the rendered
+// class attribute matches its source page character for character.
+const headlineClass = editorial
+  ? 'mt-3 max-w-4xl font-display text-h1 leading-headline-tight text-foreground'
+  : 'mt-3 font-display text-h1 leading-headline-tight text-foreground';
+const subheadClass = editorial
+  ? 'mt-m max-w-2xl text-lg leading-relaxed text-foreground/80'
+  : 'mt-m max-w-2xl text-lg text-foreground/80';
 ---
 
 <section class="bg-background" aria-labelledby={headingId}>
@@ -90,8 +117,8 @@ const {
       {eyebrow && (
         <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{eyebrow}</p>
       )}
-      <h1 id={headingId} class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{headline}</h1>
-      {subhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{subhead}</p>}
+      <h1 id={headingId} class={headlineClass}>{headline}</h1>
+      {subhead && <p class={subheadClass}>{subhead}</p>}
       {intro && <p class="mt-m max-w-2xl text-foreground/75">{intro}</p>}
     </div>
     {variant === 'rule' && <div class="mt-l h-px w-full bg-gold/50"></div>}

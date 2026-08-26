@@ -47,6 +47,8 @@ export const SECTION_MEMBERS = `{
     videoPoster${IMAGE_PROJECTION}
   },
   _type == "sectionForm" => { form->${FORM_PROJECTION} },
+  // Get Started's request panel carries a form reference of its own (2026-08-26).
+  _type == "sectionRequestPanel" => { form->${FORM_PROJECTION} },
   _type == "sectionFaqList" => {
     // Resolve the optional categoryRef so the block component gets the title.
     "categoryFilter": coalesce(categoryRef->title, categoryString)
@@ -235,8 +237,11 @@ export async function getHomePage(fetcher = sanityFetch) {
 
 // ---- About page -----------------------------------------------------------
 
-export async function getAboutPage() {
-  return sanityFetch(`*[_type == "aboutPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: About converted to
+// the page builder 2026-08-26, so /preview/about renders it through
+// SingletonPage with draft data.
+export async function getAboutPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "aboutPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -257,8 +262,10 @@ export async function getAboutPage() {
 
 // ---- FAQ page -------------------------------------------------------------
 
-export async function getFaqPage() {
-  return sanityFetch(`*[_type == "faqPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: the FAQ page
+// converted to the page builder 2026-08-26.
+export async function getFaqPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "faqPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -280,6 +287,24 @@ export async function getFaqPage() {
     secondaryCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
+}
+
+// The same FAQ items the faqPage query embeds, as a standalone call for the
+// `sectionFaqGrouped` block (2026-08-26): a converted page's sections fetch
+// their own collection data, the way every "auto" block does. Kept beside the
+// page query on purpose — the projection and the ordering must not drift, or
+// the FAQ page's JSON-LD (built from the page query) would describe a different
+// list from the one rendered.
+export async function getGroupedFaqItems(fetcher = sanityFetch) {
+  return fetcher(
+    `*[_type == "faqItem" && archived != true] | order(coalesce(categoryRef->title, category) asc, displayOrder asc){
+      question, answer,
+      "category": coalesce(categoryRef->title, category),
+      displayOrder
+    }`,
+    {},
+    [],
+  );
 }
 
 // ---- FAQ items (for sectionFaqList page-builder block) -------------------
@@ -317,8 +342,10 @@ export async function getFaqItems(opts: { category?: string; limit?: number } = 
 
 // ---- Contact page ---------------------------------------------------------
 
-export async function getContactPage() {
-  return sanityFetch(`*[_type == "contactPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: the Contact page
+// converted to the page builder 2026-08-26.
+export async function getContactPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "contactPage"][0]{
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
@@ -477,8 +504,10 @@ const EVENT_CARD = `{
   image${IMAGE_PROJECTION}
 }`;
 
-export async function getEventsPage() {
-  return sanityFetch(`*[_type == "eventsPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: the Events page
+// converted to the page builder 2026-08-26.
+export async function getEventsPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "eventsPage"][0]{
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
@@ -808,8 +837,11 @@ export async function getTerms() {
 
 // ---- Pricing page + tiers -------------------------------------------------
 
-export async function getPricingPage() {
-  return sanityFetch(`*[_type == "pricingPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: the Pricing page
+// converted to the page builder 2026-08-26, so /preview/pricing renders it
+// through SingletonPage with draft data.
+export async function getPricingPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "pricingPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
@@ -852,8 +884,10 @@ export async function getFeaturedTestimonials(limit = 3, fetcher = sanityFetch) 
 
 // ---- Get Started + For You + Resources page singletons --------------------
 
-export async function getGetStartedPage() {
-  return sanityFetch(`*[_type == "getStartedPage"][0]{
+// Takes the same optional draft fetcher as getPrivacyPage: Get Started
+// converted to the page builder 2026-08-26.
+export async function getGetStartedPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "getStartedPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},

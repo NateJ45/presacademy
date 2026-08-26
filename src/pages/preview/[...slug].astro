@@ -8,11 +8,12 @@
    renders it.
 
     - `/preview` renders HOME through the shared HomeBody, in full fidelity.
-    - A page that has CONVERTED to the page builder (2026-08-26 onward:
-      privacy, accessibility, for-you, resources) renders through the shared
-      SingletonPage with draft data, also in full fidelity. Converting a page
-      upgrades its preview automatically; add its type to
-      CONVERTED_PAGE_FETCHERS below in the same commit.
+    - A page that has CONVERTED to the page builder (2026-08-26: privacy,
+      accessibility, for-you, resources, then pricing, about, faq, events,
+      contact, get-started) renders through the shared SingletonPage with draft
+      data, also in full fidelity. Converting a page upgrades its preview
+      automatically; add its type to CONVERTED_PAGE_FETCHERS below in the same
+      commit.
     - The remaining fixed paths (/preview/about, /preview/courses, ...) render
       the matching SINGLETON's generic editable surface: hero fields, the
       flexibleSections page-builder blocks, and the closing CTA. The code-owned
@@ -43,6 +44,12 @@ import {
   getAccessibilityPage,
   getForYouPage,
   getResourcesPage,
+  getPricingPage,
+  getAboutPage,
+  getFaqPage,
+  getEventsPage,
+  getContactPage,
+  getGetStartedPage,
   getSiteSettings,
   getFeaturedCourses,
   getStartHereCourses,
@@ -159,6 +166,13 @@ const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = 
   accessibilityPage: getAccessibilityPage,
   forYouPage: getForYouPage,
   resourcesPage: getResourcesPage,
+  // Phase 2, 2026-08-26.
+  pricingPage: getPricingPage,
+  aboutPage: getAboutPage,
+  faqPage: getFaqPage,
+  eventsPage: getEventsPage,
+  contactPage: getContactPage,
+  getStartedPage: getGetStartedPage,
 };
 
 let converted: { page: any; settings: any } | null = null;
@@ -204,10 +218,17 @@ const title = home
     ? `${converted.page?.heroHeadline ?? slug} — Preview`
     : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
 
-// The two converted legal pages wear the photo hero, which SingletonPage leaves
-// to the page (its scoped style must not follow every text-hero page). Here the
-// slot is filled from the draft's own hero fields.
-const previewImageHero = converted && (singletonType === 'privacyPage' || singletonType === 'accessibilityPage');
+// Some converted pages wear the photo hero, which SingletonPage leaves to the
+// page (its scoped style must not follow every text-hero page). Here the slot is
+// filled from the draft's own hero fields. Keep this set in step with the
+// `kind: 'image'` entries in SingletonPage's hero map as those pages convert.
+const IMAGE_HERO_TYPES = new Set([
+  'privacyPage',
+  'accessibilityPage',
+  'faqPage',
+  'contactPage',
+]);
+const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.has(singletonType));
 ---
 
 <PreviewLayout {title} {draftMode} {pageId}>

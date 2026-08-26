@@ -4,19 +4,31 @@
 // (per course / audit / full track), then a scholarship section and a small
 // heritage band. Rule & Ledger layout. No checkout is wired; CTAs route to
 // /get-started (express interest).
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 2 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md). The three
+// bands are now blocks in the page's "Page sections" array, rendered by
+// SingletonPage: the tier cards (`sectionPricingTiers` on its Rule & Ledger
+// surface), the scholarship promise (`sectionScholarship`), and the heritage
+// stat band (`sectionLedgerStats`). What stays here is the queries, the SEO
+// derivation and the breadcrumb JSON-LD.
+//
+// The old `scholarship*`, `footnote` and `stats` fields are deliberately left in
+// place and populated (decision D4, additive migration): reverting this file
+// brings the old page back with its content intact. They get unset in the
+// cleanup phase, never by clicking "Remove field" in the Studio. If the sections
+// array is ever empty, DEFAULT_SECTIONS renders the same three bands the page
+// always fell back to, including in the credential-less CI build.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getPricingPage, getPricingTiers, getSiteSettings } from '@/lib/queries';
+import SingletonPage from '@/components/SingletonPage.astro';
+import { getPricingPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import FinalCta from '@/components/FinalCta.astro';
-import PricingTierCards from '@/components/PricingTierCards.astro';
-import Sections from '@/components/Sections.astro';
 
-const [page, tiers, siteSettings] = await Promise.all([
+const [page, siteSettings] = await Promise.all([
   getPricingPage().catch(() => null),
-  getPricingTiers().catch(() => []),
   getSiteSettings().catch(() => null),
 ]);
 const settings = resolveSiteSettings(siteSettings);
@@ -25,21 +37,6 @@ const title = page?.seoTitle ?? `Pricing & Scholarships · ${site.name}`;
 const description =
   page?.seoDescription ??
   'What a course costs, said plainly, and how we keep Reformed formation within reach.';
-
-const heroEyebrow = page?.heroEyebrow ?? 'Tuition';
-const heroHeadline = page?.heroHeadline ?? 'Pricing and scholarships';
-const heroSubhead =
-  page?.heroSubhead ?? 'What a course costs, said plainly, and how we keep formation within reach.';
-
-// The heritage band stats: editor-driven (pricingPage.stats), with the built-in
-// trio as the fallback so the page is unchanged until an editor sets them.
-const stats = page?.stats?.length
-  ? page.stats
-  : [
-      { value: 'Free', label: 'Sit in on a class first' },
-      { value: 'Per course', label: 'Pay as you go, no degree debt' },
-      { value: 'Need-based', label: 'Scholarships every term' },
-    ];
 
 const schemas = [
   breadcrumbSchema([
@@ -50,57 +47,20 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  <section class="bg-background">
-    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
-        {page?.pricingIntro && <p class="mt-m max-w-2xl text-foreground/75">{page.pricingIntro}</p>}
-      </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
-    </div>
-  </section>
-
-  {/* Tier cards */}
-  {tiers.length > 0 && (
-    <section class="bg-background">
-      <div class="mx-auto max-w-content px-m pb-section-md">
-        <PricingTierCards tiers={tiers} headingTag="h2" />
-      </div>
-    </section>
-  )}
-
-  {/* Scholarships */}
-  <section class="surface-warm bg-muted">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{page?.scholarshipEyebrow ?? 'Scholarships'}</p>
-        <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{page?.scholarshipHeadline ?? 'No one is turned away for cost'}</h2>
-        <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{page?.scholarshipBody ?? 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.'}</p>
-      </div>
-      {page?.footnote && <p class="mt-m max-w-2xl text-sm text-foreground/65">{page.footnote}</p>}
-    </div>
-  </section>
-
-  {/* Heritage band */}
-  <section class="border-b border-border-soft bg-background">
-    <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3" data-stagger-grid>
-      {stats.map((s, i) => (
-        <div class:list={['px-m py-l', i < stats.length - 1 && 'sm:border-r border-border-soft border-b sm:border-b-0']}>
-          <p class="font-display text-h3 text-chapel-ink">{s.value}</p>
-          <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? 'Questions about cost?'}
-    headline={page?.finalCtaHeadline ?? 'Ask us, plainly'}
-    subhead={page?.finalCtaSubhead ?? 'Tell us your situation on the interest form and we will be straight with you.'}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+  <SingletonPage
+    pageType="pricingPage"
+    {page}
+    {settings}
+    heroFallbacks={{
+      eyebrow: 'Tuition',
+      headline: 'Pricing and scholarships',
+      subhead: 'What a course costs, said plainly, and how we keep formation within reach.',
+    }}
+    finalCtaFallbacks={{
+      eyebrow: 'Questions about cost?',
+      headline: 'Ask us, plainly',
+      subhead: 'Tell us your situation on the interest form and we will be straight with you.',
+      cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started' },
+    }}
   />
 </BaseLayout>

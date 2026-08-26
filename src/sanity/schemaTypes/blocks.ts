@@ -233,6 +233,43 @@ export const sectionForm = defineType({
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
     defineField({ name: 'form', title: 'Form', type: 'reference', to: [{ type: 'form' }], validation: (R) => R.required() }),
+    // -------------------------------------------------------------------------
+    // The four fields the Contact page needed (2026-08-26, Phase 2).
+    // -------------------------------------------------------------------------
+    // All OPTIONAL, all defaulting to exactly what this block rendered before
+    // they existed, so every page already using it is untouched (proven by a
+    // 13-page parity run in the same commit). The form renderer itself, and its
+    // hCaptcha wiring, are not forked: both variants render the same FormBlock.
+    defineField({
+      name: 'variant',
+      title: 'Section style',
+      type: 'string',
+      description:
+        'Leave as "Embedded" on ordinary pages. "Page body" is the Contact page\'s own, roomier form section, with an eyebrow above the heading.',
+      options: {
+        list: [
+          { title: 'Embedded in a page', value: 'embedded' },
+          { title: 'The page body (Contact)', value: 'pageBody' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'embedded',
+    }),
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string', description: 'Small line above the heading. Shown in the "Page body" style.' }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description:
+        'Only needed to link straight to this section, e.g. /contact#contact-form. Setting it also gives the section an accessible name from its heading.',
+    }),
+    defineField({
+      name: 'fallbackLabel',
+      title: 'Button label when no form is chosen',
+      type: 'string',
+      description:
+        'Safety net. If the form above is ever missing, the section shows an email button instead of a broken form. Example: "Email the Office".',
+    }),
   ],
   preview: { select: { title: 'heading', form: 'form.title' }, prepare: ({ title, form }) => ({ title: title || form || 'Form' }) },
 });
@@ -702,6 +739,42 @@ export const sectionPricingTiers = defineType({
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
     defineField({ name: 'ctaLabel', title: 'Card button label', type: 'string', description: 'The button on each tier card. Leave empty for "Express interest".' }),
     defineField({ name: 'ctaUrl', title: 'Card button link', type: 'string', description: 'Where each tier button goes. Leave empty for "/get-started".' }),
+    // -------------------------------------------------------------------------
+    // The two fields the Pricing page needed (2026-08-26, Phase 2).
+    // -------------------------------------------------------------------------
+    // Both are OPTIONAL and both default to exactly what this block rendered
+    // before they existed, so every page already using it is untouched (proven
+    // by a 13-page parity run in the same commit).
+    defineField({
+      name: 'headingLevel',
+      title: 'Tier name heading level',
+      type: 'string',
+      description:
+        'Leave as "Heading 3" unless this section is the page body itself. The Pricing page uses Heading 2 because the tier names are that page\'s top-level headings.',
+      options: {
+        list: [
+          { title: 'Heading 3 (inside a page)', value: 'h3' },
+          { title: 'Heading 2 (the page body)', value: 'h2' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'h3',
+    }),
+    defineField({
+      name: 'surface',
+      title: 'Surface',
+      type: 'string',
+      description:
+        'Leave as "Standard section" on ordinary pages. "Rule & Ledger" is the fixed, art-directed surface the Pricing page uses: no background control, tighter spacing.',
+      options: {
+        list: [
+          { title: 'Standard section (background above applies)', value: 'shell' },
+          { title: 'Rule & Ledger (fixed surface)', value: 'ledger' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'shell',
+    }),
     bgField(),
   ],
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Tuition tiers' }) },
@@ -833,17 +906,23 @@ export const sectionLegalBody = defineType({
  * Numbered cards: the 01/02/03 ledger cards that appear on four pages
  * (for-you personas, about beliefs, get-started steps, home wayfinding).
  *
- * `variant` picks which border treatment the cards wear. The three values are
- * the three treatments already in the codebase, so later phases have a name for
- * each. ONLY `top2` is exercised so far (for-you, converted 2026-08-26):
+ * `variant` picks the whole TREATMENT, not only a border. That was not obvious
+ * when the type was written (Phase 1 assumed the four pages differed by border
+ * alone); converting about and get-started on 2026-08-26 showed the three bands
+ * differ in surface, spacing, grid, heading size and header shape too. Rather
+ * than average them into one "close enough" band, each variant renders its
+ * source markup verbatim:
  *
- *   top2    a full hairline box with a heavier gold top rule (for-you personas)
- *   full    the same box, gold on all four sides
- *   ledger  no box at all, just the gold top rule over the card (about beliefs)
- *
- * When Phase 2 converts about and get-started, verify `ledger` and `full`
- * against those pages with the parity harness before trusting them. They are
- * declared, not yet proven.
+ *   top2    boxed cards, hairline all round with a heavier gold top rule, on
+ *           paper. PROVEN against for-you (2026-08-26).
+ *   full    the same boxed band, gold on all four sides. Declared for a page
+ *           that wants it; not yet held against one.
+ *   ledger  the warm band: eyebrow + h2 over a gold rule, two columns of
+ *           unboxed cards under a gold top rule, footnote below. PROVEN
+ *           against about's "What we believe" (2026-08-26).
+ *   steps   the warm band's quieter cousin: eyebrow only, three columns,
+ *           smaller type throughout. PROVEN against get-started's "What happens
+ *           next" (2026-08-26).
  */
 export const sectionNumberedCards = defineType({
   name: 'sectionNumberedCards',
@@ -882,14 +961,16 @@ export const sectionNumberedCards = defineType({
     }),
     defineField({
       name: 'variant',
-      title: 'Card border',
+      title: 'Card style',
       type: 'string',
-      description: 'How the cards are framed. All three are brand-locked; pick the one that matches the page.',
+      description:
+        'The whole treatment: surface, spacing and type, not only the border. All four are brand-locked; pick the one that matches the page.',
       options: {
         list: [
-          { title: 'Boxed, gold top rule', value: 'top2' },
+          { title: 'Boxed, gold top rule (For You)', value: 'top2' },
           { title: 'Boxed, gold all round', value: 'full' },
-          { title: 'Ledger (gold top rule only)', value: 'ledger' },
+          { title: 'Warm band, gold top rule (About: what we believe)', value: 'ledger' },
+          { title: 'Warm band, three small steps (Get Started)', value: 'steps' },
         ],
         layout: 'radio',
       },
@@ -909,6 +990,449 @@ export const sectionNumberedCards = defineType({
       title: title || 'Numbered cards',
       subtitle: `${cards?.length ?? 0} card(s)`,
     }),
+  },
+});
+
+/**
+ * The warm statement band: pricing #3, the scholarship promise (2026-08-26).
+ *
+ * One quiet, wide-measure statement on the warm paper surface, with a gold
+ * eyebrow over an h2 and a lead paragraph, plus an optional footnote a step
+ * quieter still. The Pricing page is its first user; the type is general
+ * because the band is (any page can say one important thing this way).
+ *
+ * The surface (`surface-warm bg-muted`) is fixed in code, per D1. There is no
+ * tone field and there must not be one: this band's whole job is to be the one
+ * warm interruption on an otherwise white page.
+ */
+export const sectionScholarship = defineType({
+  name: 'sectionScholarship',
+  title: 'Warm statement band',
+  type: 'object',
+  description:
+    'One important thing said plainly, on the warm paper surface. Used by the Pricing page for the scholarship promise.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed if you want to link straight to this section, e.g. /pricing#scholarships.',
+    }),
+    defineField({ name: 'body', title: 'Body', type: 'text', rows: 4 }),
+    defineField({
+      name: 'footnote',
+      title: 'Footnote (optional)',
+      type: 'text',
+      rows: 2,
+      description: 'A quieter line under the statement, for a caveat or a date.',
+    }),
+  ],
+  preview: {
+    select: { title: 'headline', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Warm statement band', subtitle }),
+  },
+});
+
+/**
+ * The ruled stat band: pricing #4 and (in Phase 4) home #4.
+ *
+ * A single row of value/label cells divided by hairlines, closing on a bottom
+ * rule. Two layouts, because the two pages genuinely differ:
+ *
+ *   trio  three cells, stacking to one column on phones (Pricing). PROVEN by
+ *         the parity harness 2026-08-26.
+ *   quad  four cells in a 2x2 that opens out to a row on large screens, with
+ *         the count-up animation wired (home). DECLARED, not yet proven: home
+ *         converts in Phase 4, and the harness has not held this variant
+ *         against it. Verify before trusting it, the same way `top2` was.
+ *
+ * A stat opts into the count-up animation per item (`count`). Year-style values
+ * leave it off on purpose, so "2026" does not spin up from zero.
+ */
+export const sectionLedgerStats = defineType({
+  name: 'sectionLedgerStats',
+  title: 'Stat band (ruled)',
+  type: 'object',
+  description:
+    'A row of numbers divided by hairlines, the way the Pricing and Home pages show them. Each cell is a value over a small label.',
+  fields: [
+    defineField({
+      name: 'landmarkLabel',
+      title: 'Screen-reader label for this band (optional)',
+      type: 'string',
+      description:
+        'Read aloud to describe this part of the page, e.g. "The Academy at a glance". Leave empty on a page where the band needs no name of its own. If you set one, it must NOT repeat the page headline word for word.',
+    }),
+    defineField({
+      name: 'items',
+      title: 'Stats',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'ledgerStat',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string', validation: (R) => R.required(), description: 'Free text, so "Free", "Per course" and "9" all work.' }),
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'count',
+              title: 'Count up to this number',
+              type: 'boolean',
+              initialValue: false,
+              description: 'Animates from zero when the band scrolls into view. Only for plain numbers, never for a year.',
+            }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+      validation: (R) => R.min(1),
+    }),
+    defineField({
+      name: 'variant',
+      title: 'Layout',
+      type: 'string',
+      description: 'How the cells are divided. Both are brand-locked; pick the one that matches the page.',
+      options: {
+        list: [
+          { title: 'Three across (Pricing)', value: 'trio' },
+          { title: 'Four across (Home)', value: 'quad' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'trio',
+    }),
+  ],
+  preview: {
+    select: { items: 'items', label: 'landmarkLabel' },
+    prepare: ({ items, label }) => ({
+      title: label || 'Stat band',
+      subtitle: `${items?.length ?? 0} stat(s)`,
+    }),
+  },
+});
+
+/**
+ * Editorial columns: about #2 (mission) and about #4 (how we teach / why we
+ * exist), 2026-08-26.
+ *
+ * Two layouts, because the About page uses the same ingredients twice in two
+ * shapes, and both are cut verbatim:
+ *
+ *   labeled  a narrow gold label in a 200px column, with the statement and its
+ *            body in the wide one. Uses the FIRST column only.
+ *   pair     two equal columns that slide in from opposite sides.
+ *
+ * The `heading` field is deliberately dual-purpose, and the descriptions say so:
+ * in `pair` it is a real h2, in `labeled` it is the large display sentence that
+ * carries the mission (a paragraph, because the page has no heading there and
+ * inventing one would change the page's heading outline).
+ */
+export const sectionEditorialColumns = defineType({
+  name: 'sectionEditorialColumns',
+  title: 'Editorial columns',
+  type: 'object',
+  description:
+    'One or two columns of quiet, well-set prose. The About page uses it for the mission statement and for the "how we teach / why we exist" pair.',
+  fields: [
+    defineField({
+      name: 'variant',
+      title: 'Layout',
+      type: 'string',
+      description: 'Both are brand-locked; pick the one that matches the page.',
+      options: {
+        list: [
+          { title: 'Labeled (small label, one wide column)', value: 'labeled' },
+          { title: 'Pair (two equal columns)', value: 'pair' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'labeled',
+    }),
+    defineField({
+      name: 'columns',
+      title: 'Columns',
+      type: 'array',
+      description: 'The "Labeled" layout uses the first column only. The "Pair" layout uses two.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'editorialColumn',
+          fields: [
+            defineField({ name: 'eyebrow', title: 'Label', type: 'string', description: 'The small gold line above, e.g. "Our mission".' }),
+            defineField({
+              name: 'heading',
+              title: 'Heading / statement',
+              type: 'text',
+              rows: 2,
+              description:
+                'In the "Pair" layout this is a heading. In the "Labeled" layout it is the large opening sentence, set as a statement rather than a heading.',
+            }),
+            defineField({ name: 'body', title: 'Body', type: 'text', rows: 5 }),
+          ],
+          preview: { select: { title: 'eyebrow', subtitle: 'heading' } },
+        }),
+      ],
+      validation: (R) => R.min(1).max(2),
+    }),
+  ],
+  preview: {
+    select: { columns: 'columns', variant: 'variant' },
+    prepare: ({ columns, variant }) => ({
+      title: columns?.[0]?.eyebrow || 'Editorial columns',
+      subtitle: variant === 'pair' ? 'Two columns' : 'Labeled',
+    }),
+  },
+});
+
+/**
+ * The inline band: about #5, the strip that points at the faculty page
+ * (2026-08-26). Copy on the left, one pill button on the right, hairlines top
+ * and bottom. Deliberately small: it is a signpost between two big sections.
+ *
+ * The button is a plain label + URL rather than the shared ctaBlock, because
+ * this band's pill is hand-written markup on the page it came from and
+ * CtaLink.astro would render a different element.
+ */
+export const sectionInlineBand = defineType({
+  name: 'sectionInlineBand',
+  title: 'Inline band (copy + button)',
+  type: 'object',
+  description:
+    'A thin ruled strip: a line of copy on the left, one button on the right. Used on the About page to point at the faculty.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
+    defineField({ name: 'ctaLabel', title: 'Button label', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Button link',
+      type: 'string',
+      description: 'Internal path like "/faculty" or a full URL. Leave empty for "/faculty".',
+    }),
+  ],
+  preview: {
+    select: { title: 'headline', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Inline band', subtitle }),
+  },
+});
+
+/**
+ * The FAQ page's grouped accordion: faq #2 (2026-08-26).
+ *
+ * Auto-updating: it pulls every question from the FAQ collection itself, so
+ * editors add and edit questions where the questions live. What this section
+ * owns is the ORDER of the category headings and the section's screen-reader
+ * label.
+ *
+ * Distinct from `sectionFaqList`, which embeds a flat slice of the same
+ * collection on any other page.
+ */
+export const sectionFaqGrouped = defineType({
+  name: 'sectionFaqGrouped',
+  title: 'FAQ, grouped by category (from collection)',
+  type: 'object',
+  description:
+    'Every question from the FAQ collection, grouped under its category heading, as an open-and-close list. This is the FAQ page itself.',
+  fields: [
+    defineField({
+      name: 'landmarkLabel',
+      title: 'Screen-reader label for this section',
+      type: 'string',
+      description:
+        'Read aloud to describe this part of the page. It must NOT repeat the page headline word for word.',
+      initialValue: 'Frequently asked questions',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'categoryOrder',
+      title: 'Category order',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description:
+        'The category headings, in the order you want them. A category with no questions is skipped. A category used by a question but missing from this list is added at the end, so nothing can hide.',
+    }),
+  ],
+  preview: {
+    select: { order: 'categoryOrder' },
+    prepare: ({ order }) => ({
+      title: 'FAQ, grouped by category',
+      subtitle: order?.length ? `${order.length} categories in order` : 'Default category order',
+    }),
+  },
+});
+
+/**
+ * The Events page's "Upcoming" grid: events #2 (2026-08-26).
+ *
+ * Auto-updating: it pulls the upcoming one-time events from the Events
+ * collection, so nobody has to remember to remove an event after it happens.
+ * What this section owns is the heading above the grid and the sentence shown
+ * when there is nothing dated on the calendar.
+ */
+export const sectionEventGrid = defineType({
+  name: 'sectionEventGrid',
+  title: 'Upcoming events (from collection)',
+  type: 'object',
+  description:
+    'Cards for every upcoming one-time event: info sessions, lectures, term starts. Past events drop off by themselves.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "upcoming-heading".',
+    }),
+    defineField({
+      name: 'emptyCopy',
+      title: 'What to say when nothing is scheduled',
+      type: 'text',
+      rows: 3,
+      description:
+        'Shown in place of the cards when there are no upcoming events. The sentence ends with a link to the course catalog, which is added for you, so finish on a phrase like "the best place to start is a".',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Upcoming events', subtitle }),
+  },
+});
+
+/**
+ * The Events page's recurring rhythms: events #3 (2026-08-26).
+ *
+ * Auto-updating: it pulls the RECURRING events from the Events collection, and
+ * shows three built-in rhythms while there are none, so the page is never a
+ * heading over a blank space.
+ */
+export const sectionRuledList = defineType({
+  name: 'sectionRuledList',
+  title: 'Recurring rhythms (from collection)',
+  type: 'object',
+  description:
+    'A ruled list of the things that happen on a repeating schedule: the monthly info session, the lecture series, visiting a class.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "recurring-heading".',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Recurring rhythms', subtitle }),
+  },
+});
+
+/**
+ * The Contact page's details + map: contact #2 (2026-08-26).
+ *
+ * The address, phone, email and office hours are NOT fields here: they are site
+ * settings, so they stay in one place and the footer, the map and the JSON-LD
+ * cannot disagree with this section. What the section owns is the labels, the
+ * who-to-reach rows, and the getting-here note.
+ */
+export const sectionContactDetails = defineType({
+  name: 'sectionContactDetails',
+  title: 'Contact details + map',
+  type: 'object',
+  description:
+    'The address, phone, email and office hours from your site settings, a "who to reach" list, a getting-here note, and an embedded map.',
+  fields: [
+    defineField({
+      name: 'landmarkLabel',
+      title: 'Screen-reader label for this section',
+      type: 'string',
+      description:
+        'Read aloud to describe this part of the page. It must NOT repeat the page headline word for word.',
+      initialValue: 'Contact details',
+      validation: (R) => R.required(),
+    }),
+    defineField({ name: 'whoToReachLabel', title: '"Who to reach" label', type: 'string', initialValue: 'Who to reach' }),
+    defineField({
+      name: 'reasons',
+      title: 'Who to reach, row by row',
+      type: 'array',
+      description:
+        'Leave empty to use the built-in rows (general questions, courses and enrollment, pricing).',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'contactReason',
+          fields: [
+            defineField({ name: 'label', title: 'Reason', type: 'string', validation: (R) => R.required(), description: 'Example: "Courses and enrollment".' }),
+            defineField({ name: 'value', title: 'Link text', type: 'string', validation: (R) => R.required(), description: 'What the link says: an email address, or a phrase like "Request information".' }),
+            defineField({ name: 'href', title: 'Link', type: 'string', validation: (R) => R.required(), description: 'An internal path like "/pricing", or "mailto:someone@example.org".' }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'value' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'gettingHereLabel', title: '"Getting here" label', type: 'string', initialValue: 'Getting here' }),
+    defineField({ name: 'gettingHereBody', title: 'Getting here', type: 'text', rows: 3 }),
+    defineField({
+      name: 'mapTitle',
+      title: 'Map description (for screen readers)',
+      type: 'string',
+      initialValue: 'Map to The Presbyterian Academy',
+      description: 'Names the embedded map for anyone using a screen reader.',
+    }),
+  ],
+  preview: {
+    select: { title: 'landmarkLabel' },
+    prepare: ({ title }) => ({ title: title || 'Contact details + map' }),
+  },
+});
+
+/**
+ * Get Started's request panel: get-started #2 (2026-08-26).
+ *
+ * The express-interest form on the left, and on the right a ruled panel holding
+ * the free intro call, the "visit a class" note and the syllabus note. Narrow
+ * and bespoke on purpose: this is the page's whole job, not a general layout.
+ *
+ * The booking link falls back to the PUBLIC_CALENDLY_URL build variable, then
+ * to a mailto. All three states are live; see the component's header.
+ */
+export const sectionRequestPanel = defineType({
+  name: 'sectionRequestPanel',
+  title: 'Request panel (form + intro call)',
+  type: 'object',
+  description:
+    'The express-interest form beside a panel offering a free intro call, a class visit, and a syllabus. Used by the Get Started page.',
+  fields: [
+    defineField({ name: 'requestEyebrow', title: 'Form eyebrow', type: 'string' }),
+    defineField({ name: 'requestHeadline', title: 'Form heading', type: 'string', validation: (R) => R.required() }),
+    defineField({ name: 'requestBody', title: 'Form intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'form',
+      title: 'Form',
+      type: 'reference',
+      to: [{ type: 'form' }],
+      description: 'The form to show. If none is chosen, an email button takes its place.',
+    }),
+    defineField({ name: 'calendlyEyebrow', title: 'Panel eyebrow', type: 'string' }),
+    defineField({ name: 'calendlyHeadline', title: 'Panel heading', type: 'string' }),
+    defineField({ name: 'calendlyBody', title: 'Panel text', type: 'text', rows: 2 }),
+    defineField({
+      name: 'calendlyUrl',
+      title: 'Booking link',
+      type: 'url',
+      description:
+        'Where "Book a free intro" goes, usually a Calendly link. Leave empty to use the link set up for the whole site; with neither, the button becomes an email link instead.',
+    }),
+    defineField({ name: 'visitClassBody', title: '"Visit a class" text', type: 'text', rows: 2 }),
+    defineField({ name: 'syllabusBody', title: '"Take a syllabus" text', type: 'text', rows: 2 }),
+  ],
+  preview: {
+    select: { title: 'requestHeadline', subtitle: 'requestEyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Request panel', subtitle }),
   },
 });
 
@@ -936,6 +1460,21 @@ export const sectionBlocks = [
   // Ported page sections (Rule & Ledger), 2026-08-26.
   sectionLegalBody,
   sectionNumberedCards,
+  // Phase 2, 2026-08-26 (pricing).
+  sectionScholarship,
+  sectionLedgerStats,
+  // Phase 2, 2026-08-26 (about).
+  sectionEditorialColumns,
+  sectionInlineBand,
+  // Phase 2, 2026-08-26 (faq).
+  sectionFaqGrouped,
+  // Phase 2, 2026-08-26 (events).
+  sectionEventGrid,
+  sectionRuledList,
+  // Phase 2, 2026-08-26 (contact).
+  sectionContactDetails,
+  // Phase 2, 2026-08-26 (get-started).
+  sectionRequestPanel,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -964,6 +1503,21 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   // Ported page sections (Rule & Ledger), 2026-08-26.
   { type: 'sectionLegalBody' },
   { type: 'sectionNumberedCards' },
+  // Phase 2, 2026-08-26 (pricing).
+  { type: 'sectionScholarship' },
+  { type: 'sectionLedgerStats' },
+  // Phase 2, 2026-08-26 (about).
+  { type: 'sectionEditorialColumns' },
+  { type: 'sectionInlineBand' },
+  // Phase 2, 2026-08-26 (faq).
+  { type: 'sectionFaqGrouped' },
+  // Phase 2, 2026-08-26 (events).
+  { type: 'sectionEventGrid' },
+  { type: 'sectionRuledList' },
+  // Phase 2, 2026-08-26 (contact).
+  { type: 'sectionContactDetails' },
+  // Phase 2, 2026-08-26 (get-started).
+  { type: 'sectionRequestPanel' },
 ];
 
 // =============================================================================
@@ -1026,7 +1580,19 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
   {
     name: 'ruleAndLedger',
     title: 'Page sections (Rule & Ledger)',
-    of: ['sectionLegalBody', 'sectionNumberedCards'],
+    of: [
+      'sectionLegalBody',
+      'sectionNumberedCards',
+      'sectionScholarship',
+      'sectionLedgerStats',
+      'sectionEditorialColumns',
+      'sectionInlineBand',
+      'sectionFaqGrouped',
+      'sectionEventGrid',
+      'sectionRuledList',
+      'sectionContactDetails',
+      'sectionRequestPanel',
+    ],
   },
 ];
 

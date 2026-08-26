@@ -324,7 +324,7 @@ export const guides: Guide[] = [
           '**Cards, facts & lists**: card grids, feature cards, big numbers, numbered steps, an inline FAQ accordion, key dates, and partner logos.',
           '**From your catalog (auto-updating)**: the dynamic list (featured courses, upcoming events, faculty, testimonials), the FAQ list, and the pricing tiers. These keep themselves up to date from your other documents.',
           '**Banners, forms & extras**: the call-to-action band, a form, downloadable resources, and embeds.',
-          '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages, now editable. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. So far: the legal statement body (Privacy, Accessibility) and numbered cards (For You).',
+          '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages, now editable. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. In this band: the legal statement body (Privacy, Accessibility), numbered cards (For You, About, Get Started), the warm statement band and the ruled stat band (Pricing), editorial columns and the inline band (About), the grouped FAQ (FAQ), upcoming events and recurring rhythms (Events), the contact details and map (Contact), and the request panel (Get Started).',
         ],
       },
       { kind: 'h', text: 'Reorder or remove' },

@@ -1,20 +1,62 @@
 ---
 // Form block. Drops a referenced, configurable form into a page section.
+//
+// TWO STYLES (the second added 2026-08-26, Phase 2 of the page-builder
+// conversion):
+//
+//   embedded  the original: a warm band with a plain h2, tighter spacing, and
+//             the form under it. Every existing user of this block gets this,
+//             because the new fields default to it and the rendered HTML is
+//             unchanged from before they existed (13-page parity run).
+//
+//   pageBody  the Contact page's own form section, lifted verbatim out of
+//             contact.astro: an eyebrow over the heading via SectionHeading, a
+//             roomier rhythm, a larger intro paragraph, and a named landmark.
+//             It also renders when no form is chosen, because that page's
+//             section falls back to an email button rather than disappearing.
+//
+// The FORM RENDERER IS NOT FORKED. Both styles hand off to FormBlock, so the
+// native/embed modes, the hCaptcha wiring and the mailto fallback stay in one
+// place. Only the frame around it differs.
 import FormBlock from '@/components/FormBlock.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 
 const { block, fallbackEmail } = Astro.props as { block: any; fallbackEmail?: string };
+
+const pageBody = block?.variant === 'pageBody';
+// The landmark is named by its own heading, and only when there is an id to
+// point at: an aria-labelledby aiming at nothing is worse than no label.
+const headingId = block?.headingId || undefined;
 ---
 
 {
-  block?.form && (
-    <section class="surface-warm bg-muted">
-      <div class="mx-auto max-w-3xl px-m py-section-md">
-        {block.heading && <h2 class="font-display text-h2 text-foreground">{block.heading}</h2>}
-        {block.intro && <p class="mt-s text-foreground/80 leading-relaxed">{block.intro}</p>}
-        <div class="mt-l">
-          <FormBlock form={block.form} fallbackEmail={fallbackEmail} />
+  block && (pageBody || block.form) && (
+    pageBody ? (
+      <section class="surface-warm bg-muted" aria-labelledby={headingId}>
+        <div class="mx-auto max-w-3xl px-m py-section-lg">
+          <SectionHeading
+            eyebrow={block.eyebrow}
+            headline={block.heading}
+            headingId={headingId}
+          />
+          {block.intro && (
+            <p class="mt-m text-lg text-foreground/85 leading-relaxed">{block.intro}</p>
+          )}
+          <div class="mt-l">
+            <FormBlock form={block.form} fallbackEmail={fallbackEmail} fallbackLabel={block.fallbackLabel} />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    ) : (
+      <section class="surface-warm bg-muted">
+        <div class="mx-auto max-w-3xl px-m py-section-md">
+          {block.heading && <h2 class="font-display text-h2 text-foreground">{block.heading}</h2>}
+          {block.intro && <p class="mt-s text-foreground/80 leading-relaxed">{block.intro}</p>}
+          <div class="mt-l">
+            <FormBlock form={block.form} fallbackEmail={fallbackEmail} />
+          </div>
+        </div>
+      </section>
+    )
   )
 }

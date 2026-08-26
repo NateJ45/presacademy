@@ -2,21 +2,30 @@
 // Safe to edit by hand for copy + structure changes.
 // Events index. Two groups: upcoming one-time events (info sessions, lectures,
 // workshops, term starts, deadlines, from Sanity) and the recurring rhythms of
-// the Academy. The recurring rhythms fall back to a known list so the page is
-// complete before Sanity is connected. Rule & Ledger layout.
+// the Academy. Rule & Ledger layout.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 2 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md). Both groups are
+// now blocks in the page's "Page sections" array, rendered by SingletonPage:
+// `sectionEventGrid` (upcoming) and `sectionRuledList` (recurring rhythms).
+// Each fetches its own slice of the Events collection, so this file no longer
+// queries events at all. What stays here is the page query, the SEO derivation
+// and the breadcrumb JSON-LD.
+//
+// The recurring rhythms' three built-in items live in RuledListBlock.astro, the
+// same safety net the page carried. If the sections array is ever empty,
+// DEFAULT_SECTIONS renders both bands with the page's own headings, including in
+// the credential-less CI build.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getEventsPage, getRecurringEvents, getUpcomingEvents, getSiteSettings } from '@/lib/queries';
+import SingletonPage from '@/components/SingletonPage.astro';
+import { getEventsPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import FinalCta from '@/components/FinalCta.astro';
-import Sections from '@/components/Sections.astro';
 
-const [page, recurring, upcoming, siteSettings] = await Promise.all([
+const [page, siteSettings] = await Promise.all([
   getEventsPage().catch(() => null),
-  getRecurringEvents().catch(() => []),
-  getUpcomingEvents().catch(() => []),
   getSiteSettings().catch(() => null),
 ]);
 const settings = resolveSiteSettings(siteSettings);
@@ -25,28 +34,6 @@ const title = page?.seoTitle ?? `Events · ${site.name}`;
 const description =
   page?.seoDescription ??
   'Info sessions, open lectures, workshops, and term start dates at The Presbyterian Academy. See what is coming up.';
-
-const heroEyebrow = page?.heroEyebrow ?? 'Events';
-const heroHeadline = page?.heroHeadline ?? 'Come and see what we do';
-const heroSubhead =
-  page?.heroSubhead ??
-  'Free info sessions, open lectures, and workshops, plus the term dates and deadlines you need to plan ahead.';
-
-// Known recurring rhythms — used when no recurring events exist in Sanity yet.
-const RECURRING_FALLBACK = [
-  { title: 'Monthly info session', scheduleLabel: 'First Tuesday, 7pm', summary: 'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.' },
-  { title: 'Open lecture series', scheduleLabel: 'Third Thursday, 7pm', summary: 'A single public lecture from one of our faculty, no registration required.' },
-  { title: 'Visit a class', scheduleLabel: 'During each term', summary: 'Sit in on the first session of any course, free, before you enroll.' },
-];
-const displayRecurring = recurring.length > 0 ? recurring : RECURRING_FALLBACK;
-
-function whenLabel(ev: any): string {
-  if (ev.scheduleLabel) return ev.scheduleLabel;
-  if (ev.start) {
-    return new Date(ev.start).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  }
-  return '';
-}
 
 const schemas = [
   breadcrumbSchema([
@@ -57,76 +44,21 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  <section class="bg-background">
-    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
-      </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
-    </div>
-  </section>
-
-  {/* Upcoming one-time events */}
-  <section class="bg-background" aria-labelledby="upcoming-heading">
-    <div class="mx-auto max-w-content px-m pb-section-md">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{page?.upcomingEyebrow ?? 'Mark your calendar'}</p>
-        <h2 id="upcoming-heading" class="mt-2 font-display text-h2 text-foreground">{page?.upcomingHeadline ?? 'Upcoming'}</h2>
-      </div>
-      {upcoming.length > 0 ? (
-        <ul class:list={['mt-l grid grid-cols-1 gap-l list-none p-0', upcoming.length === 1 ? 'max-w-3xl' : 'md:grid-cols-2 lg:grid-cols-3']} data-stagger-grid>
-          {upcoming.map((ev: any) => (
-            <li>
-              <a href={`/events/${ev.slug?.current ?? ''}`} class="card-lift group block h-full no-underline">
-                <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary"></div>
-                <div class="border border-t-0 border-border-soft p-l">
-                  {ev.category && <span class="text-xs uppercase tracking-eyebrow text-gold-ink">{ev.category}</span>}
-                  <h3 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{ev.title}</h3>
-                  <p class="mt-1 text-sm text-foreground/70">{whenLabel(ev)}</p>
-                  {ev.summary && <p class="mt-3 text-foreground/80 leading-relaxed">{ev.summary}</p>}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p class="mt-l text-foreground/80 italic">
-          {page?.upcomingEmpty ?? 'Nothing dated on the calendar right now. The recurring rhythms below never stop, and the best place to start is a'}{' '}
-          <a href="/courses" class="text-link underline underline-offset-2">course</a>.
-        </p>
-      )}
-    </div>
-  </section>
-
-  {/* Recurring rhythms */}
-  <section class="surface-warm bg-muted" aria-labelledby="recurring-heading">
-    <div class="mx-auto max-w-content px-m py-section-md">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{page?.rhythmsEyebrow ?? 'Every month'}</p>
-        <h2 id="recurring-heading" class="mt-2 font-display text-h2 text-foreground">{page?.rhythmsHeadline ?? 'Ways to get a feel for the Academy'}</h2>
-      </div>
-      <ul class="mt-l max-w-3xl list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft" data-stagger-grid>
-        {displayRecurring.map((ev: any) => (
-          <li class="py-m">
-            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-              <span class="font-display text-h4 text-foreground">{ev.title}</span>
-              <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
-            </div>
-            {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? 'Want a closer look?'}
-    headline={page?.finalCtaHeadline ?? 'Book a free intro'}
-    subhead={page?.finalCtaSubhead ?? 'A short, no-pressure conversation about where you are and what fits.'}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get started', linkType: 'external', externalUrl: '/get-started' }}
+  <SingletonPage
+    pageType="eventsPage"
+    {page}
+    {settings}
+    heroFallbacks={{
+      eyebrow: 'Events',
+      headline: 'Come and see what we do',
+      subhead:
+        'Free info sessions, open lectures, and workshops, plus the term dates and deadlines you need to plan ahead.',
+    }}
+    finalCtaFallbacks={{
+      eyebrow: 'Want a closer look?',
+      headline: 'Book a free intro',
+      subhead: 'A short, no-pressure conversation about where you are and what fits.',
+      cta: { label: 'Get started', linkType: 'external', externalUrl: '/get-started' },
+    }}
   />
 </BaseLayout>

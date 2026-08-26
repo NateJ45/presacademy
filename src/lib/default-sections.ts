@@ -106,6 +106,239 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
       ],
     },
   ],
+
+  // ---- pricing (converted 2026-08-26) --------------------------------------
+  // The three bands pricing.astro used to render inline, in the same order.
+  //
+  // The tier cards carry no content of their own: the block fetches the
+  // pricingTier documents itself, and with no Sanity credentials there are none,
+  // so it renders nothing — exactly what the old page did behind its
+  // `tiers.length > 0` guard.
+  //
+  // `footnote` is absent from the scholarship band on purpose: the page read it
+  // straight off the document with no fallback, so an empty dataset showed no
+  // footnote line.
+  pricingPage: [
+    {
+      _key: 'pricingTiers',
+      _type: 'sectionPricingTiers',
+      surface: 'ledger',
+      headingLevel: 'h2',
+    },
+    {
+      _key: 'pricingScholarship',
+      _type: 'sectionScholarship',
+      eyebrow: 'Scholarships',
+      headline: 'No one is turned away for cost',
+      body: 'Need-based scholarships are available every term, funded by our supporters. If tuition is a barrier, tell us on the interest form and we will work it out. Formation should be within reach of anyone called to it.',
+    },
+    {
+      _key: 'pricingStats',
+      _type: 'sectionLedgerStats',
+      variant: 'trio',
+      items: [
+        { _key: 'stat1', value: 'Free', label: 'Sit in on a class first' },
+        { _key: 'stat2', value: 'Per course', label: 'Pay as you go, no degree debt' },
+        { _key: 'stat3', value: 'Need-based', label: 'Scholarships every term' },
+      ],
+    },
+  ],
+
+  // ---- about (converted 2026-08-26) ----------------------------------------
+  // The four bands about.astro used to render inline, in the same order:
+  // mission, what we believe, the teach/why pair, the faculty signpost.
+  aboutPage: [
+    {
+      _key: 'aboutMission',
+      _type: 'sectionEditorialColumns',
+      variant: 'labeled',
+      columns: [
+        {
+          _key: 'mission',
+          eyebrow: 'Our mission',
+          heading:
+            'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.',
+          body: 'We are a school, not a church. We exist to equip the people who already serve: ruling elders, small-group leaders, Sunday-school teachers, and lifelong learners in PC(USA), ECO, and EPC congregations. We teach in person, in cohorts, at a pace that fits a working life.',
+        },
+      ],
+    },
+    {
+      _key: 'aboutBeliefs',
+      _type: 'sectionNumberedCards',
+      variant: 'ledger',
+      eyebrow: 'What we believe',
+      heading: 'Confessional, and warm about it',
+      cards: [
+        {
+          _key: 'belief1',
+          title: 'Scripture is our final authority',
+          body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.',
+        },
+        {
+          _key: 'belief2',
+          title: 'Salvation is by grace alone',
+          body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.',
+        },
+        {
+          _key: 'belief3',
+          title: 'The confessions guide us',
+          body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.',
+        },
+        {
+          _key: 'belief4',
+          title: 'Formation is for everyone',
+          body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.',
+        },
+      ],
+      footnote:
+        'Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.',
+    },
+    {
+      _key: 'aboutTeachWhy',
+      _type: 'sectionEditorialColumns',
+      variant: 'pair',
+      columns: [
+        {
+          _key: 'teach',
+          eyebrow: 'How we teach',
+          heading: 'Formation, not just information',
+          body: 'A course here is more than a lecture. You read real texts, you discuss them with a cohort that sticks together, and you leave able to teach what you have learned. The goal is not to make you a scholar. It is to make you a wiser, steadier leader of the people God has already given you.',
+        },
+        {
+          _key: 'why',
+          eyebrow: 'Why we exist',
+          heading: 'A school for the whole church',
+          body: 'The Presbyterian Academy is supported by the Presbytery of Cincinnati, bringing seminary-grade teaching to lay leaders who cannot leave their jobs and families for a degree. We teach the historic Reformed faith for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious, taught by ministers and scholars who believe ordinary believers deserve the real thing.',
+        },
+      ],
+    },
+    {
+      _key: 'aboutFacultyBand',
+      _type: 'sectionInlineBand',
+      eyebrow: 'The people who teach',
+      headline:
+        'Every course is led by an ordained minister or a credentialed Reformed scholar.',
+      ctaLabel: 'Meet the faculty',
+      ctaUrl: '/faculty',
+    },
+  ],
+
+  // ---- faq (converted 2026-08-26) ------------------------------------------
+  // One auto block. It fetches the FAQ collection itself and falls back to the
+  // built-in starter questions (src/lib/faq-fallback.ts) when the collection is
+  // empty, which is exactly what the page did. No categoryOrder here on
+  // purpose: with no Sanity document there was no editor order either, so the
+  // block uses DEFAULT_CATEGORY_ORDER, same as before.
+  faqPage: [
+    {
+      _key: 'faqGrouped',
+      _type: 'sectionFaqGrouped',
+      landmarkLabel: 'Frequently asked questions',
+    },
+  ],
+
+  // ---- events (converted 2026-08-26) ---------------------------------------
+  // Two auto blocks. Both fetch their own slice of the Events collection; the
+  // recurring list falls back to its three built-in rhythms (in
+  // RuledListBlock.astro) when the collection has none, exactly as the page did.
+  // The headingIds are the ones the page's landmarks already used, so anchors
+  // and aria-labelledby keep working.
+  eventsPage: [
+    {
+      _key: 'eventsUpcoming',
+      _type: 'sectionEventGrid',
+      eyebrow: 'Mark your calendar',
+      heading: 'Upcoming',
+      headingId: 'upcoming-heading',
+      emptyCopy:
+        'Nothing dated on the calendar right now. The recurring rhythms below never stop, and the best place to start is a',
+    },
+    {
+      _key: 'eventsRhythms',
+      _type: 'sectionRuledList',
+      eyebrow: 'Every month',
+      heading: 'Ways to get a feel for the Academy',
+      headingId: 'recurring-heading',
+    },
+  ],
+
+  // ---- contact (converted 2026-08-26) --------------------------------------
+  // The details band resolves the address, phone, email and office hours from
+  // site settings itself, and falls back to the built-in who-to-reach rows (in
+  // ContactDetailsBlock.astro) when none are set, exactly as the page did.
+  //
+  // The form section carries no `form` reference here: with no Sanity document
+  // there is no form either, and the block then shows the email button, which
+  // is what the old page rendered in that state.
+  contactPage: [
+    {
+      _key: 'contactDetails',
+      _type: 'sectionContactDetails',
+      landmarkLabel: 'Contact details',
+      whoToReachLabel: 'Who to reach',
+      gettingHereLabel: 'Getting here',
+      gettingHereBody:
+        'Courses meet in person on the West Chester campus, with free on-site parking. The building is a short drive from the interstate.',
+      mapTitle: 'Map to The Presbyterian Academy',
+    },
+    {
+      _key: 'contactForm',
+      _type: 'sectionForm',
+      variant: 'pageBody',
+      eyebrow: 'Send a Note',
+      heading: 'Start the conversation',
+      headingId: 'contact-form',
+      fallbackLabel: 'Email the Office',
+    },
+  ],
+
+  // ---- get-started (converted 2026-08-26) ----------------------------------
+  // The request panel and the three "what happens next" steps.
+  //
+  // No `form` and no `calendlyUrl` here on purpose: with no Sanity document
+  // there is neither, and the panel then renders the email button and the
+  // FormBlock's own mailto fallback, which is exactly what the old page did in
+  // that state. PUBLIC_CALENDLY_URL still applies if the environment sets it.
+  getStartedPage: [
+    {
+      _key: 'getStartedRequest',
+      _type: 'sectionRequestPanel',
+      requestEyebrow: 'Request information',
+      requestHeadline: 'Ask us anything',
+      requestBody:
+        'Tell us what you are hoping to learn and we will help you find the right course.',
+      calendlyEyebrow: 'Or talk to us first',
+      calendlyHeadline: 'Book a free intro session',
+      calendlyBody: 'A short, no-pressure conversation about where you are and what fits.',
+      visitClassBody:
+        'You are welcome to sit in on the first session of any course, free, before you decide.',
+      syllabusBody:
+        'Every course page has a downloadable syllabus, so you can see exactly what a term covers.',
+    },
+    {
+      _key: 'getStartedSteps',
+      _type: 'sectionNumberedCards',
+      variant: 'steps',
+      eyebrow: 'What happens next',
+      cards: [
+        {
+          _key: 'step1',
+          title: 'You tell us a little',
+          body: 'A short form, just enough for us to point you in the right direction.',
+        },
+        {
+          _key: 'step2',
+          title: 'We reply, person to person',
+          body: 'A real teacher or staff member answers your questions within a few days.',
+        },
+        {
+          _key: 'step3',
+          title: 'You try before you decide',
+          body: 'Sit in on a class or book a free intro. Enroll only when you are ready.',
+        },
+      ],
+    },
+  ],
 };
 
 /** The sections a page should render: the editor's array, else the defaults. */

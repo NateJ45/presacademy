@@ -1,12 +1,25 @@
 ---
 // Safe to edit by hand for copy + structure changes.
 // FAQ page. Questions come from the faqItem collection in Sanity, grouped by
-// category in the order set on the FAQ Page singleton, so editors add, edit, and
-// reorder questions without touching code. When the collection is empty (e.g.
-// Sanity not configured) the page falls back to a built-in starter set, so it is
-// never broken or empty. Rendered as a native (no-JS) accordion; emits FAQPage
-// JSON-LD for rich results. Collection answers are Portable Text; the built-in
-// fallback answers are plain strings. The render handles both.
+// category in the order set on the section, so editors add, edit, and reorder
+// questions without touching code. When the collection is empty (e.g. Sanity not
+// configured) the page falls back to a built-in starter set, so it is never
+// broken or empty. Rendered as a native (no-JS) accordion.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 2 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md). The accordion
+// is now a `sectionFaqGrouped` block in the page's "Page sections" array,
+// rendered by SingletonPage; the block fetches the FAQ collection itself.
+//
+// THE FAQPage JSON-LD STAYS HERE, by doctrine: all structured data is emitted
+// from page frontmatter. That is why this file still fetches the questions —
+// not to render them, but to describe them to search engines. Both paths read
+// the same collection with the same projection and the same built-in fallback
+// (src/lib/faq-fallback.ts), so the markup and the schema cannot disagree.
+//
+// The photo hero also stays here: its scoped .hero-fill style has to live in
+// the pages that use it, or every text-hero page inherits the style tag (see
+// the note in SingletonPage.astro).
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getFaqPage, getSiteSettings } from '@/lib/queries';
@@ -15,9 +28,8 @@ import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import Hero from '@/components/Hero.astro';
-import PortableTextStatic from '@/components/PortableTextStatic.astro';
-import FinalCta from '@/components/FinalCta.astro';
-import Sections from '@/components/Sections.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
+import { FALLBACK_FAQS } from '@/lib/faq-fallback';
 
 const [siteSettings, page] = await Promise.all([
   getSiteSettings().catch(() => null),
@@ -30,40 +42,15 @@ const description =
   page?.seoDescription ??
   'Common questions about courses, format, cost, scholarships, who it is for, and our Reformed identity.';
 
-// Built-in starter questions. Used only when the faqItem collection is empty.
-// Answers here are plain strings; collection answers are Portable Text.
-const fallbackFaqs = [
-  { category: 'Courses & Format', question: 'How do courses work?', answer: 'Each course meets in person, in a cohort, over six to ten evenings. You read real texts, discuss them together, and leave able to teach what you have learned.' },
-  { category: 'Courses & Format', question: 'Do I need a degree or prior training?', answer: 'No. Our courses are built for adult lay leaders and curious believers. We meet you where you are.' },
-  { category: 'Courses & Format', question: 'Where do classes meet?', answer: 'On our West Chester campus, with free on-site parking. Most courses meet on weekday evenings.' },
-  { category: 'Cost & Scholarships', question: 'What does a course cost?', answer: 'Most courses are $195, or $95 to audit. A full certificate track is $1,400. See the Pricing page for the details.' },
-  { category: 'Cost & Scholarships', question: 'What if I cannot afford it?', answer: 'Need-based scholarships are available every term, funded by our supporters. No one is turned away for cost. Just tell us on the interest form.' },
-  { category: "Who It's For", question: 'Who takes courses here?', answer: 'Ruling and teaching elders, small-group and Sunday-school leaders, lifelong learners from PC(USA), ECO, and EPC churches, and anyone discerning a call.' },
-  { category: "Who It's For", question: 'Can I take a course if I am not Presbyterian?', answer: 'Yes. Reformed Christians of every stripe, and the simply curious, are welcome.' },
-  { category: 'Reformed Identity', question: 'What do you believe?', answer: 'We are a confessional Reformed school in the PC(USA), holding to the Westminster Standards and the Book of Confessions, taught for ordinary believers.' },
-  { category: 'Reformed Identity', question: 'Is this a seminary?', answer: 'No. We are a lay-formation school. The teaching is seminary-grade, but it is built for people who are not leaving their jobs and families for a degree.' },
-  { category: 'Getting Started', question: 'How do I try before I enroll?', answer: 'Sit in on the first session of any course, free, or book a free intro session. Request information and we will help you find a fit.' },
-  { category: 'Getting Started', question: 'When do courses start?', answer: 'We run cohorts each term. The next term and its dates are on the home page and the Events page.' },
-];
+const heroEyebrow = page?.heroEyebrow ?? 'Common Questions';
+const heroHeadline = page?.heroHeadline ?? 'Everything you want to know';
+const heroSubhead =
+  page?.heroSubhead ??
+  'If your question is not here, just ask. We are happy to help you figure out whether the Academy is a fit.';
 
-const DEFAULT_CATEGORY_ORDER = ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'];
-
-const faqs: any[] = (Array.isArray(page?.faqs) && page.faqs.length > 0) ? page.faqs : fallbackFaqs;
-const categoryOrder: string[] = (page?.categoryOrder?.length) ? page.categoryOrder : DEFAULT_CATEGORY_ORDER;
-
-// Group by the editor's category order, dropping empty categories. Any category
-// present in the data but missing from the order list is appended, so a new
-// category can never silently hide its questions.
-const grouped = categoryOrder
-  .map((cat) => ({ category: cat, items: faqs.filter((f) => f.category === cat) }))
-  .filter((g) => g.items.length > 0);
-const known = new Set(categoryOrder);
-for (const f of faqs) {
-  if (f.category && !known.has(f.category)) {
-    known.add(f.category);
-    grouped.push({ category: f.category, items: faqs.filter((x) => x.category === f.category) });
-  }
-}
+// The list the JSON-LD describes: the collection, or the built-in starter set,
+// the same choice the block makes when it renders.
+const faqs: any[] = Array.isArray(page?.faqs) && page.faqs.length > 0 ? page.faqs : FALLBACK_FAQS;
 
 // Flatten a Portable Text answer (or pass a string through) for the JSON-LD.
 function answerText(a: any): string {
@@ -97,52 +84,31 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
-  <Hero
-    eyebrow={page?.heroEyebrow ?? 'Common Questions'}
-    headline={page?.heroHeadline ?? 'Everything you want to know'}
-    subhead={page?.heroSubhead ?? 'If your question is not here, just ask. We are happy to help you figure out whether the Academy is a fit.'}
-    keyword={page?.heroKeyword}
-    backgroundImage={page?.heroImage ?? null}
-    localImage={heroFaq}
-    localImageAlt="Three students talking together"
-    headingId="faq-hero"
-    size="short"
-  />
-
-  <section class="bg-background" aria-label="Frequently asked questions">
-    <div class="mx-auto max-w-3xl px-m py-section-lg space-y-section-md" data-stagger-grid>
-      {grouped.map((group) => (
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-m">{group.category}</h2>
-          <div class="divide-y divide-border-soft border-t border-b border-border-soft">
-            {group.items.map((f) => (
-              <details class="group py-m">
-                <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg text-foreground">
-                  {f.question}
-                  <span class="shrink-0 text-link transition-transform group-open:rotate-45" aria-hidden="true">+</span>
-                </summary>
-                {typeof f.answer === 'string' ? (
-                  <p class="mt-s text-foreground/85 leading-relaxed">{f.answer}</p>
-                ) : (
-                  <div class="mt-s text-foreground/85 leading-relaxed [&>div>*:first-child]:mt-0">
-                    <PortableTextStatic value={f.answer} />
-                  </div>
-                )}
-              </details>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? "Still wondering?"}
-    headline={page?.finalCtaHeadline ?? "Ask us anything"}
-    subhead={page?.finalCtaSubhead ?? "If your question is not here, send it our way and we will answer plainly."}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started' }}
-    backgroundImage={page?.finalCtaBackgroundImage}
-  />
+  <SingletonPage
+    pageType="faqPage"
+    {page}
+    {settings}
+    finalCtaBackgroundImage={page?.finalCtaBackgroundImage}
+    finalCtaFallbacks={{
+      eyebrow: 'Still wondering?',
+      headline: 'Ask us anything',
+      subhead: 'If your question is not here, send it our way and we will answer plainly.',
+      cta: { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started' },
+    }}
+  >
+    {/* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */}
+    <Hero
+      slot="hero"
+      eyebrow={heroEyebrow}
+      headline={heroHeadline}
+      subhead={heroSubhead}
+      keyword={page?.heroKeyword}
+      backgroundImage={page?.heroImage ?? null}
+      localImage={heroFaq}
+      localImageAlt="Three students talking together"
+      headingId="faq-hero"
+      size="short"
+    />
+  </SingletonPage>
 </BaseLayout>

@@ -863,6 +863,33 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
 };
 
@@ -981,6 +1008,33 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
 };
 
@@ -1105,6 +1159,106 @@ export type SiteSettings = {
   };
 };
 
+export type FormReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'form';
+};
+
+export type SectionRequestPanel = {
+  _type: 'sectionRequestPanel';
+  requestEyebrow?: string;
+  requestHeadline?: string;
+  requestBody?: string;
+  form?: FormReference;
+  calendlyEyebrow?: string;
+  calendlyHeadline?: string;
+  calendlyBody?: string;
+  calendlyUrl?: string;
+  visitClassBody?: string;
+  syllabusBody?: string;
+};
+
+export type SectionContactDetails = {
+  _type: 'sectionContactDetails';
+  landmarkLabel?: string;
+  whoToReachLabel?: string;
+  reasons?: Array<{
+    label?: string;
+    value?: string;
+    href?: string;
+    _type: 'contactReason';
+    _key: string;
+  }>;
+  gettingHereLabel?: string;
+  gettingHereBody?: string;
+  mapTitle?: string;
+};
+
+export type SectionRuledList = {
+  _type: 'sectionRuledList';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+};
+
+export type SectionEventGrid = {
+  _type: 'sectionEventGrid';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+  emptyCopy?: string;
+};
+
+export type SectionFaqGrouped = {
+  _type: 'sectionFaqGrouped';
+  landmarkLabel?: string;
+  categoryOrder?: Array<string>;
+};
+
+export type SectionInlineBand = {
+  _type: 'sectionInlineBand';
+  eyebrow?: string;
+  headline?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+};
+
+export type SectionEditorialColumns = {
+  _type: 'sectionEditorialColumns';
+  variant?: 'labeled' | 'pair';
+  columns?: Array<{
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    _type: 'editorialColumn';
+    _key: string;
+  }>;
+};
+
+export type SectionLedgerStats = {
+  _type: 'sectionLedgerStats';
+  landmarkLabel?: string;
+  items?: Array<{
+    value?: string;
+    label?: string;
+    count?: boolean;
+    _type: 'ledgerStat';
+    _key: string;
+  }>;
+  variant?: 'trio' | 'quad';
+};
+
+export type SectionScholarship = {
+  _type: 'sectionScholarship';
+  eyebrow?: string;
+  headline?: string;
+  headingId?: string;
+  body?: string;
+  footnote?: string;
+};
+
 export type SectionNumberedCards = {
   _type: 'sectionNumberedCards';
   eyebrow?: string;
@@ -1118,7 +1272,7 @@ export type SectionNumberedCards = {
     _type: 'numberedCard';
     _key: string;
   }>;
-  variant?: 'top2' | 'full' | 'ledger';
+  variant?: 'top2' | 'full' | 'ledger' | 'steps';
   footnote?: string;
 };
 
@@ -1156,6 +1310,8 @@ export type SectionPricingTiers = {
   intro?: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  headingLevel?: 'h3' | 'h2';
+  surface?: 'shell' | 'ledger';
   background?: SectionPricingTiersBackground;
 };
 
@@ -1381,18 +1537,15 @@ export type SectionFeatureCards = {
   background?: SectionFeatureCardsBackground;
 };
 
-export type FormReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'form';
-};
-
 export type SectionForm = {
   _type: 'sectionForm';
   heading?: string;
   intro?: string;
   form?: FormReference;
+  variant?: 'embedded' | 'pageBody';
+  eyebrow?: string;
+  headingId?: string;
+  fallbackLabel?: string;
 };
 
 export type SectionCtaBand = {
@@ -1695,6 +1848,33 @@ export type Page = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -1803,6 +1983,33 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   listIntro?: string;
@@ -1907,6 +2114,33 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   personasIntro?: string;
@@ -2017,6 +2251,33 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   requestForm?: FormReference;
@@ -2136,6 +2397,33 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   pricingIntro?: string;
@@ -2249,6 +2537,33 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   directoryIntro?: string;
@@ -2354,6 +2669,33 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCta?: CtaBlock;
   catalogIntro?: string;
@@ -2478,6 +2820,33 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
 };
 
@@ -2596,6 +2965,33 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
 };
 
@@ -2746,6 +3142,33 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
 };
 
@@ -2846,6 +3269,33 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -2984,6 +3434,33 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3178,6 +3655,16 @@ export type AllSanitySchemaTypes =
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | FormReference
+  | SectionRequestPanel
+  | SectionContactDetails
+  | SectionRuledList
+  | SectionEventGrid
+  | SectionFaqGrouped
+  | SectionInlineBand
+  | SectionEditorialColumns
+  | SectionLedgerStats
+  | SectionScholarship
   | SectionNumberedCards
   | SectionLegalBody
   | SectionPricingTiers
@@ -3194,7 +3681,6 @@ export type AllSanitySchemaTypes =
   | SectionAccordion
   | SectionStats
   | SectionFeatureCards
-  | FormReference
   | SectionForm
   | SectionCtaBand
   | SectionQuote

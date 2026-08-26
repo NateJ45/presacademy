@@ -32,6 +32,15 @@ import EmbedBlock from '@/components/EmbedBlock.astro';
 // fixed surfaces and stay OUT of SHELL_AWARE on purpose (decision D1).
 import LegalBodyBlock from '@/components/blocks/LegalBodyBlock.astro';
 import NumberedCardsBlock from '@/components/blocks/NumberedCardsBlock.astro';
+import ScholarshipBlock from '@/components/blocks/ScholarshipBlock.astro';
+import LedgerStatsBlock from '@/components/blocks/LedgerStatsBlock.astro';
+import EditorialColumnsBlock from '@/components/blocks/EditorialColumnsBlock.astro';
+import InlineBandBlock from '@/components/blocks/InlineBandBlock.astro';
+import FaqGroupedBlock from '@/components/blocks/FaqGroupedBlock.astro';
+import EventGridBlock from '@/components/blocks/EventGridBlock.astro';
+import RuledListBlock from '@/components/blocks/RuledListBlock.astro';
+import ContactDetailsBlock from '@/components/blocks/ContactDetailsBlock.astro';
+import RequestPanelBlock from '@/components/blocks/RequestPanelBlock.astro';
 
 interface Props {
   sections?: any[] | null;
@@ -68,6 +77,15 @@ const MAP: Record<string, any> = {
   embed: EmbedBlock,
   sectionLegalBody: LegalBodyBlock,
   sectionNumberedCards: NumberedCardsBlock,
+  sectionScholarship: ScholarshipBlock,
+  sectionLedgerStats: LedgerStatsBlock,
+  sectionEditorialColumns: EditorialColumnsBlock,
+  sectionInlineBand: InlineBandBlock,
+  sectionFaqGrouped: FaqGroupedBlock,
+  sectionEventGrid: EventGridBlock,
+  sectionRuledList: RuledListBlock,
+  sectionContactDetails: ContactDetailsBlock,
+  sectionRequestPanel: RequestPanelBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.
@@ -91,7 +109,11 @@ const DEFAULT_TONE: Record<string, string> = {
   (sections ?? []).map((block: any) => {
     const Cmp = MAP[block?._type];
     if (!Cmp) return null;
-    if (SHELL_AWARE.has(block._type)) {
+    // A shell-aware block can opt OUT of the shell per instance by choosing a
+    // fixed Rule & Ledger surface (2026-08-26: sectionPricingTiers is the first,
+    // for the Pricing page). It then paints its own <section>, exactly like the
+    // ported types below. Absent the field, nothing changes.
+    if (SHELL_AWARE.has(block._type) && block.surface !== 'ledger') {
       const dt = DEFAULT_TONE[block._type] ?? 'default';
       return (
         <SectionShell background={block.background} defaultTone={dt}>

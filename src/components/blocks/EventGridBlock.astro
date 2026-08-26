@@ -1,0 +1,71 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// EventGridBlock — the Events page's "Upcoming" grid (2026-08-26)
+// =============================================================================
+// Phase 2 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. The
+// markup was CUT from src/pages/events/index.astro, not rewritten.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// Auto block: it fetches the upcoming one-time events itself at build time, so
+// an editor who adds an event in Studio sees it here after the next rebuild.
+// "Upcoming" is resolved against build time (see getUpcomingEvents).
+//
+// THE 1-VS-N COLUMN RULE IS DELIBERATE. A single event in a three-column grid
+// reads as a mistake, so one event gets a wide single column and two or more
+// get the responsive grid. Ported exactly.
+//
+// THE EMPTY STATE ends in a link to the catalog, and that link's text is fixed
+// in markup rather than editable: an <a> whose label an editor could empty is an
+// axe link-name violation waiting to happen, and this state is exactly what the
+// credential-less CI build renders.
+import { getUpcomingEvents } from '@/lib/queries';
+import { whenLabel } from '@/lib/event-when-label';
+
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const upcoming: any[] = (await getUpcomingEvents().catch(() => [])) ?? [];
+
+// Landmark id: the section is labeled by its own h2. Deterministic fallback so
+// the label never dangles, matching what the page carried.
+const headingId = block?.headingId || 'upcoming-heading';
+
+const emptyCopy =
+  block?.emptyCopy ??
+  'Nothing dated on the calendar right now. The recurring rhythms below never stop, and the best place to start is a';
+---
+
+<section class="bg-background" aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m pb-section-md">
+    <div data-reveal>
+      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{block?.eyebrow}</p>
+      <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+    </div>
+    {upcoming.length > 0 ? (
+      <ul class:list={['mt-l grid grid-cols-1 gap-l list-none p-0', upcoming.length === 1 ? 'max-w-3xl' : 'md:grid-cols-2 lg:grid-cols-3']} data-stagger-grid>
+        {upcoming.map((ev: any) => (
+          <li>
+            <a href={`/events/${ev.slug?.current ?? ''}`} class="card-lift group block h-full no-underline">
+              <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary"></div>
+              <div class="border border-t-0 border-border-soft p-l">
+                {ev.category && <span class="text-xs uppercase tracking-eyebrow text-gold-ink">{ev.category}</span>}
+                <h3 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{ev.title}</h3>
+                <p class="mt-1 text-sm text-foreground/70">{whenLabel(ev)}</p>
+                {ev.summary && <p class="mt-3 text-foreground/80 leading-relaxed">{ev.summary}</p>}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="mt-l text-foreground/80 italic">
+        {emptyCopy}{' '}
+        <a href="/courses" class="text-link underline underline-offset-2">course</a>.
+      </p>
+    )}
+  </div>
+</section>

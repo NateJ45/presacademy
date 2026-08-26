@@ -53,6 +53,14 @@ const NON_STEGA_FIELDS = new Set([
   // legal statement renders when a sectionLegalBody has an empty body, so a
   // stega-encoded value would silently render neither.
   'fallbackStatement',
+  // Phase 2, 2026-08-26 (pricing). `variant` above already covers
+  // sectionLedgerStats' layout choice; these two are sectionPricingTiers' new
+  // opt-in fields, and both pick MARKUP: `surface` decides whether the block is
+  // wrapped in SectionShell at all, `headingLevel` whether the tier names are
+  // h2 or h3. Stega-encoded, each would silently fall back to its default
+  // branch, in preview only.
+  'surface',
+  'headingLevel',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

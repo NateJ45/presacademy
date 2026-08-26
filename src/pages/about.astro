@@ -2,17 +2,35 @@
 // Safe to edit by hand for copy + structure changes.
 // About — the identity page. Mission, Reformed (PC(USA)) identity, What We
 // Believe (the distinctives, folded in from the old beliefs page), how we define
-// formation, history, and a link to the faculty. Rule & Ledger layout. Hero,
-// SEO, and the closing CTA come from the aboutPage singleton with school
-// fallbacks; the body sections carry inline fallback copy.
+// formation, history, and a link to the faculty. Rule & Ledger layout.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 2 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md). The four body
+// bands are now blocks in the page's "Page sections" array, rendered by
+// SingletonPage: the mission (`sectionEditorialColumns`, labeled), what we
+// believe (`sectionNumberedCards`, the warm ledger style), the teach/why pair
+// (`sectionEditorialColumns`, pair), and the faculty signpost
+// (`sectionInlineBand`). What stays here is the queries, the SEO derivation and
+// the breadcrumb JSON-LD.
+//
+// About's hero is the one that differs from the other six rule-variant pages
+// (a 4xl headline measure, a relaxed subhead leading). That difference is kept
+// and now lives behind PageHeader's `emphasis="editorial"` prop, set for this
+// page in SingletonPage's hero map. PageHeader's header comment records why.
+//
+// The old mission/believe/teach/why/facultyBand fields are deliberately left in
+// place and populated (decision D4, additive migration): reverting this file
+// brings the old page back with its content intact. They get unset in the
+// cleanup phase, never by clicking "Remove field" in the Studio. If the sections
+// array is ever empty, DEFAULT_SECTIONS renders the same four bands the page
+// always fell back to, including in the credential-less CI build.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
 import { getAboutPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import FinalCta from '@/components/FinalCta.astro';
-import Sections from '@/components/Sections.astro';
 
 const [page, siteSettings] = await Promise.all([
   getAboutPage().catch(() => null),
@@ -25,41 +43,6 @@ const description =
   page?.seoDescription ??
   'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'About the Academy';
-const heroHeadline = page?.heroHeadline ?? 'Reformed formation, for the whole church';
-const heroSubhead =
-  page?.heroSubhead ??
-  'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.';
-
-// About body copy: each reads the aboutPage singleton and falls back to these
-// literals when the field is empty.
-const missionEyebrow = page?.missionEyebrow ?? 'Our mission';
-const missionStatement = page?.missionStatement ?? 'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.';
-const missionBody = page?.missionBody ?? 'We are a school, not a church. We exist to equip the people who already serve: ruling elders, small-group leaders, Sunday-school teachers, and lifelong learners in PC(USA), ECO, and EPC congregations. We teach in person, in cohorts, at a pace that fits a working life.';
-
-const believeEyebrow = page?.believeEyebrow ?? 'What we believe';
-const believeHeadline = page?.believeHeadline ?? 'Confessional, and warm about it';
-// The distinctives, plainly, each paired with a pastoral line.
-const beliefs = page?.beliefs?.length ? page.beliefs : [
-  { title: 'Scripture is our final authority', body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.' },
-  { title: 'Salvation is by grace alone', body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.' },
-  { title: 'The confessions guide us', body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.' },
-  { title: 'Formation is for everyone', body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.' },
-];
-const believeFootnote = page?.believeFootnote ?? 'Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.';
-
-const teachEyebrow = page?.teachEyebrow ?? 'How we teach';
-const teachHeadline = page?.teachHeadline ?? 'Formation, not just information';
-const teachBody = page?.teachBody ?? 'A course here is more than a lecture. You read real texts, you discuss them with a cohort that sticks together, and you leave able to teach what you have learned. The goal is not to make you a scholar. It is to make you a wiser, steadier leader of the people God has already given you.';
-
-const whyEyebrow = page?.whyEyebrow ?? 'Why we exist';
-const whyHeadline = page?.whyHeadline ?? 'A school for the whole church';
-const whyBody = page?.whyBody ?? 'The Presbyterian Academy is supported by the Presbytery of Cincinnati, bringing seminary-grade teaching to lay leaders who cannot leave their jobs and families for a degree. We teach the historic Reformed faith for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious, taught by ministers and scholars who believe ordinary believers deserve the real thing.';
-
-const facultyBandEyebrow = page?.facultyBandEyebrow ?? 'The people who teach';
-const facultyBandHeadline = page?.facultyBandHeadline ?? 'Every course is led by an ordained minister or a credentialed Reformed scholar.';
-const facultyBandCtaLabel = page?.facultyBandCtaLabel ?? 'Meet the faculty';
-
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
@@ -69,83 +52,21 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  {/* Hero */}
-  <section class="bg-background">
-    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 class="mt-3 max-w-4xl font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-        {heroSubhead && <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>}
-      </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
-    </div>
-  </section>
-
-  {/* Mission, editorial two-column */}
-  <section class="bg-background">
-    <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-md lg:grid-cols-[200px_1fr]">
-      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{missionEyebrow}</p>
-      <div class="max-w-prose" data-reveal>
-        <p class="font-display text-h3 leading-snug text-foreground">{missionStatement}</p>
-        <p class="mt-m text-lg leading-relaxed text-foreground/80">{missionBody}</p>
-      </div>
-    </div>
-  </section>
-
-  {/* What We Believe */}
-  <section class="surface-warm bg-muted">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{believeEyebrow}</p>
-        <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{believeHeadline}</h2>
-      </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
-      <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
-        {beliefs.map((b, i) => (
-          <div class="border-t-2 border-gold pt-4">
-            <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="mt-2 font-display text-h4 text-foreground">{b.title}</h3>
-            <p class="mt-2 leading-relaxed text-foreground/80">{b.body}</p>
-          </div>
-        ))}
-      </div>
-      <p class="mt-l max-w-2xl text-foreground/70">{believeFootnote}</p>
-    </div>
-  </section>
-
-  {/* How we teach + history, editorial */}
-  <section class="bg-background">
-    <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m py-section-md lg:grid-cols-2">
-      <div class="max-w-prose reveal-l" data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{teachEyebrow}</p>
-        <h2 class="mt-2 font-display text-h3 text-foreground">{teachHeadline}</h2>
-        <p class="mt-m leading-relaxed text-foreground/80">{teachBody}</p>
-      </div>
-      <div class="max-w-prose reveal-r" data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{whyEyebrow}</p>
-        <h2 class="mt-2 font-display text-h3 text-foreground">{whyHeadline}</h2>
-        <p class="mt-m leading-relaxed text-foreground/80">{whyBody}</p>
-      </div>
-    </div>
-  </section>
-
-  {/* Leadership -> faculty */}
-  <section class="border-y border-border-soft bg-background">
-    <div class="mx-auto flex max-w-content flex-wrap items-center justify-between gap-m px-m py-l">
-      <div>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{facultyBandEyebrow}</p>
-        <p class="mt-2 max-w-xl font-display text-h4 text-foreground">{facultyBandHeadline}</p>
-      </div>
-      <a href="/faculty" class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">{facultyBandCtaLabel}</a>
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? 'Ready to learn?'}
-    headline={page?.finalCtaHeadline ?? 'Find a course to begin'}
-    subhead={page?.finalCtaSubhead ?? 'Browse the catalog, meet the teachers, and start when you are ready.'}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
+  <SingletonPage
+    pageType="aboutPage"
+    {page}
+    {settings}
+    heroFallbacks={{
+      eyebrow: 'About the Academy',
+      headline: 'Reformed formation, for the whole church',
+      subhead:
+        'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.',
+    }}
+    finalCtaFallbacks={{
+      eyebrow: 'Ready to learn?',
+      headline: 'Find a course to begin',
+      subhead: 'Browse the catalog, meet the teachers, and start when you are ready.',
+      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' },
+    }}
   />
 </BaseLayout>
