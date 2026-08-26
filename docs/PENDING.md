@@ -38,6 +38,13 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
+- **Page-builder conversion (PLANNED, awaiting go).** Convert the 13
+  bespoke singleton pages to a sections-array page-builder with zero
+  visual change. The full plan — governing decisions, the ~15 new
+  section types mapped to every page, phasing, parity harness, risks —
+  is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
+  Estimated 5–7 sessions; each phase lands deployed and verified.
+
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image
   wells, and the faculty strip is text-only, which makes a polished page
