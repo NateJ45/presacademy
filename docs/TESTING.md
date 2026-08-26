@@ -101,8 +101,13 @@ darkening `--input` in both themes first.
   becomes the test target and every result is meaningless. Check with
   `netstat -ano | findstr :4321` and `taskkill /F /PID <pid>` before trusting
   a surprising local run. Relatedly, a running `wrangler dev` holds a lock on
-  `dist/client` and makes the build itself fail with EPERM while emptying
-  `dist`. **Killing `workerd.exe` alone is NOT enough** — the parent
+  `dist/client` and used to make the build fail with EPERM while emptying
+  `dist`. **This is now handled automatically**: the `prebuild` hook runs
+  `scripts/free-dist.mjs`, which stops any node/workerd process whose command
+  line mentions BOTH this project's directory AND a dev server
+  (wrangler/miniflare/http-server/astro preview), printing the PIDs it kills.
+  Windows-only; a no-op on Linux CI. If you ever need to do it by hand,
+  remember: **killing `workerd.exe` alone is NOT enough** — the parent
   `wrangler`/node process keeps the handle (and can respawn the child), so
   the lock survives and the next build still fails. Find and kill the whole
   set by command line:
