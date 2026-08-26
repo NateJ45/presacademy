@@ -5,9 +5,14 @@ name: Sanity dataset backup
 # Activates once the SANITY_AUTH_TOKEN secret is set (a read token is enough);
 # until then it logs a warning and skips. Restore steps: docs/agent/ci-cd-and-ops.md.
 
+# Schedule disabled 2026-07 (decision preserved through the 2026-08-26 history
+# scrub): SANITY_AUTH_TOKEN was never set, so the daily gate job billed a
+# minute a day just to log "skipping". Uncomment once the token secret exists
+# (setup: docs/agent/ci-cd-and-ops.md) — the nightly backup is genuinely worth
+# having as soon as real content lands. Manual runs still work.
 on:
-  schedule:
-    - cron: '0 7 * * *' # daily 07:00 UTC
+  # schedule:
+  #   - cron: '0 7 * * *' # daily 07:00 UTC
   workflow_dispatch:
 
 jobs:

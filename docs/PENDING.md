@@ -21,15 +21,6 @@ that section when it gets long.
   `https://www.presbyterianacademy.org` (and any workers.dev preview
   origin you use) must be listed under Project → API → CORS origins with
   credentials allowed. sanity.io/manage.
-- **Retire the hosted Studio.** `presbyterian-academy.sanity.studio` is
-  no longer built or deployed from this repo and will serve an
-  increasingly stale schema. The embedded `/studio` is confirmed working
-  in production (2026-08-26), so this is ready to run. Easiest path:
-  sanity.io/manage → project `uz2sl3zp` → Studios → delete the hosted
-  one. (CLI alternative needs the retired ids, kept here on purpose
-  since `sanity.cli.ts` deliberately no longer carries them:
-  studioHost `presbyterian-academy`, appId `usl3ubscklxyewmtgfv3v4xy`.)
-  Tell any editor who has the old URL bookmarked.
 - **Real Academy photography.** The whole dataset still runs on Pexels
   CC0 placeholders (`acad-*`). Editors can swap photos in Studio any time;
   until then the site is presentable but generic. Unblocks: a photo shoot
@@ -65,6 +56,8 @@ that section when it gets long.
 
 ## Recently closed
 
+- 2026-08-26 — **Hosted Studio deleted** (Nathan, via sanity.io/manage).
+  The embedded /studio is now the only Studio.
 - 2026-08-26 — **Unsplash plugin re-enabled** after the Studio crash root
   cause proved it innocent (held at 7.0.15 for @sanity/ui v3 compat).
 - 2026-08-26 — **Studio folded into the root package** (the WCP shape):

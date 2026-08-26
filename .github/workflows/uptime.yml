@@ -9,9 +9,14 @@ name: Uptime check
 # real monitoring, also point a dedicated service (UptimeRobot's free tier is
 # plenty) at the homepage.
 
+# Schedule disabled 2026-07 (decision preserved through the 2026-08-26 history
+# scrub): SITE_URL was never set, so every hourly run billed a minimum just to
+# log "skipping" and exit. At launch, either uncomment after setting the
+# SITE_URL repo variable, or (better) point UptimeRobot's free tier at the
+# homepage. Manual runs still work via workflow_dispatch.
 on:
-  schedule:
-    - cron: '17 * * * *' # hourly, offset off the top of the hour
+  # schedule:
+  #   - cron: '17 * * * *' # hourly, offset off the top of the hour
   workflow_dispatch:
 
 jobs:
