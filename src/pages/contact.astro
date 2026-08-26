@@ -48,8 +48,13 @@ const mapQuery = encodeURIComponent(`${addressLine}, ${cityStateZip}`);
 // (contactPage.contactReasons); this const renders when that field is empty, so
 // the page is identical until an editor overrides it. The default emails come
 // from Sanity siteSettings (public + pastoral) via the resolver.
+// The email row only exists when settings.email is set: it is '' until an
+// editor fills it in (the CI empty-env build renders that state), and an <a>
+// with empty text is an axe link-name violation.
 const FALLBACK_REASONS = [
-  { label: 'General questions', value: settings.email, href: `mailto:${settings.email}` },
+  ...(settings.email
+    ? [{ label: 'General questions', value: settings.email, href: `mailto:${settings.email}` }]
+    : []),
   { label: 'Courses and enrollment', value: 'Request information', href: '/get-started' },
   { label: 'Pricing and scholarships', value: 'See pricing', href: '/pricing' },
 ];
@@ -85,10 +90,12 @@ const reasons = page?.contactReasons?.length ? page.contactReasons : FALLBACK_RE
               <a href={telHref(settings.phone)} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors">{settings.phone}</a>
             </li>
           )}
-          <li class="flex items-start gap-s">
-            <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-            <a href={`mailto:${settings.email}`} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors break-all">{settings.email}</a>
-          </li>
+          {settings.email && (
+            <li class="flex items-start gap-s">
+              <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+              <a href={`mailto:${settings.email}`} class="text-link hover:text-primary-dark underline underline-offset-2 transition-colors break-all">{settings.email}</a>
+            </li>
+          )}
           <li class="flex items-start gap-s">
             <Clock size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
             <span>Office hours: {settings.officeHours}</span>

@@ -126,12 +126,26 @@ const hasSanityBody = Boolean(page?.body);
             <p class="text-foreground/80">
               If you have questions about how your information is handled, or want your data
               removed, reach out at{' '}
-              <a
-                href={`mailto:${contactEmail}`}
-                class="text-link underline underline-offset-2 hover:text-primary transition-colors"
-              >
-                {contactEmail}
-              </a>.
+              {/* Guard: the email is '' until an editor sets it (the CI empty-env
+                  build renders that state), and an <a> with empty text is an axe
+                  link-name violation. */}
+              {
+                contactEmail ? (
+                  <a
+                    href={`mailto:${contactEmail}`}
+                    class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                  >
+                    {contactEmail}
+                  </a>
+                ) : (
+                  <a
+                    href="/contact"
+                    class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                  >
+                    the contact page
+                  </a>
+                )
+              }.
               You'll hear back within a few business days.
             </p>
           </div>

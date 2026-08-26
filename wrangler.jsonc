@@ -11,10 +11,18 @@
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     // @astrojs/cloudflare v14 splits the build into dist/client (static assets)
-    // + dist/server (SSR bundle; empty while the site is fully static).
+    // + dist/server (the SSR bundle: /preview/**, /api/draft-mode/*, /studio).
+    //
+    // Deliberately NO "not_found_handling" here. With "404-page" set, Cloudflare
+    // answers NAVIGATION requests (Sec-Fetch-Mode: navigate) that miss the asset
+    // store straight from the static 404 page WITHOUT invoking the Worker — which
+    // silently 404'd every SSR route for real browsers while curl (which sends no
+    // Sec-Fetch headers) saw them working. That broke the Presentation preview in
+    // production on 2026-08-26 and hid from every command-line probe. Without the
+    // field, asset misses invoke the Worker and Astro renders the 404 page itself
+    // (exactly the WCP repo's shape).
     "directory": "./dist/client",
-    "binding": "ASSETS",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS"
   },
   "observability": {
     "enabled": true
