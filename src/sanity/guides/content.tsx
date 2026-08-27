@@ -236,12 +236,18 @@ export const guides: Guide[] = [
     diy: 'self',
     body: [
       { kind: 'path', items: ['Pages', '(choose a page)'], link: { pane: 'pages' } },
+      { kind: 'h', text: 'Every page is built the same way' },
+      {
+        kind: 'p',
+        text: 'Each page has three parts. The **Hero** is the big opening headline, and it lives in the `Hero` tab. The **body** is a stack of blocks in the `Page sections` tab, which you can reword, reorder, add to and remove. The **closing call to action** is the band at the very bottom, in its own tab. So the middle of every page is yours: see **Add & arrange sections** for how to work with it.',
+      },
       { kind: 'h', text: 'Make an edit' },
       {
         kind: 'steps',
         items: [
           'Open **Pages** and click the page you want, for example `About`.',
-          'Fields are grouped into tabs at the top (Hero, the page copy, `SEO`, `Page sections`). Click a tab to find what you want.',
+          'Fields are grouped into tabs at the top: `Hero`, `Page sections`, the closing call to action, `SEO`, and on a few pages a small `Page copy` tab for a stray line or two.',
+          'For words in the middle of the page, open `Page sections` and click the block that holds them.',
           'Change the text, or swap a photo.',
           'Re-read your change here to make sure it reads right.',
           'Click `Publish`. The website rebuilds and your change appears in a few minutes.',
@@ -259,7 +265,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'These build themselves',
-        text: 'The Courses page and the Faculty page lay out their cards automatically from the Catalog and Faculty lists. To change a course or a teacher, edit that course or that faculty member, not the page. The page fields control the wording around the cards, and on Courses the “Start here” rail is now a section you can reword, reorder or remove in Page sections. The big filterable list of courses, and the roster of teachers, stay where they are: they are the page’s job, not a section. The Home page works the same way: its whole middle is now sections in Page sections (the “where to begin” row, the two course rails, the numbers band, the topics ticker, the faculty strip and the quotes), and the rails, the strip and the quotes fill themselves from the Catalog, the Faculty list and the Testimonials. The big picture headline at the top stays in the Hero tab, where it has always been.',
+        text: 'The Courses page and the Faculty page lay out their cards automatically from the Catalog and Faculty lists. To change a course or a teacher, edit that course or that faculty member, not the page. On Courses the “Start here” rail is a section you can reword, reorder or remove in `Page sections`. The big filterable list of courses, and the roster of teachers, are not sections: they are the page’s own job, and they always sit below whatever you add. The Home page works the same way: its whole middle is sections (the “where to begin” row, the two course rails, the numbers band, the topics ticker, the faculty strip and the quotes), and the rails, the strip and the quotes fill themselves from the Catalog, the Faculty list and the Testimonials. The big picture headline at the top stays in the `Hero` tab, where it has always been.',
       },
       { kind: 'seealso', items: ['Add or edit a course', 'Photos & images', 'Do it yourself vs. ask for help'] },
     ],
@@ -306,6 +312,12 @@ export const guides: Guide[] = [
     diy: 'self',
     body: [
       { kind: 'path', items: ['Pages', '(any page)', 'Page sections'], link: { pane: 'pages' } },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Every page’s body is built from sections',
+        text: 'This is not only for pages you build yourself. The middle of every fixed page, Home, About, Pricing, FAQ, Events, Contact, Get Started, For You, Courses, Faculty, Privacy and Accessibility, is a stack of blocks in `Page sections`. Open a page, click a block, and you are editing the real thing visitors see. Two parts stay outside the stack on purpose: the big headline at the top (the `Hero` tab) and the closing call to action at the bottom, so neither can be deleted by accident.',
+      },
       { kind: 'h', text: 'Add a section' },
       {
         kind: 'steps',
@@ -324,7 +336,16 @@ export const guides: Guide[] = [
           '**Cards, facts & lists**: card grids, feature cards, big numbers, numbered steps, an inline FAQ accordion, key dates, and partner logos.',
           '**From your catalog (auto-updating)**: the dynamic list (featured courses, upcoming events, faculty, testimonials), the FAQ list, and the pricing tiers. These keep themselves up to date from your other documents.',
           '**Banners, forms & extras**: the call-to-action band, a form, downloadable resources, and embeds.',
-          '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages, now editable. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. In this band: the legal statement body (Privacy, Accessibility), numbered cards (For You, About, Get Started), the warm statement band and the ruled stat band (Pricing), editorial columns and the inline band (About), the grouped FAQ (FAQ), upcoming events and recurring rhythms (Events), the contact details and map (Contact), the request panel (Get Started), the course rail (Courses and Home), which pulls the courses you have marked “Start here” or “Featured” straight from the catalog, and Home’s own three: the topics ticker, the faculty strip and the testimonials.',
+          '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. In this band: the legal statement body (Privacy, Accessibility), numbered cards (For You, About, Get Started, Home), the warm statement band and the ruled stat band (Pricing, Home), editorial columns and the inline band (About), the grouped FAQ (FAQ), upcoming events and recurring rhythms (Events), the contact details and map (Contact), the request panel (Get Started), the course rail (Courses and Home), which pulls the courses you have marked “Start here” or “Featured” straight from the catalog, and Home’s own three: the topics ticker, the faculty strip and the testimonials.',
+        ],
+      },
+      { kind: 'h', text: 'What is not a section' },
+      {
+        kind: 'bullets',
+        items: [
+          'The **big headline** at the top of a page is a field in the `Hero` tab, not a block. Same for the photo behind it.',
+          'The **closing call to action** at the bottom of a page has its own fields, so it is always there.',
+          'The **course catalog** with its filters, and the **faculty roster**, are drawn by the Courses and Faculty pages themselves. They always sit below the sections you add, so a section you add to Courses lands above the catalog.',
         ],
       },
       { kind: 'h', text: 'Reorder or remove' },
@@ -336,7 +357,7 @@ export const guides: Guide[] = [
         ],
       },
       { kind: 'h', text: "Change a section's background" },
-      { kind: 'p', text: 'Each section has a **Section background** control so it sits nicely on the page. Open it to find:' },
+      { kind: 'p', text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). Open it to find:' },
       {
         kind: 'bullets',
         items: [
@@ -766,10 +787,14 @@ export const guides: Guide[] = [
         ],
       },
       { kind: 'h', text: 'Change the order of the categories' },
-      { kind: 'path', items: ['Pages', 'FAQ', 'Category order'], link: { doc: 'faqPage' } },
+      { kind: 'path', items: ['Pages', 'FAQ', 'Page sections', 'Grouped FAQ'], link: { doc: 'faqPage' } },
       {
         kind: 'steps',
-        items: ['Open **Pages**, then **FAQ**, and find **Category order**.', 'Drag the categories into the order you want. `Publish`.'],
+        items: [
+          'Open **Pages**, then **FAQ**, then the `Page sections` tab.',
+          'Click the **Grouped FAQ** block and find **Category order** inside it.',
+          'Drag the categories into the order you want. `Publish`.',
+        ],
       },
       {
         kind: 'callout',
@@ -815,7 +840,7 @@ export const guides: Guide[] = [
       { kind: 'path', items: ['Pages', 'Pricing & Scholarships'], link: { doc: 'pricingPage' } },
       {
         kind: 'p',
-        text: 'The page lists your tiers automatically. To change the intro, the scholarship wording, or anything around the tiers, open **Pages**, then **Pricing & Scholarships**, and edit the text there. There is no checkout. These are express-interest prices.',
+        text: 'The page lists your tiers automatically. The opening line under the headline is the **Pricing intro** field in the `Page copy` tab. Everything below it is blocks in the `Page sections` tab: the tier cards, the scholarship promise, and the small band of figures at the bottom. Click a block to reword it, or drag to reorder. There is no checkout. These are express-interest prices.',
       },
       { kind: 'seealso', items: ['Add or edit a course'] },
     ],

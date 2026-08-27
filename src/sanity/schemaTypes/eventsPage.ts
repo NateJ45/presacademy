@@ -1,4 +1,11 @@
-// Events index page singleton. Drives the hero copy + SEO on /events.
+// Events index page singleton. Drives the hero copy, the closing CTAs and SEO
+// on /events.
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the upcoming-events and
+// weekly-rhythms band copy moved to their `sectionEventGrid` and
+// `sectionRuledList` blocks in "Page sections", and the old fields were unset by
+// scripts/cleanup-builder-fields.mjs. The `detailFinalCta*` fields stay: the
+// event DETAIL route renders them.
 
 import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
@@ -36,11 +43,6 @@ export const eventsPage = defineType({
     }),
     defineField({ name: 'specialEyebrow', title: 'Special services eyebrow', type: 'string' }),
     defineField({ name: 'specialHeadline', title: 'Special services headline', type: 'string' }),
-    defineField({ name: 'upcomingEyebrow', title: 'Upcoming events eyebrow', type: 'string' }),
-    defineField({ name: 'upcomingHeadline', title: 'Upcoming events headline', type: 'string' }),
-    defineField({ name: 'upcomingEmpty', title: 'Upcoming empty-state text', type: 'text', rows: 2 }),
-    defineField({ name: 'rhythmsEyebrow', title: 'Weekly rhythms eyebrow', type: 'string' }),
-    defineField({ name: 'rhythmsHeadline', title: 'Weekly rhythms headline', type: 'string' }),
     defineField({ name: 'finalCtaEyebrow', title: 'Closing CTA eyebrow', type: 'string' }),
     defineField({ name: 'finalCtaHeadline', title: 'Closing CTA headline', type: 'string' }),
     defineField({ name: 'finalCtaSubhead', title: 'Closing CTA subhead', type: 'text', rows: 2 }),

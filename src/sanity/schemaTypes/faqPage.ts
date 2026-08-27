@@ -1,7 +1,12 @@
-// FAQ page singleton. Questions auto-populate from faqItem collection,
-// grouped by category in the order specified by categoryOrder.
+// FAQ page singleton. Questions auto-populate from the faqItem collection.
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the category order moved
+// onto the page's `sectionFaqGrouped` block, which is what groups and renders
+// the questions now, so the page-level `categoryOrder` field (and its "Category
+// order" group) went away. The FAQPage JSON-LD in src/pages/faq.astro reads the
+// QUESTIONS through the page query, never that field.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const faqPage = defineType({
@@ -13,7 +18,6 @@ export const faqPage = defineType({
   groups: [
     { name: 'seo', title: 'SEO' },
     { name: 'hero', title: 'Hero' },
-    { name: 'list', title: 'Category order' },
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
   ],
@@ -76,16 +80,6 @@ export const faqPage = defineType({
       group: 'hero',
       description:
         'A single word from the headline to render in handwritten Pinyon Script. Must match exactly (case-sensitive). Leave blank to skip.',
-    }),
-
-    defineField({
-      name: 'categoryOrder',
-      title: 'Category order',
-      type: 'array',
-      group: 'list',
-      description: 'Drag to reorder. Must match the option values on faqItem.category.',
-      of: [defineArrayMember({ type: 'string' })],
-      initialValue: ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'],
     }),
 
     defineField({ name: 'finalCtaEyebrow', title: 'Final CTA eyebrow', type: 'string', group: 'final', initialValue: 'Not Finding Your Answer?' }),

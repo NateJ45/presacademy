@@ -47,140 +47,24 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PHASES 1 THROUGH 4 LANDED 2026-08-26. ALL 13 PAGES
-  ARE CONVERTED; only Phase 5, cleanup + docs, remains, and it is deliberately
-  unhurried).**
-  Convert the 13 bespoke singleton pages to a sections-array page-builder
-  with zero visual change. The full plan — governing decisions, the ~15
-  new section types mapped to every page, phasing, parity harness, risks
-  — is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
-  Estimated 5–7 sessions; each phase lands deployed and verified.
-  Phase 0 built the foundations (`src/components/PageHeader.astro`,
-  `src/components/SingletonPage.astro`, `src/lib/heading-id.ts` + tests,
-  `src/lib/default-sections.ts`, `scripts/page-parity.mjs`).
-  **Phase 1 converted four pages** — resources, privacy, accessibility,
-  for-you — each verified at 13/13 page parity, 79 unit tests, 109
-  Playwright tests, plus the empty-env axe run. It added two section
-  types (`sectionLegalBody`, `sectionNumberedCards`), their components,
-  their DEFAULT_SECTIONS entries, three seed scripts
-  (`scripts/seed-builder-*.mjs`, all run against production), and
-  full-fidelity `/preview` for the four converted pages.
-  **Phase 2 converted six more** — pricing, about, faq, events, contact,
-  get-started — each verified at 13/13 page parity, 79 unit tests, 109
-  Playwright tests, the empty-credential axe run (32 chromium tests,
-  light + dark), and all six `/preview/*` routes opened under
-  `wrangler dev`. It added nine section types (`sectionScholarship`,
-  `sectionLedgerStats`, `sectionEditorialColumns`, `sectionInlineBand`,
-  `sectionFaqGrouped`, `sectionEventGrid`, `sectionRuledList`,
-  `sectionContactDetails`, `sectionRequestPanel`), patched two existing
-  ones without changing their output for current users
-  (`sectionPricingTiers` gained `headingLevel` + `surface`, `sectionForm`
-  gained `variant`/`eyebrow`/`headingId`/`fallbackLabel`), and shipped six
-  seed scripts (`scripts/seed-builder-*.mjs`, all run against production
-  and re-run clean).
-  The four Phase 1 carry-forwards, settled:
-  1. **about.astro's hero delta is KEPT**, behind PageHeader's new
-     `emphasis="editorial"` prop (opt-in, set only by About in
-     SingletonPage's hero map). Unifying the seven heroes would have been
-     a real visual change; making the two classes unconditional would have
-     changed six pages. PageHeader's header comment records the call.
-  2. **`sectionNumberedCards`' variants: `ledger` and a new `steps` are
-     now PROVEN** (about's beliefs, get-started's steps). The type's
-     `variant` turned out to select a whole treatment, not just a border:
-     the three bands differ in surface, rhythm, grid, heading size and
-     header shape, so each renders its source markup verbatim. `full`
-     remains declared and unproven.
-  3. **The Checkup rule `page-heading-ids` is now actionable.** Phase 2
-     added types with a mandatory heading or landmark label
-     (`sectionEventGrid`, `sectionRuledList`, `sectionFaqGrouped`,
-     `sectionContactDetails`), so `PORTED_SECTION_TYPES` can list those
-     without warning about correct content. Still to do.
-  4. **Photo heroes stay in their page files, not in SingletonPage**
-     (Astro collects CSS from the module graph, so importing `Hero.astro`
-     into the shared renderer injected its scoped `.hero-fill` style into
-     every text-hero page). faq and contact followed the
-     privacy/accessibility slot pattern in Phase 2.
-  **Phase 3 converted the two pages with pinned code regions** — courses
-  and faculty — each verified at 13/13 page parity, 79 unit tests, 109
-  Playwright tests, the empty-credential axe run (32 chromium tests,
-  light + dark), and both `/preview/*` routes opened under `wrangler dev`
-  with their filter islands exercised and a clean console. It added one
-  section type (`sectionCourseRail`, built whole: `source` startHere +
-  featured, two band treatments, `dedupeAgainstStartHere`), one seed
-  (`scripts/seed-builder-courses.mjs`, run against production and re-run
-  clean), and `src/components/pinned/` for the two shared code regions.
-  Three Phase 3 findings worth keeping:
-  1. **The pinned slot is single and always after the sections.** A second
-     "before sections" slot was considered and rejected; the reasoning and
-     the editorial consequence (a new section on courses lands above the
-     catalog, not below it) are in `SingletonPage.astro`'s header.
-  2. **The parity normalizer gained rule 3**, `<astro-island prefix="rN">`.
-     Moving the catalog into a component shifted its island's render-order
-     counter with zero markup change. The 13 committed baselines were
-     re-normalized in place (not re-captured).
-  3. **A hero-map bug was found by the PREVIEW, not by parity.** The
-     faculty entry named the trust-line field `trustLine`; the field is
-     `aggregateTrustLine`, so an editor's edit would never have reached
-     the page. Parity missed it because the fallback string and the field
-     hold the same sentence. Fixed. Worth remembering when Phase 4 wires
-     home's hero map: check every field NAME against the schema.
-  **Phase 4 converted home, the last page**, verified at 13/13 page parity
-  TWICE (once on `DEFAULT_SECTIONS`, then again after the seed ran, so both
-  the code fallback and the Sanity-driven path are proven byte-identical),
-  79 unit tests, 109 Playwright tests, the empty-credential axe run (32
-  chromium tests, light + dark), and `/preview` opened under `wrangler dev`
-  with the whole body, the running Ken Burns slideshow and a clean console.
-  It added three section types (`sectionTicker`, `sectionFacultyRail`,
-  `sectionTestimonialRail`), a fourth `sectionNumberedCards` variant
-  (`wayfinding`, with the `landmarkLabel` and per-card `href` it needs),
-  `src/components/home/HomeHero.astro` (the split hero, page-level per D2,
-  rendered into SingletonPage's hero slot), one seed
-  (`scripts/seed-builder-home.mjs`, run against production and re-run
-  clean), and it DELETED `src/components/home/HomeBody.astro` along with the
-  preview route's home special case.
-  The five Phase 3 carry-forwards, settled:
-  1. **`sectionLedgerStats`' `quad` is PROVEN.** It needed no change: the
-     markup copied ahead of time in Phase 2 matched home byte for byte.
-  2. **Auto sections still preview PUBLISHED collection data, EXCEPT on
-     home.** Home's preview showed draft courses, faculty and testimonials
-     before the conversion, so a `fetcher` prop now runs SingletonPage →
-     Sections → the auto blocks, and the preview route passes the draft
-     fetcher for `homePage` only. Every other page's blocks take the
-     default and read published data, as the risk register allows. Pass the
-     fetcher from another page's branch the day it matters.
-  3. **`sectionCourseRail` is fully proven.** `feature`, `featured`,
-     `adaptiveColumns` and `dedupeAgainstStartHere` all held against home.
-  4. **Home's rails really do differ from the Courses rail** in a class
-     attribute, as predicted; `adaptiveColumns` is why both pages are
-     byte-exact.
-  5. **The Events page's `upcomingEmpty` copy in Sanity already ends in a
-     full sentence** ("...is a course."), while the page appends a link
-     reading "course." to it. The seed carried the value across
-     faithfully, so nothing changed, but the live empty state reads
-     oddly. Worth an editor fixing the field (it is now
-     `sectionEventGrid.emptyCopy`). STILL OPEN.
-  Two findings from Phase 4 worth keeping:
-  1. **`data-countup-grid` cannot be interpolated.** Astro serializes
-     `data-x={true}` as `data-x="true"`, and home wrote the attribute bare.
-     That single byte was the ONLY parity diff in the whole home
-     conversion; `LedgerStatsBlock`'s `quad` branch now spells the grid out
-     twice so the attribute's presence is a branch, not a value.
-  2. **The plan's slice map was wrong about home's wayfinding row**, which
-     it pencilled in as `sectionNumberedCards`' `ledger` variant. The row
-     has no heading, each cell is a link, and it is named by an aria-label:
-     it earned a fourth variant. Parity decided it, exactly as the plan
-     said it would.
-  What Phase 5 (cleanup) should now unset, on top of the earlier pages'
-  superseded fields: `homePage.wayfinding`, `.stats`, `.tickerTopics`,
-  `.startHereEyebrow`, `.startHereHeadline`, `.coursesEyebrow`,
-  `.coursesHeadline`, `.coursesLinkLabel`, `.facultyEyebrow`,
-  `.facultyHeadline`, `.facultyLinkLabel`, `.testimonialsEyebrow`,
-  `.testimonialsHeadline` (all now unread by any renderer; only
-  `seed-builder-home.mjs` still reads them). The hero fields, the final-CTA
-  fields and the SEO fields all STAY. Phase 5 can also drop the "code-owned
-  middle" note from the preview route's generic branch if `404` is given a
-  better preview, and retire the `autoData` prop on SingletonPage, which no
-  page ever used (every auto block fetches for itself).
+- **The Events page's empty-state line reads oddly.** The copy ends in a full
+  sentence ("...is a course.") while the block appends a link reading "course."
+  to it. Carried across faithfully by the conversion, so nothing changed, but an
+  editor should fix the wording. It now lives on the Events page's
+  `sectionEventGrid` block, as **Empty-state copy**, in `Page sections`.
+- **The Checkup tool's `page-heading-ids` rule is still to write.** Phase 2 of
+  the conversion added the section types with a mandatory heading or landmark
+  label (`sectionEventGrid`, `sectionRuledList`, `sectionFaqGrouped`,
+  `sectionContactDetails`), so `PORTED_SECTION_TYPES` can now list them without
+  warning about correct content. The rule itself was never written.
+- **Four pre-conversion orphan fields were deliberately left alone** in Phase 5
+  (2026-08-27). They are unread by any renderer, but they predate the
+  page-builder work and nothing superseded them, so removing them is a separate
+  decision: `coursesPage.catalogIntro`, `facultyPage.directoryIntro`,
+  `eventsPage.specialEyebrow` / `.specialHeadline`, plus `faqPage`'s
+  `finalCtaScriptAccent` / `secondaryCta` / `note` and `contactPage.note`. None
+  hold data except the two `note` fields (editor scratchpads, which is what they
+  are for). Decide per field: delete with a dry-run unset, or wire one up.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image
@@ -199,6 +83,45 @@ that section when it gets long.
   edit there.
 
 ## Recently closed
+
+- 2026-08-27 — **PAGE-BUILDER CONVERSION COMPLETE (Phase 5, cleanup + docs).**
+  All thirteen singleton pages had converted on 2026-08-26 (Phases 0 through 4:
+  the shared `src/components/SingletonPage.astro` renderer, ~17 ported section
+  types, `src/lib/default-sections.ts` as the empty-dataset fallback,
+  `scripts/page-parity.mjs` as the pixel guard, and full-fidelity `/preview` for
+  every page). Phase 5 removed the scaffolding:
+  - **A full dataset export was taken first**:
+    `backups/pre-phase5-2026-08-26.tar.gz` (28.8 MB, 65 documents, 35 assets;
+    `backups/` is gitignored). That is the restore point if a field turns out to
+    have been read after all.
+  - **63 superseded fields were unset across 11 documents** by the new
+    `scripts/cleanup-builder-fields.mjs` (dry-run by default, `--apply` to
+    write, idempotent, and it refuses to touch a document whose
+    `flexibleSections` array is empty). Never the Studio's "Remove field"
+    button. Per document: homePage 13, aboutPage 16, pricingPage 4,
+    getStartedPage 11, forYouPage 1, coursesPage 2, eventsPage 5, faqPage 1,
+    contactPage 6, privacyPage 2, accessibilityPage 2.
+  - **The same fields were removed from the schemas** in the same commit, with
+    five now-empty field groups (homePage and aboutPage "Page copy",
+    getStartedPage "Form & scheduling", contactPage "Form intro + expectations",
+    faqPage "Category order", and the two legal pages' "Content"), and the
+    matching GROQ projections dropped from `src/lib/queries.ts`. Typegen re-run.
+  - **What stayed, and why**: every hero, closing-CTA and SEO field (decision
+    D2), plus the extras a renderer still reads: `pricingIntro` /
+    `personasIntro` / `listIntro` (the hero map's intro paragraph),
+    `aggregateTrustLine` (the faculty hero), `coursesPage.emptyState` +
+    `facultyPage.emptyState` + `resourcesPage.emptyStateBody` (the pinned code
+    regions), and the course and event DETAIL-page fields.
+  - **Code retired**: `SingletonPage`'s `autoData` prop (no page ever passed
+    one) and the preview route's stale "the code-owned middle renders on the
+    live site only" note, now reworded for the only branch that reaches it
+    (`404`).
+  - **The twelve `scripts/seed-builder-*.mjs` are historical now** and carry a
+    header saying so; `scripts/seed-page-copy.mjs` gained a DO NOT RUN warning,
+    because applying it would write the removed fields back as unknown fields.
+  - **Docs**: the plan doc is marked COMPLETE, CLAUDE.md's routes and preview
+    sections say so, OPERATIONS.md's seed section is corrected, and the Studio
+    guides now teach "every page's body is built from sections".
 
 - 2026-08-26 — **Hosted Studio deleted** (Nathan, via sanity.io/manage).
   The embedded /studio is now the only Studio.

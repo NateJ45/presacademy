@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// HISTORICAL, kept for the record. RAN 2026-08-26 against production. The
+// singleton fields this script reads were unset in Phase 5 (2026-08-27) by
+// scripts/cleanup-builder-fields.mjs and removed from the schemas, so re-running
+// it now is a no-op or an error by design. It stays in the tree because it is
+// the record of how this page's content moved into the page builder.
 // =============================================================================
 // seed-builder-for-you.mjs — move the persona cards into the page builder
 // (2026-08-26, Phase 1 of the page-builder conversion)

@@ -1,7 +1,14 @@
 // Contact page singleton. Email, social links, service area come from siteSettings.
-// Form field options (project types) are wired in the Astro component, not Sanity.
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the body of this page is
+// two blocks in "Page sections" now, `sectionContactDetails` (details,
+// who-to-reach rows, getting-here copy, the map) and `sectionForm` (the form
+// reference and its intro), so the whole "Form intro + expectations" group and
+// the who-to-reach / getting-here / form-headline fields went away. The seeds
+// carried their values across before scripts/cleanup-builder-fields.mjs unset
+// them.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const contactPage = defineType({
@@ -13,7 +20,6 @@ export const contactPage = defineType({
   groups: [
     { name: 'seo', title: 'SEO' },
     { name: 'hero', title: 'Hero' },
-    { name: 'form', title: 'Form intro + expectations' },
     { name: 'content', title: 'Page copy' },
     { name: 'sections', title: 'Page sections' },
     // removed empty interior-designer scheduling group during church remodel
@@ -79,36 +85,14 @@ export const contactPage = defineType({
         'A single word from the headline to render in handwritten Pinyon Script. Must match exactly (case-sensitive). Leave blank to skip.',
     }),
 
-    defineField({
-      name: 'formIntroNote',
-      title: 'Form intro note',
-      type: 'text',
-      rows: 3,
-      group: 'form',
-      description: 'Pre-submit expectation note shown above the form.',
-    }),
-    defineField({
-      name: 'contactForm',
-      title: 'Contact form',
-      type: 'reference',
-      to: [{ type: 'form' }],
-      group: 'form',
-      description: 'The form shown on the contact page. Leave empty to show direct contact links only.',
-    }),
     // removed interior-designer contact form dropdown option fields (formProjectTypeOptions, formLocationOptions, formBudgetOptions, formTimelineOptions, formSourceOptions) during church remodel
-    defineField({
-      name: 'whatToExpectEyebrow',
-      title: '"What to expect" eyebrow',
-      type: 'string',
-      group: 'form',
-      initialValue: 'What to Expect.',
-    }),
     // removed orphaned whatToExpectHeadline + whatToExpectContent (designer-era
     // "what to expect" block; contact.astro never rendered them) during the
-    // content-editability audit. whatToExpectEyebrow IS used (form-section eyebrow).
+    // content-editability audit.
     // removed interior-designer postInquiryRoadmap field during church remodel
-
     // removed interior-designer scheduling fields (schedulingLink, schedulingLinkLabel, availabilityNote) during church remodel
+    // removed formIntroNote, contactForm and whatToExpectEyebrow 2026-08-27:
+    // the page's `sectionForm` block carries the form, its intro and its eyebrow.
 
     defineField({
       name: 'note',
@@ -117,30 +101,9 @@ export const contactPage = defineType({
       rows: 3,
       description: 'Internal-only reminder for editors. Anything you write here stays in Studio and never renders on the live page.',
     }),
-    defineField({ name: 'whoToReachLabel', title: 'Who to reach label', type: 'string', group: 'content' }),
-    defineField({
-      name: 'contactReasons',
-      title: 'Who to reach rows',
-      type: 'array',
-      group: 'content',
-      description:
-        'The rows under "Who to reach". Each row has a label, the text shown on the right, and where it links. For an email, set the link to "mailto:office@example.org". For a page, use a path like "/weddings". Drag to reorder. Leave empty to use the built-in default rows.',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'contactReason',
-          fields: [
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
-            defineField({ name: 'value', title: 'Shown text', type: 'string', description: 'The text shown on the right, e.g. an email address or "See wedding details".', validation: (R) => R.required() }),
-            defineField({ name: 'href', title: 'Link', type: 'string', description: 'A "mailto:" email link, an internal path like "/weddings", or a full URL.', validation: (R) => R.required() }),
-          ],
-          preview: { select: { title: 'label', subtitle: 'value' } },
-        }),
-      ],
-    }),
-    defineField({ name: 'gettingHereLabel', title: 'Getting here label', type: 'string', group: 'content' }),
-    defineField({ name: 'gettingHereBody', title: 'Getting here body', type: 'text', rows: 3, group: 'content' }),
-    defineField({ name: 'formSectionHeadline', title: 'Form section headline', type: 'string', group: 'content' }),
+    // removed whoToReachLabel, contactReasons, gettingHereLabel, gettingHereBody
+    // and formSectionHeadline 2026-08-27: the `sectionContactDetails` and
+    // `sectionForm` blocks in "Page sections" carry all five.
     defineField({ name: 'finalCtaEyebrow', title: 'Closing CTA eyebrow', type: 'string', group: 'content' }),
     defineField({ name: 'finalCtaHeadline', title: 'Closing CTA headline', type: 'string', group: 'content' }),
     defineField({ name: 'finalCtaSubhead', title: 'Closing CTA subhead', type: 'text', rows: 2, group: 'content' }),

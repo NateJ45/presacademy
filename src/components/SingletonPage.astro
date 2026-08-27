@@ -182,12 +182,10 @@ interface Props {
   page: any;
   /** resolveSiteSettings() output. */
   settings: any;
-  /**
-   * Collection data the page's auto sections need (upcoming events, faculty,
-   * testimonials, ...). Passed straight through to Sections; each auto block
-   * reads the keys it cares about. Empty for pages with no auto sections.
-   */
-  autoData?: Record<string, unknown>;
+  /* An `autoData` prop lived here from Phase 0 until 2026-08-27, meant to carry
+     collection data down to the auto sections. All thirteen pages converted
+     without it: every auto block fetches for itself (optionally through the
+     `fetcher` below), so no page ever passed it. Retired in Phase 5. */
   /** This page's inline hero fallback copy. */
   heroFallbacks?: HeroFallbacks;
   /** This page's inline closing-CTA fallback copy. */
@@ -214,7 +212,6 @@ const {
   pageType,
   page,
   settings,
-  autoData: _autoData = {},
   heroFallbacks = {},
   finalCtaFallbacks = {},
   finalCtaBackgroundImage,

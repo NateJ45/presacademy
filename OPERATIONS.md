@@ -151,9 +151,11 @@ See the "Patch Sanity content programmatically" section below for the client set
 
 **Important: seeded content is placeholder.** Before launch, replace all fabricated content (example press items, placeholder pricing, dummy affiliate URLs, sample guide PDFs) with real content.
 
-### Mirror the live page copy into Studio (`seed-page-copy.mjs`)
+### Mirror the live page copy into Studio (`seed-page-copy.mjs`) — SUPERSEDED
 
-This one is NOT placeholder — it copies the actual inline-fallback strings from the `.astro` pages into Sanity so an editor opening a page in Studio sees the live wording instead of a blank field. Run it after re-schematizing a page singleton (and after `studio:deploy`), or any time `/sanity-audit` shows empty fields on home/about/get-started/faculty that should mirror the site.
+**Do not run this with `--apply` any more (2026-08-27).** It fills page-copy fields that Phase 5 of the page-builder conversion removed from the schemas: home's wayfinding / stats / strip copy, about's mission / beliefs / teach / why / faculty band, get-started's request and Calendly copy. That content is now section blocks in each page's **Page sections** array, so applying the script would write unknown fields back into the documents. The script and this entry stay as the record of the 2026-06 editability pass.
+
+To mirror live copy into Studio today, there is nothing to mirror: the sections ARE the copy. If a page ever falls back to `src/lib/default-sections.ts` because its array is empty, re-run that page's `scripts/seed-builder-*.mjs`, which is itself historical (see its header).
 
 ```bash
 node scripts/seed-page-copy.mjs            # dry run: lists the empty fields it would fill

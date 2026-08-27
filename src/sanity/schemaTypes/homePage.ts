@@ -1,14 +1,21 @@
-// Home page singleton — the lay-school home. Holds the hero, the built-in section
-// copy (wayfinding, the stat band, the topics ticker, and the eyebrow/heading
-// labels around the Start-here / Courses / Faculty / Testimonials strips), and the
-// closing CTA. The strips' CARDS come from the catalog collections (courses,
-// faculty, testimonials); the fields here are only the surrounding copy.
+// Home page singleton — the lay-school home. Holds the hero, the closing CTA,
+// and SEO. THE BODY IS NO LONGER HERE: it is the "Page sections" array, built
+// and reordered by the editor.
 //
-// Every field falls back to the literal in src/pages/index.astro when left empty,
-// so the live design is unchanged until an editor overrides it. The church-era
-// fields (Sunday worship band, weekly rhythms, "The Record", Welcome section,
-// seasonal hero, etc.) were removed in the 2026-06 editability pass — the home
-// document held no data in them, so removal is clean (no "unknown field" warnings).
+// 2026-08-27 (Phase 5 of the page-builder conversion): the whole "Page copy"
+// group went away. The wayfinding ledger, the stat band, the topics ticker and
+// the eyebrow/heading/link labels around the Start-here / Courses / Faculty /
+// Testimonials rails are now section blocks in `flexibleSections`, seeded from
+// these fields by scripts/seed-builder-home.mjs and then unset from the dataset
+// by scripts/cleanup-builder-fields.mjs. Nothing read them any more.
+//
+// The hero, the final CTA and the SEO fields stay page-level by decision D2 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md: an editor can
+// rearrange the body, never delete the page's h1.
+//
+// The church-era fields (Sunday worship band, weekly rhythms, "The Record",
+// Welcome section, seasonal hero, etc.) were removed in the 2026-06 editability
+// pass — the home document held no data in them, so removal was clean.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
@@ -21,7 +28,6 @@ export const homePage = defineType({
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'hero', title: 'Hero' },
-    { name: 'content', title: 'Page copy' },
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
     { name: 'seo', title: 'SEO' },
@@ -43,61 +49,8 @@ export const homePage = defineType({
     defineField({ name: 'heroSecondaryLabel', title: 'Hero secondary button', type: 'string', group: 'hero', description: 'The outlined button label (links to Get Started). Leave empty for "Book a free intro".' }),
     defineField({ name: 'nextCohortLabel', title: '"Next cohort" label', type: 'string', group: 'hero', description: 'The small label before the next-term date under the hero. The date, term, and city come from the Term and Site Settings, not here. Leave empty for "Next cohort begins".' }),
 
-    // ---- Page copy ----
-    defineField({
-      name: 'wayfinding',
-      title: 'Wayfinding steps',
-      type: 'array',
-      group: 'content',
-      description: 'The "where to begin" row under the hero. Numbered automatically (01, 02, ...). Leave empty for the built-in four.',
-      of: [defineArrayMember({
-        type: 'object',
-        name: 'wayfindingStep',
-        fields: [
-          defineField({ name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required() }),
-          defineField({ name: 'body', title: 'One-line description', type: 'string' }),
-          defineField({ name: 'href', title: 'Link', type: 'string', description: 'An internal path like /courses, or a full URL.' }),
-        ],
-        preview: { select: { title: 'title', subtitle: 'href' } },
-      })],
-    }),
-    defineField({ name: 'startHereEyebrow', title: 'Start-here — eyebrow', type: 'string', group: 'content', description: 'Label over the "a few courses to begin with" rail. Leave empty for "Start here".' }),
-    defineField({ name: 'startHereHeadline', title: 'Start-here — headline', type: 'string', group: 'content' }),
-    defineField({
-      name: 'stats',
-      title: 'Stat band',
-      type: 'array',
-      group: 'content',
-      description: 'The at-a-glance figures band. Each is a big value + a label. Leave empty for the built-in four.',
-      of: [defineArrayMember({
-        type: 'object',
-        name: 'stat',
-        fields: [
-          defineField({ name: 'value', title: 'Value', type: 'string', validation: (Rule) => Rule.required(), description: 'e.g. "100%", "In person", "Need-based".' }),
-          defineField({ name: 'label', title: 'Label', type: 'string', validation: (Rule) => Rule.required() }),
-          defineField({ name: 'count', title: 'Count up on scroll', type: 'boolean', initialValue: false, description: 'Animate the number counting up. Only works for number values like "100%".' }),
-        ],
-        preview: { select: { title: 'value', subtitle: 'label' } },
-      })],
-    }),
-    defineField({
-      name: 'tickerTopics',
-      title: 'Topics ticker',
-      type: 'array',
-      group: 'content',
-      description: 'The slowly-scrolling list of subjects the Academy teaches (decorative). Leave empty for the built-in list.',
-      of: [defineArrayMember({ type: 'string' })],
-    }),
-    defineField({ name: 'coursesEyebrow', title: 'Courses strip — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'coursesHeadline', title: 'Courses strip — headline', type: 'string', group: 'content' }),
-    defineField({ name: 'coursesLinkLabel', title: 'Courses strip — link label', type: 'string', group: 'content', description: 'The "see all" link. Leave empty for "See all courses".' }),
-    defineField({ name: 'facultyEyebrow', title: 'Faculty strip — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'facultyHeadline', title: 'Faculty strip — headline', type: 'string', group: 'content' }),
-    defineField({ name: 'facultyLinkLabel', title: 'Faculty strip — link label', type: 'string', group: 'content', description: 'Leave empty for "Meet the faculty".' }),
-    defineField({ name: 'testimonialsEyebrow', title: 'Testimonials strip — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'testimonialsHeadline', title: 'Testimonials strip — headline', type: 'string', group: 'content' }),
-
     // ---- Page sections ----
+    // The whole body of the home page lives here now (2026-08-27, Phase 5).
     defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: FLEXIBLE_SECTIONS_DESCRIPTION, of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
 
     // ---- Final CTA ----

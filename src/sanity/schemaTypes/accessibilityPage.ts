@@ -1,14 +1,17 @@
 // Accessibility statement page singleton. Route: /accessibility.
-// Mirrors privacyPage: a Portable Text body + a "last reviewed" date, editable
-// by the faculty. One instance only; singleton enforcement in sanity.config.ts.
+// Mirrors privacyPage. One instance only; singleton enforcement in
+// sanity.config.ts. Safe to edit by hand.
 //
-// The site ships a complete, on-brand statement as a STATIC fallback in
-// src/pages/accessibility.astro, so the page is live and accurate before this
-// doc is ever created. Every field here is optional: an editor can override
-// just the hero/SEO and keep the default body, or replace the whole statement.
-// Safe to edit by hand.
+// 2026-08-27 (Phase 5 of the page-builder conversion): the statement text and
+// its "last reviewed" date live on this page's `sectionLegalBody` block in "Page
+// sections" now, so the old page-level `body` and `lastUpdated` fields (and the
+// "Content" group) went away. scripts/seed-builder-accessibility.mjs copied the
+// values across; scripts/cleanup-builder-fields.mjs unset the originals.
+//
+// The site still ships a complete, on-brand statement as the block's built-in
+// fallback, so the page is live and accurate even with an empty body.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const accessibilityPage = defineType({
@@ -20,7 +23,6 @@ export const accessibilityPage = defineType({
   groups: [
     { name: 'seo', title: 'SEO' },
     { name: 'hero', title: 'Hero' },
-    { name: 'content', title: 'Content' },
     { name: 'sections', title: 'Page sections' },
   ],
   fields: [
@@ -89,52 +91,7 @@ export const accessibilityPage = defineType({
       description: 'A single word from the headline to render in the script accent font. Must match exactly. Leave blank to skip.',
     }),
 
-    // Content
-    defineField({
-      name: 'lastUpdated',
-      title: 'Last reviewed date',
-      type: 'date',
-      group: 'content',
-      description: 'Shown at the top of the statement. Update it whenever you review or change the statement so visitors can see it is current.',
-    }),
-    defineField({
-      name: 'body',
-      title: 'Statement body',
-      type: 'array',
-      group: 'content',
-      description: 'The full accessibility statement. Leave this empty to show the site\'s built-in default statement. Use headings (H2/H3) to organize sections.',
-      of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [
-            { title: 'Paragraph', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [
-            { title: 'Bullet', value: 'bullet' },
-            { title: 'Numbered', value: 'number' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Bold', value: 'strong' },
-              { title: 'Italic', value: 'em' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
-                  { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false },
-                ],
-              },
-            ],
-          },
-        }),
-      ],
-    }),
+    // The statement text itself is the "Policy or statement" block below.
     defineField({
       name: 'flexibleSections',
       title: 'Page sections',

@@ -1,3 +1,12 @@
+// SUPERSEDED 2026-08-27, DO NOT RUN WITH --apply. Most of the fields below
+// (home's wayfinding / stats / strip copy, about's mission / beliefs / teach /
+// why / faculty band, get-started's request and Calendly copy) were removed from
+// the schemas in Phase 5 of the page-builder conversion, and their content lives
+// in each page's "Page sections" array. Applying this script now would write
+// UNKNOWN fields back into the documents, which is exactly the mess Phase 5
+// cleaned up. It stays in the tree as the record of the 2026-06 editability
+// pass. To mirror live copy into Studio today, edit the section blocks.
+//
 // Seed the built-in page copy into Sanity so Studio mirrors the live site.
 //
 //   node scripts/seed-page-copy.mjs            (dry run: shows what would be set)

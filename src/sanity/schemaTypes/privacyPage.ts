@@ -1,9 +1,16 @@
 // Privacy policy page singleton. Route: /privacy.
-// Portable Text body + last-updated date, editable by the site editor.
 // One instance only; singleton enforcement in sanity.config.ts.
 // Safe to edit by hand.
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the policy text and its
+// last-updated date live on this page's `sectionLegalBody` block in "Page
+// sections" now, so the old page-level `body` and `lastUpdated` fields (and the
+// "Content" group that held them) went away. scripts/seed-builder-privacy.mjs
+// copied the values into the block; scripts/cleanup-builder-fields.mjs unset the
+// originals. If an editor empties the block's body, the built-in policy in
+// LegalBodyBlock.astro renders, so the page is never blank.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const privacyPage = defineType({
@@ -15,7 +22,6 @@ export const privacyPage = defineType({
   groups: [
     { name: 'seo', title: 'SEO' },
     { name: 'hero', title: 'Hero' },
-    { name: 'content', title: 'Content' },
     { name: 'sections', title: 'Page sections' },
   ],
   fields: [
@@ -84,54 +90,7 @@ export const privacyPage = defineType({
       description: 'A single word from the headline to render in Pinyon Script. Must match exactly. Leave blank to skip.',
     }),
 
-    // Content
-    defineField({
-      name: 'lastUpdated',
-      title: 'Last updated date',
-      type: 'date',
-      group: 'content',
-      description: 'Shown at the top of the policy. Update whenever the policy content changes.',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'body',
-      title: 'Policy body',
-      type: 'array',
-      group: 'content',
-      description: 'The full privacy policy text. Use headings (H2/H3) to organize sections.',
-      of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [
-            { title: 'Paragraph', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [
-            { title: 'Bullet', value: 'bullet' },
-            { title: 'Numbered', value: 'number' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Bold', value: 'strong' },
-              { title: 'Italic', value: 'em' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
-                  { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false },
-                ],
-              },
-            ],
-          },
-        }),
-      ],
-      validation: (Rule) => Rule.required(),
-    }),
+    // The policy text itself is the "Policy or statement" block below.
     defineField({
       name: 'flexibleSections',
       title: 'Page sections',

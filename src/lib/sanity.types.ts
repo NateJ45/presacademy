@@ -776,26 +776,6 @@ export type AccessibilityPage = {
     _type: 'image';
   };
   heroScriptAccent?: string;
-  lastUpdated?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h2' | 'h3';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      openInNewTab?: boolean;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -933,26 +913,6 @@ export type PrivacyPage = {
     _type: 'image';
   };
   heroScriptAccent?: string;
-  lastUpdated?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal' | 'h2' | 'h3';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      openInNewTab?: boolean;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -1611,6 +1571,42 @@ export type SectionForm = {
   fallbackLabel?: string;
 };
 
+export type Form = {
+  _id: string;
+  _type: 'form';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  archived?: boolean;
+  title?: string;
+  slug?: Slug;
+  heading?: string;
+  intro?: string;
+  mode?: 'native' | 'embed';
+  fields?: Array<{
+    label?: string;
+    name?: string;
+    type?: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'date';
+    required?: boolean;
+    placeholder?: string;
+    helpText?: string;
+    options?: Array<string>;
+    width?: 'full' | 'half';
+    _type: 'formField';
+    _key: string;
+  }>;
+  submitLabel?: string;
+  successMessage?: string;
+  consentNote?: string;
+  provider?: {
+    service?: 'web3forms' | 'formspree' | 'email';
+    accessKey?: string;
+    notifyEmail?: string;
+  };
+  embedUrl?: string;
+  embedHtml?: string;
+};
+
 export type SectionCtaBand = {
   _type: 'sectionCtaBand';
   eyebrow?: string;
@@ -2243,13 +2239,6 @@ export type ForYouPage = {
   >;
   finalCta?: CtaBlock;
   personasIntro?: string;
-  personas?: Array<{
-    label?: string;
-    promise?: string;
-    cta?: CtaBlock;
-    _type: 'persona';
-    _key: string;
-  }>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -2391,23 +2380,6 @@ export type GetStartedPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
-  requestForm?: FormReference;
-  calendlyUrl?: string;
-  requestEyebrow?: string;
-  requestHeadline?: string;
-  requestBody?: string;
-  calendlyEyebrow?: string;
-  calendlyHeadline?: string;
-  calendlyBody?: string;
-  visitClassBody?: string;
-  syllabusBody?: string;
-  stepsHeadline?: string;
-  steps?: Array<{
-    title?: string;
-    body?: string;
-    _type: 'getStartedStep';
-    _key: string;
-  }>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -2550,16 +2522,6 @@ export type PricingPage = {
   >;
   finalCta?: CtaBlock;
   pricingIntro?: string;
-  scholarshipEyebrow?: string;
-  scholarshipHeadline?: string;
-  scholarshipBody?: string;
-  footnote?: string;
-  stats?: Array<{
-    value?: string;
-    label?: string;
-    _type: 'pricingStat';
-    _key: string;
-  }>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -2846,8 +2808,6 @@ export type CoursesPage = {
   >;
   finalCta?: CtaBlock;
   catalogIntro?: string;
-  startHereEyebrow?: string;
-  startHereHeadline?: string;
   emptyState?: string;
   detailTrustLine?: string;
   detailExpressLabel?: string;
@@ -2887,11 +2847,6 @@ export type EventsPage = {
   };
   specialEyebrow?: string;
   specialHeadline?: string;
-  upcomingEyebrow?: string;
-  upcomingHeadline?: string;
-  upcomingEmpty?: string;
-  rhythmsEyebrow?: string;
-  rhythmsHeadline?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -3038,21 +2993,7 @@ export type ContactPage = {
     _type: 'image';
   };
   heroScriptAccent?: string;
-  formIntroNote?: string;
-  contactForm?: FormReference;
-  whatToExpectEyebrow?: string;
   note?: string;
-  whoToReachLabel?: string;
-  contactReasons?: Array<{
-    label?: string;
-    value?: string;
-    href?: string;
-    _type: 'contactReason';
-    _key: string;
-  }>;
-  gettingHereLabel?: string;
-  gettingHereBody?: string;
-  formSectionHeadline?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -3166,42 +3107,6 @@ export type ContactPage = {
   >;
 };
 
-export type Form = {
-  _id: string;
-  _type: 'form';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  archived?: boolean;
-  title?: string;
-  slug?: Slug;
-  heading?: string;
-  intro?: string;
-  mode?: 'native' | 'embed';
-  fields?: Array<{
-    label?: string;
-    name?: string;
-    type?: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'date';
-    required?: boolean;
-    placeholder?: string;
-    helpText?: string;
-    options?: Array<string>;
-    width?: 'full' | 'half';
-    _type: 'formField';
-    _key: string;
-  }>;
-  submitLabel?: string;
-  successMessage?: string;
-  consentNote?: string;
-  provider?: {
-    service?: 'web3forms' | 'formspree' | 'email';
-    accessKey?: string;
-    notifyEmail?: string;
-  };
-  embedUrl?: string;
-  embedHtml?: string;
-};
-
 export type FaqPage = {
   _id: string;
   _type: 'faqPage';
@@ -3231,7 +3136,6 @@ export type FaqPage = {
     _type: 'image';
   };
   heroScriptAccent?: string;
-  categoryOrder?: Array<string>;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaScriptAccent?: string;
@@ -3364,27 +3268,6 @@ export type AboutPage = {
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
-  missionEyebrow?: string;
-  missionStatement?: string;
-  missionBody?: string;
-  believeEyebrow?: string;
-  believeHeadline?: string;
-  beliefs?: Array<{
-    title?: string;
-    body?: string;
-    _type: 'belief';
-    _key: string;
-  }>;
-  believeFootnote?: string;
-  teachEyebrow?: string;
-  teachHeadline?: string;
-  teachBody?: string;
-  whyEyebrow?: string;
-  whyHeadline?: string;
-  whyBody?: string;
-  facultyBandEyebrow?: string;
-  facultyBandHeadline?: string;
-  facultyBandCtaLabel?: string;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -3537,31 +3420,6 @@ export type HomePage = {
   heroPrimaryLabel?: string;
   heroSecondaryLabel?: string;
   nextCohortLabel?: string;
-  wayfinding?: Array<{
-    title?: string;
-    body?: string;
-    href?: string;
-    _type: 'wayfindingStep';
-    _key: string;
-  }>;
-  startHereEyebrow?: string;
-  startHereHeadline?: string;
-  stats?: Array<{
-    value?: string;
-    label?: string;
-    count?: boolean;
-    _type: 'stat';
-    _key: string;
-  }>;
-  tickerTopics?: Array<string>;
-  coursesEyebrow?: string;
-  coursesHeadline?: string;
-  coursesLinkLabel?: string;
-  facultyEyebrow?: string;
-  facultyHeadline?: string;
-  facultyLinkLabel?: string;
-  testimonialsEyebrow?: string;
-  testimonialsHeadline?: string;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -3893,6 +3751,7 @@ export type AllSanitySchemaTypes =
   | SectionStats
   | SectionFeatureCards
   | SectionForm
+  | Form
   | SectionCtaBand
   | SectionQuote
   | SectionCardGrid
@@ -3921,7 +3780,6 @@ export type AllSanitySchemaTypes =
   | CoursesPage
   | EventsPage
   | ContactPage
-  | Form
   | FaqPage
   | AboutPage
   | HomePage

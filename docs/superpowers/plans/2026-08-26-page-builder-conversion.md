@@ -1,6 +1,11 @@
 # Page-builder conversion plan — same pixels, editor-owned structure
 
-**Written 2026-08-26. Status: PLANNED, not started.**
+**Written 2026-08-26. STATUS: COMPLETE (all six phases, 2026-08-26 and
+2026-08-27).** Phases 0 through 4 converted all thirteen singletons on
+2026-08-26; Phase 5 (cleanup and docs) landed 2026-08-27 after a full dataset
+export to `backups/pre-phase5-2026-08-26.tar.gz`. This file is kept as the
+record of the decisions, not as a to-do list. What actually shipped, phase by
+phase, is in `docs/PENDING.md`'s "Recently closed" entry.
 
 Convert the 13 bespoke singleton pages into a Sanity page-builder (the WCP
 shape: one renderer, sections arrays, brand-locked schemas) **without changing

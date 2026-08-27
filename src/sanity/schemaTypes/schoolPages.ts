@@ -7,8 +7,24 @@
 // To add another page: call definePageSingleton(...), then register the export
 // in index.ts (schemaTypes), structure.ts (SINGLETON_TYPES + a Pages item) and
 // sanity.config.ts (SINGLETON_TYPES set + urlForDoc case).
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the per-page "extras"
+// slimmed right down. Every band of body copy these singletons used to carry
+// (pricing's scholarship promise and stat band, get-started's request panel and
+// steps, for-you's personas, courses' start-here rail) is a section block in
+// `flexibleSections` now, seeded from the old fields by the seed-builder-*.mjs
+// scripts and then unset from the dataset by scripts/cleanup-builder-fields.mjs.
+// Get Started's whole "Form & scheduling" group went with them: the form
+// reference and the Calendly URL are fields on its `sectionRequestPanel` block.
+//
+// What deliberately stayed: the hero fields, the closing-CTA fields, SEO, and
+// the handful of extras a RENDERER still reads — `pricingIntro`,
+// `personasIntro` and `listIntro` (the hero map's intro paragraph),
+// `aggregateTrustLine` (the faculty hero's trust line), both `emptyState`
+// fields and `emptyStateBody` (the pinned code regions), and the three
+// `detail*` fields the course DETAIL route renders.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 interface PageDefaults {
@@ -142,8 +158,6 @@ export const coursesPage = definePageSingleton('coursesPage', 'Courses', {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
     defineField({ name: 'catalogIntro', title: 'Catalog intro', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'startHereEyebrow', title: '"Start here" eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'startHereHeadline', title: '"Start here" headline', type: 'string', group: 'content' }),
     defineField({ name: 'emptyState', title: 'Empty-state line', type: 'string', description: 'Shown when no courses match the filters.', group: 'content' }),
     defineField({ name: 'detailTrustLine', title: 'Course page: trust line', type: 'string', description: 'The reassurance line under the buttons on a single course page. Example: "You can visit the first session free before you decide."', group: 'content' }),
     defineField({ name: 'detailExpressLabel', title: 'Course page: primary button', type: 'string', description: 'The main aside button on a course page. Leave empty for "Express interest".', group: 'content' }),
@@ -174,28 +188,6 @@ export const pricingPage = definePageSingleton('pricingPage', 'Pricing & Scholar
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
     defineField({ name: 'pricingIntro', title: 'Pricing intro', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'scholarshipEyebrow', title: 'Scholarships eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'scholarshipHeadline', title: 'Scholarships headline', type: 'string', group: 'content' }),
-    defineField({ name: 'scholarshipBody', title: 'Scholarships body', type: 'text', rows: 4, group: 'content' }),
-    defineField({ name: 'footnote', title: 'Footnote', type: 'text', rows: 2, group: 'content' }),
-    defineField({
-      name: 'stats',
-      title: 'Heritage band stats',
-      type: 'array',
-      group: 'content',
-      description: 'The small row of value + label pairs near the bottom of the page (for example "Free / Sit in on a class first").',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'pricingStat',
-          fields: [
-            defineField({ name: 'value', title: 'Value', type: 'string', validation: (R) => R.required() }),
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
-          ],
-          preview: { select: { title: 'value', subtitle: 'label' } },
-        }),
-      ],
-    }),
     ...finalCtaText(),
   ],
 });
@@ -205,36 +197,10 @@ export const getStartedPage = definePageSingleton('getStartedPage', 'Get Started
   heroHeadline: 'Tell us what you want to learn',
   heroSubhead: 'Request information, book a free intro, or download a course syllabus. No application fee, no pressure.',
 }, {
-  groups: [{ name: 'form', title: 'Form & scheduling' }, { name: 'content', title: 'Page copy' }],
+  groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
-    defineField({ name: 'requestForm', title: 'Express-interest form', type: 'reference', to: [{ type: 'form' }], group: 'form', description: 'The request-info form. Leave empty to show a direct email link.' }),
-    defineField({ name: 'calendlyUrl', title: 'Calendly URL', type: 'url', group: 'form', description: 'The free-intro booking link. Leave empty to use the site default (PUBLIC_CALENDLY_URL).' }),
-    defineField({ name: 'requestEyebrow', title: 'Request-info panel eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'requestHeadline', title: 'Request-info panel headline', type: 'string', group: 'content' }),
-    defineField({ name: 'requestBody', title: 'Request-info panel body', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'calendlyEyebrow', title: 'Free-intro eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'calendlyHeadline', title: 'Free-intro headline', type: 'string', group: 'content' }),
-    defineField({ name: 'calendlyBody', title: 'Free-intro body', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'visitClassBody', title: '"Visit a class" body', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'syllabusBody', title: 'Syllabus-download body', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'stepsHeadline', title: 'What happens next headline', type: 'string', group: 'content' }),
-    defineField({
-      name: 'steps',
-      title: 'What happens next',
-      type: 'array',
-      group: 'content',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'getStartedStep',
-          fields: [
-            defineField({ name: 'title', title: 'Step title', type: 'string', validation: (R) => R.required() }),
-            defineField({ name: 'body', title: 'Step body', type: 'text', rows: 2 }),
-          ],
-          preview: { select: { title: 'title', subtitle: 'body' } },
-        }),
-      ],
-    }),
+    // The request panel (form reference, Calendly URL, all its copy) and the
+    // "what happens next" steps are Page sections blocks now (2026-08-27).
     ...finalCtaText(),
   ],
 });
@@ -247,25 +213,7 @@ export const forYouPage = definePageSingleton('forYouPage', 'For You', {
   groups: [{ name: 'content', title: 'Page copy' }],
   fields: [
     defineField({ name: 'personasIntro', title: 'Personas intro', type: 'text', rows: 2, group: 'content' }),
-    defineField({
-      name: 'personas',
-      title: 'Personas',
-      type: 'array',
-      group: 'content',
-      description: 'Each persona card: who it is for, a one-line promise, and a single CTA.',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'persona',
-          fields: [
-            defineField({ name: 'label', title: 'Who it is for', type: 'string', validation: (R) => R.required(), description: 'Example: "The small-group leader".' }),
-            defineField({ name: 'promise', title: 'One-line promise', type: 'text', rows: 2 }),
-            defineField({ name: 'cta', title: 'CTA', type: 'ctaBlock' }),
-          ],
-          preview: { select: { title: 'label', subtitle: 'promise' } },
-        }),
-      ],
-    }),
+    // The persona cards themselves are a Page sections block now (2026-08-27).
     ...finalCtaText(),
   ],
 });

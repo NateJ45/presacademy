@@ -1,14 +1,18 @@
-// About page singleton — the school's identity page. Hero + the editorial body
-// (mission, the "what we believe" distinctives, how we teach, why we exist, and
-// the faculty band) + closing CTA. Every field falls back to the literal in
-// src/pages/about.astro when empty, so the live design is unchanged until edited.
+// About page singleton — the school's identity page. Hero + "Page sections" +
+// closing CTA.
+//
+// 2026-08-27 (Phase 5 of the page-builder conversion): the whole "Page copy"
+// group went away. The mission, the "what we believe" distinctives, the
+// teach/why pair and the faculty band are now section blocks in
+// `flexibleSections`, seeded from these fields by scripts/seed-builder-about.mjs
+// and then unset from the dataset by scripts/cleanup-builder-fields.mjs.
 //
 // The church / template-era fields (the building, who-we-are, mural + feature
 // photos, hero image, hero/CTA script accents) were removed in the 2026-06
-// editability pass; the about document held no data in them, so removal is clean
-// (no "unknown field" warnings).
+// editability pass; the about document held no data in them, so removal was
+// clean (no "unknown field" warnings).
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField } from 'sanity';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const aboutPage = defineType({
@@ -18,7 +22,6 @@ export const aboutPage = defineType({
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'hero', title: 'Hero' },
-    { name: 'content', title: 'Page copy' },
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
     { name: 'seo', title: 'SEO' },
@@ -29,45 +32,10 @@ export const aboutPage = defineType({
     defineField({ name: 'heroHeadline', title: 'Hero headline', type: 'string', group: 'hero', description: 'The big opening line.', validation: (Rule) => Rule.required() }),
     defineField({ name: 'heroSubhead', title: 'Hero subhead', type: 'text', rows: 3, group: 'hero' }),
 
-    // ---- Page copy ----
-    // Mission
-    defineField({ name: 'missionEyebrow', title: 'Mission — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'missionStatement', title: 'Mission — statement', type: 'text', rows: 3, group: 'content', description: 'The big mission line.' }),
-    defineField({ name: 'missionBody', title: 'Mission — body', type: 'text', rows: 4, group: 'content' }),
-    // What we believe
-    defineField({ name: 'believeEyebrow', title: 'What we believe — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'believeHeadline', title: 'What we believe — headline', type: 'string', group: 'content' }),
-    defineField({
-      name: 'beliefs',
-      title: 'What we believe — points',
-      type: 'array',
-      group: 'content',
-      description: 'The distinctives, numbered automatically (01, 02, ...). Leave empty for the built-in four.',
-      of: [defineArrayMember({
-        type: 'object',
-        name: 'belief',
-        fields: [
-          defineField({ name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required() }),
-          defineField({ name: 'body', title: 'Body', type: 'text', rows: 2 }),
-        ],
-        preview: { select: { title: 'title', subtitle: 'body' } },
-      })],
-    }),
-    defineField({ name: 'believeFootnote', title: 'What we believe — footnote', type: 'text', rows: 2, group: 'content', description: 'The standards line under the points.' }),
-    // How we teach
-    defineField({ name: 'teachEyebrow', title: 'How we teach — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'teachHeadline', title: 'How we teach — headline', type: 'string', group: 'content' }),
-    defineField({ name: 'teachBody', title: 'How we teach — body', type: 'text', rows: 4, group: 'content' }),
-    // Why we exist
-    defineField({ name: 'whyEyebrow', title: 'Why we exist — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'whyHeadline', title: 'Why we exist — headline', type: 'string', group: 'content' }),
-    defineField({ name: 'whyBody', title: 'Why we exist — body', type: 'text', rows: 4, group: 'content', description: 'Names the funder (the Presbytery of Cincinnati). Update if the funding arrangement changes.' }),
-    // Faculty band
-    defineField({ name: 'facultyBandEyebrow', title: 'Faculty band — eyebrow', type: 'string', group: 'content' }),
-    defineField({ name: 'facultyBandHeadline', title: 'Faculty band — headline', type: 'string', group: 'content' }),
-    defineField({ name: 'facultyBandCtaLabel', title: 'Faculty band — button label', type: 'string', group: 'content', description: 'The button links to the Faculty page. Leave empty for "Meet the faculty".' }),
-
     // ---- Page sections ----
+    // The whole body of the About page lives here now (2026-08-27, Phase 5).
+    // The "why we exist" copy names the funder (the Presbytery of Cincinnati);
+    // it is a section block's field today, so update it there.
     defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: FLEXIBLE_SECTIONS_DESCRIPTION, of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
 
     // ---- Final CTA ----

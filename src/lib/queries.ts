@@ -208,10 +208,9 @@ export async function getBeliefsPage() {
 // HomeHero.astro and the body's in DEFAULT_SECTIONS; the section blocks fetch
 // their own cards from the catalog collections below.
 //
-// The wayfinding / stats / tickerTopics / strip-copy fields are still projected
-// because the documents still carry them (decision D4, additive migration: they
-// are unset in the cleanup phase, not before). Nothing reads them any more
-// except scripts/seed-builder-home.mjs.
+// The wayfinding / stats / tickerTopics / strip-copy fields left this
+// projection on 2026-08-27 (Phase 5) along with the schema fields and the data:
+// every one of them is a section block's field now.
 //
 // Takes the optional draft fetcher, as it always has.
 
@@ -227,14 +226,6 @@ export async function getHomePage(fetcher = sanityFetch) {
     heroPrimaryLabel,
     heroSecondaryLabel,
     nextCohortLabel,
-    wayfinding[]{ title, body, href },
-    startHereEyebrow,
-    startHereHeadline,
-    stats[]{ value, label, count },
-    tickerTopics,
-    coursesEyebrow, coursesHeadline, coursesLinkLabel,
-    facultyEyebrow, facultyHeadline, facultyLinkLabel,
-    testimonialsEyebrow, testimonialsHeadline,
     finalCtaEyebrow, finalCtaHeadline, finalCtaSubhead,
     finalCta${CTA_PROJECTION},
     finalCtaBackgroundImage${IMAGE_PROJECTION},
@@ -253,13 +244,6 @@ export async function getAboutPage(fetcher = sanityFetch) {
     seoDescription,
     seoImage${IMAGE_PROJECTION},
     heroEyebrow, heroHeadline, heroSubhead,
-    missionEyebrow, missionStatement, missionBody,
-    believeEyebrow, believeHeadline,
-    beliefs[]{ title, body },
-    believeFootnote,
-    teachEyebrow, teachHeadline, teachBody,
-    whyEyebrow, whyHeadline, whyBody,
-    facultyBandEyebrow, facultyBandHeadline, facultyBandCtaLabel,
     finalCtaEyebrow, finalCtaHeadline, finalCtaSubhead,
     finalCtaBackgroundImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
@@ -279,7 +263,6 @@ export async function getFaqPage(fetcher = sanityFetch) {
     heroEyebrow, heroHeadline, heroSubhead, heroKeyword,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
-    categoryOrder,
     // coalesce: prefer the new categoryRef document title; fall back to the
     // legacy hardcoded string so existing items keep grouping correctly until
     // editors migrate them to the reference field.
@@ -356,7 +339,6 @@ export async function getContactPage(fetcher = sanityFetch) {
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
-    contactForm->${FORM_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
 }
@@ -439,8 +421,6 @@ export async function getPrivacyPage(fetcher = sanityFetch) {
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
-    lastUpdated,
-    body,
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
 }
@@ -457,8 +437,6 @@ export async function getAccessibilityPage(fetcher = sanityFetch) {
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
-    lastUpdated,
-    body,
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
 }
@@ -898,9 +876,7 @@ export async function getGetStartedPage(fetcher = sanityFetch) {
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
-    requestForm->${FORM_PROJECTION},
     finalCta${CTA_PROJECTION},
-    steps[]{ _key, title, body },
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
 }
@@ -912,7 +888,6 @@ export async function getForYouPage(fetcher = sanityFetch) {
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
-    personas[]{ _key, label, promise, cta${CTA_PROJECTION} },
     flexibleSections[]${SECTION_MEMBERS}
   }`, {}, null);
 }

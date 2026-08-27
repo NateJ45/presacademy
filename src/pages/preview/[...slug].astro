@@ -14,11 +14,14 @@
       data, in full fidelity. Converting a page upgrades its preview
       automatically; add its type to CONVERTED_PAGE_FETCHERS below in the same
       commit.
-    - The generic branch below (hero fields + flexibleSections + closing CTA,
-      with a note saying the code-owned middle is missing) is therefore reached
-      only by `404`, the one singleton the conversion never touched. It stays
-      because that is what it is for, and because a new singleton would land
-      there before it converts.
+    - The generic branch below (hero fields + flexibleSections + closing CTA) is
+      therefore reached only by `404`, the one singleton the conversion never
+      touched, and by any new singleton before it converts. It stays because
+      that is what it is for. Its note used to say that a code-owned page middle
+      renders on the live site only; that stopped being true of every other page
+      when the conversion finished, so it was reworded in Phase 5 (2026-08-27)
+      to describe what this branch actually shows. The day `404` earns a
+      full-fidelity preview of its own, the branch and the note can both go.
     - Any other slug renders the matching custom `page` doc (hero + sections),
       the full page-builder surface.
 
@@ -318,9 +321,9 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
     generic && singletonType && (
       <div class="mx-auto max-w-3xl px-4 py-6">
         <p class="rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm text-ink/80">
-          The built-in sections of this page (course rails, stats, filters, contact details) render
-          on the live site only. What previews here is what you can edit: the hero above, the
-          flexible sections below, and the closing call to action.
+          This page has not moved to the page builder yet, so it previews as its editable surface
+          only: the hero above, any page sections below, and the closing call to action. Parts of
+          it that are drawn in code render on the live site.
         </p>
       </div>
     )

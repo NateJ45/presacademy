@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// HISTORICAL, kept for the record. RAN 2026-08-26 against production. This one
+// never wrote anything and still runs (it reads only `flexibleSections` and
+// `emptyStateBody`, both of which survived Phase 5's cleanup on 2026-08-27); its
+// eleven siblings read fields that are now gone. Kept as the record of why this
+// page had nothing to convert.
 // =============================================================================
 // seed-builder-resources.mjs — the resources page's builder seed (2026-08-26)
 // =============================================================================
