@@ -1,11 +1,12 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// with-workerd.mjs — run a command with a workerd that actually starts
+// with-workerd.mjs - run a command with a workerd that actually starts
 // =============================================================================
-// WHY THIS EXISTS (2026-08-25/26)
+// WHY THIS EXISTS (ported into the starter 2026-08-27; original 2026-08-25/26)
 //
 // `astro build` prerenders the static pages by booting the Cloudflare runtime
 // (workerd) through @cloudflare/vite-plugin. On Windows the workerd version
-// the plugin pins (hoisted to node_modules/@cloudflare/workerd-windows-64)
+// that plugin pins (hoisted to node_modules/@cloudflare/workerd-windows-64)
 // aborts immediately:
 //
 //     *** std::terminate() called with no exception
@@ -14,8 +15,21 @@
 // The NEWER workerd that ships inside wrangler runs the very same config fine.
 // Miniflare lets you point at a specific binary with MINIFLARE_WORKERD_PATH,
 // so this wrapper finds wrangler's copy and sets that variable before handing
-// off to the real command. Without it, `npm run build` (and therefore
-// `npm run deploy`) fails on a Windows machine.
+// off to the real command.
+//
+// STATUS IN THIS STARTER (2026-08-27): a no-op safety net, not a live fix.
+// The starter is on Astro 6.3 with @astrojs/cloudflare 13.5.5, which does not
+// route the prerender through @cloudflare/vite-plugin, so the crash does not
+// occur and `npm run build` never needs this wrapper. It is installed now
+// because the crash appears the moment a project takes the Astro 7 /
+// adapter 14 upgrade (that is exactly where presacademy hit it). When this
+// starter takes that upgrade, wire it in:
+//
+//     "build": "node scripts/with-workerd.mjs astro build"
+//
+// Until then, leave package.json alone; running the wrapper by hand is
+// harmless because it changes nothing when the wrangler binary is absent or
+// the platform is not Windows.
 //
 // Deliberately conservative:
 //   - Windows only. The crash is a Windows binary problem; Linux CI boots the
@@ -51,7 +65,7 @@ if (process.platform === 'win32' && !env.MINIFLARE_WORKERD_PATH) {
   );
   if (existsSync(wranglerWorkerd)) {
     env.MINIFLARE_WORKERD_PATH = wranglerWorkerd;
-    console.log('[with-workerd] using wrangler\'s workerd (the plugin\'s copy crashes on Windows)');
+    console.log("[with-workerd] using wrangler's workerd (the plugin's copy crashes on Windows)");
   }
 }
 

@@ -1,17 +1,32 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// sanity-lib.mjs — shared plumbing for the Sanity seed/patch scripts
+// sanity-lib.mjs - shared plumbing for the Sanity seed/patch scripts
 // =============================================================================
-// Ported from the WCP site repo's patch-lib.mjs + pagebuilder-lib.mjs
-// (2026-08-25). Gives every script the same three things so they stop
-// re-inlining them:
+// WHY THIS EXISTS (ported into the starter 2026-08-27; original 2026-08-25,
+// itself distilled from the WCP repo's patch-lib.mjs + pagebuilder-lib.mjs)
+//
+// Gives every seed/patch script the same three things so they stop re-inlining
+// them:
 //
 //   1. A token-authed client built from the root .env.
 //   2. A DRY-RUN-BY-DEFAULT apply gate: scripts print exactly what they would
-//      change and write nothing unless run with --apply (the convention the
-//      existing presacademy seeds already use).
+//      change and write nothing unless run with --apply.
 //   3. Portable Text builders, _key generation, and an IDEMPOTENT asset
 //      uploader (re-runs never re-upload: asset ids cache in
 //      scripts/.asset-map.json, which is gitignored).
+//
+// ENV RECONCILIATION (the 2026-08-27 port decision)
+// presacademy's copy carried its own inline .env parser. The starter already
+// ships scripts/lib/loadEnv.mjs, so this file uses THAT and the duplicate
+// parser is gone. One parser, one set of rules to remember. loadEnv is the
+// keeper because it is the stricter of the two: it enforces a KEY shape,
+// strips inline `# comments` from bare values, takes quoted values literally,
+// and gives process.env precedence over .env. The looser parser silently
+// accepted lines like `KEY=value # note` and put the comment IN the token,
+// which is the shape of the .env-quoted-token 401 that cost a WCP session.
+// Downstream sites porting this file must bring loadEnv.mjs with it (or point
+// the import at their own equivalent) - it is the one dependency here beyond
+// @sanity/client.
 //
 // Usage in a script:
 //   import { client, APPLY, apply, done, toPT, p, bullet, h2, key, ref,
@@ -25,28 +40,17 @@ import { readFileSync, existsSync, writeFileSync, createReadStream } from 'node:
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@sanity/client';
+import { loadEnv } from './loadEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(__dirname, '..', '..');
 const ASSET_MAP_PATH = resolve(__dirname, '..', '.asset-map.json');
 
-// --- env: parse root .env, then process.env -----------------------------------
-function parseEnv(p) {
-  if (!existsSync(p)) return {};
-  const out = {};
-  for (const line of readFileSync(p, 'utf-8').split('\n')) {
-    const t = line.trim();
-    if (!t || t.startsWith('#')) continue;
-    const i = t.indexOf('=');
-    if (i === -1) continue;
-    let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
-      v = v.slice(1, -1);
-    out[t.slice(0, i).trim()] = v;
-  }
-  return out;
-}
-const env = { ...parseEnv(resolve(ROOT, '.env')), ...process.env };
+// --- env ---------------------------------------------------------------------
+// loadEnv merges the root .env under process.env (process.env wins) and does
+// not mutate process.env, so importing this file never leaks a token into a
+// child process by accident.
+const env = loadEnv(ROOT);
 
 export const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 export const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
@@ -69,7 +73,7 @@ export const APPLY = process.argv.includes('--apply');
 
 /** Log one planned change; run it only under --apply. */
 export async function apply(label, fn) {
-  console.log(`${APPLY ? '✓' : 'DRY'} ${label}`);
+  console.log(`${APPLY ? 'OK ' : 'DRY'} ${label}`);
   if (APPLY) await fn();
 }
 
@@ -89,7 +93,7 @@ export const key = () => `k${n++}`;
 export const ref = (id) => ({ _type: 'reference', _ref: id });
 
 // --- Portable Text builders --------------------------------------------------
-// Plain text (\n\n paragraph breaks) → Portable Text blocks.
+// Plain text (\n\n paragraph breaks) -> Portable Text blocks.
 export const toPT = (text) =>
   String(text || '')
     .split(/\n{2,}/)
@@ -141,7 +145,13 @@ const spansOf = (parts, markDefs) =>
 /** A normal paragraph block from mixed string/strong()/link() parts. */
 export const p = (...parts) => {
   const markDefs = [];
-  return { _type: 'block', _key: key(), style: 'normal', markDefs, children: spansOf(parts, markDefs) };
+  return {
+    _type: 'block',
+    _key: key(),
+    style: 'normal',
+    markDefs,
+    children: spansOf(parts, markDefs),
+  };
 };
 
 /** A bullet-list item block from mixed parts. */
@@ -170,9 +180,11 @@ export function makeUploader(uploadClient = client) {
   return {
     async upload(relPath) {
       if (map[relPath]) return map[relPath];
-      const asset = await uploadClient.assets.upload('image', createReadStream(resolve(ROOT, relPath)), {
-        filename: relPath.split('/').pop(),
-      });
+      const asset = await uploadClient.assets.upload(
+        'image',
+        createReadStream(resolve(ROOT, relPath)),
+        { filename: relPath.split('/').pop() },
+      );
       map[relPath] = asset._id;
       save();
       return asset._id;
@@ -180,9 +192,11 @@ export function makeUploader(uploadClient = client) {
     async uploadFile(relPath) {
       const cacheKey = `file:${relPath}`;
       if (map[cacheKey]) return map[cacheKey];
-      const asset = await uploadClient.assets.upload('file', createReadStream(resolve(ROOT, relPath)), {
-        filename: relPath.split('/').pop(),
-      });
+      const asset = await uploadClient.assets.upload(
+        'file',
+        createReadStream(resolve(ROOT, relPath)),
+        { filename: relPath.split('/').pop() },
+      );
       map[cacheKey] = asset._id;
       save();
       return asset._id;

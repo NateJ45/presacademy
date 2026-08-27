@@ -100,6 +100,36 @@ Standalone scripts:
   - `node scripts/seed-editability.mjs` is the full editability seed (2026-06-15): render-neutral, only-empty + `createIfNotExists`. Re-run safe.
   - `node scripts/sanity-audit.mjs` (also `/sanity-audit`) reports dataset ground truth.
 
+### Shared-file sync (the site family)
+
+This repo is a member of the cross-repo sync system whose **library of record** is
+`ncs-astro-sanity-starter`. Its `PORTS.md` is the registry: one dated card per portable
+improvement (what it is, why it exists, how to install it) plus a matrix of which repo has
+which. Files the starter owns carry a first-line marker:
+
+```
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+```
+
+Marked here as of 2026-08-27: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
+`scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`.
+`scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
+
+Check for drift with:
+
+```
+NCS_STARTER_DIR=<path-to-starter> node scripts/sync-check.mjs
+```
+
+It diffs every marked file against the starter's copy (line endings normalized, everything
+else byte-exact) and exits 1 on drift. **A marked file is not edited here.** Improve it in
+the starter with a PORTS.md card in the same commit, then pull it back. If a local
+adaptation is genuinely required, drop the marker and record the fork on that card.
+
+`scripts/page-parity.mjs` is deliberately **unmarked**: it is the origin of the starter's
+harness, and both copies accrue site-specific normalizer rules, so it is a ported pattern
+rather than a canonical file.
+
 ## Code conventions
 
 - TypeScript strict mode. No `any`.

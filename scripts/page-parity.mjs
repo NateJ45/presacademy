@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ORIGIN of the ncs-astro-sanity-starter parity harness (a PATTERN, not an
+// identical-canonical file: every site accrues its own normalizer rules and its
+// own PAGES list, so this copy is deliberately NOT sync-check marked. The
+// starter's copy is the parameterized descendant of this one - auto-detected
+// html root plus route auto-discovery - and diverges on purpose. 2026-08-27.)
 /**
  * page-parity.mjs - rendered-HTML parity harness for the page-builder conversion.
  *

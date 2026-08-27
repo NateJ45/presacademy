@@ -84,6 +84,20 @@ that section when it gets long.
 
 ## Recently closed
 
+- 2026-08-27 — **MARKER SYNC SESSION: this repo joined the shared-file sync system.**
+  `ncs-astro-sanity-starter` is the library of record (`PORTS.md` there is the registry).
+  Presacademy was the source of most of these files, but the starter improved them on the
+  way in, so this session pulled the canonical versions back: `scripts/free-dist.mjs`
+  (bracket-safe ordinal command-line match instead of PowerShell `-like`),
+  `scripts/with-workerd.mjs` (genericized header), `src/lib/contrast.ts` (comment-only;
+  export surface unchanged), and `scripts/lib/sanity-lib.mjs` reconciled onto the stricter
+  `scripts/lib/loadEnv.mjs`, which is new here and must travel with sanity-lib. Added
+  `scripts/sync-check.mjs`. `scripts/page-parity.mjs` was left alone and given a
+  PORTED-pattern note instead of a marker: it is the origin of the starter's harness and
+  both copies carry site-specific normalizer rules.
+  Verified: `node scripts/seed-builder-privacy.mjs` dry-run clean, `npm test` 79/79,
+  `npm run build` then parity compare 13/13 PASS, `sync-check` 5/5 SAME exit 0.
+
 - 2026-08-27 — **PAGE-BUILDER CONVERSION COMPLETE (Phase 5, cleanup + docs).**
   All thirteen singleton pages had converted on 2026-08-26 (Phases 0 through 4:
   the shared `src/components/SingletonPage.astro` renderer, ~17 ported section
