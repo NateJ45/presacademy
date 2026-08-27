@@ -26,18 +26,52 @@ const { title, draftMode, pageId } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-draft={draftMode ? '1' : '0'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+    <script is:inline>
+      // Before paint: mark whether this preview page is EMBEDDED in the Studio's
+      // Presentation iframe. Two behaviors hang off the class (2026-08-27):
+      //  - The "Exit preview" button hides when embedded. Inside Presentation it
+      //    is a trap: it clears the draft cookie and strands the iframe on the
+      //    live site with no Studio connection, and nothing short of reloading
+      //    the whole Studio re-runs the enable handshake (an editor hit exactly
+      //    this). The way out of Presentation is Presentation's own chrome.
+      //  - The slim bar shows a reconnect hint if a page ever renders embedded
+      //    but WITHOUT draft mode (a dead session), instead of failing silently.
+      if (window.self !== window.top) {
+        document.documentElement.classList.add('in-studio-frame');
+        if (document.documentElement.dataset.draft !== '1') {
+          document.documentElement.classList.add('preview-disconnected');
+        }
+      }
+    </script>
+    <style>
+      .in-studio-frame [data-exit-preview] {
+        display: none;
+      }
+      [data-reconnect-hint] {
+        display: none;
+      }
+      .in-studio-frame.preview-disconnected [data-reconnect-hint] {
+        display: inline;
+      }
+      .in-studio-frame.preview-disconnected [data-connected-note] {
+        display: none;
+      }
+    </style>
   </head>
   <body class="relative bg-background text-foreground">
     <div
       class="border-border-soft bg-card text-foreground/70 flex items-center justify-between border-b px-4 py-1.5 text-xs"
     >
-      <span>Draft preview — the site header and footer render on the live site only.</span>
+      <span data-connected-note>Draft preview — the site header and footer render on the live site only.</span>
+      <span data-reconnect-hint class="font-semibold"
+        >Draft session ended — reload the Studio browser tab to reconnect the preview.</span
+      >
     </div>
     <main id="main"><slot /></main>
 
@@ -88,6 +122,7 @@ const { title, draftMode, pageId } = Astro.props;
           <VisualEditingOverlay client:only="react" pageId={pageId} />
           <a
             href="/api/draft-mode/disable"
+            data-exit-preview
             class="bg-primary text-primary-foreground hover:bg-primary-dark fixed right-4 bottom-4 z-50 rounded-full px-4 py-2 text-sm font-bold shadow-lg"
           >
             Exit preview
