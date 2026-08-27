@@ -28,6 +28,8 @@ pnpm-debug.log*
 # generated artifacts
 tmp/
 schema.json
+# Sanity CLI build cache, written by `sanity build` (noticed 2026-08-27)
+.sanity/
 
 # transient commit message files
 .git-commit-msg.tmp
@@ -57,3 +59,6 @@ scripts/.asset-map.json
 test-results/
 playwright-report/
 .lighthouseci/
+
+# Sanity CLI dev runtime cache
+.sanity/
