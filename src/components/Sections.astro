@@ -8,6 +8,7 @@
 // background (token tone, or image/video with overlay). The original blocks
 // render their own section background and are passed through unwrapped.
 import SectionShell from '@/components/SectionShell.astro';
+import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -68,8 +69,20 @@ interface Props {
    * preview branch the day it matters.
    */
   fetcher?: any;
+  /**
+   * PREVIEW ONLY (2026-08-27). When set, every section that carries a `_key` is
+   * wrapped in a plain block box holding a `data-sanity` attribute, which gives
+   * the Presentation overlay a section-level edit target: insert before/after,
+   * duplicate, remove, drag to reorder, all in the canvas.
+   *
+   * Only src/pages/preview/[...slug].astro passes it. Absent (every live and
+   * static render) there is no wrapper and no attribute, so the rendered HTML is
+   * byte-identical to before this prop existed. scripts/page-parity.mjs holds
+   * that line.
+   */
+  editDoc?: EditDoc;
 }
-const { sections = [], fallbackEmail, fallbackPhone, fetcher } = Astro.props;
+const { sections = [], fallbackEmail, fallbackPhone, fetcher, editDoc } = Astro.props;
 
 const MAP: Record<string, any> = {
   sectionRichText: RichTextBlock,
@@ -134,16 +147,23 @@ const DEFAULT_TONE: Record<string, string> = {
     // fixed Rule & Ledger surface (2026-08-26: sectionPricingTiers is the first,
     // for the Pricing page). It then paints its own <section>, exactly like the
     // ported types below. Absent the field, nothing changes.
-    if (SHELL_AWARE.has(block._type) && block.surface !== 'ledger') {
-      const dt = DEFAULT_TONE[block._type] ?? 'default';
-      return (
+    const dt = DEFAULT_TONE[block._type] ?? 'default';
+    const rendered =
+      SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
         <SectionShell background={block.background} defaultTone={dt}>
           <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
         </SectionShell>
+      ) : (
+        // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
+        // above are all editor-authored content, with nothing to fetch.
+        <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} fetcher={fetcher} />
       );
-    }
-    // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
-    // above are all editor-authored content, with nothing to fetch.
-    return <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} fetcher={fetcher} />;
+    // Preview only (2026-08-27): the section-level edit target. The wrapper is a
+    // plain unstyled div on purpose. It must be a REAL block box, because the
+    // overlay outlines the element's rect, and a `display: contents` element has
+    // no rect to outline. With no `editDoc` there is no wrapper at all, so the
+    // live HTML does not change.
+    const editAttr = editDoc && block._key ? sectionEditAttr(editDoc, block._key) : undefined;
+    return editAttr ? <div data-sanity={editAttr}>{rendered}</div> : rendered;
   })
 }

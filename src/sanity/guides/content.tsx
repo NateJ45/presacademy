@@ -253,6 +253,13 @@ export const guides: Guide[] = [
           'Click `Publish`. The website rebuilds and your change appears in a few minutes.',
         ],
       },
+      { kind: 'h', text: 'Or work straight on the page picture' },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'The preview is editable too',
+        text: 'Open **Preview** (the eye icon at the top) and you get the page as visitors see it, beside the fields. Hover a section there and it outlines, with a small toolbar: add a section above or below it, duplicate it, remove it, or drag it to a new spot. Click any words to jump to the box that holds them. Everything you do in the picture lands in the same fields, so use whichever feels easier, and `Publish` when you are happy.',
+      },
       { kind: 'h', text: 'The empty-box rule (friendly and important)' },
       {
         kind: 'callout',
@@ -308,7 +315,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Add & arrange sections',
     icon: '🧩',
-    lead: 'Sections are the building blocks of a page. Mix and match them, reorder them, and set their backgrounds.',
+    lead: 'Sections are the building blocks of a page. Mix and match them, reorder them, and set their backgrounds, from the list or straight on the page picture.',
     diy: 'self',
     body: [
       { kind: 'path', items: ['Pages', '(any page)', 'Page sections'], link: { pane: 'pages' } },
@@ -317,6 +324,13 @@ export const guides: Guide[] = [
         tone: 'positive',
         title: 'Every page’s body is built from sections',
         text: 'This is not only for pages you build yourself. The middle of every fixed page, Home, About, Pricing, FAQ, Events, Contact, Get Started, For You, Courses, Faculty, Privacy and Accessibility, is a stack of blocks in `Page sections`. Open a page, click a block, and you are editing the real thing visitors see. Two parts stay outside the stack on purpose: the big headline at the top (the `Hero` tab) and the closing call to action at the bottom, so neither can be deleted by accident.',
+      },
+      { kind: 'h', text: 'Two ways to work' },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'On the page picture, or in the list',
+        text: 'Open **Preview** and hover a section on the page picture. It outlines, and a small toolbar appears: **add a section above or below it**, **duplicate** it, **remove** it, or **drag** it to a new place in the page. That is usually the quickest way, because you are looking at the thing you are moving. The `Page sections` list described below does all the same jobs, and is the place to go when a page has no sections yet.',
       },
       { kind: 'h', text: 'Add a section' },
       {
@@ -354,6 +368,7 @@ export const guides: Guide[] = [
         items: [
           'Drag a section by the dots on its left to move it. Top of the list is top of the page.',
           'Click the `⋮` menu on a section and choose **Remove** to delete it. (Removing a section is undoable before you publish.)',
+          'In **Preview**, do the same on the page itself: drag a section to a new spot, or use its toolbar to duplicate or remove it.',
         ],
       },
       { kind: 'h', text: "Change a section's background" },

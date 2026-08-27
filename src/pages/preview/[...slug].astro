@@ -238,6 +238,30 @@ const generic = !converted;
 // converted singletons have fixed ids equal to their type.
 const pageId = converted ? singletonType : doc!._id.replace(/^drafts\./, '');
 
+// ---------------------------------------------------------------------------
+// In-canvas section controls (2026-08-27)
+// ---------------------------------------------------------------------------
+// The doc + array field each rendered section belongs to. Sections.astro turns
+// this into one `data-sanity` attribute per section, which is what lets the
+// Presentation overlay outline a section and offer insert / duplicate / remove
+// / drag-to-reorder right in the preview instead of only in the Structure
+// panel. See src/lib/preview-edit-attr.ts.
+//
+// Passed regardless of draftMode. The attribute is inert without the Studio's
+// overlay, this route is noindex and never part of the static build, and a
+// preview opened before the cookie lands would otherwise render uncontrollable
+// sections. The two branches disagree on the FIELD NAME: singletons build their
+// body in `flexibleSections`, custom `page` docs in `sections`.
+const editDoc = converted
+  ? { id: singletonType!, type: singletonType!, field: 'flexibleSections' as const }
+  : {
+      id: doc!._id.replace(/^drafts\./, ''),
+      type: doc!._type,
+      field: (singletonType ? 'flexibleSections' : 'sections') as
+        | 'flexibleSections'
+        | 'sections',
+    };
+
 const heroHeadline = generic ? doc!.heroHeadline || doc!.title || doc!.seoTitle || '' : '';
 const builderSections = generic ? (singletonType ? doc!.flexibleSections : doc!.sections) : [];
 const hasFinalCta = generic ? Boolean(doc!.finalCtaHeadline || doc!.finalCta) : false;
@@ -268,6 +292,7 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
         page={converted.page}
         settings={converted.settings}
         fetcher={singletonType === 'homePage' ? draftFetch : undefined}
+        editDoc={editDoc}
       >
         {singletonType === 'homePage' && (
           <HomeHero slot="hero" page={converted.page} settings={converted.settings} {nextTerm} />
@@ -328,7 +353,7 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
       </div>
     )
   }
-  {generic && <Sections sections={builderSections} />}
+  {generic && <Sections sections={builderSections} editDoc={editDoc} />}
   {
     hasFinalCta && (
       <FinalCta

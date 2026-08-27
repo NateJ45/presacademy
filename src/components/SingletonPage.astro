@@ -29,6 +29,7 @@ import PageHeader from '@/components/PageHeader.astro';
 import Sections from '@/components/Sections.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import { sectionsFor } from '@/lib/default-sections';
+import type { EditDoc } from '@/lib/preview-edit-attr';
 
 /* -----------------------------------------------------------------------------
    Why Hero.astro is NOT imported here (found by the parity harness 2026-08-26)
@@ -206,6 +207,13 @@ interface Props {
    * `= sanityFetch` default, so the live build is unchanged. See Sections.astro.
    */
   fetcher?: any;
+  /**
+   * PREVIEW ONLY (2026-08-27). Threaded straight down to Sections, which then
+   * gives each section a `data-sanity` edit target for the Presentation overlay
+   * (insert, duplicate, remove, drag to reorder in the canvas). Only the preview
+   * route sets it; every page file leaves it undefined and renders as before.
+   */
+  editDoc?: EditDoc;
 }
 
 const {
@@ -216,6 +224,7 @@ const {
   finalCtaFallbacks = {},
   finalCtaBackgroundImage,
   fetcher,
+  editDoc,
 } = Astro.props as Props;
 
 const hero = HERO_VARIANTS[pageType];
@@ -237,6 +246,16 @@ const heroTrustLine =
 
 const sections = sectionsFor(pageType, page?.flexibleSections);
 const showFinalCta = !NO_FINAL_CTA.has(pageType);
+
+/* The edit targets are only real when the sections came from the DOCUMENT.
+   sectionsFor falls back to DEFAULT_SECTIONS whole when the doc's array is
+   empty, and those entries carry seed `_key`s that the document does not hold
+   yet. Pointing the overlay at them would offer an editor controls that patch
+   array items which do not exist. An empty array previews as plain output, and
+   the editor adds the first section from the Structure panel (2026-08-27). */
+const sectionsAreFromDoc =
+  Array.isArray(page?.flexibleSections) && page.flexibleSections.length > 0;
+const sectionsEditDoc = sectionsAreFromDoc ? editDoc : undefined;
 ---
 
 {
@@ -264,6 +283,7 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
   fallbackEmail={settings?.email}
   fallbackPhone={settings?.phone}
   fetcher={fetcher}
+  editDoc={sectionsEditDoc}
 />
 
 {/* ---------------------------------------------------------------------------
