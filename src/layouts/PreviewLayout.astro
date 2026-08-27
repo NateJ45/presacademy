@@ -146,8 +146,15 @@ const { title, draftMode, pageId } = Astro.props;
       // /preview/* (the visual-editing history adapter then reports the new
       // location, and Presentation resolves the document, so the navigator and
       // the edit panel follow the click). Links with NO preview route (detail
-      // pages like /courses/<slug>, /api, /studio, external origins) open in a
-      // NEW TAB instead, so the preview surface is never hijacked.
+      // pages like /courses/<slug>, /api, /studio, external origins) split by
+      // context (2026-08-28, editor feedback):
+      //  - EMBEDDED in the Studio: the navigation is SUPPRESSED entirely. A
+      //    click on a faculty or course card there is an EDIT gesture - the
+      //    stega overlay already selects the right field/document - and a live
+      //    tab popping open on every card click forced a tab-switch back to
+      //    the Studio each time.
+      //  - Standalone /preview tab: NEW TAB, as before, so the preview surface
+      //    is never hijacked.
       //
       // FIRST_SEGMENT_PREVIEWABLE mirrors SINGLETON_BY_PATH in
       // src/pages/preview/[...slug].astro (plus: any single-segment path is a
@@ -167,11 +174,12 @@ const { title, draftMode, pageId } = Astro.props;
           if (!(anchor instanceof HTMLAnchorElement)) return;
           if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
 
+          const embedded = document.documentElement.classList.contains('in-studio-frame');
           const url = new URL(anchor.href, window.location.href);
           // External origin: never let it take over the iframe.
           if (url.origin !== window.location.origin) {
             event.preventDefault();
-            window.open(url.href, '_blank', 'noopener');
+            if (!embedded) window.open(url.href, '_blank', 'noopener');
             return;
           }
           const path = url.pathname.replace(/\/+$/, '') || '/';
@@ -189,10 +197,12 @@ const { title, draftMode, pageId } = Astro.props;
           event.preventDefault();
           if (previewable) {
             window.location.assign(path === '/' ? '/preview' : `/preview${path}`);
-          } else {
-            // Detail routes and everything else without a preview: new tab.
+          } else if (!embedded) {
+            // Standalone tab: detail routes without a preview open in a new tab.
             window.open(url.href, '_blank', 'noopener');
           }
+          // Embedded: suppressed. The stega overlay's field selection IS the
+          // click's result; the editor stays in the Studio.
         },
         true,
       );
