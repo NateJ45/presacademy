@@ -10,7 +10,8 @@
     - `/preview` renders HOME through the shared HomeBody, in full fidelity.
     - A page that has CONVERTED to the page builder (2026-08-26: privacy,
       accessibility, for-you, resources, then pricing, about, faq, events,
-      contact, get-started) renders through the shared SingletonPage with draft
+      contact, get-started, then courses and faculty) renders through the shared
+      SingletonPage with draft
       data, also in full fidelity. Converting a page upgrades its preview
       automatically; add its type to CONVERTED_PAGE_FETCHERS below in the same
       commit.
@@ -34,6 +35,8 @@ import Sections from '@/components/Sections.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import HomeBody from '@/components/home/HomeBody.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
+import CoursesCatalog from '@/components/pinned/CoursesCatalog.astro';
+import FacultyRoster from '@/components/pinned/FacultyRoster.astro';
 import { previewFetch } from '@/lib/cms-preview';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import {
@@ -50,6 +53,12 @@ import {
   getEventsPage,
   getContactPage,
   getGetStartedPage,
+  getCoursesPage,
+  getFacultyPage,
+  getCourses,
+  getTeachingAreas,
+  getFaculty,
+  getTerms,
   getSiteSettings,
   getFeaturedCourses,
   getStartHereCourses,
@@ -158,8 +167,11 @@ if (singletonType === 'homePage') {
 //     pages import it as a build-time asset; this route is SSR). An editor who
 //     has set a hero image in Sanity sees that image, which is the thing they
 //     are previewing.
-//   - resources' empty state is a pinned code region in the page file, so it
-//     does not appear here.
+//   - resources' empty state is a pinned code region held in ITS page file, so
+//     it does not appear here. The courses catalog and the faculty roster are
+//     pinned regions too, but they are shared components, so this route fills
+//     their slot itself (see the pinned-data block below). Resources' zero state
+//     could join them the day it earns a component of its own.
 // ---------------------------------------------------------------------------
 const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = {
   privacyPage: getPrivacyPage,
@@ -173,6 +185,11 @@ const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = 
   eventsPage: getEventsPage,
   contactPage: getContactPage,
   getStartedPage: getGetStartedPage,
+  // Phase 3, 2026-08-26. Both of these carry a PINNED CODE REGION, fetched
+  // below and passed into SingletonPage's "pinned" slot, so the preview shows
+  // the whole page and not a page with its middle missing.
+  coursesPage: getCoursesPage,
+  facultyPage: getFacultyPage,
 };
 
 let converted: { page: any; settings: any } | null = null;
@@ -182,6 +199,36 @@ if (!home && singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
     getSiteSettings(draftFetch),
   ]);
   converted = { page, settings: resolveSiteSettings(siteSettings) };
+}
+
+// ---------------------------------------------------------------------------
+// The pinned regions' collection data (Phase 3, 2026-08-26)
+// ---------------------------------------------------------------------------
+// The courses catalog and the faculty roster are code, not sections, so nothing
+// in the sections pipeline fetches what they need. This route fetches it the
+// same way the page files do, and for the same reason: the preview is only
+// trustworthy if it renders the WHOLE page.
+//
+// PUBLISHED data on purpose, via the standard query functions. Those four
+// collection queries do not take a fetcher yet, and the live page reads them
+// published too, so this matches what an editor is previewing. It is the same
+// accepted trade the other auto blocks make (the plan's risk register); when a
+// draft-aware catalog matters, parameterize the queries and pass draftFetch.
+let pinned: Record<string, any> | null = null;
+if (converted && singletonType === 'coursesPage') {
+  const [courses, areas, faculty, terms] = await Promise.all([
+    getCourses().catch(() => []),
+    getTeachingAreas().catch(() => []),
+    getFaculty().catch(() => []),
+    getTerms().catch(() => []),
+  ]);
+  pinned = { courses, areas, faculty, terms };
+} else if (converted && singletonType === 'facultyPage') {
+  const [faculty, areas] = await Promise.all([
+    getFaculty().catch(() => []),
+    getTeachingAreas().catch(() => []),
+  ]);
+  pinned = { faculty, areas };
 }
 
 const doc = home || converted
@@ -261,6 +308,24 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
             backgroundImage={converted.page?.heroImage ?? null}
             headingId="preview-hero"
             size="short"
+          />
+        )}
+        {pinned && singletonType === 'coursesPage' && (
+          <CoursesCatalog
+            slot="pinned"
+            courses={pinned.courses}
+            areas={pinned.areas}
+            faculty={pinned.faculty}
+            terms={pinned.terms}
+            emptyState={converted.page?.emptyState}
+          />
+        )}
+        {pinned && singletonType === 'facultyPage' && (
+          <FacultyRoster
+            slot="pinned"
+            faculty={pinned.faculty}
+            areas={pinned.areas}
+            emptyState={converted.page?.emptyState}
           />
         )}
       </SingletonPage>

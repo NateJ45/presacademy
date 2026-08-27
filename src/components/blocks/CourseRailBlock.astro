@@ -1,0 +1,132 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// CourseRailBlock — the course cards pulled straight from the catalog
+// (2026-08-26)
+// =============================================================================
+// Phase 3 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Every
+// branch below was CUT from the page that owns it, not rewritten:
+//   rail     src/pages/courses/index.astro's "Start here" band (PROVEN by the
+//            parity harness, 2026-08-26)
+//   rail     src/components/home/HomeBody.astro's "Start here" band, which is
+//            the same markup with adaptiveColumns on (Phase 4 proves it)
+//   feature  HomeBody's catalog preview: paper surface, gold rule, "see all"
+//            link, and the dedup against the Start-here rail (Phase 4)
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surfaces, no tone field.
+//
+// AUTO BLOCK. It fetches its own courses, so a course flagged "Start here" or
+// "Featured" in the catalog appears here after the next build with nobody
+// editing the page. Like the other auto blocks it reads PUBLISHED data even in
+// the draft preview (the plan's risk register accepts that; parameterize the
+// query with the draft fetcher when it matters).
+//
+// WHY TWO WHOLE TREATMENTS AND NOT ONE PARAMETERIZED BAND
+// The three live rails differ in surface, vertical rhythm, header shape,
+// heading size and eyebrow color, not just in copy. Averaging them would have
+// been a visual change on two live pages. Same call, same reasoning, as
+// NumberedCardsBlock's variants.
+//
+// WHY THE COLUMN RULE IS A FIELD
+// Home's Start-here rail narrows its grid below three courses; the Courses page
+// has always used the fixed three-column class. With the dataset's current two
+// Start-here courses those two pages really do emit different class attributes
+// today, so one behavior could not have covered both. Off is the Courses form,
+// and it is the default.
+import CourseCard from '@/components/CourseCard.astro';
+import { getStartHereCourses, getFeaturedCourses } from '@/lib/queries';
+
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const source = block?.source === 'featured' ? 'featured' : 'startHere';
+const variant = block?.variant === 'feature' ? 'feature' : 'rail';
+const limit: number | undefined =
+  typeof block?.limit === 'number' && block.limit > 0 ? block.limit : undefined;
+
+// The two sources ask for their cap in different places, because the two source
+// pages did. Start-here fetches every flagged course and trims afterwards
+// (courses.astro's `startHere.slice(0, 3)`); featured pushes the cap into the
+// query (HomeBody's `getFeaturedCourses(6)`), so the rail never pays for cards
+// it will not draw.
+let courses: any[] = [];
+if (source === 'featured') {
+  courses = (await getFeaturedCourses(limit ?? 6).catch(() => [])) ?? [];
+} else {
+  const all = (await getStartHereCourses().catch(() => [])) ?? [];
+  courses = limit ? all.slice(0, limit) : all;
+}
+
+// Home's second rail drops any course its first rail already showed, so the
+// same card never appears twice on one page. Three is what the Start-here rail
+// itself renders, and the number is held here rather than made a field: it is a
+// property of the rail being deduped against, not an editorial choice.
+if (block?.dedupeAgainstStartHere) {
+  const shown = ((await getStartHereCourses().catch(() => [])) ?? []).slice(0, 3);
+  courses = courses.filter((c: any) => !shown.some((s: any) => s.slug === c.slug));
+}
+
+// Landmark id: the band is labeled by its own h2. Deterministic fallback so the
+// label never dangles. The seeds carry the ids the pages already used
+// ("start-here", "home-start", "home-courses"), so anchors keep working.
+const headingId = block?.headingId || 'course-rail';
+
+// Written as one class string (rather than class:list) so the rendered
+// attribute matches its source page character for character in every case:
+// three-or-more and the fixed form produce the same string the pages carry
+// today, and the narrow forms reproduce HomeBody's class:list output exactly,
+// because class:list drops empty entries before joining.
+const BASE_GRID = 'mt-l grid grid-cols-1 gap-l';
+const WIDE = 'sm:grid-cols-2 lg:grid-cols-3';
+const gridClass = block?.adaptiveColumns
+  ? [BASE_GRID, courses.length >= 3 ? WIDE : courses.length === 2 ? 'sm:grid-cols-2' : '']
+      .filter(Boolean)
+      .join(' ')
+  : `${BASE_GRID} ${WIDE}`;
+
+// The "see all" link belongs to the catalog-preview header only; the quiet rail
+// has nowhere to put it. Both halves have to be present or no link renders (an
+// <a> with an empty label is an axe link-name failure).
+const showLink = variant === 'feature' && Boolean(block?.linkLabel && block?.linkHref);
+---
+
+{
+  courses.length > 0 &&
+    (variant === 'feature' ? (
+      /* Home: the catalog preview. Paper surface, large rhythm, a flex header
+         whose right edge carries the link out to the full catalog, and a gold
+         hairline under the whole header. */
+      <section class="bg-background" aria-labelledby={headingId}>
+        <div class="mx-auto max-w-content px-m py-section-lg">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div data-reveal>
+              <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block?.eyebrow}</p>
+              <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+            </div>
+            {showLink && (
+              <a href={block.linkHref} class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{block.linkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+            )}
+          </div>
+          <div class="mt-l h-px w-full bg-gold/50"></div>
+          <ul class={gridClass} data-stagger-grid>
+            {courses.map((c: any) => <CourseCard course={c} />)}
+          </ul>
+        </div>
+      </section>
+    ) : (
+      /* Courses and Home: the quiet "Start here" rail on the card surface. */
+      <section class="bg-card" aria-labelledby={headingId}>
+        <div class="mx-auto max-w-content px-m py-section-md">
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{block?.eyebrow}</p>
+            <h2 id={headingId} class="mt-2 font-display text-h3 text-foreground">{block?.heading}</h2>
+          </div>
+          <ul class={gridClass} data-stagger-grid>
+            {courses.map((c: any) => <CourseCard course={c} />)}
+          </ul>
+        </div>
+      </section>
+    ))
+}

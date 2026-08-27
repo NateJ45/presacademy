@@ -4,12 +4,36 @@
 // a "Start here" rail, with a progressive-enhancement filter island over the
 // top. Rule & Ledger layout: a ruled section header, a left filter rail, and a
 // squared card grid. Falls back to an empty-state line before Sanity is seeded.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 3 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md), and the first
+// page with a PINNED CODE REGION.
+//
+// What converted: the hero (PageHeader, through SingletonPage's hero map) and
+// the "Start here" rail, which is now a `sectionCourseRail` block in the page's
+// "Page sections" array.
+//
+// What did not: the catalog. The React filter island, its four-collection facet
+// counting, the sr-only heading and the empty state stay code by doctrine (the
+// plan's "Stays code, deliberately"), and render through SingletonPage's
+// "pinned" slot, which sits between the sections array and the closing CTA.
+// That reproduces today's order exactly, because this page's sections array is
+// empty in the dataset. SingletonPage's header records what the ordering does
+// and does not allow once an editor adds a section.
+//
+// The old `startHereEyebrow`, `startHereHeadline` and `emptyState` fields are
+// deliberately left in place and populated (decision D4, additive migration):
+// reverting this file brings the old page back with its content intact. They
+// get unset in the cleanup phase, never by clicking "Remove field" in the
+// Studio. `emptyState` is in fact still read below, because the catalog that
+// uses it is still code.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
+import CoursesCatalog from '@/components/pinned/CoursesCatalog.astro';
 import {
   getCoursesPage,
   getCourses,
-  getStartHereCourses,
   getTeachingAreas,
   getFaculty,
   getTerms,
@@ -18,15 +42,10 @@ import {
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import CourseCard from '@/components/CourseCard.astro';
-import CourseFilters from '@/components/CourseFilters';
-import FinalCta from '@/components/FinalCta.astro';
-import Sections from '@/components/Sections.astro';
 
-const [page, courses, startHere, areas, faculty, terms, siteSettings] = await Promise.all([
+const [page, courses, areas, faculty, terms, siteSettings] = await Promise.all([
   getCoursesPage().catch(() => null),
   getCourses().catch(() => []),
-  getStartHereCourses().catch(() => []),
   getTeachingAreas().catch(() => []),
   getFaculty().catch(() => []),
   getTerms().catch(() => []),
@@ -39,34 +58,6 @@ const description =
   page?.seoDescription ??
   'Reformed formation taught in person, in cohorts. Browse the catalog by topic or teacher.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'Catalog';
-const heroHeadline = page?.heroHeadline ?? 'Courses';
-const heroSubhead =
-  page?.heroSubhead ??
-  'Reformed formation taught in person, in cohorts. Browse by topic or teacher, and find a place to begin.';
-
-// Filter options, counted against the catalog so empty facets never show.
-const topicOptions = (areas ?? [])
-  .map((a: any) => ({
-    slug: a.slug,
-    label: a.title,
-    count: courses.filter((c: any) => (c.teachingAreas ?? []).some((t: any) => t.slug === a.slug)).length,
-  }))
-  .filter((o: any) => o.count > 0);
-
-const teacherOptions = (faculty ?? [])
-  .map((f: any) => ({
-    slug: f.slug,
-    label: `${f.honorific ? f.honorific + ' ' : ''}${f.name}`,
-    count: courses.filter((c: any) => (c.instructors ?? []).some((i: any) => i.slug === f.slug)).length,
-  }))
-  .filter((o: any) => o.count > 0);
-
-const usedTermSlugs = new Set(courses.map((c: any) => c.nextOffering?.term?.slug).filter(Boolean));
-const termOptions = (terms ?? [])
-  .filter((t: any) => usedTermSlugs.has(t.slug))
-  .map((t: any) => ({ slug: t.slug, label: t.title }));
-
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
@@ -76,66 +67,25 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  {/* Ruled section header */}
-  <section class="bg-background" aria-labelledby="courses-hero">
-    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 id="courses-hero" class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
-      </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
-    </div>
-  </section>
-
-  {/* Start here rail */}
-  {startHere.length > 0 && (
-    <section class="bg-card" aria-labelledby="start-here">
-      <div class="mx-auto max-w-content px-m py-section-md">
-        <div data-reveal>
-          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{page?.startHereEyebrow ?? 'Start here'}</p>
-          <h2 id="start-here" class="mt-2 font-display text-h3 text-foreground">{page?.startHereHeadline ?? 'New to the Academy? Begin with these.'}</h2>
-        </div>
-        <ul class="mt-l grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
-          {startHere.slice(0, 3).map((c: any) => <CourseCard course={c} />)}
-        </ul>
-      </div>
-    </section>
-  )}
-
-  {/* Catalog: filter rail + grid */}
-  <section class="bg-background" aria-labelledby="catalog">
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <h2 id="catalog" class="sr-only">All courses</h2>
-      <div class="grid grid-cols-1 gap-l lg:grid-cols-[230px_1fr] lg:gap-x-12">
-        <CourseFilters client:load topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
-
-        <div>
-          {courses.length > 0 ? (
-            <ul class="grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
-              {courses.map((c: any) => <CourseCard course={c} />)}
-            </ul>
-          ) : (
-            <p class="text-foreground/80 italic">
-              The catalog is being prepared. In the meantime,{' '}
-              <a href="/get-started" class="text-link underline underline-offset-2">request information</a> and we will be in touch.
-            </p>
-          )}
-          <p data-course-empty hidden class="mt-l text-foreground/80 italic">
-            {page?.emptyState ?? 'No courses match those filters yet. Try clearing one, or'}{' '}
-            <a href="/get-started" class="text-link underline underline-offset-2">ask us what is coming next</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? 'Not sure where to start?'}
-    headline={page?.finalCtaHeadline ?? 'Tell us what you want to learn'}
-    subhead={page?.finalCtaSubhead ?? 'We will help you find the right course and point you to a free intro session.'}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
-  />
+  <SingletonPage
+    pageType="coursesPage"
+    {page}
+    {settings}
+    heroFallbacks={{
+      eyebrow: 'Catalog',
+      headline: 'Courses',
+      subhead:
+        'Reformed formation taught in person, in cohorts. Browse by topic or teacher, and find a place to begin.',
+    }}
+    finalCtaFallbacks={{
+      eyebrow: 'Not sure where to start?',
+      headline: 'Tell us what you want to learn',
+      subhead: 'We will help you find the right course and point you to a free intro session.',
+      cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started' },
+    }}
+  >
+    <Fragment slot="pinned">
+      <CoursesCatalog {courses} {areas} {faculty} {terms} emptyState={page?.emptyState} />
+    </Fragment>
+  </SingletonPage>
 </BaseLayout>

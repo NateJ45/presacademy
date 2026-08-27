@@ -117,9 +117,9 @@ Standalone scripts:
 |---|---|---|
 | `/` | `src/pages/index.astro` | Home: split hero, wayfinding ledger, start-here rail, stats, course + faculty + testimonial strips |
 | `/about` | `src/pages/about.astro` | About page singleton |
-| `/courses` | `src/pages/courses/index.astro` | Course catalog + filters (topic, teacher, term) |
+| `/courses` | `src/pages/courses/index.astro` | Course catalog + filters (topic, teacher, term); catalog is a pinned code region |
 | `/courses/[slug]` | `src/pages/courses/[slug].astro` | Course detail: sessions, pricing, instructors |
-| `/faculty` | `src/pages/faculty/index.astro` | Faculty index |
+| `/faculty` | `src/pages/faculty/index.astro` | Faculty index; the roster is a pinned code region |
 | `/faculty/[slug]` | `src/pages/faculty/[slug].astro` | Faculty profile: degrees, publications, courses taught |
 | `/events` | `src/pages/events/index.astro` | Events: info sessions, lectures, term starts |
 | `/events/[slug]` | `src/pages/events/[slug].astro` | Event detail |
@@ -140,7 +140,9 @@ Standalone scripts:
 | `/sitemap-index.xml` | `@astrojs/sitemap` (auto) | Production sitemap |
 | `/404` | `src/pages/404.astro` | Custom 404 |
 
-Most fixed routes end with `<Sections sections={page?.flexibleSections} />`: the page-builder blocks an editor appends below the built-in content. **Ten routes have gone further** (2026-08-26): `/resources`, `/privacy`, `/accessibility`, `/for-you` (Phase 1), then `/pricing`, `/about`, `/faq`, `/events`, `/contact`, `/get-started` (Phase 2) render their whole body from that array through `src/components/SingletonPage.astro`, with `src/lib/default-sections.ts` supplying the same copy when the array is empty. Those pages' files are now queries + JSON-LD + `SingletonPage` (photo-hero pages pass their `<Hero slot="hero">` in, so its scoped style stays off the text-hero pages). `/courses`, `/faculty` and `/` convert in Phases 3 and 4 of `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
+Most fixed routes end with `<Sections sections={page?.flexibleSections} />`: the page-builder blocks an editor appends below the built-in content. **Twelve routes have gone further** (2026-08-26): `/resources`, `/privacy`, `/accessibility`, `/for-you` (Phase 1), then `/pricing`, `/about`, `/faq`, `/events`, `/contact`, `/get-started` (Phase 2), then `/courses` and `/faculty` (Phase 3) render their whole body from that array through `src/components/SingletonPage.astro`, with `src/lib/default-sections.ts` supplying the same copy when the array is empty. Those pages' files are now queries + JSON-LD + `SingletonPage` (photo-hero pages pass their `<Hero slot="hero">` in, so its scoped style stays off the text-hero pages). Only `/` is left; it converts in Phase 4 of `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
+
+**Pinned code regions** (Phase 3): a few page middles stay code on purpose and render through `SingletonPage`'s `pinned` slot, which sits between the sections array and the closing CTA. `src/components/pinned/` holds the shared ones (`CoursesCatalog.astro`, `FacultyRoster.astro`, each a React filter island over a server-rendered grid); the preview route fills the same slot so a preview shows the whole page. There is ONE pinned slot and it is always after the sections, which means an editor's new section lands ABOVE the pinned region. `SingletonPage.astro`'s header explains why that is the rule and when to revisit it.
 
 ---
 

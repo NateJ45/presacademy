@@ -61,6 +61,12 @@ const NON_STEGA_FIELDS = new Set([
   // branch, in preview only.
   'surface',
   'headingLevel',
+  // Phase 3, 2026-08-26 (courses). sectionCourseRail's two rendering enums are
+  // ALREADY covered above: `source` picks which catalog query runs, `variant`
+  // picks which of the two bands renders. Checked rather than assumed, because
+  // stega-encoded, `source` would never equal "featured" and `variant` would
+  // never equal "feature", and the preview would quietly show the wrong rail
+  // while the live site was right. Nothing to add here; the note is the record.
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

@@ -339,6 +339,41 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
       ],
     },
   ],
+
+  // ---- courses (converted 2026-08-26) --------------------------------------
+  // One auto block: the "Start here" rail. It fetches the courses flagged
+  // "Start here" itself, and renders NOTHING when there are none, which is
+  // exactly what the old page's `startHere.length > 0` guard did (and what the
+  // credential-less CI build gets).
+  //
+  // `adaptiveColumns` is absent on purpose: the Courses page has always used the
+  // fixed three-column grid, unlike home's rail. See CourseRailBlock's header.
+  //
+  // The catalog itself is NOT here. It stays a pinned code region in
+  // src/pages/courses/index.astro (the React filter island, the four-collection
+  // facet counting, the sr-only h2 and the empty state), rendered through
+  // SingletonPage's "pinned" slot AFTER this array. See SingletonPage's header
+  // for what that ordering does and does not allow.
+  coursesPage: [
+    {
+      _key: 'coursesStartHere',
+      _type: 'sectionCourseRail',
+      source: 'startHere',
+      variant: 'rail',
+      eyebrow: 'Start here',
+      heading: 'New to the Academy? Begin with these.',
+      headingId: 'start-here',
+      limit: 3,
+    },
+  ],
+
+  // ---- faculty (converted 2026-08-26) --------------------------------------
+  // No entry, deliberately. The Faculty page's body is entirely the roster, and
+  // the roster is a pinned code region (the FacultyFilter island, the area
+  // chips, the sr-only h2 and the empty state). Its sections array is empty
+  // today and there is nothing to fall back to, so `facultyPage` is absent here
+  // rather than present and empty: `sectionsFor` returns [] either way, and an
+  // empty array in this map would read like an oversight.
 };
 
 /** The sections a page should render: the editor's array, else the defaults. */

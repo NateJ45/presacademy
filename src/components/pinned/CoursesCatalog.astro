@@ -1,0 +1,97 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// CoursesCatalog — the Courses page's pinned code region (2026-08-26)
+// =============================================================================
+// Phase 3 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md, and
+// the reason this directory exists.
+//
+// WHY THIS IS NOT A SECTION TYPE
+// The plan lists the catalog under "Stays code, deliberately". It is a React
+// progressive-enhancement island (CourseFilters) sitting over a server-rendered
+// grid, wired by data attributes on the cards, and fed by facet counts computed
+// across FOUR collections (courses, teaching areas, faculty, terms) so an empty
+// facet never appears. None of that is editorial: there is no arrangement of it
+// an editor would ever want to change, and every field it might expose is a way
+// to break the filters. Making it a section would buy nothing and risk the
+// page's main job.
+//
+// So it renders through SingletonPage's "pinned" slot, BETWEEN the page's
+// sections array and the closing CTA, which is exactly where it sits on the
+// live page. SingletonPage's header documents the ordering contract.
+//
+// The markup was CUT from src/pages/courses/index.astro, not rewritten, and the
+// facet counting came with it: it is part of the catalog, not of the page, and
+// keeping the two together is what lets the preview route render this region
+// identically by passing the same four collections.
+//
+// THE EMPTY-STATE LINK TEXT IS FIXED IN MARKUP, not editable. An <a> whose
+// label an editor could empty is an axe link-name violation waiting to happen,
+// and the no-courses state is exactly what the credential-less CI build
+// renders, so it is the state axe grades.
+import CourseCard from '@/components/CourseCard.astro';
+import CourseFilters from '@/components/CourseFilters';
+
+interface Props {
+  /** The whole catalog, already ordered by the query. */
+  courses: any[];
+  /** Teaching areas, for the topic facet. */
+  areas: any[];
+  /** Faculty, for the teacher facet. */
+  faculty: any[];
+  /** Terms, for the term facet. */
+  terms: any[];
+  /** The line shown when the filters match nothing. */
+  emptyState?: string;
+}
+const { courses = [], areas = [], faculty = [], terms = [], emptyState } = Astro.props as Props;
+
+// Filter options, counted against the catalog so empty facets never show.
+const topicOptions = (areas ?? [])
+  .map((a: any) => ({
+    slug: a.slug,
+    label: a.title,
+    count: courses.filter((c: any) => (c.teachingAreas ?? []).some((t: any) => t.slug === a.slug)).length,
+  }))
+  .filter((o: any) => o.count > 0);
+
+const teacherOptions = (faculty ?? [])
+  .map((f: any) => ({
+    slug: f.slug,
+    label: `${f.honorific ? f.honorific + ' ' : ''}${f.name}`,
+    count: courses.filter((c: any) => (c.instructors ?? []).some((i: any) => i.slug === f.slug)).length,
+  }))
+  .filter((o: any) => o.count > 0);
+
+const usedTermSlugs = new Set(courses.map((c: any) => c.nextOffering?.term?.slug).filter(Boolean));
+const termOptions = (terms ?? [])
+  .filter((t: any) => usedTermSlugs.has(t.slug))
+  .map((t: any) => ({ slug: t.slug, label: t.title }));
+---
+
+{/* Catalog: filter rail + grid */}
+<section class="bg-background" aria-labelledby="catalog">
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    <h2 id="catalog" class="sr-only">All courses</h2>
+    <div class="grid grid-cols-1 gap-l lg:grid-cols-[230px_1fr] lg:gap-x-12">
+      <CourseFilters client:load topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
+
+      <div>
+        {courses.length > 0 ? (
+          <ul class="grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+            {courses.map((c: any) => <CourseCard course={c} />)}
+          </ul>
+        ) : (
+          <p class="text-foreground/80 italic">
+            The catalog is being prepared. In the meantime,{' '}
+            <a href="/get-started" class="text-link underline underline-offset-2">request information</a> and we will be in touch.
+          </p>
+        )}
+        <p data-course-empty hidden class="mt-l text-foreground/80 italic">
+          {emptyState ?? 'No courses match those filters yet. Try clearing one, or'}{' '}
+          <a href="/get-started" class="text-link underline underline-offset-2">ask us what is coming next</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

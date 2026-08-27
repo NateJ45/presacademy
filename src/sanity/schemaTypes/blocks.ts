@@ -1436,6 +1436,131 @@ export const sectionRequestPanel = defineType({
   },
 });
 
+/**
+ * The course rail: courses #2 (Start here), home #3 (Start here), home #6 (the
+ * catalog preview), 2026-08-26.
+ *
+ * Auto-updating: it pulls the courses itself, so a course marked "Start here"
+ * or "Featured" in the catalog appears here without anyone editing the page.
+ *
+ * WHY THIS TYPE CARRIES TWO WHOLE TREATMENTS AND NOT ONE
+ * The three rails on the live site are not one band with different copy. The
+ * two "Start here" rails sit on the card surface at the medium rhythm with a
+ * small h3-sized heading; the home catalog preview sits on paper at the large
+ * rhythm with a flex header, a "see all" link and a gold rule under it. Merging
+ * them would have been a visual change on two live pages, which this conversion
+ * promises never to do (same reasoning as sectionNumberedCards' variants).
+ *
+ *   rail     the card-surface band. PROVEN by the parity harness against the
+ *            Courses page, 2026-08-26.
+ *   feature  the paper band with the rule and the "see all" link. DECLARED,
+ *            not proven: it is home #6 copied ahead of time, and home converts
+ *            in Phase 4. Hold it against the harness before trusting it.
+ *
+ * `source` and `dedupeAgainstStartHere` are likewise built now and proven in
+ * halves: `startHere` is what the Courses page runs on today; `featured` and
+ * the dedup exist for home's second rail, which drops any course already shown
+ * in its first one. Phase 4 proves them.
+ *
+ * WHY "adaptiveColumns" IS A FIELD AND NOT THE RULE EVERYWHERE
+ * Home's Start-here rail narrows its grid when it holds fewer than three
+ * courses (two courses get two columns, not three with a gap); the Courses page
+ * has always used the fixed three-column class regardless. With the dataset's
+ * current two Start-here courses the two pages really do render different class
+ * attributes, so one behavior could not cover both. Off is the Courses form.
+ */
+export const sectionCourseRail = defineType({
+  name: 'sectionCourseRail',
+  title: 'Course rail (from catalog)',
+  type: 'object',
+  description:
+    'A row of course cards pulled straight from the catalog: either the courses marked "Start here" or the ones marked "Featured". Nothing to keep in sync by hand.',
+  fields: [
+    defineField({
+      name: 'source',
+      title: 'Which courses',
+      type: 'string',
+      description: 'Where the cards come from. Set the flags on the courses themselves in the catalog.',
+      options: {
+        list: [
+          { title: 'Courses marked "Start here"', value: 'startHere' },
+          { title: 'Courses marked "Featured"', value: 'featured' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'startHere',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'variant',
+      title: 'Band style',
+      type: 'string',
+      description: 'Both are brand-locked; pick the one that matches the page.',
+      options: {
+        list: [
+          { title: 'Quiet rail on the card surface (Courses, Home "Start here")', value: 'rail' },
+          { title: 'Catalog preview with a rule and a "see all" link (Home)', value: 'feature' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'rail',
+      validation: (R) => R.required(),
+    }),
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "course-rail".',
+    }),
+    defineField({
+      name: 'limit',
+      title: 'How many cards at most',
+      type: 'number',
+      description: 'Leave empty to show every course the catalog returns.',
+      validation: (R) => R.min(1).integer(),
+    }),
+    defineField({
+      name: 'linkLabel',
+      title: '"See all" link text',
+      type: 'string',
+      description: 'Shown in the header of the catalog-preview style only. Leave empty for no link.',
+      hidden: ({ parent }) => parent?.variant !== 'feature',
+    }),
+    defineField({
+      name: 'linkHref',
+      title: '"See all" link',
+      type: 'string',
+      description: 'Where that link goes, usually "/courses".',
+      hidden: ({ parent }) => parent?.variant !== 'feature',
+    }),
+    defineField({
+      name: 'adaptiveColumns',
+      title: 'Narrow the grid when there are only one or two courses',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'On, two courses fill two columns instead of leaving a gap in a three-column row. Off, the grid is always three columns wide on a large screen.',
+    }),
+    defineField({
+      name: 'dedupeAgainstStartHere',
+      title: 'Skip courses already shown in a "Start here" rail',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'For a second rail on the same page, so the same course card never appears twice.',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'eyebrow', source: 'source' },
+    prepare: ({ title, subtitle, source }) => ({
+      title: title || 'Course rail',
+      subtitle: [subtitle, source === 'featured' ? 'Featured courses' : 'Start here'].filter(Boolean).join(' - '),
+    }),
+  },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -1475,6 +1600,8 @@ export const sectionBlocks = [
   sectionContactDetails,
   // Phase 2, 2026-08-26 (get-started).
   sectionRequestPanel,
+  // Phase 3, 2026-08-26 (courses; home reuses it in Phase 4).
+  sectionCourseRail,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -1518,6 +1645,8 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionContactDetails' },
   // Phase 2, 2026-08-26 (get-started).
   { type: 'sectionRequestPanel' },
+  // Phase 3, 2026-08-26 (courses; home reuses it in Phase 4).
+  { type: 'sectionCourseRail' },
 ];
 
 // =============================================================================
@@ -1592,6 +1721,7 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
       'sectionRuledList',
       'sectionContactDetails',
       'sectionRequestPanel',
+      'sectionCourseRail',
     ],
   },
 ];

@@ -41,6 +41,7 @@ import EventGridBlock from '@/components/blocks/EventGridBlock.astro';
 import RuledListBlock from '@/components/blocks/RuledListBlock.astro';
 import ContactDetailsBlock from '@/components/blocks/ContactDetailsBlock.astro';
 import RequestPanelBlock from '@/components/blocks/RequestPanelBlock.astro';
+import CourseRailBlock from '@/components/blocks/CourseRailBlock.astro';
 
 interface Props {
   sections?: any[] | null;
@@ -86,6 +87,7 @@ const MAP: Record<string, any> = {
   sectionRuledList: RuledListBlock,
   sectionContactDetails: ContactDetailsBlock,
   sectionRequestPanel: RequestPanelBlock,
+  sectionCourseRail: CourseRailBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.

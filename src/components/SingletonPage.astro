@@ -72,8 +72,15 @@ type HeroConfig =
       headingId?: string;
       /* The page's second, quieter intro paragraph, where it has one. */
       introField?: 'pricingIntro' | 'personasIntro' | 'listIntro';
-      /* The faculty trust line's field name. */
-      trustLineField?: 'trustLine';
+      /* The faculty trust line's field name. Corrected 2026-08-26 when Faculty
+         converted (Phase 3): Phase 0 wrote 'trustLine', but the field on
+         facultyPage is `aggregateTrustLine`, so the lookup found nothing and
+         the hero silently fell through to the page's inline fallback. Parity
+         did not catch it, because the fallback and the field hold the same
+         sentence; the DRAFT PREVIEW did, by rendering the page with no trust
+         line at all (it has no page file to fall back through). An editor's
+         edit to that field would never have reached the page. */
+      trustLineField?: 'aggregateTrustLine';
       /* About only (2026-08-26): its hero holds the headline to a 4xl measure
          and relaxes the subhead's leading. Why that two-class difference is
          kept rather than smoothed either way: PageHeader.astro's header. */
@@ -110,7 +117,7 @@ const HERO_VARIANTS: Record<string, HeroConfig> = {
     kind: 'text',
     variant: 'trustLine',
     headingId: 'faculty-hero',
-    trustLineField: 'trustLine',
+    trustLineField: 'aggregateTrustLine',
   },
 
   /* Full-bleed photo, rendered by the page into slot="hero". */
@@ -254,11 +261,36 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
 
 <Sections sections={sections} fallbackEmail={settings?.email} fallbackPhone={settings?.phone} />
 
-{/* Pinned code regions: the few middles that stay code on purpose (the courses
-    catalog with its React filter island, the faculty roster). They render
-    BETWEEN the sections array and the closing CTA, exactly where they sit
-    today. Phase 3 documents the pattern; the slot is here from the start so
-    the ordering contract is visible in one place. */}
+{/* ---------------------------------------------------------------------------
+    Pinned code regions: ONE slot, always after the sections (settled 2026-08-26)
+    ---------------------------------------------------------------------------
+    The few page middles that stay code on purpose render here: the courses
+    catalog with its React filter island, the faculty roster, resources' zero
+    state. They sit BETWEEN the sections array and the closing CTA.
+
+    Phase 3 tested that contract against the hardest case and kept it. Courses
+    reads, top to bottom: hero, "Start here" rail, catalog, editor sections,
+    closing CTA. The rail became a section and the catalog is pinned, so the
+    rendered order is now hero, sections, catalog, CTA. Those agree today, and
+    parity proves it, because the page's sections array holds only the rail:
+    the dataset has no editor-added sections on courses or faculty.
+
+    The alternative was a SECOND slot ("pinned-before-sections") so the catalog
+    could keep sitting above the array. It was rejected: it would buy back an
+    ordering nobody can currently see, at the price of two ordering rules for
+    every future page, and it cannot express the courses page anyway (the rail
+    has to come BEFORE the catalog, so a catalog pinned above the sections would
+    need the rail pinned above it as well, and then the rail is not a section).
+    One slot, one rule, stated once.
+
+    THE EDITORIAL IMPLICATION, stated plainly because it is real: a section an
+    editor adds to courses lands between the "Start here" rail and the catalog,
+    not below the catalog where a section would have landed before the
+    conversion. Nothing on the live site moves (there are none), and above the
+    catalog is the better home for an introduction to it. If a page ever needs
+    editor sections BELOW its pinned region, that is the moment to add the
+    second slot, with its own parity capture.
+--------------------------------------------------------------------------- */}
 <slot name="pinned" />
 
 {

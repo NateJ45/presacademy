@@ -38,7 +38,8 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PHASES 1 AND 2 LANDED 2026-08-26, Phase 3 next).**
+- **Page-builder conversion (PHASES 1, 2 AND 3 LANDED 2026-08-26, Phase 4 —
+  home — is the last conversion phase).**
   Convert the 13 bespoke singleton pages to a sections-array page-builder
   with zero visual change. The full plan — governing decisions, the ~15
   new section types mapped to every page, phasing, parity harness, risks
@@ -89,16 +90,54 @@ that section when it gets long.
      into the shared renderer injected its scoped `.hero-fill` style into
      every text-hero page). faq and contact followed the
      privacy/accessibility slot pattern in Phase 2.
-  Carry-forwards for Phase 3:
+  **Phase 3 converted the two pages with pinned code regions** — courses
+  and faculty — each verified at 13/13 page parity, 79 unit tests, 109
+  Playwright tests, the empty-credential axe run (32 chromium tests,
+  light + dark), and both `/preview/*` routes opened under `wrangler dev`
+  with their filter islands exercised and a clean console. It added one
+  section type (`sectionCourseRail`, built whole: `source` startHere +
+  featured, two band treatments, `dedupeAgainstStartHere`), one seed
+  (`scripts/seed-builder-courses.mjs`, run against production and re-run
+  clean), and `src/components/pinned/` for the two shared code regions.
+  Three Phase 3 findings worth keeping:
+  1. **The pinned slot is single and always after the sections.** A second
+     "before sections" slot was considered and rejected; the reasoning and
+     the editorial consequence (a new section on courses lands above the
+     catalog, not below it) are in `SingletonPage.astro`'s header.
+  2. **The parity normalizer gained rule 3**, `<astro-island prefix="rN">`.
+     Moving the catalog into a component shifted its island's render-order
+     counter with zero markup change. The 13 committed baselines were
+     re-normalized in place (not re-captured).
+  3. **A hero-map bug was found by the PREVIEW, not by parity.** The
+     faculty entry named the trust-line field `trustLine`; the field is
+     `aggregateTrustLine`, so an editor's edit would never have reached
+     the page. Parity missed it because the fallback string and the field
+     hold the same sentence. Fixed. Worth remembering when Phase 4 wires
+     home's hero map: check every field NAME against the schema.
+  Carry-forwards for Phase 4:
   1. **`sectionLedgerStats`' `quad` variant is declared, not proven.** It
      is home's stat band copied ahead of time; hold it against home with
      the parity harness in Phase 4, the way `trio` was held against
      pricing.
   2. **Auto sections still preview PUBLISHED collection data** (FAQ items,
-     events, pricing tiers, site settings). Accepted at conversion time,
-     as the plan's risk register allows: parameterize each block's query
-     with the draft fetcher when it matters.
-  3. **The Events page's `upcomingEmpty` copy in Sanity already ends in a
+     events, pricing tiers, site settings, and now courses and faculty).
+     Accepted at conversion time, as the plan's risk register allows:
+     parameterize each block's query with the draft fetcher when it
+     matters. The preview route fetches the pinned regions' collections
+     the same published way, for the same reason.
+  3. **`sectionCourseRail` is half-proven, on purpose.** `source:
+     'startHere'` with `variant: 'rail'` is what the Courses page runs on.
+     `source: 'featured'`, `variant: 'feature'` (the paper band with the
+     gold rule and the "see all" link), `adaptiveColumns` and
+     `dedupeAgainstStartHere` are home's three rails built ahead of time
+     and NOT yet held against the harness. Home #3 is the rail with
+     `adaptiveColumns` on; home #6 is the feature band with the dedup.
+  4. **Home's two rails and the Courses rail differ in a real class
+     attribute today.** Home narrows its grid below three courses; Courses
+     never does, and the dataset currently has exactly two Start-here
+     courses, so the two pages emit different `class` values from the same
+     data. That is why `adaptiveColumns` exists rather than one rule.
+  5. **The Events page's `upcomingEmpty` copy in Sanity already ends in a
      full sentence** ("...is a course."), while the page appends a link
      reading "course." to it. The seed carried the value across
      faithfully, so nothing changed, but the live empty state reads

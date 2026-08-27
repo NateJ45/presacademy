@@ -4,16 +4,35 @@
 // with honorific + name and the degree-with-institution line directly beneath.
 // Rule & Ledger layout with an aggregate trust line up top. Falls back to an
 // empty-state line before Sanity is seeded.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 3 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md), the second
+// page with a PINNED CODE REGION.
+//
+// What converted: the hero only. It is the trust-line variant of PageHeader
+// (the gold hairline becomes that paragraph's top border), wired through
+// SingletonPage's hero map, which names `aggregateTrustLine` as the field.
+//
+// What did not: the roster. The FacultyFilter island, its area chips, the
+// sr-only heading and the empty state stay code by doctrine (the plan's "Stays
+// code, deliberately") and render through SingletonPage's "pinned" slot.
+//
+// NOTHING WAS SEEDED for this page. Its body is entirely the roster, so there
+// is no band to move into "Page sections": the array is empty, and an editor
+// who adds one gets it between the hero and the roster. That is the pinned
+// slot's documented ordering (SingletonPage's header), and it is the sensible
+// place for an introduction to the faculty to land.
+//
+// The old `aggregateTrustLine` and `emptyState` fields stay populated and in
+// use: the first now feeds the shared hero, the second the pinned roster.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SingletonPage from '@/components/SingletonPage.astro';
+import FacultyRoster from '@/components/pinned/FacultyRoster.astro';
 import { getFacultyPage, getFaculty, getTeachingAreas, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import FacultyCard from '@/components/FacultyCard.astro';
-import FacultyFilter from '@/components/FacultyFilter';
-import FinalCta from '@/components/FinalCta.astro';
-import Sections from '@/components/Sections.astro';
 
 const [page, faculty, areas, siteSettings] = await Promise.all([
   getFacultyPage().catch(() => null),
@@ -28,19 +47,6 @@ const description =
   page?.seoDescription ??
   'Every course is led by an ordained minister or a credentialed Reformed scholar. Meet the faculty of The Presbyterian Academy.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'The faculty';
-const heroHeadline = page?.heroHeadline ?? 'Taught by ministers and scholars';
-const heroSubhead =
-  page?.heroSubhead ?? 'The teachers are the heart of the Academy. Get to know them.';
-const trustLine =
-  page?.aggregateTrustLine ?? 'Every teacher is an ordained minister or a credentialed Reformed scholar.';
-
-// Only offer area chips that actually have faculty behind them.
-const usedAreas = new Set(faculty.flatMap((f: any) => (f.teachingAreas ?? []).map((t: any) => t.slug)));
-const areaChips = (areas ?? [])
-  .filter((a: any) => usedAreas.has(a.slug))
-  .map((a: any) => ({ slug: a.slug, label: a.title }));
-
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
@@ -50,41 +56,25 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings}>
-  <section class="bg-background" aria-labelledby="faculty-hero">
-    <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
-      <div data-reveal>
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
-        <h1 id="faculty-hero" class="mt-3 font-display text-h1 leading-headline-tight text-foreground">{heroHeadline}</h1>
-        {heroSubhead && <p class="mt-m max-w-2xl text-lg text-foreground/80">{heroSubhead}</p>}
-      </div>
-      {trustLine && (
-        <p class="mt-l border-t border-gold/50 pt-l text-base text-foreground/75">{trustLine}</p>
-      )}
-    </div>
-  </section>
-
-  <section class="bg-background" aria-labelledby="faculty-list">
-    <div class="mx-auto max-w-content px-m pb-section-lg">
-      <h2 id="faculty-list" class="sr-only">Faculty members</h2>
-      {areaChips.length > 0 && <FacultyFilter client:load areas={areaChips} />}
-      {faculty.length > 0 ? (
-        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
-          {faculty.map((f: any) => <FacultyCard person={f} />)}
-        </ul>
-      ) : (
-        <p class="mt-l text-foreground/80 italic">
-          {page?.emptyState ?? 'The faculty roster is being prepared. To ask about teaching with us, get in touch.'}
-        </p>
-      )}
-    </div>
-  </section>
-
-  <Sections sections={page?.flexibleSections} fallbackEmail={settings.email} />
-
-  <FinalCta
-    eyebrow={page?.finalCtaEyebrow ?? 'Learn from them'}
-    headline={page?.finalCtaHeadline ?? 'Find a course to take'}
-    subhead={page?.finalCtaSubhead ?? 'Every course is taught by the people you just met.'}
-    cta={page?.finalCta?.label ? page.finalCta : { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
-  />
+  <SingletonPage
+    pageType="facultyPage"
+    {page}
+    {settings}
+    heroFallbacks={{
+      eyebrow: 'The faculty',
+      headline: 'Taught by ministers and scholars',
+      subhead: 'The teachers are the heart of the Academy. Get to know them.',
+      trustLine: 'Every teacher is an ordained minister or a credentialed Reformed scholar.',
+    }}
+    finalCtaFallbacks={{
+      eyebrow: 'Learn from them',
+      headline: 'Find a course to take',
+      subhead: 'Every course is taught by the people you just met.',
+      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' },
+    }}
+  >
+    <Fragment slot="pinned">
+      <FacultyRoster {faculty} {areas} emptyState={page?.emptyState} />
+    </Fragment>
+  </SingletonPage>
 </BaseLayout>

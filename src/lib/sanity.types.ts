@@ -890,6 +890,9 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
 };
 
@@ -1035,6 +1038,9 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
 };
 
@@ -1157,6 +1163,20 @@ export type SiteSettings = {
     successMessage?: string;
     consentNote?: string;
   };
+};
+
+export type SectionCourseRail = {
+  _type: 'sectionCourseRail';
+  source?: 'startHere' | 'featured';
+  variant?: 'rail' | 'feature';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+  limit?: number;
+  linkLabel?: string;
+  linkHref?: string;
+  adaptiveColumns?: boolean;
+  dedupeAgainstStartHere?: boolean;
 };
 
 export type FormReference = {
@@ -1875,6 +1895,9 @@ export type Page = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -2010,6 +2033,9 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   listIntro?: string;
@@ -2141,6 +2167,9 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   personasIntro?: string;
@@ -2278,6 +2307,9 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   requestForm?: FormReference;
@@ -2424,6 +2456,9 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   pricingIntro?: string;
@@ -2564,6 +2599,9 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   directoryIntro?: string;
@@ -2696,6 +2734,9 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCta?: CtaBlock;
   catalogIntro?: string;
@@ -2847,6 +2888,9 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
 };
 
@@ -2992,6 +3036,9 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
 };
 
@@ -3169,6 +3216,9 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
 };
 
@@ -3296,6 +3346,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3461,6 +3514,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3655,6 +3711,7 @@ export type AllSanitySchemaTypes =
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | SectionCourseRail
   | FormReference
   | SectionRequestPanel
   | SectionContactDetails

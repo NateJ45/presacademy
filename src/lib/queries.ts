@@ -668,8 +668,8 @@ const COURSE_CARD = `{
 
 // ---- Courses page singleton + course collection ---------------------------
 
-export async function getCoursesPage() {
-  return sanityFetch(`*[_type == "coursesPage"][0]{
+export async function getCoursesPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "coursesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
@@ -746,8 +746,8 @@ const FACULTY_CARD = `{
   "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current }
 }`;
 
-export async function getFacultyPage() {
-  return sanityFetch(`*[_type == "facultyPage"][0]{
+export async function getFacultyPage(fetcher = sanityFetch) {
+  return fetcher(`*[_type == "facultyPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},

@@ -1,0 +1,58 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// FacultyRoster — the Faculty page's pinned code region (2026-08-26)
+// =============================================================================
+// Phase 3 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md, the
+// twin of CoursesCatalog.astro in this directory.
+//
+// WHY THIS IS NOT A SECTION TYPE
+// Same reasoning as the catalog: a React filter island (FacultyFilter) over a
+// server-rendered grid, with the area chips derived from the roster itself so a
+// chip that would match nobody never appears. It is the page's whole job, there
+// is no arrangement of it an editor would want, and every field it might expose
+// is a way to break the filter.
+//
+// It renders through SingletonPage's "pinned" slot, between the sections array
+// and the closing CTA. Faculty has no body sections today, so the roster is the
+// first thing after the hero either way; see SingletonPage's header for what
+// the ordering does and does not allow once an editor adds one.
+//
+// The markup was CUT from src/pages/faculty/index.astro, not rewritten, and the
+// chip derivation came with it, so the preview route can render this region
+// identically by passing the same two collections.
+import FacultyCard from '@/components/FacultyCard.astro';
+import FacultyFilter from '@/components/FacultyFilter';
+
+interface Props {
+  /** The roster, already ordered by the query. */
+  faculty: any[];
+  /** Teaching areas, filtered down to the ones with teachers behind them. */
+  areas: any[];
+  /** The line shown before anyone has been added. */
+  emptyState?: string;
+}
+const { faculty = [], areas = [], emptyState } = Astro.props as Props;
+
+// Only offer area chips that actually have faculty behind them.
+const usedAreas = new Set(faculty.flatMap((f: any) => (f.teachingAreas ?? []).map((t: any) => t.slug)));
+const areaChips = (areas ?? [])
+  .filter((a: any) => usedAreas.has(a.slug))
+  .map((a: any) => ({ slug: a.slug, label: a.title }));
+---
+
+<section class="bg-background" aria-labelledby="faculty-list">
+  <div class="mx-auto max-w-content px-m pb-section-lg">
+    <h2 id="faculty-list" class="sr-only">Faculty members</h2>
+    {areaChips.length > 0 && <FacultyFilter client:load areas={areaChips} />}
+    {faculty.length > 0 ? (
+      <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+        {faculty.map((f: any) => <FacultyCard person={f} />)}
+      </ul>
+    ) : (
+      <p class="mt-l text-foreground/80 italic">
+        {emptyState ?? 'The faculty roster is being prepared. To ask about teaching with us, get in touch.'}
+      </p>
+    )}
+  </div>
+</section>

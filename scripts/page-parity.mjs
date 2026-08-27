@@ -48,7 +48,17 @@
  *      markup from about.astro into a section component legitimately changes it
  *      while the rendered result is identical. The attribute NAME is kept (its
  *      presence or absence is real drift), the hash is replaced with CID.
- *   3. Whitespace runs BETWEEN tags (>   < becomes ><) and trailing whitespace
+ *   3. The hydration PREFIX on <astro-island>, prefix="r1" -> prefix="rN".
+ *      Added 2026-08-26 (Phase 3: courses + faculty). Astro numbers each island
+ *      by its position in the render order and uses the value only to namespace
+ *      that island's hydration variables, so the number is unique-per-page and
+ *      otherwise meaningless. Moving the courses catalog into a component
+ *      pushed its island further down the render order (r1 -> r8) without
+ *      changing one rendered byte, which is the same situation as the scoped-
+ *      style hash in rule 2: a generated identity derived from source layout.
+ *      The <astro-island> tag itself, its component-url and its serialized
+ *      props are all still compared, so a real island change still shows up.
+ *   4. Whitespace runs BETWEEN tags (>   < becomes ><) and trailing whitespace
  *      on every line, plus CRLF -> LF. Astro's indentation shifts when markup
  *      is nested one level deeper inside a section wrapper; the browser does not
  *      care and neither should the diff. Whitespace INSIDE a text node is left
@@ -114,7 +124,12 @@ function stripAstroCids(html) {
     .replace(/data-astro-transition-scope="[^"]*"/g, 'data-astro-transition-scope="SCOPE"');
 }
 
-/** Rule 3: whitespace that only reflects source indentation. */
+/** Rule 3: the render-order counter in an island's hydration prefix. */
+function stripIslandPrefixes(html) {
+  return html.replace(/(<astro-island\b[^>]*?)\sprefix="r\d+"/g, '$1 prefix="rN"');
+}
+
+/** Rule 4: whitespace that only reflects source indentation. */
 function collapseWhitespace(html) {
   return html
     .replace(/\r\n/g, '\n')
@@ -127,7 +142,7 @@ function collapseWhitespace(html) {
 }
 
 export function normalize(html) {
-  return collapseWhitespace(stripAstroCids(stripAssetHashes(html)));
+  return collapseWhitespace(stripIslandPrefixes(stripAstroCids(stripAssetHashes(html))));
 }
 
 // --------------------------------------------------------------------------
