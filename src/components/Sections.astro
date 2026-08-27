@@ -42,6 +42,9 @@ import RuledListBlock from '@/components/blocks/RuledListBlock.astro';
 import ContactDetailsBlock from '@/components/blocks/ContactDetailsBlock.astro';
 import RequestPanelBlock from '@/components/blocks/RequestPanelBlock.astro';
 import CourseRailBlock from '@/components/blocks/CourseRailBlock.astro';
+import TickerBlock from '@/components/blocks/TickerBlock.astro';
+import FacultyRailBlock from '@/components/blocks/FacultyRailBlock.astro';
+import TestimonialRailBlock from '@/components/blocks/TestimonialRailBlock.astro';
 
 interface Props {
   sections?: any[] | null;
@@ -52,8 +55,21 @@ interface Props {
    * statement offers a phone number when siteSettings carries one.
    */
   fallbackPhone?: string;
+  /**
+   * Optional draft-aware fetcher, handed to the AUTO blocks so their collection
+   * data can be draft content in the Studio preview (2026-08-26, Phase 4).
+   * Undefined everywhere else, which lets each query function fall through to
+   * its own `= sanityFetch` default, so the live build is unchanged.
+   *
+   * Only home passes one today: its preview showed draft courses, faculty and
+   * testimonials before the conversion (through the old HomeBody special case)
+   * and had to keep doing so. The other converted pages' auto blocks still read
+   * published data, which the plan's risk register accepts; pass this from their
+   * preview branch the day it matters.
+   */
+  fetcher?: any;
 }
-const { sections = [], fallbackEmail, fallbackPhone } = Astro.props;
+const { sections = [], fallbackEmail, fallbackPhone, fetcher } = Astro.props;
 
 const MAP: Record<string, any> = {
   sectionRichText: RichTextBlock,
@@ -88,6 +104,9 @@ const MAP: Record<string, any> = {
   sectionContactDetails: ContactDetailsBlock,
   sectionRequestPanel: RequestPanelBlock,
   sectionCourseRail: CourseRailBlock,
+  sectionTicker: TickerBlock,
+  sectionFacultyRail: FacultyRailBlock,
+  sectionTestimonialRail: TestimonialRailBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.
@@ -123,6 +142,8 @@ const DEFAULT_TONE: Record<string, string> = {
         </SectionShell>
       );
     }
-    return <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} />;
+    // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
+    // above are all editor-authored content, with nothing to fetch.
+    return <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} fetcher={fetcher} />;
   })
 }

@@ -7,19 +7,18 @@
    reads the perspective cookie, fetches the doc draft-aware (stega on), and
    renders it.
 
-    - `/preview` renders HOME through the shared HomeBody, in full fidelity.
-    - A page that has CONVERTED to the page builder (2026-08-26: privacy,
-      accessibility, for-you, resources, then pricing, about, faq, events,
-      contact, get-started, then courses and faculty) renders through the shared
-      SingletonPage with draft
-      data, also in full fidelity. Converting a page upgrades its preview
+    - ALL THIRTEEN singleton pages have now CONVERTED to the page builder
+      (2026-08-26: privacy, accessibility, for-you, resources, then pricing,
+      about, faq, events, contact, get-started, then courses and faculty, and
+      finally home). Each renders through the shared SingletonPage with draft
+      data, in full fidelity. Converting a page upgrades its preview
       automatically; add its type to CONVERTED_PAGE_FETCHERS below in the same
       commit.
-    - The remaining fixed paths (/preview/about, /preview/courses, ...) render
-      the matching SINGLETON's generic editable surface: hero fields, the
-      flexibleSections page-builder blocks, and the closing CTA. The code-owned
-      middle of those pages (course rails, stats, filters) renders only on the
-      live site — a note in the preview says so.
+    - The generic branch below (hero fields + flexibleSections + closing CTA,
+      with a note saying the code-owned middle is missing) is therefore reached
+      only by `404`, the one singleton the conversion never touched. It stays
+      because that is what it is for, and because a new singleton would land
+      there before it converts.
     - Any other slug renders the matching custom `page` doc (hero + sections),
       the full page-builder surface.
 
@@ -33,7 +32,7 @@ import PreviewLayout from '@/layouts/PreviewLayout.astro';
 import Hero from '@/components/Hero.astro';
 import Sections from '@/components/Sections.astro';
 import FinalCta from '@/components/FinalCta.astro';
-import HomeBody from '@/components/home/HomeBody.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
 import CoursesCatalog from '@/components/pinned/CoursesCatalog.astro';
 import FacultyRoster from '@/components/pinned/FacultyRoster.astro';
@@ -60,10 +59,6 @@ import {
   getFaculty,
   getTerms,
   getSiteSettings,
-  getFeaturedCourses,
-  getStartHereCourses,
-  getFeaturedFaculty,
-  getFeaturedTestimonials,
   getNextTerm,
 } from '@/lib/queries';
 
@@ -121,48 +116,20 @@ interface PreviewDoc {
 
 const singletonType = SINGLETON_BY_PATH[slug];
 
-// ---------------------------------------------------------------------------
-// HOME: full-fidelity preview. The page body is the SHARED HomeBody component
-// (also rendered by index.astro), fed here with DRAFT data through the same
-// query functions — so what the editor sees IS the page, not an approximation.
-// The other singletons still get the generic editable-surface preview below;
-// convert them the same way (extract the body, pass a draft fetcher) as they
-// earn it.
-// ---------------------------------------------------------------------------
 const draftFetch = (q: string, p: Record<string, unknown> = {}, fallback: any = null) =>
   previewFetch(draftMode, q, p).catch(() => fallback);
 
-let home: Record<string, any> | null = null;
-if (singletonType === 'homePage') {
-  const [page, siteSettings, featuredCourses, startHere, featuredFaculty, testimonials, nextTerm] =
-    await Promise.all([
-      getHomePage(draftFetch),
-      getSiteSettings(draftFetch),
-      getFeaturedCourses(6, draftFetch),
-      getStartHereCourses(draftFetch),
-      getFeaturedFaculty(3, draftFetch),
-      getFeaturedTestimonials(3, draftFetch),
-      getNextTerm(draftFetch),
-    ]);
-  home = {
-    page,
-    settings: resolveSiteSettings(siteSettings),
-    featuredCourses: featuredCourses ?? [],
-    startHere: startHere ?? [],
-    featuredFaculty: featuredFaculty ?? [],
-    testimonials: testimonials ?? [],
-    nextTerm,
-  };
-}
-
 // ---------------------------------------------------------------------------
-// CONVERTED SINGLETONS: full-fidelity preview, same deal as home (2026-08-26).
+// CONVERTED SINGLETONS: full-fidelity preview (2026-08-26). All thirteen.
 // A page that has moved to the builder renders through SingletonPage here, with
 // DRAFT data pulled by the same query function the live page uses. That is what
 // makes the preview trustworthy: one template, so it cannot drift from the
 // page. Add a page's type here in the same commit that converts it.
 //
-// Two things preview differently from the live page, both accepted:
+// Three things preview differently from the live page, all accepted:
+//   - home's hero renders here too (into the same "hero" slot, as HomeHero), so
+//     nothing is missing; what differs is only that its images come from the
+//     draft.
 //   - the photo heroes render without their LOCAL fallback image (the live
 //     pages import it as a build-time asset; this route is SSR). An editor who
 //     has set a hero image in Sanity sees that image, which is the thing they
@@ -174,6 +141,12 @@ if (singletonType === 'homePage') {
 //     could join them the day it earns a component of its own.
 // ---------------------------------------------------------------------------
 const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = {
+  // Phase 4, 2026-08-26. Home converted last and its special case is GONE: what
+  // used to be a bespoke branch rendering HomeBody with seven pre-fetched
+  // collections is now this one line plus the hero slot and the auto sections'
+  // own draft-aware fetches, below. Home keeps everything the special case gave
+  // it (the whole body, draft courses/faculty/testimonials, the next-term line).
+  homePage: getHomePage,
   privacyPage: getPrivacyPage,
   accessibilityPage: getAccessibilityPage,
   forYouPage: getForYouPage,
@@ -193,7 +166,7 @@ const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = 
 };
 
 let converted: { page: any; settings: any } | null = null;
-if (!home && singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
+if (singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
   const [page, siteSettings] = await Promise.all([
     CONVERTED_PAGE_FETCHERS[singletonType](draftFetch),
     getSiteSettings(draftFetch),
@@ -214,6 +187,12 @@ if (!home && singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
 // published too, so this matches what an editor is previewing. It is the same
 // accepted trade the other auto blocks make (the plan's risk register); when a
 // draft-aware catalog matters, parameterize the queries and pass draftFetch.
+// Home's hero is page-level too, and its ledger line names the next cohort, so
+// the term has to be fetched here the way the page file fetches it. Draft-aware,
+// because the old home special case fetched it that way (2026-08-26, Phase 4).
+const nextTerm =
+  converted && singletonType === 'homePage' ? await getNextTerm(draftFetch) : null;
+
 let pinned: Record<string, any> | null = null;
 if (converted && singletonType === 'coursesPage') {
   const [courses, areas, faculty, terms] = await Promise.all([
@@ -231,7 +210,7 @@ if (converted && singletonType === 'coursesPage') {
   pinned = { faculty, areas };
 }
 
-const doc = home || converted
+const doc = converted
   ? null
   : await previewFetch<PreviewDoc | null>(
   draftMode,
@@ -241,29 +220,29 @@ const doc = home || converted
   singletonType ? { type: singletonType } : { slug },
 );
 
-if (!home && !converted && !doc) {
+if (!converted && !doc) {
   return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
 }
 if (converted && !converted.page) {
   return new Response(`No document found for "${slug}"`, { status: 404 });
 }
 
-const generic = !home && !converted;
+const generic = !converted;
 
 // The doc id the overlay + /preview/live listen on, read from the QUERY (a
 // Studio-created page has a random id). Draft perspective can return the
 // drafts. twin's id; strip it so the listen filter matches both twins. The
-// converted singletons have fixed ids equal to their type, same as home.
-const pageId = home ? 'homePage' : converted ? singletonType : doc!._id.replace(/^drafts\./, '');
+// converted singletons have fixed ids equal to their type.
+const pageId = converted ? singletonType : doc!._id.replace(/^drafts\./, '');
 
 const heroHeadline = generic ? doc!.heroHeadline || doc!.title || doc!.seoTitle || '' : '';
 const builderSections = generic ? (singletonType ? doc!.flexibleSections : doc!.sections) : [];
 const hasFinalCta = generic ? Boolean(doc!.finalCtaHeadline || doc!.finalCta) : false;
-const title = home
-  ? 'Home — Preview'
-  : converted
-    ? `${converted.page?.heroHeadline ?? slug} — Preview`
-    : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
+const title = converted
+  ? singletonType === 'homePage'
+    ? 'Home — Preview'
+    : `${converted.page?.heroHeadline ?? slug} — Preview`
+  : `${doc!.title ?? heroHeadline ?? slug} — Preview`;
 
 // Some converted pages wear the photo hero, which SingletonPage leaves to the
 // page (its scoped style must not follow every text-hero page). Here the slot is
@@ -280,25 +259,16 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
 
 <PreviewLayout {title} {draftMode} {pageId}>
   {
-    home && (
-      <HomeBody
-        page={home.page}
-        settings={home.settings}
-        featuredCourses={home.featuredCourses}
-        startHere={home.startHere}
-        featuredFaculty={home.featuredFaculty}
-        testimonials={home.testimonials}
-        nextTerm={home.nextTerm}
-      />
-    )
-  }
-  {
     converted && (
       <SingletonPage
         pageType={singletonType}
         page={converted.page}
         settings={converted.settings}
+        fetcher={singletonType === 'homePage' ? draftFetch : undefined}
       >
+        {singletonType === 'homePage' && (
+          <HomeHero slot="hero" page={converted.page} settings={converted.settings} {nextTerm} />
+        )}
         {previewImageHero && (
           <Hero
             slot="hero"

@@ -1,0 +1,46 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// TickerBlock — the slow topics marquee (2026-08-26)
+// =============================================================================
+// Phase 4 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Cut
+// verbatim from src/components/home/HomeBody.astro's topics ticker; PROVEN
+// against home by the parity harness the same day.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// TWO THINGS THAT ARE DELIBERATE AND MUST SURVIVE ANY EDIT
+//   1. `aria-hidden="true"` on the section. The band is decoration: every topic
+//      it names is a real, readable heading in the catalog, and a sideways-
+//      moving list of words read aloud is noise. It also means the band needs no
+//      landmark label and must not have a heading.
+//   2. The track holds the group TWICE. The marquee animation translates by
+//      exactly one group width, so the second copy is what makes the loop
+//      seamless. One copy leaves a visible gap on every cycle.
+//      (The animation itself, and its prefers-reduced-motion stop, live in
+//      globals.css under .marquee.)
+interface Props {
+  block: any;
+}
+const { block } = Astro.props as Props;
+
+const topics: string[] = block?.topics ?? [];
+---
+
+{
+  topics.length > 0 && (
+    <section class="border-b border-border-soft bg-card" aria-hidden="true">
+      <div class="marquee py-3.5">
+        <div class="marquee__track">
+          {[0, 1].map(() => (
+            <div class="marquee__group text-xs uppercase tracking-eyebrow text-foreground/70">
+              {topics.map((topic: string) => (
+                <span class="inline-flex items-center gap-3">{topic}<span class="text-gold-ink">&#10022;</span></span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

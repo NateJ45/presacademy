@@ -1,0 +1,59 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// TestimonialRailBlock — the home page's quotes (2026-08-26)
+// =============================================================================
+// Phase 4 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Cut
+// verbatim from src/components/home/HomeBody.astro's testimonials band; PROVEN
+// against home by the parity harness the same day.
+//
+// Rendered OUTSIDE SectionShell (decision D1): fixed surface, no tone field.
+//
+// AUTO BLOCK, and draft-aware through the optional `fetcher` threaded down from
+// SingletonPage, for the same reason FacultyRailBlock is: home's preview showed
+// draft testimonials before the conversion and still does.
+//
+// The attribution line joins role and city with filter(Boolean), so a quote with
+// only one of them never renders a dangling comma.
+import { getFeaturedTestimonials } from '@/lib/queries';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const limit: number = typeof block?.limit === 'number' && block.limit > 0 ? block.limit : 3;
+const testimonials = (await getFeaturedTestimonials(limit, fetcher).catch(() => [])) ?? [];
+
+// Landmark id: the band is labeled by its own h2. The seed carries the id the
+// page already used ("home-stories"), so anchors keep working.
+const headingId = block?.headingId || 'testimonial-rail';
+---
+
+{
+  testimonials.length > 0 && (
+    <section class="bg-background" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div data-reveal>
+          <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block?.eyebrow}</p>
+          <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {testimonials.map((t: any) => (
+            <figure class="flex h-full flex-col">
+              <blockquote class="font-display text-xl italic leading-relaxed text-foreground/90">{t.quote}</blockquote>
+              <figcaption class="mt-auto pt-l">
+                <div class="h-px w-full bg-border-soft"></div>
+                <p class="mt-3 text-sm font-medium text-foreground">{t.name}</p>
+                <p class="text-sm text-foreground/70">{[t.role, t.city].filter(Boolean).join(', ')}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

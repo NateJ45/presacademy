@@ -35,7 +35,9 @@ const items: any[] = block?.items ?? [];
 const variant = block?.variant === 'quad' ? 'quad' : 'trio';
 
 // Present only when a stat opts in, so the pages that never animate keep their
-// grid attribute-for-attribute unchanged.
+// grid attribute-for-attribute unchanged. (Pricing's `trio` values are words, so
+// it never carries the attribute at all; see the note in the `quad` branch for
+// why that branch spells the presence out instead of interpolating it.)
 const countupGrid = items.some((s) => s?.count) ? true : undefined;
 
 // Pricing's band has no accessible name (it sits under the page h1 and needs
@@ -47,14 +49,31 @@ const landmarkLabel = block?.landmarkLabel || undefined;
   items.length > 0 && (
     variant === 'quad' ? (
       <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
-        <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid={countupGrid}>
-          {items.map((s: any, i: number) => (
-            <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
-              <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
-              <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
-            </div>
-          ))}
-        </div>
+        {/* The grid is written out twice, on purpose (2026-08-26, Phase 4).
+            Astro serializes `data-countup-grid={true}` as `data-countup-grid="true"`,
+            while home wrote the attribute BARE, and the parity harness reads
+            bytes: that one difference was the only diff in the whole home
+            conversion. A valueless attribute cannot be produced from an
+            expression, so the presence of the attribute is a branch instead. */}
+        {countupGrid ? (
+          <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
+            {items.map((s: any, i: number) => (
+              <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
+                <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
+                <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid>
+            {items.map((s: any, i: number) => (
+              <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
+                <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
+                <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     ) : (
       <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>

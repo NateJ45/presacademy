@@ -923,6 +923,14 @@ export const sectionLegalBody = defineType({
  *   steps   the warm band's quieter cousin: eyebrow only, three columns,
  *           smaller type throughout. PROVEN against get-started's "What happens
  *           next" (2026-08-26).
+ *   wayfind the home page's "where to begin" row: four full-width LINK cells
+ *           divided by hairlines, no heading of its own, an aria-label instead.
+ *           PROVEN against home (2026-08-26, Phase 4).
+ *
+ * The wayfinding band is the reason two extra fields exist below: `landmarkLabel`
+ * (it has no visible heading to be named by) and the per-card `href` (the whole
+ * cell is one link, not a card with a button). Both are ignored by the other
+ * variants, which is why they carry the band's name in their descriptions.
  */
 export const sectionNumberedCards = defineType({
   name: 'sectionNumberedCards',
@@ -939,6 +947,13 @@ export const sectionNumberedCards = defineType({
       type: 'string',
       description: 'Only needed if you want to link straight to this section, e.g. /about#our-beliefs. Leave empty and one is made from the heading.',
     }),
+    defineField({
+      name: 'landmarkLabel',
+      title: 'Screen-reader label (the "where to begin" style only)',
+      type: 'string',
+      description:
+        'Read aloud to describe this part of the page, e.g. "Where to begin". Used by the "where to begin" style, which has no visible heading of its own. It must NOT repeat the page headline word for word.',
+    }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
     defineField({
       name: 'cards',
@@ -953,6 +968,13 @@ export const sectionNumberedCards = defineType({
             defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required(), description: 'Example: "The small-group leader".' }),
             defineField({ name: 'body', title: 'Body', type: 'text', rows: 2, description: 'One line on what this card promises.' }),
             defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
+            defineField({
+              name: 'href',
+              title: 'Link (the "where to begin" style only)',
+              type: 'string',
+              description:
+                'An internal path like /courses, or a full URL. In the "where to begin" style the whole cell is this link; the other styles use the button above instead.',
+            }),
           ],
           preview: { select: { title: 'title', subtitle: 'body' } },
         }),
@@ -971,6 +993,7 @@ export const sectionNumberedCards = defineType({
           { title: 'Boxed, gold all round', value: 'full' },
           { title: 'Warm band, gold top rule (About: what we believe)', value: 'ledger' },
           { title: 'Warm band, three small steps (Get Started)', value: 'steps' },
+          { title: 'Where to begin: a row of linked cells (Home)', value: 'wayfinding' },
         ],
         layout: 'radio',
       },
@@ -1044,9 +1067,9 @@ export const sectionScholarship = defineType({
  *   trio  three cells, stacking to one column on phones (Pricing). PROVEN by
  *         the parity harness 2026-08-26.
  *   quad  four cells in a 2x2 that opens out to a row on large screens, with
- *         the count-up animation wired (home). DECLARED, not yet proven: home
- *         converts in Phase 4, and the harness has not held this variant
- *         against it. Verify before trusting it, the same way `top2` was.
+ *         the count-up animation wired (home). PROVEN by the parity harness
+ *         against home, 2026-08-26 (Phase 4). It needed no change: the markup
+ *         copied ahead of time in Phase 2 matched the page byte for byte.
  *
  * A stat opts into the count-up animation per item (`count`). Year-style values
  * leave it off on purpose, so "2026" does not spin up from zero.
@@ -1453,14 +1476,14 @@ export const sectionRequestPanel = defineType({
  *
  *   rail     the card-surface band. PROVEN by the parity harness against the
  *            Courses page, 2026-08-26.
- *   feature  the paper band with the rule and the "see all" link. DECLARED,
- *            not proven: it is home #6 copied ahead of time, and home converts
- *            in Phase 4. Hold it against the harness before trusting it.
+ *   feature  the paper band with the rule and the "see all" link. PROVEN by the
+ *            parity harness against home #6, 2026-08-26 (Phase 4).
  *
- * `source` and `dedupeAgainstStartHere` are likewise built now and proven in
- * halves: `startHere` is what the Courses page runs on today; `featured` and
- * the dedup exist for home's second rail, which drops any course already shown
- * in its first one. Phase 4 proves them.
+ * `source`, `adaptiveColumns` and `dedupeAgainstStartHere` were built in Phase 3
+ * and proven in Phase 4: `startHere` is what the Courses page runs on; home #3
+ * is the same rail with `adaptiveColumns` on, and home #6 is the featured band
+ * that drops any course already shown in the rail above it. All four now hold
+ * against a captured baseline.
  *
  * WHY "adaptiveColumns" IS A FIELD AND NOT THE RULE EVERYWHERE
  * Home's Start-here rail narrows its grid when it holds fewer than three
@@ -1561,6 +1584,115 @@ export const sectionCourseRail = defineType({
   },
 });
 
+/**
+ * The topics ticker: home #5 (2026-08-26, Phase 4).
+ *
+ * A slow marquee of subject names. It is DECORATIVE and rendered `aria-hidden`,
+ * exactly as the home page rendered it: it says nothing a screen-reader user
+ * cannot read in the catalog, and a moving list of words read aloud is noise.
+ * That is why there is no heading field and no landmark label here.
+ */
+export const sectionTicker = defineType({
+  name: 'sectionTicker',
+  title: 'Topics ticker (decorative)',
+  type: 'object',
+  description:
+    'A thin band of subject names that drifts slowly sideways. Decoration: it is skipped by screen readers and stops moving for anyone who asks for reduced motion.',
+  fields: [
+    defineField({
+      name: 'topics',
+      title: 'Topics',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'Short words or phrases, in the order they should scroll past.',
+      validation: (R) => R.min(1),
+    }),
+  ],
+  preview: {
+    select: { topics: 'topics' },
+    prepare: ({ topics }) => ({
+      title: 'Topics ticker',
+      subtitle: topics?.length ? topics.slice(0, 4).join(', ') : 'No topics yet',
+    }),
+  },
+});
+
+/**
+ * The faculty strip: home #7 (2026-08-26, Phase 4).
+ *
+ * Auto-updating: it pulls the faculty roster itself, in the roster's own order,
+ * so adding a teacher to the catalog puts them on the home page. What this
+ * section owns is the copy around the cards and the link out to the full roster.
+ */
+export const sectionFacultyRail = defineType({
+  name: 'sectionFacultyRail',
+  title: 'Faculty strip (from the roster)',
+  type: 'object',
+  description:
+    'A row of teacher cards pulled straight from the faculty roster, on the warm surface, with a link out to the full roster.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "faculty-rail".',
+    }),
+    defineField({
+      name: 'limit',
+      title: 'How many teachers',
+      type: 'number',
+      initialValue: 3,
+      description: 'Leave empty for three, which fills the row.',
+      validation: (R) => R.min(1).integer(),
+    }),
+    defineField({ name: 'linkLabel', title: '"See all" link text', type: 'string', description: 'Leave empty for no link.' }),
+    defineField({ name: 'linkHref', title: '"See all" link', type: 'string', description: 'Where that link goes, usually "/faculty".' }),
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Faculty strip', subtitle }),
+  },
+});
+
+/**
+ * The testimonial strip: home #8 (2026-08-26, Phase 4).
+ *
+ * Auto-updating: it pulls the testimonials marked "Featured", so a new quote
+ * reaches the home page by being flagged where the quotes live. Each quote is a
+ * figure with its attribution under a hairline, three across.
+ */
+export const sectionTestimonialRail = defineType({
+  name: 'sectionTestimonialRail',
+  title: 'Testimonials (from the collection)',
+  type: 'object',
+  description:
+    'The quotes marked "Featured", set three across under a gold rule. Edit the quotes themselves in the Testimonials collection.',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "testimonial-rail".',
+    }),
+    defineField({
+      name: 'limit',
+      title: 'How many quotes',
+      type: 'number',
+      initialValue: 3,
+      description: 'Leave empty for three, which fills the row.',
+      validation: (R) => R.min(1).integer(),
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'eyebrow' },
+    prepare: ({ title, subtitle }) => ({ title: title || 'Testimonials', subtitle }),
+  },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -1602,6 +1734,10 @@ export const sectionBlocks = [
   sectionRequestPanel,
   // Phase 3, 2026-08-26 (courses; home reuses it in Phase 4).
   sectionCourseRail,
+  // Phase 4, 2026-08-26 (home).
+  sectionTicker,
+  sectionFacultyRail,
+  sectionTestimonialRail,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -1647,6 +1783,10 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionRequestPanel' },
   // Phase 3, 2026-08-26 (courses; home reuses it in Phase 4).
   { type: 'sectionCourseRail' },
+  // Phase 4, 2026-08-26 (home).
+  { type: 'sectionTicker' },
+  { type: 'sectionFacultyRail' },
+  { type: 'sectionTestimonialRail' },
 ];
 
 // =============================================================================
@@ -1722,6 +1862,9 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
       'sectionContactDetails',
       'sectionRequestPanel',
       'sectionCourseRail',
+      'sectionTicker',
+      'sectionFacultyRail',
+      'sectionTestimonialRail',
     ],
   },
 ];

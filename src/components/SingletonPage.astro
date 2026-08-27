@@ -59,7 +59,10 @@ import { sectionsFor } from '@/lib/default-sections';
 --------------------------------------------------------------------------- */
 type HeroConfig =
   | {
-      /* Home only: the two-column photo/copy hero. See the TODO below. */
+      /* Home only: the two-column copy/slideshow hero. Like the photo heroes
+         below, the PAGE renders it into the "hero" slot (2026-08-26, Phase 4):
+         HeroSlideshow carries scoped styles, so importing HomeHero here would
+         inject them into all thirteen pages. See the CSS-graph note above. */
       kind: 'split';
     }
   | {
@@ -100,7 +103,8 @@ type HeroConfig =
     };
 
 const HERO_VARIANTS: Record<string, HeroConfig> = {
-  /* Split (home). Phase 4. */
+  /* Split (home), converted 2026-08-26. Rendered by the page into slot="hero"
+     as src/components/home/HomeHero.astro. */
   homePage: { kind: 'split' },
 
   /* Text + gold rule. */
@@ -196,6 +200,14 @@ interface Props {
    * never had one (2026-08-26).
    */
   finalCtaBackgroundImage?: any;
+  /**
+   * Optional draft-aware fetcher for the AUTO sections' collection queries
+   * (2026-08-26, Phase 4). Only the preview route passes one, and today only for
+   * home, whose preview has always rendered draft courses, faculty and
+   * testimonials. Undefined everywhere else, which leaves every query on its own
+   * `= sanityFetch` default, so the live build is unchanged. See Sections.astro.
+   */
+  fetcher?: any;
 }
 
 const {
@@ -206,6 +218,7 @@ const {
   heroFallbacks = {},
   finalCtaFallbacks = {},
   finalCtaBackgroundImage,
+  fetcher,
 } = Astro.props as Props;
 
 const hero = HERO_VARIANTS[pageType];
@@ -230,20 +243,10 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
 ---
 
 {
-  hero?.kind === 'split' ? (
-    /* TODO (Phase 4, home): the split hero is still owned by
-       src/components/home/HomeBody.astro, which renders it inline together
-       with the Ken Burns HeroSlideshow, the kinetic-words h1, the two pill
-       CTAs and the next-cohort line. It converts LAST, on purpose: home is
-       the heaviest page and HomeBody is already the shared page/preview
-       template, so it loses nothing by waiting. When it converts, lift that
-       markup into a HeroSplit.astro rendered from this branch, and delete the
-       HomeBody special case in src/pages/preview/[...slug].astro. Until then
-       this branch renders nothing and index.astro keeps using HomeBody. */
-    null
-  ) : hero?.kind === 'image' ? (
-    /* The page renders its own <Hero slot="hero">. See the CSS-graph note at
-       the top of this file for why it is not rendered from here. */
+  hero?.kind === 'split' || hero?.kind === 'image' ? (
+    /* The page renders its own hero into the slot: <Hero> for the photo pages,
+       <HomeHero> for home. See the CSS-graph note at the top of this file for
+       why neither is rendered from here. */
     <slot name="hero" />
   ) : hero?.kind === 'text' ? (
     <PageHeader
@@ -259,7 +262,12 @@ const showFinalCta = !NO_FINAL_CTA.has(pageType);
   ) : null
 }
 
-<Sections sections={sections} fallbackEmail={settings?.email} fallbackPhone={settings?.phone} />
+<Sections
+  sections={sections}
+  fallbackEmail={settings?.email}
+  fallbackPhone={settings?.phone}
+  fetcher={fetcher}
+/>
 
 {/* ---------------------------------------------------------------------------
     Pinned code regions: ONE slot, always after the sections (settled 2026-08-26)

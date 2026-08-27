@@ -21,6 +21,15 @@ that section when it gets long.
   `https://www.presbyterianacademy.org` (and any workers.dev preview
   origin you use) must be listed under Project → API → CORS origins with
   credentials allowed. sanity.io/manage.
+- **Confirm the Home page's live EDIT loop in the deployed Studio**
+  (2026-08-26, Phase 4). The home preview was verified end to end under
+  `wrangler dev`: the whole body renders, the slideshow runs, the console
+  is clean. What cannot be checked without a signed-in editor is the last
+  link in the chain: open Presentation, edit a Home **Page sections** block
+  (say the "where to begin" row's second cell) without publishing, and
+  confirm the change appears in the iframe and that click-to-edit opens the
+  right field. Everything the check exercises is shared code that already
+  works on twelve other pages, so this is confirmation, not suspicion.
 - **Real Academy photography.** The whole dataset still runs on Pexels
   CC0 placeholders (`acad-*`). Editors can swap photos in Studio any time;
   until then the site is presentable but generic. Unblocks: a photo shoot
@@ -38,8 +47,9 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
-- **Page-builder conversion (PHASES 1, 2 AND 3 LANDED 2026-08-26, Phase 4 —
-  home — is the last conversion phase).**
+- **Page-builder conversion (PHASES 1 THROUGH 4 LANDED 2026-08-26. ALL 13 PAGES
+  ARE CONVERTED; only Phase 5, cleanup + docs, remains, and it is deliberately
+  unhurried).**
   Convert the 13 bespoke singleton pages to a sections-array page-builder
   with zero visual change. The full plan — governing decisions, the ~15
   new section types mapped to every page, phasing, parity harness, risks
@@ -114,35 +124,63 @@ that section when it gets long.
      the page. Parity missed it because the fallback string and the field
      hold the same sentence. Fixed. Worth remembering when Phase 4 wires
      home's hero map: check every field NAME against the schema.
-  Carry-forwards for Phase 4:
-  1. **`sectionLedgerStats`' `quad` variant is declared, not proven.** It
-     is home's stat band copied ahead of time; hold it against home with
-     the parity harness in Phase 4, the way `trio` was held against
-     pricing.
-  2. **Auto sections still preview PUBLISHED collection data** (FAQ items,
-     events, pricing tiers, site settings, and now courses and faculty).
-     Accepted at conversion time, as the plan's risk register allows:
-     parameterize each block's query with the draft fetcher when it
-     matters. The preview route fetches the pinned regions' collections
-     the same published way, for the same reason.
-  3. **`sectionCourseRail` is half-proven, on purpose.** `source:
-     'startHere'` with `variant: 'rail'` is what the Courses page runs on.
-     `source: 'featured'`, `variant: 'feature'` (the paper band with the
-     gold rule and the "see all" link), `adaptiveColumns` and
-     `dedupeAgainstStartHere` are home's three rails built ahead of time
-     and NOT yet held against the harness. Home #3 is the rail with
-     `adaptiveColumns` on; home #6 is the feature band with the dedup.
-  4. **Home's two rails and the Courses rail differ in a real class
-     attribute today.** Home narrows its grid below three courses; Courses
-     never does, and the dataset currently has exactly two Start-here
-     courses, so the two pages emit different `class` values from the same
-     data. That is why `adaptiveColumns` exists rather than one rule.
+  **Phase 4 converted home, the last page**, verified at 13/13 page parity
+  TWICE (once on `DEFAULT_SECTIONS`, then again after the seed ran, so both
+  the code fallback and the Sanity-driven path are proven byte-identical),
+  79 unit tests, 109 Playwright tests, the empty-credential axe run (32
+  chromium tests, light + dark), and `/preview` opened under `wrangler dev`
+  with the whole body, the running Ken Burns slideshow and a clean console.
+  It added three section types (`sectionTicker`, `sectionFacultyRail`,
+  `sectionTestimonialRail`), a fourth `sectionNumberedCards` variant
+  (`wayfinding`, with the `landmarkLabel` and per-card `href` it needs),
+  `src/components/home/HomeHero.astro` (the split hero, page-level per D2,
+  rendered into SingletonPage's hero slot), one seed
+  (`scripts/seed-builder-home.mjs`, run against production and re-run
+  clean), and it DELETED `src/components/home/HomeBody.astro` along with the
+  preview route's home special case.
+  The five Phase 3 carry-forwards, settled:
+  1. **`sectionLedgerStats`' `quad` is PROVEN.** It needed no change: the
+     markup copied ahead of time in Phase 2 matched home byte for byte.
+  2. **Auto sections still preview PUBLISHED collection data, EXCEPT on
+     home.** Home's preview showed draft courses, faculty and testimonials
+     before the conversion, so a `fetcher` prop now runs SingletonPage →
+     Sections → the auto blocks, and the preview route passes the draft
+     fetcher for `homePage` only. Every other page's blocks take the
+     default and read published data, as the risk register allows. Pass the
+     fetcher from another page's branch the day it matters.
+  3. **`sectionCourseRail` is fully proven.** `feature`, `featured`,
+     `adaptiveColumns` and `dedupeAgainstStartHere` all held against home.
+  4. **Home's rails really do differ from the Courses rail** in a class
+     attribute, as predicted; `adaptiveColumns` is why both pages are
+     byte-exact.
   5. **The Events page's `upcomingEmpty` copy in Sanity already ends in a
      full sentence** ("...is a course."), while the page appends a link
      reading "course." to it. The seed carried the value across
      faithfully, so nothing changed, but the live empty state reads
      oddly. Worth an editor fixing the field (it is now
-     `sectionEventGrid.emptyCopy`).
+     `sectionEventGrid.emptyCopy`). STILL OPEN.
+  Two findings from Phase 4 worth keeping:
+  1. **`data-countup-grid` cannot be interpolated.** Astro serializes
+     `data-x={true}` as `data-x="true"`, and home wrote the attribute bare.
+     That single byte was the ONLY parity diff in the whole home
+     conversion; `LedgerStatsBlock`'s `quad` branch now spells the grid out
+     twice so the attribute's presence is a branch, not a value.
+  2. **The plan's slice map was wrong about home's wayfinding row**, which
+     it pencilled in as `sectionNumberedCards`' `ledger` variant. The row
+     has no heading, each cell is a link, and it is named by an aria-label:
+     it earned a fourth variant. Parity decided it, exactly as the plan
+     said it would.
+  What Phase 5 (cleanup) should now unset, on top of the earlier pages'
+  superseded fields: `homePage.wayfinding`, `.stats`, `.tickerTopics`,
+  `.startHereEyebrow`, `.startHereHeadline`, `.coursesEyebrow`,
+  `.coursesHeadline`, `.coursesLinkLabel`, `.facultyEyebrow`,
+  `.facultyHeadline`, `.facultyLinkLabel`, `.testimonialsEyebrow`,
+  `.testimonialsHeadline` (all now unread by any renderer; only
+  `seed-builder-home.mjs` still reads them). The hero fields, the final-CTA
+  fields and the SEO fields all STAY. Phase 5 can also drop the "code-owned
+  middle" note from the preview route's generic branch if `404` is given a
+  better preview, and retire the `autoData` prop on SingletonPage, which no
+  page ever used (every auto block fetches for itself).
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): several course cards render empty image

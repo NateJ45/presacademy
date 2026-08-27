@@ -893,6 +893,15 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
 };
 
@@ -1041,6 +1050,15 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
 };
 
@@ -1165,6 +1183,29 @@ export type SiteSettings = {
   };
 };
 
+export type SectionTestimonialRail = {
+  _type: 'sectionTestimonialRail';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+  limit?: number;
+};
+
+export type SectionFacultyRail = {
+  _type: 'sectionFacultyRail';
+  eyebrow?: string;
+  heading?: string;
+  headingId?: string;
+  limit?: number;
+  linkLabel?: string;
+  linkHref?: string;
+};
+
+export type SectionTicker = {
+  _type: 'sectionTicker';
+  topics?: Array<string>;
+};
+
 export type SectionCourseRail = {
   _type: 'sectionCourseRail';
   source?: 'startHere' | 'featured';
@@ -1284,15 +1325,17 @@ export type SectionNumberedCards = {
   eyebrow?: string;
   heading?: string;
   headingId?: string;
+  landmarkLabel?: string;
   intro?: string;
   cards?: Array<{
     title?: string;
     body?: string;
     cta?: CtaBlock;
+    href?: string;
     _type: 'numberedCard';
     _key: string;
   }>;
-  variant?: 'top2' | 'full' | 'ledger' | 'steps';
+  variant?: 'top2' | 'full' | 'ledger' | 'steps' | 'wayfinding';
   footnote?: string;
 };
 
@@ -1898,6 +1941,15 @@ export type Page = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -2036,6 +2088,15 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   listIntro?: string;
@@ -2170,6 +2231,15 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   personasIntro?: string;
@@ -2310,6 +2380,15 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   requestForm?: FormReference;
@@ -2459,6 +2538,15 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   pricingIntro?: string;
@@ -2602,6 +2690,15 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   directoryIntro?: string;
@@ -2737,6 +2834,15 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
   catalogIntro?: string;
@@ -2891,6 +2997,15 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
 };
 
@@ -3039,6 +3154,15 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
 };
 
@@ -3219,6 +3343,15 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
 };
 
@@ -3349,6 +3482,15 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3517,6 +3659,15 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3711,6 +3862,9 @@ export type AllSanitySchemaTypes =
   | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | SectionTestimonialRail
+  | SectionFacultyRail
+  | SectionTicker
   | SectionCourseRail
   | FormReference
   | SectionRequestPanel

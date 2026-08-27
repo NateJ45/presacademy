@@ -1,0 +1,64 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// FacultyRailBlock — the home page's faculty strip (2026-08-26)
+// =============================================================================
+// Phase 4 of docs/superpowers/plans/2026-08-26-page-builder-conversion.md. Cut
+// verbatim from src/components/home/HomeBody.astro's faculty strip; PROVEN
+// against home by the parity harness the same day.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the warm surface is fixed in
+// code, and there is no tone field.
+//
+// AUTO BLOCK. It fetches the roster itself, so a teacher added to the catalog
+// reaches the home page after the next build with nobody editing the page.
+// Unlike the other auto blocks it takes an optional `fetcher`, threaded down
+// from SingletonPage: home's preview has always shown DRAFT faculty (the old
+// HomeBody special case passed the draft fetcher into the same query function),
+// and the conversion had to keep that rather than quietly downgrade it.
+import FacultyCard from '@/components/FacultyCard.astro';
+import { getFeaturedFaculty } from '@/lib/queries';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const limit: number = typeof block?.limit === 'number' && block.limit > 0 ? block.limit : 3;
+// Passing `undefined` through hits the query's own `= sanityFetch` default, so
+// the live build reads published data exactly as before.
+const faculty = (await getFeaturedFaculty(limit, fetcher).catch(() => [])) ?? [];
+
+// Landmark id: the band is labeled by its own h2. Deterministic fallback so the
+// label never dangles. The seed carries the id the page already used
+// ("home-faculty"), so anchors keep working.
+const headingId = block?.headingId || 'faculty-rail';
+
+// Both halves have to be present or no link renders: an <a> with an empty label
+// is an axe link-name failure, and the credential-less build renders that state.
+const showLink = Boolean(block?.linkLabel && block?.linkHref);
+---
+
+{
+  faculty.length > 0 && (
+    <section class="surface-warm bg-muted" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div data-reveal>
+            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block?.eyebrow}</p>
+            <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+          </div>
+          {showLink && (
+            <a href={block.linkHref} class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{block.linkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+          )}
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {faculty.map((f: any) => <FacultyCard person={f} />)}
+        </ul>
+      </div>
+    </section>
+  )
+}

@@ -367,6 +367,132 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
     },
   ],
 
+  // ---- home (converted 2026-08-26, Phase 4) --------------------------------
+  // The eight bands HomeBody.astro used to render inline, in the same order:
+  // wayfinding, the Start-here rail, the stat band, the topics ticker, the
+  // catalog preview, the faculty strip, the testimonials. (The split hero is NOT
+  // here: heroes stay page-level fields, per decision D2, and home's renders
+  // through SingletonPage's "hero" slot as src/components/home/HomeHero.astro.)
+  //
+  // The three rails and the faculty/testimonial strips carry no cards of their
+  // own: each block fetches its slice of the catalog itself, and with no Sanity
+  // credentials there is nothing to fetch, so each renders nothing. That is
+  // exactly what the old page's `startHere.length > 0` / `featuredCourses.length
+  // > 0` / `featuredFaculty.length > 0` / `testimonials.length > 0` guards did,
+  // and what the credential-less CI build has always shown.
+  //
+  // The headingIds are the ones the page's landmarks already used, so anchors
+  // and aria-labelledby keep working.
+  homePage: [
+    {
+      _key: 'homeWayfinding',
+      _type: 'sectionNumberedCards',
+      variant: 'wayfinding',
+      landmarkLabel: 'Where to begin',
+      cards: [
+        {
+          _key: 'wayfindingStep1',
+          title: 'Take a course',
+          body: 'Browse the catalog by topic or teacher.',
+          href: '/courses',
+        },
+        {
+          _key: 'wayfindingStep2',
+          title: 'Meet the teachers',
+          body: 'Ordained ministers and Reformed scholars.',
+          href: '/faculty',
+        },
+        {
+          _key: 'wayfindingStep3',
+          title: 'Find your path',
+          body: 'A starting point for where you are now.',
+          href: '/for-you',
+        },
+        {
+          _key: 'wayfindingStep4',
+          title: 'Start free',
+          body: 'Sit in on a class, no commitment.',
+          href: '/get-started',
+        },
+      ],
+    },
+    {
+      _key: 'homeStartHere',
+      _type: 'sectionCourseRail',
+      source: 'startHere',
+      variant: 'rail',
+      eyebrow: 'Start here',
+      heading: 'A few courses to begin with',
+      headingId: 'home-start',
+      limit: 3,
+      // Home narrows its grid below three courses; the Courses page never does.
+      // See CourseRailBlock's header for why that is a field and not a rule.
+      adaptiveColumns: true,
+    },
+    {
+      _key: 'homeStats',
+      _type: 'sectionLedgerStats',
+      variant: 'quad',
+      landmarkLabel: 'The Academy at a glance',
+      // Stats for a NEW (2026) school: structure + standards, not a track record
+      // (no founding year, no alumni counts). Only number values animate.
+      items: [
+        { _key: 'stat1', value: '100%', label: 'Ordained or credentialed faculty', count: true },
+        { _key: 'stat2', value: 'In person', label: 'Taught in cohorts' },
+        { _key: 'stat3', value: 'Need-based', label: 'Scholarships every term' },
+        { _key: 'stat4', value: 'Reformed', label: 'Rooted in the Westminster Standards' },
+      ],
+    },
+    {
+      _key: 'homeTicker',
+      _type: 'sectionTicker',
+      topics: [
+        'Old Testament',
+        'Systematic Theology',
+        'Church History',
+        'Reformed Worship',
+        'Biblical Greek',
+        'Christian Ethics',
+        'Apologetics',
+        'Pastoral Care',
+        'The Confessions',
+        'Spiritual Formation',
+      ],
+    },
+    {
+      _key: 'homeCourses',
+      _type: 'sectionCourseRail',
+      source: 'featured',
+      variant: 'feature',
+      eyebrow: 'Courses',
+      heading: 'Learn something worth knowing',
+      headingId: 'home-courses',
+      limit: 6,
+      linkLabel: 'See all courses',
+      linkHref: '/courses',
+      // Drop any Start-here course so the page never shows the same card twice.
+      dedupeAgainstStartHere: true,
+    },
+    {
+      _key: 'homeFaculty',
+      _type: 'sectionFacultyRail',
+      eyebrow: 'The faculty',
+      heading: 'Taught by ministers and scholars',
+      headingId: 'home-faculty',
+      limit: 3,
+      linkLabel: 'Meet the faculty',
+      linkHref: '/faculty',
+    },
+    {
+      _key: 'homeTestimonials',
+      _type: 'sectionTestimonialRail',
+      eyebrow: 'In their words',
+      heading: 'From the people we serve',
+      headingId: 'home-stories',
+      limit: 3,
+    },
+  ],
+
   // ---- faculty (converted 2026-08-26) --------------------------------------
   // No entry, deliberately. The Faculty page's body is entirely the roster, and
   // the roster is a pinned code region (the FacultyFilter island, the area

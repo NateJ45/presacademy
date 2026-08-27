@@ -1,0 +1,104 @@
+---
+/* ============================================================================
+   HomeHero — the home page's split hero (2026-08-26, Phase 4)
+   ============================================================================
+   Cut VERBATIM out of src/components/home/HomeBody.astro when home converted to
+   the page builder. Everything below is the markup that file carried: the
+   kinetic-words h1, the two pill CTAs, the gold hairline, the next-cohort ledger
+   line with its timezone-safe date formatter, and the Ken Burns HeroSlideshow.
+
+   WHY IT IS A COMPONENT AND NOT A SECTION (decision D2)
+   Heroes stay PAGE-LEVEL fields. An editor edits the same hero fields on the
+   Home Page document as before, and there is no way to delete the page's h1 by
+   removing a section. SingletonPage's hero map records that home wears the
+   `split` hero; the markup renders through its "hero" slot.
+
+   WHY IT IS RENDERED BY THE PAGE AND NOT BY SingletonPage
+   The same CSS-module-graph reason the photo heroes are (see SingletonPage's
+   header): HeroSlideshow carries scoped styles, and importing it into the shared
+   renderer would inject them into all thirteen pages. index.astro and the
+   preview route each render this into the slot.
+
+   The `??` fallbacks stay HERE rather than being passed in, because both
+   surfaces need the identical set: index.astro renders it with build-time
+   published data (and with no data at all in the credential-less CI build), and
+   the preview route renders it with drafts. Keeping one copy is what stops the
+   two from drifting, which is the whole point of the shared-template contract.
+   ========================================================================== */
+import HeroSlideshow from '@/components/HeroSlideshow.astro';
+
+interface Props {
+  /* The homePage singleton (or its draft). */
+  page: any;
+  /* resolveSiteSettings() output; only the city line is read. */
+  settings: any;
+  /* getNextTerm() output, or null. */
+  nextTerm: any;
+}
+const { page, settings, nextTerm } = Astro.props as Props;
+
+const heroEyebrow = page?.heroEyebrow ?? 'The Presbyterian Academy';
+const heroHeadline = page?.heroHeadline ?? 'Theological depth, taught for ordinary believers.';
+const heroSubhead =
+  page?.heroSubhead ??
+  'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
+// The hero accepts one image (static) or several (a slow Ken Burns slideshow).
+// homePage.heroImages is the source; the legacy single `heroImage` field was
+// dropped from the schema in the home re-schema (and its stale doc value unset
+// by seed-editability.mjs), so there is no single-image fallback to read.
+const heroImages = page?.heroImages?.length ? page.heroImages : [];
+
+// Timezone-safe: a bare "2026-09-08" parses as UTC midnight and renders as the
+// day before in every US timezone, so the T00:00:00 suffix pins it to local.
+// One of the site's three date formatters, kept separate on purpose (they differ).
+function fmtDate(d?: string): string {
+  if (!d) return '';
+  return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+const cityLine = settings?.addressLocality ?? 'West Chester, Ohio';
+
+const heroPrimaryLabel = page?.heroPrimaryLabel ?? 'Browse courses';
+const heroSecondaryLabel = page?.heroSecondaryLabel ?? 'Book a free intro';
+const nextCohortLabel = page?.nextCohortLabel ?? 'Next cohort begins';
+
+const pillPrimary =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
+const pillGhost =
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-foreground text-foreground hover:bg-accent transition-colors';
+---
+
+  {/* Split hero */}
+  <section class="bg-background hero-atmos overflow-hidden" aria-labelledby="home-hero">
+    <div class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]">
+      <div class="hero-entry-stagger">
+        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{heroEyebrow}</p>
+        <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">
+          <span class="kinetic-words">{heroHeadline.split(' ').map((word: string, i: number) => (
+            <><span class="w" style={`--i:${i}`}><span>{word}</span></span>{' '}</>
+          ))}</span>
+        </h1>
+        <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
+        <div class="mt-l flex flex-wrap gap-3">
+          <a href="/courses" class={pillPrimary}>{heroPrimaryLabel}</a>
+          <a href="/get-started" class={pillGhost}>{heroSecondaryLabel}</a>
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50"></div>
+        {nextTerm && (
+          <p class="mt-4 text-sm text-foreground/75">
+            <span class="font-display tabular-nums uppercase tracking-[0.12em] text-gold-ink">{nextCohortLabel}</span>
+            &nbsp; {fmtDate(nextTerm.startDate)} &nbsp;·&nbsp; {nextTerm.title} &nbsp;·&nbsp; {cityLine}
+          </p>
+        )}
+      </div>
+      <div>
+        <div class="h-0.5 w-full bg-gold"></div>
+        <HeroSlideshow
+          images={heroImages}
+          eager
+          id="home"
+          aspectClass="aspect-[3/2] lg:aspect-[4/5]"
+          sizes="(min-width: 1024px) 600px, 90vw"
+        />
+      </div>
+    </div>
+  </section>

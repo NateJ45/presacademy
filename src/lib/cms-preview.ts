@@ -67,6 +67,14 @@ const NON_STEGA_FIELDS = new Set([
   // stega-encoded, `source` would never equal "featured" and `variant` would
   // never equal "feature", and the preview would quietly show the wrong rail
   // while the live site was right. Nothing to add here; the note is the record.
+  //
+  // Phase 4, 2026-08-26 (home). Checked type by type, and again nothing to add:
+  // sectionNumberedCards' new `wayfinding` value rides the `variant` entry
+  // above, and the three new types (sectionTicker, sectionFacultyRail,
+  // sectionTestimonialRail) carry no enum at all. Their only logic-bearing
+  // values are numbers and booleans (`limit`), which stega never touches -- it
+  // encodes strings. Recorded because "no change needed" is only trustworthy
+  // when someone actually looked.
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

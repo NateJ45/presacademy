@@ -1,31 +1,40 @@
 ---
-// Safe to edit by hand for data wiring; the page BODY lives in
-// src/components/home/HomeBody.astro (shared with the Studio's draft preview —
-// edit copy and structure THERE so the preview can never drift from the page).
+// Safe to edit by hand for data wiring; the page BODY is now editor-owned.
+//
+// CONVERTED TO THE PAGE BUILDER 2026-08-26 (Phase 4 of
+// docs/superpowers/plans/2026-08-26-page-builder-conversion.md, the last of the
+// thirteen singletons). HomeBody.astro is gone: the seven bands it carried are
+// section blocks in the Home Page document's "Page sections" array, rendered by
+// the shared src/components/SingletonPage.astro, which the preview route uses
+// too. So home keeps the full-fidelity preview it pioneered, and now every other
+// page has it as well.
+//
+// What stays here: the queries, the SEO derivation, and the split hero. The hero
+// is page-level doctrine (decision D2 — an editor cannot delete the page's h1),
+// and it is rendered from here rather than from SingletonPage because
+// HeroSlideshow carries scoped styles that would otherwise be injected into all
+// thirteen pages (the CSS-module-graph note in SingletonPage.astro).
+//
+// The old wayfinding / stats / tickerTopics / strip-copy fields are deliberately
+// left in place and populated (decision D4, additive migration): reverting this
+// file brings the old page back with its content intact. They get unset in the
+// cleanup phase, never by clicking "Remove field" in the Studio.
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HomeBody from '@/components/home/HomeBody.astro';
-import {
-  getHomePage,
-  getSiteSettings,
-  getFeaturedCourses,
-  getStartHereCourses,
-  getFeaturedFaculty,
-  getFeaturedTestimonials,
-  getNextTerm,
-} from '@/lib/queries';
+import SingletonPage from '@/components/SingletonPage.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
+import { getHomePage, getSiteSettings, getNextTerm } from '@/lib/queries';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 
-const [page, siteSettings, featuredCourses, startHere, featuredFaculty, testimonials, nextTerm] =
-  await Promise.all([
-    getHomePage().catch(() => null),
-    getSiteSettings().catch(() => null),
-    getFeaturedCourses(6).catch(() => []),
-    getStartHereCourses().catch(() => []),
-    getFeaturedFaculty(3).catch(() => []),
-    getFeaturedTestimonials(3).catch(() => []),
-    getNextTerm().catch(() => null),
-  ]);
+// The catalog collections the body used to need are fetched by the section
+// blocks themselves now (the course rails, the faculty strip, the testimonials).
+// What is left here is the page document, the settings, and the next term, which
+// the hero's ledger line reads.
+const [page, siteSettings, nextTerm] = await Promise.all([
+  getHomePage().catch(() => null),
+  getSiteSettings().catch(() => null),
+  getNextTerm().catch(() => null),
+]);
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? site.name;
@@ -35,13 +44,18 @@ const description =
 ---
 
 <BaseLayout {title} {description} {siteSettings}>
-  <HomeBody
+  <SingletonPage
+    pageType="homePage"
     {page}
     {settings}
-    {featuredCourses}
-    {startHere}
-    {featuredFaculty}
-    {testimonials}
-    {nextTerm}
-  />
+    finalCtaFallbacks={{
+      eyebrow: 'Begin your formation',
+      headline: 'Tell us what you want to learn',
+      subhead:
+        'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.',
+      cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started' },
+    }}
+  >
+    <HomeHero slot="hero" {page} {settings} {nextTerm} />
+  </SingletonPage>
 </BaseLayout>

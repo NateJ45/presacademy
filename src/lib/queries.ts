@@ -203,10 +203,17 @@ export async function getBeliefsPage() {
 }
 
 // ---- Home page ------------------------------------------------------------
-// The hero + every built-in school section's copy (wayfinding, stat band, topics
-// ticker, and the strip eyebrow/heading/link labels), the final CTA, and the
-// page-builder array. The strip CARDS come from the catalog collections below.
-// Each field falls back to the literal in index.astro when empty.
+// The hero fields, the final CTA, and the page-builder array that is now the
+// whole body (converted 2026-08-26, Phase 4). The hero literals live in
+// HomeHero.astro and the body's in DEFAULT_SECTIONS; the section blocks fetch
+// their own cards from the catalog collections below.
+//
+// The wayfinding / stats / tickerTopics / strip-copy fields are still projected
+// because the documents still carry them (decision D4, additive migration: they
+// are unset in the cleanup phase, not before). Nothing reads them any more
+// except scripts/seed-builder-home.mjs.
+//
+// Takes the optional draft fetcher, as it always has.
 
 export async function getHomePage(fetcher = sanityFetch) {
   return fetcher(`*[_type == "homePage"][0]{
@@ -419,8 +426,8 @@ export async function getNotFoundPage() {
 
 // ---- Privacy page ---------------------------------------------------------
 
-// The `fetcher` parameter is the draft-preview seam (the HomeBody contract,
-// generalized 2026-08-26 when this page converted to the builder): the page
+// The `fetcher` parameter is the draft-preview seam (home's shared-template
+// contract, generalized 2026-08-26 when this page converted): the page
 // passes nothing and reads published content at build time, while
 // src/pages/preview/[...slug].astro passes its draft-aware fetcher so the
 // Presentation tool renders the SAME template against unpublished edits.

@@ -8,6 +8,7 @@
 //   top2 / full  for-you.astro's personas
 //   ledger       about.astro's "What we believe"
 //   steps        get-started.astro's "What happens next"
+//   wayfinding   home's "where to begin" row (HomeBody.astro)
 //
 // Rendered OUTSIDE SectionShell (decision D1): the surfaces are fixed in code
 // and there is no tone field.
@@ -20,9 +21,19 @@
 // promises never to do. So `variant` picks a whole treatment, each held to its
 // source page by the parity harness.
 //
-// PROVEN: top2 (for-you), ledger (about), steps (get-started), all 2026-08-26.
+// PROVEN: top2 (for-you), ledger (about), steps (get-started), wayfinding
+// (home), all 2026-08-26.
 // DECLARED, NOT PROVEN: full. It is the boxed band with gold on all four sides,
 // waiting for a page that wants it. Verify with the harness before trusting it.
+//
+// WAYFINDING IS THE ODD ONE, AND IT EARNED ITS OWN BRANCH
+// Phase 4's plan pencilled home's row in as the `ledger` variant. It is not: the
+// row has no heading and no eyebrow, each CELL is one link rather than a card
+// with a button, the band is named by an aria-label instead of a heading, and
+// the grid runs to four columns with the divider on the right of every cell but
+// the last. Every one of those would have been a visible change to the home
+// page, so the markup was cut across whole, like the three before it. It is the
+// reason `landmarkLabel` and the per-card `href` exist on this type.
 //
 // HEADING LEVELS
 // The cards' titles are h2 when the section carries no heading of its own (they
@@ -64,7 +75,22 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
 
 {
   cards.length > 0 && (
-    variant === 'ledger' ? (
+    variant === 'wayfinding' ? (
+      /* Home: "where to begin". Four linked cells across a ruled band, each one
+         a number over a title and a line of copy. The whole cell is the link,
+         which is why the title's hover color is driven by the group. */
+      <section class="border-y border-border-soft bg-background" aria-label={block?.landmarkLabel || undefined}>
+        <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" data-stagger-grid>
+          {cards.map((c: any, i: number) => (
+            <a href={c.href} class:list={['group block px-m py-l no-underline', i < cards.length - 1 && 'lg:border-r border-border-soft']}>
+              <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{num(i)}</span>
+              <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{c.title}</h2>
+              <p class="mt-1 text-sm text-foreground/70">{c.body}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    ) : variant === 'ledger' ? (
       /* About: "What we believe". Warm surface, a gold rule under the header,
          two columns of unboxed cards, a quiet footnote. */
       <section class="surface-warm bg-muted" aria-labelledby={headingId}>

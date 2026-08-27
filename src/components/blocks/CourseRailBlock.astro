@@ -17,9 +17,10 @@
 //
 // AUTO BLOCK. It fetches its own courses, so a course flagged "Start here" or
 // "Featured" in the catalog appears here after the next build with nobody
-// editing the page. Like the other auto blocks it reads PUBLISHED data even in
-// the draft preview (the plan's risk register accepts that; parameterize the
-// query with the draft fetcher when it matters).
+// editing the page. It reads PUBLISHED data unless a draft-aware `fetcher` is
+// handed down (2026-08-26: home's preview does, the Courses page's does not, so
+// that page still previews published courses as the plan's risk register
+// allows).
 //
 // WHY TWO WHOLE TREATMENTS AND NOT ONE PARAMETERIZED BAND
 // The three live rails differ in surface, vertical rhythm, header shape,
@@ -38,8 +39,16 @@ import { getStartHereCourses, getFeaturedCourses } from '@/lib/queries';
 
 interface Props {
   block: any;
+  /**
+   * Draft-aware fetcher, threaded down from SingletonPage in the preview
+   * (2026-08-26, Phase 4). Undefined at build time and on the Courses page's
+   * preview, where `undefined` falls through to each query's own `= sanityFetch`
+   * default. Home passes one because its preview showed draft courses before the
+   * conversion and had to keep doing so.
+   */
+  fetcher?: any;
 }
-const { block } = Astro.props as Props;
+const { block, fetcher } = Astro.props as Props;
 
 const source = block?.source === 'featured' ? 'featured' : 'startHere';
 const variant = block?.variant === 'feature' ? 'feature' : 'rail';
@@ -53,9 +62,9 @@ const limit: number | undefined =
 // it will not draw.
 let courses: any[] = [];
 if (source === 'featured') {
-  courses = (await getFeaturedCourses(limit ?? 6).catch(() => [])) ?? [];
+  courses = (await getFeaturedCourses(limit ?? 6, fetcher).catch(() => [])) ?? [];
 } else {
-  const all = (await getStartHereCourses().catch(() => [])) ?? [];
+  const all = (await getStartHereCourses(fetcher).catch(() => [])) ?? [];
   courses = limit ? all.slice(0, limit) : all;
 }
 
@@ -64,7 +73,7 @@ if (source === 'featured') {
 // itself renders, and the number is held here rather than made a field: it is a
 // property of the rail being deduped against, not an editorial choice.
 if (block?.dedupeAgainstStartHere) {
-  const shown = ((await getStartHereCourses().catch(() => [])) ?? []).slice(0, 3);
+  const shown = ((await getStartHereCourses(fetcher).catch(() => [])) ?? []).slice(0, 3);
   courses = courses.filter((c: any) => !shown.some((s: any) => s.slug === c.slug));
 }
 
