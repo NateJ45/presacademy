@@ -17,8 +17,20 @@
 //   instant-text   an edit arrived over the comlink and N text nodes on the page
 //                  were swapped. This is the number an editor feels.
 //   soft-refresh   a /preview/live change event arrived and the server-rendered
-//                  <main> was swapped in. This is the slower, complete one; the
-//                  instant-text swap has usually already happened.
+//                  <main> was reconciled in. This is the slower, complete one;
+//                  the instant-text swap has usually already happened. Its
+//                  detail says what actually happened to the page:
+//                    unchanged (skipped)   the render matched what is on screen
+//                                          (or the previous render) and nothing
+//                                          was touched at all — the cheapest and,
+//                                          for a plain text edit, the expected
+//                                          outcome of the rate-limited follow-up;
+//                    main morphed          the tree was updated in place, keeping
+//                                          every node the render did not change;
+//                    main replaced         the morph bailed and the old wholesale
+//                    (morph bailed)        swap ran. Should never be seen; if it
+//                                          is, read src/lib/preview-morph.ts;
+//                    discarded (stale)     the scheduler refused the response.
 //
 // Left in deliberately: it costs one localStorage read per refresh when off,
 // and it is the difference between tuning this loop again and guessing at it.

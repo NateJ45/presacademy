@@ -11,6 +11,7 @@ import {
   onStart,
   shouldStart,
 } from '../../lib/preview-refresh.ts';
+import { isRedundantRender, morph } from '../../lib/preview-morph.ts';
 
 // Studio-driven navigation (the navigator side panel, document locations, the
 // preview URL bar) reaches the iframe through this adapter. The DEFAULT is
@@ -71,9 +72,9 @@ const mpaHistory: HistoryAdapter = {
 //  1. `<VisualEditing>` draws the click-to-edit overlay and opens the comlink
 //     to the parent Studio window.
 //  2. Refresh: the content is server-rendered Astro, so we soft-refetch THIS
-//     preview URL and swap in the fresh <main> — no full reload, no scroll
-//     jump, and click-to-edit keeps working because the swapped-in HTML is
-//     draft-fetched with stega too. Triggers:
+//     preview URL and RECONCILE the fresh <main> into the live one — no full
+//     reload, no scroll jump, and click-to-edit keeps working because the
+//     refetched HTML is draft-fetched with stega too. Triggers:
 //     a. AUTO: an EventSource on /preview/live (the Worker proxies Sanity's
 //        listen API into tiny "change" signals). Event-driven on purpose —
 //        never reintroduce an interval poll here.
@@ -83,6 +84,10 @@ const mpaHistory: HistoryAdapter = {
 //     single-flight, stale-response discard, and a floor on the interval between
 //     renders. Read that file before touching anything below — it is where the
 //     six-concurrent-renders 1102 and the reverting-text bug are written up.
+//     HOW the fresh HTML lands is src/lib/preview-morph.ts: an in-place morph,
+//     never a wholesale swap. That file has the measurements; the short version
+//     is that replacing <main> re-decoded fourteen images and blocked the main
+//     thread for about a second, twice per keystroke.
 //  3. The IN-CANVAS CONTROLS (`components`, 2026-08-28): swatches on a hovered
 //     section, an accent-word picker on a heading, a text card on the curated
 //     lines. They live in ./overlay/, they write through the optimistic
@@ -113,6 +118,16 @@ export default function VisualEditingOverlay({ pageId }: Props) {
   const waiting = useRef<Array<() => void>>([]);
   /** Callers the in-flight refresh covers, resolved only if it is accepted. */
   const covered = useRef<Array<() => void>>([]);
+  /**
+   * The markup of the last render that was accepted, morphed or skipped.
+   *
+   * Half of the fast path: when the server hands back bytes it has already
+   * handed back, it has not caught up with the edit yet, and applying them would
+   * undo instant text for a task and then redo it. Serialized from the PARSED
+   * element rather than kept as the raw response, so it is comparable with the
+   * live tree's own `outerHTML`.
+   */
+  const lastMarkup = useRef<string | null>(null);
 
   // Job 4: swap changed plain strings in as the edit arrives, without waiting
   // for the refetch below. Safe to call here rather than inside <VisualEditing>
@@ -169,8 +184,28 @@ export default function VisualEditingOverlay({ pageId }: Props) {
     try {
       const next = new DOMParser().parseFromString(html, 'text/html').querySelector('#main');
       const current = document.getElementById('main');
-      if (next && current) {
-        current.replaceWith(next);
+      const markup = next ? next.outerHTML : '';
+      if (!next || !current) {
+        window.location.reload();
+      } else if (isRedundantRender(markup, current.outerHTML, lastMarkup.current)) {
+        // NOTHING TO DO, and deliberately nothing announced either. Both ways of
+        // being redundant are in preview-morph.ts; what matters here is that a
+        // skip must NOT fire SOFT_REFRESH_EVENT:
+        //   - the index is still valid, because no text node was detached, so
+        //     rebuilding it would be pure cost;
+        //   - the event is also the pending-swap memory's "the server now
+        //     agrees" signal, and on the `fetched === lastAccepted` branch the
+        //     server demonstrably does NOT agree — it re-rendered the same bytes
+        //     as last time. Firing would retire swaps that have not landed and
+        //     re-open the revert this whole loop exists to prevent. On the other
+        //     branch the swaps HAVE landed, and retiring them one refresh later
+        //     costs one map entry and one no-op re-apply.
+        // The callers still resolve below: we asked the server and it had
+        // nothing new, which is a completed refresh, not a skipped one.
+        lastMarkup.current = markup;
+        stop('unchanged (skipped)');
+      } else if (morph(current, next)) {
+        lastMarkup.current = markup;
         // The instant-text path indexes the old text nodes and may be holding
         // swaps this HTML predates. Tell it to rebuild and re-apply. Belt and
         // braces now that stale HTML never lands: the classic race is gone, but
@@ -178,8 +213,20 @@ export default function VisualEditingOverlay({ pageId }: Props) {
         // sequence only counts /preview/live signals, and the comlink is faster
         // than the query index this render read).
         window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
-        stop('main swapped');
-      } else window.location.reload();
+        stop('main morphed');
+      } else {
+        // The morph bailed (a cap, or a DOM call that threw). It may have moved
+        // part of `next` into the page on its way out, so `next` is no longer a
+        // whole <main> — re-parse and do exactly what this code did before the
+        // morph existed. Slow, correct, and unreachable in normal operation.
+        const fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('#main');
+        if (fresh) {
+          lastMarkup.current = markup;
+          current.replaceWith(fresh);
+          window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
+          stop('main replaced (morph bailed)');
+        } else window.location.reload();
+      }
     } finally {
       resolvers.forEach((resolve) => resolve());
     }
