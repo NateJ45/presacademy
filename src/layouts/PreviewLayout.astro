@@ -175,6 +175,19 @@ const { title, draftMode, pageId } = Astro.props;
           if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
 
           const embedded = document.documentElement.classList.contains('in-studio-frame');
+          // EDIT MODE detection (2026-08-28, editor feedback round 2): while
+          // Presentation's Edit toggle is ON, the visual-editing overlay keeps
+          // outline boxes ([data-sanity-overlay-element]) in the DOM. In that
+          // mode EVERY click is a selection gesture - including buttons whose
+          // hrefs have preview equivalents - so suppress ALL navigation and
+          // let the overlay's field/section selection be the whole result.
+          // With Edit toggled OFF the boxes are gone and clicks browse
+          // normally (remap below). Navigation in edit mode belongs to the
+          // page list and the URL bar.
+          if (embedded && document.querySelector('[data-sanity-overlay-element]')) {
+            event.preventDefault();
+            return;
+          }
           const url = new URL(anchor.href, window.location.href);
           // External origin: never let it take over the iframe.
           if (url.origin !== window.location.origin) {
