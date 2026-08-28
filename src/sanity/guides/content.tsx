@@ -262,7 +262,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'The preview is editable too',
-        text: 'Open **Preview** (the eye icon at the top) and you get the page as visitors see it, beside the fields. Hover a section there and it outlines. **Right-click inside the outline** for the section menu: add a section above or below it (with pictures of each kind), duplicate it, move it, or remove it. The small tag at the outline's corner is a handle you can drag. Click any words to jump to the box that holds them. Everything you do in the picture lands in the same fields, so use whichever feels easier, and `Publish` when you are happy.',
+        text: 'Open **Preview** (the eye icon at the top) and you get the page as visitors see it, beside the fields. Hover a section there and it outlines. **Right-click inside the outline** for the section menu: add a section above or below it (with pictures of each kind), duplicate it, move it, or remove it. The small tag at the outline’s corner is a handle you can drag. Click any words to jump to the box that holds them. Everything you do in the picture lands in the same fields, so use whichever feels easier, and `Publish` when you are happy.',
       },
       { kind: 'h', text: 'The empty-box rule (friendly and important)' },
       {
@@ -658,7 +658,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'On the page picture, or in the list',
-        text: 'Open **Preview** and hover a section on the page picture. It outlines. **Right-click inside the outline** and a menu appears: **insert a section before or after it** (a picture picker of every kind), **duplicate** it, **move** it, or **remove** it. Drag the small tag at the outline's corner to pull it to a new place. That is usually the quickest way, because you are looking at the thing you are moving. The `Page sections` list described below does all the same jobs, and is the place to go when a page has no sections yet.',
+        text: 'Open **Preview** and hover a section on the page picture. It outlines. **Right-click inside the outline** and a menu appears: **insert a section before or after it** (a picture picker of every kind), **duplicate** it, **move** it, or **remove** it. Drag the small tag at the outline’s corner to pull it to a new place. That is usually the quickest way, because you are looking at the thing you are moving. The `Page sections` list described below does all the same jobs, and is the place to go when a page has no sections yet.',
       },
       { kind: 'h', text: 'Add a section' },
       {
