@@ -6,6 +6,7 @@
 import { defineType, defineField } from 'sanity';
 import { archivedField } from './archived';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import { SEO_GROUP, seoFields } from './seo';
 
 export const page = defineType({
   name: 'page',
@@ -15,7 +16,7 @@ export const page = defineType({
     // No `default: true` → the form opens on the implicit "All fields" tab.
     { name: 'hero', title: 'Hero' },
     { name: 'content', title: 'Sections' },
-    { name: 'seo', title: 'SEO' },
+    SEO_GROUP,
   ],
   fields: [
     // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
@@ -38,7 +39,13 @@ export const page = defineType({
     }),
     defineField({ name: 'heroEyebrow', title: 'Hero eyebrow', type: 'string', group: 'hero' }),
     defineField({ name: 'heroHeadline', title: 'Hero headline', type: 'string', group: 'hero' }),
-    defineField({ name: 'heroSubhead', title: 'Hero subhead', type: 'text', rows: 3, group: 'hero' }),
+    defineField({
+      name: 'heroSubhead',
+      title: 'Hero subhead',
+      type: 'text',
+      rows: 3,
+      group: 'hero',
+    }),
     defineField({
       name: 'heroImage',
       title: 'Hero background image',
@@ -57,32 +64,13 @@ export const page = defineType({
 
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
-    defineField({
-      name: 'seoTitle',
-      title: 'SEO title',
-      type: 'string',
-      group: 'seo',
-      validation: (Rule) => Rule.max(60).warning('Titles longer than ~60 characters get cut off in Google.'),
-    }),
-    defineField({
-      name: 'seoDescription',
-      title: 'SEO description',
-      type: 'text',
-      rows: 3,
-      group: 'seo',
-      validation: (Rule) => Rule.max(160).warning('Descriptions longer than ~160 characters get cut off in Google.'),
-    }),
-    defineField({
-      name: 'seoImage',
-      title: 'Social share image',
-      type: 'image',
-      group: 'seo',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-    }),
+    ...seoFields({ group: 'seo' }),
   ],
   preview: {
     select: { title: 'title', slug: 'slug.current' },
-    prepare: ({ title, slug }) => ({ title: title || 'Page', subtitle: slug ? `/${slug}` : 'no slug yet' }),
+    prepare: ({ title, slug }) => ({
+      title: title || 'Page',
+      subtitle: slug ? `/${slug}` : 'no slug yet',
+    }),
   },
 });

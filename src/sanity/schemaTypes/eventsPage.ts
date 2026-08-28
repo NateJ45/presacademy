@@ -8,22 +8,22 @@
 // event DETAIL route renders them.
 
 import { defineType, defineField } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import {
+  FLEXIBLE_SECTION_MEMBERS,
+  FLEXIBLE_SECTIONS_DESCRIPTION,
+  FLEXIBLE_SECTIONS_OPTIONS,
+} from './blocks';
+import { seoFields } from './seo';
 
 export const eventsPage = defineType({
   name: 'eventsPage',
   title: 'Events (index page)',
   type: 'document',
   fields: [
-    defineField({ name: 'seoTitle', title: 'SEO title', type: 'string' }),
-    defineField({ name: 'seoDescription', title: 'SEO description', type: 'text', rows: 2 }),
-    defineField({
-      name: 'seoImage',
-      title: 'Social share image',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-    }),
+    // Search & sharing (shared definition: ./seo.ts). This type has no field
+    // groups, so the fields sit at the top of the one flat list, where they
+    // have always been.
+    ...seoFields(),
     defineField({ name: 'heroEyebrow', title: 'Hero eyebrow', type: 'string' }),
     defineField({ name: 'heroHeadline', title: 'Hero headline', type: 'string' }),
     defineField({ name: 'heroSubhead', title: 'Hero subhead', type: 'text', rows: 2 }),
@@ -46,11 +46,42 @@ export const eventsPage = defineType({
     defineField({ name: 'finalCtaEyebrow', title: 'Closing CTA eyebrow', type: 'string' }),
     defineField({ name: 'finalCtaHeadline', title: 'Closing CTA headline', type: 'string' }),
     defineField({ name: 'finalCtaSubhead', title: 'Closing CTA subhead', type: 'text', rows: 2 }),
-    defineField({ name: 'finalCta', title: 'Closing CTA button', type: 'ctaBlock', description: 'The button in the closing call-to-action band. Leave empty to use the built-in default button.' }),
-    defineField({ name: 'detailFinalCtaEyebrow', title: 'Event detail — closing CTA eyebrow', type: 'string', description: 'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.' }),
-    defineField({ name: 'detailFinalCtaHeadline', title: 'Event detail — closing CTA headline', type: 'string', description: 'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.' }),
-    defineField({ name: 'detailFinalCtaSubhead', title: 'Event detail — closing CTA subhead', type: 'text', rows: 2, description: 'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.' }),
-    defineField({ name: 'detailFinalCta', title: 'Event detail — closing CTA button', type: 'ctaBlock', description: 'The button in the closing band at the bottom of every individual event page. Leave empty to use the built-in default button.' }),
+    defineField({
+      name: 'finalCta',
+      title: 'Closing CTA button',
+      type: 'ctaBlock',
+      description:
+        'The button in the closing call-to-action band. Leave empty to use the built-in default button.',
+    }),
+    defineField({
+      name: 'detailFinalCtaEyebrow',
+      title: 'Event detail — closing CTA eyebrow',
+      type: 'string',
+      description:
+        'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.',
+    }),
+    defineField({
+      name: 'detailFinalCtaHeadline',
+      title: 'Event detail — closing CTA headline',
+      type: 'string',
+      description:
+        'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.',
+    }),
+    defineField({
+      name: 'detailFinalCtaSubhead',
+      title: 'Event detail — closing CTA subhead',
+      type: 'text',
+      rows: 2,
+      description:
+        'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.',
+    }),
+    defineField({
+      name: 'detailFinalCta',
+      title: 'Event detail — closing CTA button',
+      type: 'ctaBlock',
+      description:
+        'The button in the closing band at the bottom of every individual event page. Leave empty to use the built-in default button.',
+    }),
     defineField({
       name: 'flexibleSections',
       title: 'Page sections',

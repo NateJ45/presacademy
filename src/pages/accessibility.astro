@@ -50,7 +50,7 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
   <SingletonPage pageType="accessibilityPage" {page} {settings}>
     {/* Hero — photo variant, short height. Rendered here rather than inside
         SingletonPage so its scoped style stays on the pages that use it. */}

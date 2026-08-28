@@ -43,7 +43,7 @@ const description =
   'Reformed formation taught in person, in cohorts, for the people who lead the church: elders, teachers, small-group hosts, and the lifelong curious.';
 ---
 
-<BaseLayout {title} {description} {siteSettings}>
+<BaseLayout {title} {description} {siteSettings} hideFromSearch={page?.hideFromSearch === true}>
   <SingletonPage
     pageType="homePage"
     {page}

@@ -39,7 +39,7 @@ const title = page?.seoTitle ?? page?.title ?? site.name;
 const description = page?.seoDescription ?? '';
 ---
 
-<BaseLayout {title} {description} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout {title} {description} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
   <Hero
     eyebrow={page?.heroEyebrow ?? ''}
     headline={page?.heroHeadline ?? page?.title ?? ''}

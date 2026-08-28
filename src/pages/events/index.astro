@@ -43,7 +43,7 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings}>
+<BaseLayout {title} {description} {schemas} {siteSettings} hideFromSearch={page?.hideFromSearch === true}>
   <SingletonPage
     pageType="eventsPage"
     {page}

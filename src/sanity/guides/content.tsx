@@ -315,9 +315,84 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'positive',
         title: 'You can add it to the menu yourself',
-        text: 'A new page is invisible until something links to it. To put it in the top menu or the footer, see the guide **Edit the top menu & footer**.',
+        text: 'A new page is invisible until something links to it. The quickest way is the page list in **Preview**: click the `⋯` beside your page and choose **Add to menu**. The longer way, and the place to rename or reorder afterwards, is the guide **Edit the top menu & footer**.',
       },
-      { kind: 'seealso', items: ['Edit the top menu & footer', 'Add & arrange sections'] },
+      {
+        kind: 'seealso',
+        items: [
+          'Copy, archive & restore a page',
+          'Edit the top menu & footer',
+          'Add & arrange sections',
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'page-housekeeping',
+    category: 'Website pages & menus',
+    title: 'Copy, archive & restore a page',
+    icon: '🗂️',
+    lead: 'Start a page from one you already have, take a page off the site without losing it, and bring it back.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Preview', 'the page list on the left', '⋯'],
+        link: { tool: 'presentation' },
+      },
+      {
+        kind: 'p',
+        text: 'Open **Preview** (the eye icon at the top). The list down the left side is every page on the site. Beside each page you built yourself there is a `⋯` button, and everything below lives in it. The fixed pages (Home, About, Courses and the rest) have no `⋯`, because there is only ever one of each: nothing to copy, nothing to put away.',
+      },
+      { kind: 'h', text: 'Copy a page' },
+      {
+        kind: 'steps',
+        items: [
+          'Click `⋯` beside the page, then **Duplicate**.',
+          'The copy opens straight away. It is named "… copy" and its web address gets "-copy" on the end, so it can never collide with the original.',
+          'Change the **Title**, the **Slug** (the web address) and whatever else differs.',
+          '`Publish` when it is ready.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'A copy starts as a draft',
+        text: 'The copy is private until you publish it, so a half-finished duplicate can never turn up on the website. Everything comes across with it: the hero, every section, every photo.',
+      },
+      { kind: 'h', text: 'Archive a page' },
+      {
+        kind: 'steps',
+        items: [
+          'Click `⋯` beside the page, then **Archive**.',
+          'The page drops to an **Archived** group at the bottom of the list.',
+          'It comes off the website at the next rebuild and out of the sitemap. If it was in the top menu it is taken out of the menu too, so no link is left pointing at nothing.',
+        ],
+      },
+      { kind: 'h', text: 'Bring one back' },
+      {
+        kind: 'steps',
+        items: [
+          'Find it under **Archived** at the bottom of the page list.',
+          'Click `⋯`, then **Restore**. It returns to **Custom pages** exactly as it was.',
+          'If it used to be in the top menu, put it back with **Add to menu**.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Archiving never deletes anything',
+        text: 'An archived page is only hidden. Every word and every photo is still there, and Restore puts it back untouched. Getting rid of a page for good is a separate, deliberate step: see the guide **Deleting things & the trash**.',
+      },
+      {
+        kind: 'seealso',
+        items: [
+          'Build a brand-new page',
+          'Edit the top menu & footer',
+          'Deleting things & the trash',
+        ],
+      },
     ],
   },
 
@@ -437,6 +512,22 @@ export const guides: Guide[] = [
         title: 'Picking the page is safer than typing the address',
         text: 'When you pick a page from the list, the link follows that page. If its web address ever changes, the menu link changes with it and can never go dead. Older links here still show an **Address (typed by hand)** box, and that typed address is what the site uses. Clear it if you would rather pick the page.',
       },
+      { kind: 'h', text: 'The one-click way, from the page list' },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Preview** (the eye icon at the top) and find the page in the list on the left.',
+          'Click the `⋯` beside it, then **Add to menu**. A link to that page is added to the end of the top menu, using the page name as its label.',
+          'Rows already in the menu show a small **In menu** note, and their `⋯` offers **Remove from menu** instead.',
+          'To rename it or move it up the row, open Site Settings as above. The order and the wording live there.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Six is the limit',
+        text: 'The header fits six links. Once there are six, **Add to menu** greys out and says so. Take something out first, either with **Remove from menu** on its row or in Site Settings.',
+      },
       { kind: 'h', text: 'Build a dropdown menu' },
       {
         kind: 'steps',
@@ -493,7 +584,65 @@ export const guides: Guide[] = [
         title: 'Easiest from the page picture',
         text: 'Open **Preview** (the eye icon at the top) and click the header or the footer on the page itself. Site Settings opens beside it, and your menu changes show up in the picture as you make them.',
       },
-      { kind: 'seealso', items: ['Build a brand-new page', 'The brand: colors & fonts'] },
+      {
+        kind: 'seealso',
+        items: [
+          'Build a brand-new page',
+          'Copy, archive & restore a page',
+          'The brand: colors & fonts',
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'search-sharing',
+    category: 'Website pages & menus',
+    title: 'How a page looks in Google',
+    icon: '🔎',
+    lead: 'Set the line Google shows, the sentence under it, the picture people see when they share the page, and how to keep a page out of search altogether.',
+    diy: 'self',
+    body: [
+      { kind: 'path', items: ['Pages', '(any page)', 'Search & sharing'], link: { pane: 'pages' } },
+      {
+        kind: 'p',
+        text: 'Every page, the fixed ones and the ones you build, has a `Search & sharing` tab. It opens with two pictures: the page as a **Google result**, and the page as a **card in a message**. Both redraw as you type, so you can see a title get cut off instead of counting letters.',
+      },
+      { kind: 'h', text: 'The four boxes' },
+      {
+        kind: 'bullets',
+        items: [
+          '**SEO title**: the line Google shows and the words in the browser tab. Aim for 50 to 60 characters. Leave it empty and the page uses its own built-in title, which is usually fine.',
+          '**SEO description**: the sentence under the title in a Google result. Aim for 150 to 160 characters. Write it for a person deciding whether to click.',
+          '**Social share image**: the picture that appears when someone pastes the address into a text, Facebook, or Slack. Wide, about 1200 by 630 pixels. Leave it empty to use the site-wide one in Site Settings.',
+          '**Hide this page from search engines**: off for every ordinary page. See below.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Empty is fine',
+        text: 'Every box here is optional. Leave one blank and the page keeps doing exactly what it does today. You are only ever overriding, never filling something in that was missing.',
+      },
+      { kind: 'h', text: 'Keeping a page out of Google' },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page, go to `Search & sharing`, and turn on **Hide this page from search engines**.',
+          '`Publish`.',
+          'The page stays live at its address, so you can still hand the link to anyone. It just asks search engines not to list it, and it drops out of the site map that tells Google what to look at.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Hidden is not private',
+        text: 'Anyone with the address can still open the page, and a search engine can ignore the request. Use it for a page you want to hand out by link, like a form for one group. Do not use it for anything that must not be seen.',
+      },
+      {
+        kind: 'seealso',
+        items: ['Build a brand-new page', 'Photos & images', 'Copy, archive & restore a page'],
+      },
     ],
   },
 

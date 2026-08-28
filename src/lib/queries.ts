@@ -69,9 +69,13 @@ export const SECTION_MEMBERS = `{
 // DEREFERENCED down to a type + slug. src/lib/nav-href.ts turns that into an
 // href. The field list is separate from the braces so it can also be spread
 // into a projection that adds children (navItems' dropdown groups).
+// The `archived != true` guard: a menu link pointing at a page that was moved
+// to the trash resolves to nothing, and nav-href.ts DROPS a link that resolves
+// to nothing rather than rendering a dead one. Singletons carry no `archived`
+// field at all, which reads the same as "not archived", so they are untouched.
 const NAV_LINK_FIELDS = `_key, _type, label, linkType, href, externalUrl,
-    "slug": internalPage->slug.current,
-    "docType": internalPage->_type`;
+    "slug": select(internalPage->archived != true => internalPage->slug.current),
+    "docType": select(internalPage->archived != true => internalPage->_type)`;
 export const NAV_LINK_PROJECTION = `{ ${NAV_LINK_FIELDS} }`;
 
 // ---- Site settings (used in BaseLayout / Header / Footer) -----------------
@@ -254,6 +258,7 @@ export async function getHomePage(fetcher = sanityFetch) {
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     heroEyebrow,
     heroHeadline,
     heroSubhead,
@@ -282,6 +287,7 @@ export async function getAboutPage(fetcher = sanityFetch) {
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead,
     finalCtaEyebrow, finalCtaHeadline, finalCtaSubhead,
     finalCtaBackgroundImage${IMAGE_PROJECTION},
@@ -303,6 +309,7 @@ export async function getFaqPage(fetcher = sanityFetch) {
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead, heroKeyword,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
@@ -440,6 +447,7 @@ export async function getPageBySlug(slug: string) {
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     sections[]${SECTION_MEMBERS}
   }`,
     { slug },
@@ -489,6 +497,7 @@ export async function getPrivacyPage(fetcher = sanityFetch) {
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
@@ -509,6 +518,7 @@ export async function getAccessibilityPage(fetcher = sanityFetch) {
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
+    hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,

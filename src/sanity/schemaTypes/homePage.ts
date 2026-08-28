@@ -18,7 +18,12 @@
 // pass — the home document held no data in them, so removal was clean.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import {
+  FLEXIBLE_SECTION_MEMBERS,
+  FLEXIBLE_SECTIONS_DESCRIPTION,
+  FLEXIBLE_SECTIONS_OPTIONS,
+} from './blocks';
+import { SEO_GROUP, seoFields } from './seo';
 
 export const homePage = defineType({
   name: 'homePage',
@@ -30,56 +35,124 @@ export const homePage = defineType({
     { name: 'hero', title: 'Hero' },
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
-    { name: 'seo', title: 'SEO' },
+    SEO_GROUP,
   ],
   fields: [
     // ---- Hero ----
-    defineField({ name: 'heroEyebrow', title: 'Hero eyebrow', type: 'string', group: 'hero', description: 'Small label above the headline. Leave empty for the default.' }),
-    defineField({ name: 'heroHeadline', title: 'Hero headline', type: 'string', group: 'hero', description: 'The big opening line. Leave empty for the default.', validation: (Rule) => Rule.required() }),
-    defineField({ name: 'heroSubhead', title: 'Hero subhead', type: 'text', rows: 3, group: 'hero', description: 'One or two sentences under the headline.' }),
+    defineField({
+      name: 'heroEyebrow',
+      title: 'Hero eyebrow',
+      type: 'string',
+      group: 'hero',
+      description: 'Small label above the headline. Leave empty for the default.',
+    }),
+    defineField({
+      name: 'heroHeadline',
+      title: 'Hero headline',
+      type: 'string',
+      group: 'hero',
+      description: 'The big opening line. Leave empty for the default.',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'heroSubhead',
+      title: 'Hero subhead',
+      type: 'text',
+      rows: 3,
+      group: 'hero',
+      description: 'One or two sentences under the headline.',
+    }),
     defineField({
       name: 'heroImages',
       title: 'Hero image(s)',
       type: 'array',
       group: 'hero',
-      description: 'The photo beside the hero text. Add one for a static image, or two or more for a slow cross-fading slideshow. Drag to set the order.',
-      of: [defineArrayMember({ type: 'image', options: { hotspot: true }, fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })] })],
+      description:
+        'The photo beside the hero text. Add one for a static image, or two or more for a slow cross-fading slideshow. Drag to set the order.',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+        }),
+      ],
     }),
-    defineField({ name: 'heroPrimaryLabel', title: 'Hero primary button', type: 'string', group: 'hero', description: 'The filled button label (links to the Courses page). Leave empty for "Browse courses".' }),
-    defineField({ name: 'heroSecondaryLabel', title: 'Hero secondary button', type: 'string', group: 'hero', description: 'The outlined button label (links to Get Started). Leave empty for "Book a free intro".' }),
-    defineField({ name: 'nextCohortLabel', title: '"Next cohort" label', type: 'string', group: 'hero', description: 'The small label before the next-term date under the hero. The date, term, and city come from the Term and Site Settings, not here. Leave empty for "Next cohort begins".' }),
+    defineField({
+      name: 'heroPrimaryLabel',
+      title: 'Hero primary button',
+      type: 'string',
+      group: 'hero',
+      description:
+        'The filled button label (links to the Courses page). Leave empty for "Browse courses".',
+    }),
+    defineField({
+      name: 'heroSecondaryLabel',
+      title: 'Hero secondary button',
+      type: 'string',
+      group: 'hero',
+      description:
+        'The outlined button label (links to Get Started). Leave empty for "Book a free intro".',
+    }),
+    defineField({
+      name: 'nextCohortLabel',
+      title: '"Next cohort" label',
+      type: 'string',
+      group: 'hero',
+      description:
+        'The small label before the next-term date under the hero. The date, term, and city come from the Term and Site Settings, not here. Leave empty for "Next cohort begins".',
+    }),
 
     // ---- Page sections ----
     // The whole body of the home page lives here now (2026-08-27, Phase 5).
-    defineField({ name: 'flexibleSections', title: 'Page sections', type: 'array', group: 'sections', description: FLEXIBLE_SECTIONS_DESCRIPTION, of: FLEXIBLE_SECTION_MEMBERS, options: FLEXIBLE_SECTIONS_OPTIONS }),
+    defineField({
+      name: 'flexibleSections',
+      title: 'Page sections',
+      type: 'array',
+      group: 'sections',
+      description: FLEXIBLE_SECTIONS_DESCRIPTION,
+      of: FLEXIBLE_SECTION_MEMBERS,
+      options: FLEXIBLE_SECTIONS_OPTIONS,
+    }),
 
     // ---- Final CTA ----
-    defineField({ name: 'finalCtaEyebrow', title: 'Final CTA — eyebrow', type: 'string', group: 'final' }),
-    defineField({ name: 'finalCtaHeadline', title: 'Final CTA — headline', type: 'string', group: 'final' }),
-    defineField({ name: 'finalCtaSubhead', title: 'Final CTA — subhead', type: 'text', rows: 2, group: 'final' }),
-    defineField({ name: 'finalCta', title: 'Final CTA — button', type: 'ctaBlock', group: 'final' }),
+    defineField({
+      name: 'finalCtaEyebrow',
+      title: 'Final CTA — eyebrow',
+      type: 'string',
+      group: 'final',
+    }),
+    defineField({
+      name: 'finalCtaHeadline',
+      title: 'Final CTA — headline',
+      type: 'string',
+      group: 'final',
+    }),
+    defineField({
+      name: 'finalCtaSubhead',
+      title: 'Final CTA — subhead',
+      type: 'text',
+      rows: 2,
+      group: 'final',
+    }),
+    defineField({
+      name: 'finalCta',
+      title: 'Final CTA — button',
+      type: 'ctaBlock',
+      group: 'final',
+    }),
     defineField({
       name: 'finalCtaBackgroundImage',
       title: 'Final CTA — background image (optional)',
       type: 'image',
       group: 'final',
       options: { hotspot: true },
-      description: 'Optional photo behind the closing call-to-action. Auto-darkened so the text stays readable. Leave empty for the solid panel.',
+      description:
+        'Optional photo behind the closing call-to-action. Auto-darkened so the text stays readable. Leave empty for the solid panel.',
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
 
-    // ---- SEO ----
-    defineField({ name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo', description: 'Browser tab + Google result title. Aim for 50 to 60 characters.', validation: (Rule) => Rule.max(60).warning('Titles longer than about 60 characters get cut off in Google search results.') }),
-    defineField({ name: 'seoDescription', title: 'SEO description', type: 'text', rows: 3, group: 'seo', description: 'The sentence under the title in Google results. Aim for 150 to 160 characters.', validation: (Rule) => Rule.max(160).warning('Descriptions longer than about 160 characters get cut off in Google search results.') }),
-    defineField({
-      name: 'seoImage',
-      title: 'Social share image',
-      type: 'image',
-      group: 'seo',
-      options: { hotspot: true },
-      description: 'Shown when the home page is shared on social media. Use a wide image, about 1200 by 630 pixels. Overrides the site default in Site Settings.',
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-    }),
+    // ---- Search & sharing (shared definition: ./seo.ts) ----
+    ...seoFields({ group: 'seo' }),
   ],
   preview: { prepare: () => ({ title: 'Home Page' }) },
 });

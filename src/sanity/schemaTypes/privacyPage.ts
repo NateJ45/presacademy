@@ -11,7 +11,12 @@
 // LegalBodyBlock.astro renders, so the page is never blank.
 
 import { defineType, defineField } from 'sanity';
-import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_DESCRIPTION, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import {
+  FLEXIBLE_SECTION_MEMBERS,
+  FLEXIBLE_SECTIONS_DESCRIPTION,
+  FLEXIBLE_SECTIONS_OPTIONS,
+} from './blocks';
+import { SEO_GROUP, seoFields } from './seo';
 
 export const privacyPage = defineType({
   name: 'privacyPage',
@@ -20,40 +25,14 @@ export const privacyPage = defineType({
   // Configuration, not prose the editor writes — exclude from Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'seo', title: 'SEO' },
+    SEO_GROUP,
     { name: 'hero', title: 'Hero' },
     { name: 'sections', title: 'Page sections' },
   ],
   fields: [
     // SEO
-    defineField({
-      name: 'seoTitle',
-      title: 'SEO title',
-      type: 'string',
-      group: 'seo',
-      description: 'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
-      validation: (Rule) => Rule.max(60).warning('Titles longer than about 60 characters get cut off in Google search results.'),
-    }),
-    defineField({
-      name: 'seoDescription',
-      title: 'SEO description',
-      type: 'text',
-      rows: 3,
-      group: 'seo',
-      description: 'The sentence under the title in Google results. Aim for 150 to 160 characters. Write it for a person, not a search engine.',
-      validation: (Rule) => Rule.max(160).warning('Descriptions longer than about 160 characters get cut off in Google search results.'),
-    }),
-    defineField({
-      name: 'seoImage',
-      title: 'Social share image (this page)',
-      type: 'image',
-      group: 'seo',
-      description: 'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
-      options: { hotspot: true },
-      fields: [
-        defineField({ name: 'alt', title: 'Alt text', type: 'string' }),
-      ],
-    }),
+    // ---- Search & sharing (shared definition: ./seo.ts) ----
+    ...seoFields({ group: 'seo', imageTitle: 'Social share image (this page)' }),
 
     // Hero
     defineField({
@@ -71,7 +50,13 @@ export const privacyPage = defineType({
       initialValue: 'Privacy Policy',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: 'heroSubhead', title: 'Hero subhead', type: 'text', rows: 2, group: 'hero' }),
+    defineField({
+      name: 'heroSubhead',
+      title: 'Hero subhead',
+      type: 'text',
+      rows: 2,
+      group: 'hero',
+    }),
     defineField({
       name: 'heroImage',
       title: 'Hero background image (optional)',
@@ -79,7 +64,12 @@ export const privacyPage = defineType({
       group: 'hero',
       options: { hotspot: true },
       fields: [
-        defineField({ name: 'alt', title: 'Alt text', type: 'string', validation: (R) => R.required() }),
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          type: 'string',
+          validation: (R) => R.required(),
+        }),
       ],
     }),
     defineField({
@@ -87,7 +77,8 @@ export const privacyPage = defineType({
       title: 'Script-font accent word (optional)',
       type: 'string',
       group: 'hero',
-      description: 'A single word from the headline to render in Pinyon Script. Must match exactly. Leave blank to skip.',
+      description:
+        'A single word from the headline to render in Pinyon Script. Must match exactly. Leave blank to skip.',
     }),
 
     // The policy text itself is the "Policy or statement" block below.

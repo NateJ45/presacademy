@@ -34,6 +34,8 @@ interface Props {
   siteSettings?: any;
   /** When true, emit <meta name="robots" content="noindex, follow">. Used by the 404 page so it never gets indexed. Defaults to false (the page is indexable). */
   noindex?: boolean;
+  /** The page's own "Hide this page from search engines" switch (hideFromSearch in Sanity). Stronger than `noindex`: it asks search engines not to index the page AND not to follow its links, and the page is dropped from the sitemap (astro.config.mjs). Defaults to false. */
+  hideFromSearch?: boolean;
 }
 
 const {
@@ -44,6 +46,7 @@ const {
   schemas = [],
   siteSettings = null,
   noindex = false,
+  hideFromSearch = false,
 } = Astro.props as Props;
 
 const canonical = new URL(Astro.url.pathname, site.url).toString();
@@ -133,7 +136,15 @@ const announcementClass = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {/* An editor's "Hide this page from search engines" wins over the built-in
+        noindex: it is the stronger of the two (nofollow as well), and only one
+        robots line may be emitted. Neither renders on an ordinary page, so the
+        markup is unchanged everywhere the switch is off. */}
+    {hideFromSearch ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      noindex && <meta name="robots" content="noindex, follow" />
+    )}
 
     {/* Mobile browser UI chrome color. Light by default (matching the default
         theme); the bootstrap below flips it to the dark value when the visitor

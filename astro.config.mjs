@@ -6,6 +6,13 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
+import { fetchHiddenPagePaths } from './scripts/lib/hidden-pages.mjs';
+
+// Pages an editor switched "Hide this page from search engines" on, as
+// site-relative paths. Read once, here, because @astrojs/sitemap's filter is
+// synchronous. The lookup never throws: with no project, no token or no
+// network it returns [] and the sitemap is exactly what it always was.
+const hiddenPagePaths = await fetchHiddenPagePaths();
 
 // https://astro.build/config
 export default defineConfig({
@@ -41,11 +48,30 @@ export default defineConfig({
       // /preview and /studio are Studio plumbing (SSR/noindex) — mostly
       // excluded already because the sitemap only walks prerendered routes,
       // but the filter makes it explicit and future-proof.
-      filter: (page) =>
-        !page.includes('/404') &&
-        !page.includes('/style-guide') &&
-        !page.includes('/preview') &&
-        !page.includes('/studio'),
+      //
+      // The last clause is the editor's own switch: a page with
+      // "Hide this page from search engines" turned on drops out here as well
+      // as carrying a noindex tag. `page` arrives as a full URL, so compare on
+      // the pathname with any trailing slash trimmed.
+      filter: (page) => {
+        if (
+          page.includes('/404') ||
+          page.includes('/style-guide') ||
+          page.includes('/preview') ||
+          page.includes('/studio')
+        ) {
+          return false;
+        }
+        if (hiddenPagePaths.length === 0) return true;
+        let pathname;
+        try {
+          pathname = new URL(page).pathname;
+        } catch {
+          pathname = page;
+        }
+        const trimmed = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+        return !hiddenPagePaths.includes(trimmed);
+      },
     }),
     react(),
   ],

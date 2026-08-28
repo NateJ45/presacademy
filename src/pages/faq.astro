@@ -83,7 +83,7 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
   <SingletonPage
     pageType="faqPage"
     {page}

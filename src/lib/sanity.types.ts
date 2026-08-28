@@ -1590,6 +1590,7 @@ export type AccessibilityPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -1727,6 +1728,7 @@ export type PrivacyPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -2017,6 +2019,7 @@ export type Page = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
 };
 
 export type ResourcesPage = {
@@ -2047,6 +2050,7 @@ export type ResourcesPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2190,6 +2194,7 @@ export type ForYouPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2332,6 +2337,7 @@ export type GetStartedPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2473,6 +2479,7 @@ export type PricingPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2615,6 +2622,7 @@ export type FacultyPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2759,6 +2767,7 @@ export type CoursesPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   flexibleSections?: Array<
     | ({
         _key: string;
@@ -2893,6 +2902,7 @@ export type EventsPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -3040,6 +3050,7 @@ export type ContactPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -3183,6 +3194,7 @@ export type FaqPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -3457,6 +3469,7 @@ export type AboutPage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
 };
 
 export type HomePage = {
@@ -3609,6 +3622,7 @@ export type HomePage = {
     alt?: string;
     _type: 'image';
   };
+  hideFromSearch?: boolean;
 };
 
 export type MediaTag = {
