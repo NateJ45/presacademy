@@ -99,7 +99,7 @@ export const PAGE_CHECK_CONFIG: PageCheckConfig = {
   // `padding` and `tone` live inside every block's `background` object,
   // `imageSide` / `mediaSide` choose which way a two-column block faces, and
   // `surface` is the per-instance opt-out of the shared section shell.
-  extraSettingKeys: ['imageSide', 'mediaSide', 'padding', 'surface'],
+  extraSettingKeys: ['accent', 'imageSide', 'mediaSide', 'padding', 'surface'],
   // Every address the SITE CODE owns rather than the page builder, plus the
   // folders the build writes into. A link to /courses or /events/harvest is
   // fine even though no `page` document holds that slug. Compare with
