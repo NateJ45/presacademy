@@ -1,6 +1,7 @@
 import { VisualEditing } from '@sanity/visual-editing/react';
 import type { HistoryAdapter, HistoryRefresh } from '@sanity/visual-editing';
 import { useCallback, useEffect, useRef } from 'react';
+import { inCanvasControls } from './overlay/index.ts';
 
 // Studio-driven navigation (the navigator side panel, document locations, the
 // preview URL bar) reaches the iframe through this adapter. The DEFAULT is
@@ -27,7 +28,7 @@ const mpaHistory: HistoryAdapter = {
 // =============================================================================
 // VisualEditingOverlay — click-to-edit overlay + refresh for the preview
 // =============================================================================
-// Two jobs, both only ever active in the Studio's Presentation preview (this
+// Three jobs, all only ever active in the Studio's Presentation preview (this
 // is rendered from PreviewLayout with client:only when draftMode is true, so
 // it never ships to a public page):
 //
@@ -42,6 +43,11 @@ const mpaHistory: HistoryAdapter = {
 //        never reintroduce an interval poll here.
 //     b. MANUAL: the comlink `refresh` handler — the preview's Refresh (⟳)
 //        button, kept as the fallback if the stream is down.
+//  3. The IN-CANVAS CONTROLS (`components`, 2026-08-28): swatches on a hovered
+//     section, an accent-word picker on a heading, a text card on the curated
+//     lines. They live in ./overlay/, they write through the optimistic
+//     document API (no token in the browser), and their edits come back through
+//     the same refresh loop above as any other change. See ./overlay/index.ts.
 // =============================================================================
 
 interface Props {
@@ -143,5 +149,7 @@ export default function VisualEditingOverlay({ pageId }: Props) {
     [pageId, softRefresh],
   );
 
-  return <VisualEditing portal refresh={refresh} history={mpaHistory} />;
+  return (
+    <VisualEditing portal refresh={refresh} history={mpaHistory} components={inCanvasControls} />
+  );
 }

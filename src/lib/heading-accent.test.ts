@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { splitHeadingAccent } from './heading-accent.ts';
+import { splitHeadingAccent, splitHeadingWords, isAccentedWord } from './heading-accent.ts';
 import { hasInlineRich, inlineRichRuns } from './inline-rich.ts';
 
 // The invisible run Sanity's stega encoder hides inside a preview string. Two
@@ -85,5 +85,68 @@ describe('inline rich twins', () => {
       { _type: 'block', children: [{ _type: 'span', text: 'x', marks: ['someAnnotationKey'] }] },
     ]);
     assert.deepEqual(runs, [{ text: 'x', strong: false, em: false }]);
+  });
+});
+
+describe('splitHeadingWords', () => {
+  it('splits a heading into words and the spaces between them', () => {
+    const tokens = splitHeadingWords('Formation for elders');
+    assert.deepEqual(
+      tokens.map((t) => t.text),
+      ['Formation', ' ', 'for', ' ', 'elders'],
+    );
+    assert.deepEqual(
+      tokens.map((t) => t.word),
+      [true, false, true, false, true],
+    );
+  });
+
+  it('rejoins to the cleaned heading, so the overlay redraws it exactly', () => {
+    const heading = `Theolog${STEGA}ical depth,  taught plainly.`;
+    const tokens = splitHeadingWords(heading);
+    assert.equal(tokens.map((t) => t.text).join(''), 'Theological depth,  taught plainly.');
+  });
+
+  it('keeps punctuation on the label but off the stored value', () => {
+    const tokens = splitHeadingWords('Grace, unhurried.');
+    assert.deepEqual(tokens[0], { text: 'Grace,', value: 'Grace', word: true });
+    assert.deepEqual(tokens[2], { text: 'unhurried.', value: 'unhurried', word: true });
+  });
+
+  it('a value that survives is one splitHeadingAccent can find', () => {
+    const heading = 'Grace, unhurried.';
+    for (const token of splitHeadingWords(heading).filter((t) => t.word)) {
+      assert.equal(splitHeadingAccent(heading, token.value).found, true, token.value);
+    }
+  });
+
+  it('a token of pure punctuation is not offered as a word', () => {
+    const tokens = splitHeadingWords('Come — and stay');
+    const dash = tokens.find((t) => t.text === '—');
+    assert.equal(dash?.word, false);
+  });
+
+  it('is empty for an empty heading', () => {
+    assert.deepEqual(splitHeadingWords(''), []);
+    assert.deepEqual(splitHeadingWords(undefined), []);
+    assert.deepEqual(splitHeadingWords(STEGA), []);
+  });
+});
+
+describe('isAccentedWord', () => {
+  const tokens = splitHeadingWords('Grace, unhurried.');
+  const grace = tokens[0];
+
+  it('rings the word the stored accent points at, whatever its case', () => {
+    assert.equal(isAccentedWord(grace, 'Grace'), true);
+    assert.equal(isAccentedWord(grace, 'grace'), true);
+    assert.equal(isAccentedWord(grace, `gra${STEGA}ce`), true);
+  });
+
+  it('rings nothing else', () => {
+    assert.equal(isAccentedWord(grace, 'unhurried'), false);
+    assert.equal(isAccentedWord(grace, ''), false);
+    assert.equal(isAccentedWord(grace, undefined), false);
+    assert.equal(isAccentedWord({ text: ' ', value: '', word: false }, ''), false);
   });
 });

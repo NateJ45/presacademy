@@ -28,6 +28,7 @@ import {
 } from '@sanity/icons';
 import { SINGLETON_PREVIEW_PATHS } from '../resolve';
 import { sectionLabel } from '../../lib/page-checks';
+import { adaptToneToNeighbour } from '../../lib/section-fields';
 import { addSectionToPage, type PageOpsClient } from '../pageOps';
 import { SECTION_HOST_TYPES } from '../pageBuilderConfig';
 import { SHARE_LINK_TTL_PHRASE, useShareDraftLink } from './shareDraftLink';
@@ -641,13 +642,39 @@ export function PreviewNavigator() {
       if (!currentRow || !currentField || !preset.section) return;
       setBusy(preset.id);
       try {
+        // ---------------------------------------------------------------
+        // Arrive dressed for the page (2026-08-28)
+        // ---------------------------------------------------------------
+        // A saved section lands at the BOTTOM, so the section it will sit
+        // under is whichever one is last right now. Adopting that section's
+        // surface means the new band reads as a continuation instead of a
+        // seam an editor then has to go and fix. Only the tone travels; see
+        // adaptToneToNeighbour in src/lib/section-fields.ts.
+        //
+        // The adaptation is HERE and not in pageOps.addSectionToPage on
+        // purpose: pageOps is the portable copy shared with the starter, and
+        // "adopt the previous section's tone" is this repo's schema talking,
+        // not a general page operation. The read is the draft first, exactly
+        // as the append will be.
+        //
+        // GROQ has no attribute access by parameter, so the field name is
+        // interpolated. It is one of two literals from SECTION_HOST_TYPES, never
+        // anything an editor can type.
+        const twins = await client.fetch<{ _id: string; items?: unknown[] }[]>(
+          `*[_id in $ids]{_id, "items": ${currentField}}`,
+          { ids: [`drafts.${currentRow.id}`, currentRow.id] },
+        );
+        const source = twins.find((d) => d._id.startsWith('drafts.')) ?? twins[0];
+        const items = Array.isArray(source?.items) ? source.items : [];
+        const previous = (items[items.length - 1] ?? null) as Record<string, unknown> | null;
+
         // Always onto the DRAFT, always at the bottom: a saved section that went
         // live on click would be a publish nobody asked for.
         await addSectionToPage(
           client as unknown as PageOpsClient,
           currentRow.id,
           currentField,
-          preset.section,
+          adaptToneToNeighbour(preset.section, previous),
         );
         refetch();
         toast.push({
