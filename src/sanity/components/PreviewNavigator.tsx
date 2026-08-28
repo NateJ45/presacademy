@@ -33,6 +33,7 @@ import { startNav, stepNav, type PendingNav } from '../../lib/preview-navigation
 import { addSectionToPage, type PageOpsClient } from '../pageOps';
 import { SECTION_HOST_TYPES } from '../pageBuilderConfig';
 import { SHARE_LINK_TTL_PHRASE, useShareDraftLink } from './shareDraftLink';
+import { LiveDraftBridge } from './LiveDraftBridge';
 
 // =============================================================================
 // PreviewNavigator — the Squarespace-style page list beside the live preview
@@ -702,6 +703,18 @@ export function PreviewNavigator() {
 
   return (
     <Flex direction="column" style={{ height: '100%' }}>
+      {/* KEYSTROKE-INSTANT PREVIEW (2026-08-28). Renders nothing. It lives here
+          because this panel is the one place inside Presentation that already
+          knows WHICH page the preview is showing, and it is always mounted
+          alongside the preview iframe it posts into. See ./LiveDraftBridge.tsx
+          for what it sends and src/lib/preview-live-draft.ts for the contract. */}
+      {currentRow && (
+        <LiveDraftBridge
+          key={currentRow.id}
+          documentId={currentRow.id}
+          documentType={currentRow.type}
+        />
+      )}
       <Box flex={1} padding={3} style={{ overflowY: 'auto' }}>
         <Stack space={4}>
           {grouped === null ? (

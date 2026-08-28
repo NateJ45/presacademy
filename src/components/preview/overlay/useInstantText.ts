@@ -22,6 +22,21 @@
 // text nodes showing it. The refetch still happens; it just stops being the
 // thing anyone waits for.
 //
+// AND A SECOND, SHORTER PATH (2026-08-28). The swap above costs about 4ms; the
+// wait that was left is all upstream of it, because the actor's feed is still a
+// LISTEN — the edit is autosaved, committed and made visible before the frame
+// hears a word. The Studio has the answer a whole round trip earlier, in the
+// local document store its form writes optimistic patches into, so the Studio
+// side now posts that draft straight across (same origin, `postMessage`) as the
+// editor types. Both sources land in the SAME diff-and-swap below; which one may
+// write, and why a stale actor snapshot must not, is decided by `acceptsSource`
+// in src/lib/preview-live-draft.ts. The Studio end is
+// src/sanity/components/LiveDraftBridge.tsx.
+//
+// Messages from that channel are treated as hostile until proven otherwise: this
+// is a public bundle, `message` is a public doorway, and `parseLiveDraft` drops
+// anything that is not exactly the agreed shape without a word.
+//
 // EXACTLY THREE THINGS MAKE THIS SAFE TO POINT AT A LIVE PAGE, and all three
 // live in tested pure helpers rather than here:
 //
@@ -59,6 +74,13 @@ import { isEmptyActor } from '@sanity/visual-editing/optimistic';
 import { diffStringFields } from '../../../lib/preview-text-diff.ts';
 import { sourceKey } from '../../../lib/preview-stega.ts';
 import { applyTextChange, indexStegaNodes, showsText } from '../../../lib/preview-text-nodes.ts';
+import {
+  acceptsSource,
+  parseLiveDraft,
+  rememberSwap,
+  type DraftSource,
+  type PendingSwap,
+} from '../../../lib/preview-live-draft.ts';
 import { useDraftDocument } from './useDraftDocument.ts';
 import { startTiming } from './timing.ts';
 
@@ -83,18 +105,6 @@ interface ActorEvent {
  */
 const ACTOR_EVENTS = ['mutation', 'rebased.local', 'rebased.remote', 'sync'] as const;
 
-/** A swap this made that the server's HTML has not caught up with yet. */
-interface PendingSwap {
-  key: string;
-  /** The text that was on the page when this began. */
-  previous: string;
-  /** The text that should be on the page now. */
-  next: string;
-}
-
-/** Never remember more pending swaps than an editing burst can plausibly make. */
-const MAX_PENDING = 200;
-
 export function useInstantText(pageId: string): void {
   const { readNow } = useDraftDocument(pageId);
   const actor = useOptimisticActor();
@@ -108,6 +118,8 @@ export function useInstantText(pageId: string): void {
   /** Re-entrancy guard: one pass at a time, with a re-run if events arrived. */
   const running = useRef(false);
   const queued = useRef(false);
+  /** When the Studio's local channel last spoke, or null if it never has. */
+  const lastLocalAt = useRef<number | null>(null);
 
   const nodeIndex = useCallback((): Map<string, Text[]> => {
     if (index.current) return index.current;
@@ -124,7 +136,53 @@ export function useInstantText(pageId: string): void {
     return found;
   }, []);
 
-  /** Read the draft, diff it against the last one, and swap what matches. */
+  /**
+   * The one diff-and-swap, whichever channel brought the document.
+   *
+   * Synchronous on purpose: no await between reading `lastSeen` and writing it,
+   * so two snapshots arriving in the same tick cannot interleave and diff
+   * against each other's half-applied state.
+   *
+   * DOUBLE APPLICATION IS ALREADY A NO-OP, and it is worth being precise about
+   * why, because both channels do carry the same edit a moment apart. A swap
+   * only happens where a text node shows EXACTLY the old value
+   * (`applyTextChange`), so once the first channel has written "Hi there" over
+   * "Hi", the second channel's identical change finds nothing showing "Hi" and
+   * writes nothing. The pending memory agrees: `rememberSwap` is keyed by field
+   * and keeps the FIRST `previous`, so re-recording the same swap updates one
+   * entry instead of stacking two. What is NOT a no-op is an OLDER snapshot
+   * arriving after a newer one, which would read as a change back to the old
+   * words — hence `acceptsSource` on the actor path below.
+   */
+  const applyDocument = useCallback(
+    (next: Record<string, unknown>, source: DraftSource) => {
+      const stop = startTiming('instant-text');
+      const previous = lastSeen.current;
+      lastSeen.current = next;
+      // Nothing to compare against on the first read: the page was just
+      // server-rendered from this very document.
+      if (!previous) return;
+
+      const changes = diffStringFields(previous, next);
+      if (changes.length === 0) return;
+
+      const nodes = nodeIndex();
+      let swapped = 0;
+      for (const change of changes) {
+        const key = sourceKey(pageId, change.path);
+        for (const node of nodes.get(key) ?? []) {
+          if (applyTextChange(node, change.previous, change.next)) swapped += 1;
+        }
+        // Remembered whether or not a node matched: a field that is not on
+        // this page costs one map entry and is dropped at the next refresh.
+        rememberSwap(pending.current, key, change.previous, change.next);
+      }
+      if (swapped > 0) stop(`${source} ${swapped} node${swapped === 1 ? '' : 's'}`);
+    },
+    [nodeIndex, pageId],
+  );
+
+  /** Read the actor's copy of the draft and apply it. */
   const sweep = useCallback(async () => {
     if (running.current) {
       queued.current = true;
@@ -134,42 +192,35 @@ export function useInstantText(pageId: string): void {
     try {
       do {
         queued.current = false;
-        const stop = startTiming('instant-text');
         const next = await readNow();
         if (!next) continue;
-        const previous = lastSeen.current;
-        lastSeen.current = next;
-        // Nothing to compare against on the first read: the page was just
-        // server-rendered from this very document.
-        if (!previous) continue;
-
-        const changes = diffStringFields(previous, next);
-        if (changes.length === 0) continue;
-
-        const nodes = nodeIndex();
-        let swapped = 0;
-        for (const change of changes) {
-          const key = sourceKey(pageId, change.path);
-          for (const node of nodes.get(key) ?? []) {
-            if (applyTextChange(node, change.previous, change.next)) swapped += 1;
-          }
-          // Remembered whether or not a node matched: a field that is not on
-          // this page costs one map entry and is dropped at the next refresh.
-          const already = pending.current.get(key);
-          if (pending.current.size < MAX_PENDING || already) {
-            pending.current.set(key, {
-              key,
-              previous: already?.previous ?? change.previous,
-              next: change.next,
-            });
-          }
-        }
-        if (swapped > 0) stop(`${swapped} node${swapped === 1 ? '' : 's'}`);
+        // The Studio's local channel is ahead of the listen the actor rides on,
+        // so while that channel is live this snapshot is the OLD news and
+        // applying it would type the page backwards a keystroke.
+        if (!acceptsSource('actor', lastLocalAt.current, Date.now())) continue;
+        applyDocument(next, 'actor');
       } while (queued.current);
     } finally {
       running.current = false;
     }
-  }, [nodeIndex, pageId, readNow]);
+  }, [applyDocument, readNow]);
+
+  // The Studio's local edit state, posted straight across as the editor types.
+  // Untrusted input: the origin must match, and the payload must be exactly the
+  // agreed envelope. `document: null` means "this page has no draft", which is
+  // silence rather than an edit — it deliberately does not start the window that
+  // holds the actor back.
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      const message = parseLiveDraft(event.data);
+      if (!message?.document) return;
+      lastLocalAt.current = Date.now();
+      applyDocument(message.document, 'local');
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [applyDocument]);
 
   // Watch the optimistic actor. Every one of its emitted events means the
   // in-memory document may read differently; `sweep` decides if it does.
