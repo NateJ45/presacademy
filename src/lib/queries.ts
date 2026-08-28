@@ -64,6 +64,16 @@ export const SECTION_MEMBERS = `{
   }
 }`;
 
+// One menu link (schemaTypes/navLink.ts), as every menu needs it: the label,
+// the hand-typed address that older items still carry, and the picked page
+// DEREFERENCED down to a type + slug. src/lib/nav-href.ts turns that into an
+// href. The field list is separate from the braces so it can also be spread
+// into a projection that adds children (navItems' dropdown groups).
+const NAV_LINK_FIELDS = `_key, _type, label, linkType, href, externalUrl,
+    "slug": internalPage->slug.current,
+    "docType": internalPage->_type`;
+export const NAV_LINK_PROJECTION = `{ ${NAV_LINK_FIELDS} }`;
+
 // ---- Site settings (used in BaseLayout / Header / Footer) -----------------
 
 // Module-level memoized promise. The first call in a given build process fires
@@ -72,11 +82,10 @@ export const SECTION_MEMBERS = `{
 // collapsing N per-page calls into a single network request.
 let _siteSettingsPromise: Promise<any> | null = null;
 
-export async function getSiteSettings(fetcher = sanityFetch) {
-  // A custom fetcher (the draft-aware preview) bypasses the build-time memo:
-  // preview requests must see the CURRENT draft, not a cached publish.
-  if (fetcher === sanityFetch && _siteSettingsPromise) return _siteSettingsPromise;
-  const result = fetcher(`*[_type == "siteSettings"][0]{
+// Exported so the preview shell (src/layouts/PreviewLayout.astro) fetches the
+// chrome through the SAME projection. It used to fetch the raw document, which
+// left every dereferenced menu link null in the preview.
+export const SITE_SETTINGS_PROJECTION = `{
     title,
     tagline,
     mission,
@@ -86,6 +95,7 @@ export async function getSiteSettings(fetcher = sanityFetch) {
     phone,
     officeHours,
     favicon${IMAGE_PROJECTION},
+    logo${IMAGE_PROJECTION},
     addressLine,
     cityStateZip,
     geoLat,
@@ -105,18 +115,26 @@ export async function getSiteSettings(fetcher = sanityFetch) {
     footerCreditUrl,
     newsletter,
     navItems[]{
-      _type,
-      _key,
-      label,
-      href,
-      links[]{ _type, _key, label, href }
+      ${NAV_LINK_FIELDS},
+      links[]${NAV_LINK_PROJECTION}
     },
     footerColumns[]{
       _key,
       title,
-      links[]{ _key, label, href }
-    }
-  }`, {}, null);
+      links[]${NAV_LINK_PROJECTION}
+    },
+    legalNav[]${NAV_LINK_PROJECTION},
+    headerCta{ show, label, link${NAV_LINK_PROJECTION} },
+    showEmail,
+    showSocials,
+    showFooterSocials
+  }`;
+
+export async function getSiteSettings(fetcher = sanityFetch) {
+  // A custom fetcher (the draft-aware preview) bypasses the build-time memo:
+  // preview requests must see the CURRENT draft, not a cached publish.
+  if (fetcher === sanityFetch && _siteSettingsPromise) return _siteSettingsPromise;
+  const result = fetcher(`*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`, {}, null);
   if (fetcher === sanityFetch) _siteSettingsPromise = result;
   return result;
 }
@@ -160,12 +178,16 @@ export async function getPageHero(type: string) {
   // Spread (...) so any body-copy fields added to a page singleton (via the
   // definePageSingleton factory's extra fields) flow through automatically,
   // without listing each here. Images + flexibleSections are resolved explicitly.
-  return sanityFetch(`*[_type == $type][0]{
+  return sanityFetch(
+    `*[_type == $type][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, { type }, null);
+  }`,
+    { type },
+    null,
+  );
 }
 
 // Dedicated spread getters for the pages that carry their own editable list
@@ -176,30 +198,42 @@ export async function getPageHero(type: string) {
 // these named helpers keep the page-to-getter mapping obvious for maintainers.
 
 export async function getGrowPage() {
-  return sanityFetch(`*[_type == "growPage"][0]{
+  return sanityFetch(
+    `*[_type == "growPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getServePage() {
-  return sanityFetch(`*[_type == "servePage"][0]{
+  return sanityFetch(
+    `*[_type == "servePage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getBeliefsPage() {
-  return sanityFetch(`*[_type == "beliefsPage"][0]{
+  return sanityFetch(
+    `*[_type == "beliefsPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- Home page ------------------------------------------------------------
@@ -215,7 +249,8 @@ export async function getBeliefsPage() {
 // Takes the optional draft fetcher, as it always has.
 
 export async function getHomePage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "homePage"][0]{
+  return fetcher(
+    `*[_type == "homePage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -230,7 +265,10 @@ export async function getHomePage(fetcher = sanityFetch) {
     finalCta${CTA_PROJECTION},
     finalCtaBackgroundImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- About page -----------------------------------------------------------
@@ -239,7 +277,8 @@ export async function getHomePage(fetcher = sanityFetch) {
 // the page builder 2026-08-26, so /preview/about renders it through
 // SingletonPage with draft data.
 export async function getAboutPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "aboutPage"][0]{
+  return fetcher(
+    `*[_type == "aboutPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -248,7 +287,10 @@ export async function getAboutPage(fetcher = sanityFetch) {
     finalCtaBackgroundImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- FAQ page -------------------------------------------------------------
@@ -256,7 +298,8 @@ export async function getAboutPage(fetcher = sanityFetch) {
 // Takes the same optional draft fetcher as getPrivacyPage: the FAQ page
 // converted to the page builder 2026-08-26.
 export async function getFaqPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "faqPage"][0]{
+  return fetcher(
+    `*[_type == "faqPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -276,7 +319,10 @@ export async function getFaqPage(fetcher = sanityFetch) {
     finalCta${CTA_PROJECTION},
     secondaryCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // The same FAQ items the faqPage query embeds, as a standalone call for the
@@ -335,50 +381,70 @@ export async function getFaqItems(opts: { category?: string; limit?: number } = 
 // Takes the same optional draft fetcher as getPrivacyPage: the Contact page
 // converted to the page builder 2026-08-26.
 export async function getContactPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "contactPage"][0]{
+  return fetcher(
+    `*[_type == "contactPage"][0]{
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- Weddings + Use Our Space pages (hero + dereferenced inquiry form) -----
 
 export async function getWeddingsPage() {
-  return sanityFetch(`*[_type == "weddingsPage"][0]{
+  return sanityFetch(
+    `*[_type == "weddingsPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     inquiryForm->${FORM_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getUseOurSpacePage() {
-  return sanityFetch(`*[_type == "useOurSpacePage"][0]{
+  return sanityFetch(
+    `*[_type == "useOurSpacePage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     inquiryForm->${FORM_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // Standalone form fetch by slug (page-builder formRef block, ad-hoc embeds).
 export async function getForm(slug: string) {
-  return sanityFetch(`*[_type == "form" && archived != true && slug.current == $slug][0]${FORM_PROJECTION}`, { slug }, null);
+  return sanityFetch(
+    `*[_type == "form" && archived != true && slug.current == $slug][0]${FORM_PROJECTION}`,
+    { slug },
+    null,
+  );
 }
 
 // ---- Generic custom pages (/[slug], page-builder blocks) ------------------
 export async function getPageBySlug(slug: string) {
-  return sanityFetch(`*[_type == "page" && archived != true && slug.current == $slug][0]{
+  return sanityFetch(
+    `*[_type == "page" && archived != true && slug.current == $slug][0]{
     title, "slug": slug.current,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
     seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
     sections[]${SECTION_MEMBERS}
-  }`, { slug }, null);
+  }`,
+    { slug },
+    null,
+  );
 }
 
 export async function getAllPageSlugs(): Promise<string[]> {
@@ -393,7 +459,8 @@ export async function getAllPageSlugs(): Promise<string[]> {
 // ---- 404 page -------------------------------------------------------------
 
 export async function getNotFoundPage() {
-  return sanityFetch(`*[_type == "notFoundPage"][0]{
+  return sanityFetch(
+    `*[_type == "notFoundPage"][0]{
     seoTitle,
     seoDescription,
     eyebrow,
@@ -403,7 +470,10 @@ export async function getNotFoundPage() {
     primaryCtaLabel, primaryCtaHref,
     secondaryCtaLabel, secondaryCtaHref,
     tertiaryCtaLabel, tertiaryCtaHref
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- Privacy page ---------------------------------------------------------
@@ -414,7 +484,8 @@ export async function getNotFoundPage() {
 // src/pages/preview/[...slug].astro passes its draft-aware fetcher so the
 // Presentation tool renders the SAME template against unpublished edits.
 export async function getPrivacyPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "privacyPage"][0]{
+  return fetcher(
+    `*[_type == "privacyPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -422,7 +493,10 @@ export async function getPrivacyPage(fetcher = sanityFetch) {
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- Accessibility statement ----------------------------------------------
@@ -430,7 +504,8 @@ export async function getPrivacyPage(fetcher = sanityFetch) {
 // complete static fallback statement when this singleton is null.
 // Takes the same optional draft fetcher as getPrivacyPage above.
 export async function getAccessibilityPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "accessibilityPage"][0]{
+  return fetcher(
+    `*[_type == "accessibilityPage"][0]{
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -438,18 +513,25 @@ export async function getAccessibilityPage(fetcher = sanityFetch) {
     heroImage${IMAGE_PROJECTION},
     heroScriptAccent,
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // ---- Pastors & staff collection -------------------------------------------
 
 export async function getStaffMembers() {
-  return sanityFetch(`*[_type == "staffMember"] | order(displayOrder asc, name asc){
+  return sanityFetch(
+    `*[_type == "staffMember"] | order(displayOrder asc, name asc){
     _id, name, role, email,
     photo${IMAGE_PROJECTION},
     bio,
     favorites[]{ label, value }
-  }`, {}, []);
+  }`,
+    {},
+    [],
+  );
 }
 
 // ---- Ministries collection ------------------------------------------------
@@ -492,12 +574,16 @@ const EVENT_CARD = `{
 // Takes the same optional draft fetcher as getPrivacyPage: the Events page
 // converted to the page builder 2026-08-26.
 export async function getEventsPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "eventsPage"][0]{
+  return fetcher(
+    `*[_type == "eventsPage"][0]{
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // Recurring rhythms (weekly worship, Bible study) — always shown, ordered by
@@ -578,12 +664,16 @@ const SERMON_CARD = `{
 }`;
 
 export async function getSermonsPage() {
-  return sanityFetch(`*[_type == "sermonsPage"][0]{
+  return sanityFetch(
+    `*[_type == "sermonsPage"][0]{
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getRecentSermons() {
@@ -654,13 +744,17 @@ const COURSE_CARD = `{
 // ---- Courses page singleton + course collection ---------------------------
 
 export async function getCoursesPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "coursesPage"][0]{
+  return fetcher(
+    `*[_type == "coursesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getCourses() {
@@ -732,13 +826,17 @@ const FACULTY_CARD = `{
 }`;
 
 export async function getFacultyPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "facultyPage"][0]{
+  return fetcher(
+    `*[_type == "facultyPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getFaculty() {
@@ -826,13 +924,17 @@ export async function getTerms() {
 // converted to the page builder 2026-08-26, so /preview/pricing renders it
 // through SingletonPage with draft data.
 export async function getPricingPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "pricingPage"][0]{
+  return fetcher(
+    `*[_type == "pricingPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 export async function getPricingTiers() {
@@ -872,33 +974,45 @@ export async function getFeaturedTestimonials(limit = 3, fetcher = sanityFetch) 
 // Takes the same optional draft fetcher as getPrivacyPage: Get Started
 // converted to the page builder 2026-08-26.
 export async function getGetStartedPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "getStartedPage"][0]{
+  return fetcher(
+    `*[_type == "getStartedPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // Takes the same optional draft fetcher as getPrivacyPage above.
 export async function getForYouPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "forYouPage"][0]{
+  return fetcher(
+    `*[_type == "forYouPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }
 
 // Takes the same optional draft fetcher as getPrivacyPage above.
 export async function getResourcesPage(fetcher = sanityFetch) {
-  return fetcher(`*[_type == "resourcesPage"][0]{
+  return fetcher(
+    `*[_type == "resourcesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
-  }`, {}, null);
+  }`,
+    {},
+    null,
+  );
 }

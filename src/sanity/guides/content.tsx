@@ -81,7 +81,7 @@ export const guides: Guide[] = [
     category: 'Start here',
     title: 'Start here: how it all works',
     icon: '👋',
-    lead: "The big picture: what this Studio is, how your changes reach the live website, and how the left menu is organized.",
+    lead: 'The big picture: what this Studio is, how your changes reach the live website, and how the left menu is organized.',
     diy: 'self',
     body: [
       { kind: 'h', text: 'The Studio vs. the website' },
@@ -119,7 +119,11 @@ export const guides: Guide[] = [
       },
       {
         kind: 'seealso',
-        items: ["Words you'll see (a little glossary)", "Edit a page's words & photos", 'Do it yourself vs. ask for help'],
+        items: [
+          "Words you'll see (a little glossary)",
+          "Edit a page's words & photos",
+          'Do it yourself vs. ask for help',
+        ],
       },
     ],
   },
@@ -274,7 +278,10 @@ export const guides: Guide[] = [
         title: 'These build themselves',
         text: 'The Courses page and the Faculty page lay out their cards automatically from the Catalog and Faculty lists. To change a course or a teacher, edit that course or that faculty member, not the page. On Courses the “Start here” rail is a section you can reword, reorder or remove in `Page sections`. The big filterable list of courses, and the roster of teachers, are not sections: they are the page’s own job, and they always sit below whatever you add. The Home page works the same way: its whole middle is sections (the “where to begin” row, the two course rails, the numbers band, the topics ticker, the faculty strip and the quotes), and the rails, the strip and the quotes fill themselves from the Catalog, the Faculty list and the Testimonials. The big picture headline at the top stays in the `Hero` tab, where it has always been.',
       },
-      { kind: 'seealso', items: ['Add or edit a course', 'Photos & images', 'Do it yourself vs. ask for help'] },
+      {
+        kind: 'seealso',
+        items: ['Add or edit a course', 'Photos & images', 'Do it yourself vs. ask for help'],
+      },
     ],
   },
 
@@ -286,7 +293,11 @@ export const guides: Guide[] = [
     lead: 'Create a new page from scratch, like a reading group or a special campaign, without a designer.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Pages', 'Custom Pages', '+ New page'], link: { pane: 'pages;page' } },
+      {
+        kind: 'path',
+        items: ['Pages', 'Custom Pages', '+ New page'],
+        link: { pane: 'pages;page' },
+      },
       { kind: 'h', text: 'Build a page' },
       {
         kind: 'steps',
@@ -372,7 +383,10 @@ export const guides: Guide[] = [
         ],
       },
       { kind: 'h', text: "Change a section's background" },
-      { kind: 'p', text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). Open it to find:' },
+      {
+        kind: 'p',
+        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). Open it to find:',
+      },
       {
         kind: 'bullets',
         items: [
@@ -396,10 +410,14 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Edit the top menu & footer',
     icon: '🧭',
-    lead: 'Add, rename, reorder, or remove the links in the website header and footer, including dropdown menus.',
+    lead: 'Add, rename, reorder, or remove the links in the website header and footer, including dropdown menus, the header button, a logo, and the small print at the bottom.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Site Settings', 'Navigation (menus)'], link: { doc: 'siteSettings' } },
+      {
+        kind: 'path',
+        items: ['Site Settings', 'Navigation (menus)'],
+        link: { doc: 'siteSettings' },
+      },
       { kind: 'h', text: 'Add or change a menu link' },
       {
         kind: 'steps',
@@ -407,10 +425,17 @@ export const guides: Guide[] = [
           'Open **Site Settings** (top of the menu), then the `Navigation (menus)` tab.',
           'Under **Top menu links**, click `Add item`.',
           'Choose **Link** for a single page, or **Dropdown menu** to group several links under one label.',
-          'For a link, type the **Label** (what people see) and the **Address** (a page on this site like /courses or /for-you, or a full web address).',
+          'For a link, type the **Label** (what people see), then choose where it goes: **A page on this site** lets you pick the page from a list, and **Another website** takes a full web address.',
           'Drag items by the dots to reorder them. Use the `⋮` menu on an item to remove it.',
+          'The header fits **six** links at most, so keep the list short.',
           'Click `Publish`. The header updates across the site.',
         ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Picking the page is safer than typing the address',
+        text: 'When you pick a page from the list, the link follows that page. If its web address ever changes, the menu link changes with it and can never go dead. Older links here still show an **Address (typed by hand)** box, and that typed address is what the site uses. Clear it if you would rather pick the page.',
       },
       { kind: 'h', text: 'Build a dropdown menu' },
       {
@@ -437,13 +462,38 @@ export const guides: Guide[] = [
           '`Publish`. The "Get in touch" column (email, phone, social) is added for you automatically.',
         ],
       },
+      { kind: 'h', text: 'The small print at the very bottom' },
+      {
+        kind: 'p',
+        text: 'The little links beside the copyright line (Pricing, Privacy, Accessibility) are **Footer small-print links**, in the same `Navigation (menus)` tab. Leave it empty to keep those three, or add your own to replace them.',
+      },
+      { kind: 'h', text: 'The button at the right of the header' },
+      {
+        kind: 'steps',
+        items: [
+          'In `Navigation (menus)`, open **Header button**.',
+          'Type **Button text** to change what it says, and set **Where the button goes** to change where it leads. Leave both blank for the built-in "Request info" pointing at Get Started.',
+          'Turn **Show the header button** off to remove the button from the header and from the phone menu.',
+        ],
+      },
+      { kind: 'h', text: 'Use a logo instead of the typed name' },
+      {
+        kind: 'p',
+        text: 'In `Identity & contact`, upload a **Logo** and it takes the place of the typed "The Presbyterian / Academy" wordmark at the top of every page. Add **Alt text** so screen readers can read it. Trim the spare space around the image before you upload, because the site scales the whole picture to the header height. Remove the logo and the typed wordmark comes back.',
+      },
       {
         kind: 'callout',
         tone: 'primary',
         title: 'Empty means the built-in menus',
-        text: 'Both the top menu and the footer columns fall back to the built-in menus while they are empty, so you only change what you fill in.',
+        text: 'The top menu, the footer columns, the small-print links and the header button all fall back to the built-in ones while they are empty, so you only change what you fill in. The same goes for the three switches here (the email and social buttons in the phone menu, the social buttons in the footer): leave them alone and everything shows as it does today.',
       },
-      { kind: 'seealso', items: ['Build a brand-new page'] },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Easiest from the page picture',
+        text: 'Open **Preview** (the eye icon at the top) and click the header or the footer on the page itself. Site Settings opens beside it, and your menu changes show up in the picture as you make them.',
+      },
+      { kind: 'seealso', items: ['Build a brand-new page', 'The brand: colors & fonts'] },
     ],
   },
 
@@ -500,7 +550,11 @@ export const guides: Guide[] = [
     lead: 'A course is the heart of the school. Here is how to add one, set when it runs, and put it on the home page.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Catalog', 'Courses', '+ New course'], link: { pane: 'catalog;course' } },
+      {
+        kind: 'path',
+        items: ['Catalog', 'Courses', '+ New course'],
+        link: { pane: 'catalog;course' },
+      },
       { kind: 'h', text: 'Before you start' },
       {
         kind: 'callout',
@@ -558,7 +612,10 @@ export const guides: Guide[] = [
           '`Publish`. The course now appears on the Courses page at its own web address.',
         ],
       },
-      { kind: 'seealso', items: ['Add a faculty member', 'Set up a term or cohort', 'Pricing & scholarships'] },
+      {
+        kind: 'seealso',
+        items: ['Add a faculty member', 'Set up a term or cohort', 'Pricing & scholarships'],
+      },
     ],
   },
 
@@ -715,7 +772,11 @@ export const guides: Guide[] = [
     lead: 'The slim banner at the very top of every page. Use it for short, timely notices.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Content', 'Announcements', '+ New announcement'], link: { pane: 'content;announcement' } },
+      {
+        kind: 'path',
+        items: ['Content', 'Announcements', '+ New announcement'],
+        link: { pane: 'content;announcement' },
+      },
       { kind: 'h', text: 'Put up an announcement' },
       {
         kind: 'steps',
@@ -731,7 +792,9 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'Take it down' },
       {
         kind: 'steps',
-        items: ['Open the announcement, turn **Enabled** off (or set the **End** date to today), and `Publish`.'],
+        items: [
+          'Open the announcement, turn **Enabled** off (or set the **End** date to today), and `Publish`.',
+        ],
       },
       {
         kind: 'callout',
@@ -750,7 +813,11 @@ export const guides: Guide[] = [
     lead: 'A short quote from a student. Quote the kind of person you want to reach so a visitor sees themselves.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Content', 'Testimonials', '+ New testimonial'], link: { pane: 'content;testimonial' } },
+      {
+        kind: 'path',
+        items: ['Content', 'Testimonials', '+ New testimonial'],
+        link: { pane: 'content;testimonial' },
+      },
       { kind: 'h', text: 'Add a quote' },
       {
         kind: 'steps',
@@ -788,7 +855,11 @@ export const guides: Guide[] = [
     lead: 'The questions and answers on the FAQ page. Add new ones, edit answers, and control the order.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Content', 'FAQ Items', '+ New FAQ item'], link: { pane: 'content;faqItem' } },
+      {
+        kind: 'path',
+        items: ['Content', 'FAQ Items', '+ New FAQ item'],
+        link: { pane: 'content;faqItem' },
+      },
       { kind: 'h', text: 'Add a question' },
       {
         kind: 'steps',
@@ -802,7 +873,11 @@ export const guides: Guide[] = [
         ],
       },
       { kind: 'h', text: 'Change the order of the categories' },
-      { kind: 'path', items: ['Pages', 'FAQ', 'Page sections', 'Grouped FAQ'], link: { doc: 'faqPage' } },
+      {
+        kind: 'path',
+        items: ['Pages', 'FAQ', 'Page sections', 'Grouped FAQ'],
+        link: { doc: 'faqPage' },
+      },
       {
         kind: 'steps',
         items: [
@@ -830,7 +905,11 @@ export const guides: Guide[] = [
     lead: 'Set up the named price levels every course can use, and edit the wording on the Pricing & Scholarships page.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Catalog', 'Pricing Tiers', '+ New pricing tier'], link: { pane: 'catalog;pricingTier' } },
+      {
+        kind: 'path',
+        items: ['Catalog', 'Pricing Tiers', '+ New pricing tier'],
+        link: { pane: 'catalog;pricingTier' },
+      },
       { kind: 'h', text: 'Add or edit a price level' },
       {
         kind: 'steps',
@@ -849,7 +928,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'Set it on the course',
-        text: 'On a course, the `Pricing` tab has a **Price tier** field. Choose one of these tiers there. If a single course needs different wording, the course\'s **Price note** override is shown instead of the tier amount.',
+        text: "On a course, the `Pricing` tab has a **Price tier** field. Choose one of these tiers there. If a single course needs different wording, the course's **Price note** override is shown instead of the tier amount.",
       },
       { kind: 'h', text: 'The Pricing & Scholarships page' },
       { kind: 'path', items: ['Pages', 'Pricing & Scholarships'], link: { doc: 'pricingPage' } },
@@ -919,7 +998,11 @@ export const guides: Guide[] = [
     lead: 'Deleting is a soft landing here: things go to Recently deleted first, and you can bring them back.',
     diy: 'self',
     body: [
-      { kind: 'path', items: ['Recently deleted (bottom of the left menu)'], link: { pane: 'trash' } },
+      {
+        kind: 'path',
+        items: ['Recently deleted (bottom of the left menu)'],
+        link: { pane: 'trash' },
+      },
       { kind: 'h', text: 'How deleting works' },
       {
         kind: 'p',
@@ -953,7 +1036,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'If deleting is blocked',
-        text: 'When another document still points at this one (a course pointing at a term, for example), the Studio warns you instead of deleting, so the site never ends up with broken links. Open the document\'s `Used on` tab to see what links to it, remove those links, then delete.',
+        text: "When another document still points at this one (a course pointing at a term, for example), the Studio warns you instead of deleting, so the site never ends up with broken links. Open the document's `Used on` tab to see what links to it, remove those links, then delete.",
       },
       { kind: 'seealso', items: ['Do it yourself vs. ask for help'] },
     ],

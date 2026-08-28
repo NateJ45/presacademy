@@ -22,6 +22,7 @@ import { faqItem } from './faqItem';
 import { faqPage } from './faqPage';
 import { form } from './form';
 import { homePage } from './homePage';
+import { navLink } from './navLink';
 import { notFoundPage } from './notFoundPage';
 import { page } from './page';
 import { pricingTier } from './pricingTier';
@@ -36,6 +37,8 @@ export const schemaTypes = [
   // Object types (embedded) first so they're defined before docs that reference them
   ctaBlock,
   embed,
+  // One menu link (header, footer column, small-print row)
+  navLink,
   // Page-builder block library (flexibleSections members)
   ...sectionBlocks,
 

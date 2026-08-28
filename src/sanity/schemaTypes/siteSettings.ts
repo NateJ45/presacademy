@@ -9,6 +9,9 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { LinkIcon, ChevronDownIcon, ListIcon } from '@sanity/icons';
 
+// The menu-link object (label + destination) is shared: see ./navLink.ts. Every
+// menu here uses it, so a link behaves the same wherever it sits.
+
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Site Settings',
@@ -46,14 +49,16 @@ export const siteSettings = defineType({
       title: 'Mission line',
       type: 'text',
       rows: 2,
-      description: 'One-sentence mission shown in the footer. Example: "Serving and celebrating Jesus for the good of the world."',
+      description:
+        'One-sentence mission shown in the footer. Example: "Serving and celebrating Jesus for the good of the world."',
       group: 'identity',
     }),
     defineField({
       name: 'funder',
       title: 'Funder / underwriter (optional)',
       type: 'string',
-      description: 'Shown in the footer on every page as "Made possible by the [name]". Example: "Presbytery of Cincinnati". Clear this to hide the line.',
+      description:
+        'Shown in the footer on every page as "Made possible by the [name]". Example: "Presbytery of Cincinnati". Clear this to hide the line.',
       group: 'identity',
     }),
     defineField({
@@ -62,8 +67,7 @@ export const siteSettings = defineType({
       type: 'string',
       description: 'Public email address shown on the Contact page and footer.',
       group: 'identity',
-      validation: (Rule) =>
-        Rule.required().regex(/.+@.+\..+/, { name: 'email', invert: false }),
+      validation: (Rule) => Rule.required().regex(/.+@.+\..+/, { name: 'email', invert: false }),
     }),
     defineField({
       name: 'pastorEmail',
@@ -84,7 +88,8 @@ export const siteSettings = defineType({
       name: 'officeHours',
       title: 'Office hours (optional)',
       type: 'string',
-      description: 'Shown on the Contact page. Example: "Tuesday-Friday, 10am-2pm". Leave blank to hide.',
+      description:
+        'Shown on the Contact page. Example: "Tuesday-Friday, 10am-2pm". Leave blank to hide.',
       group: 'identity',
     }),
     defineField({
@@ -95,6 +100,30 @@ export const siteSettings = defineType({
       description:
         'The small icon shown in the browser tab and in bookmarks. Use a simple, roughly square logo mark, at least 128 by 128 pixels (fine detail disappears at tiny sizes). Leave blank to use the built-in church mark.',
       options: { hotspot: true },
+    }),
+    defineField({
+      name: 'logo',
+      title: 'Logo (optional)',
+      type: 'image',
+      group: 'identity',
+      description:
+        'A logo image for the top of every page. Leave blank and the site keeps its typed wordmark ("The Presbyterian / Academy"), which is the brand as designed. When set, the logo replaces the wordmark and is scaled to the header height, so upload it with any spare space already trimmed off.',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          type: 'string',
+          description:
+            'What the logo says, for screen readers. Example: "The Presbyterian Academy".',
+          validation: (Rule) =>
+            Rule.custom((value, ctx: any) =>
+              ctx.parent?.asset && !value
+                ? 'Add alt text so screen readers can read the logo'
+                : true,
+            ),
+        }),
+      ],
     }),
     defineField({
       name: 'addressLine',
@@ -138,31 +167,13 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'The links in the website header. Drag to reorder. Add a "Link" for a single page, or a "Dropdown menu" to group several links under one label. Leave this empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
+        'The links in the website header. Drag to reorder. Add a "Link" for a single page, or a "Dropdown menu" to group several links under one label. The header design fits at most six, so keep the list short. Leave this empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
+      validation: (Rule) => Rule.max(6),
       of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'navLink',
-          title: 'Link',
-          icon: LinkIcon,
-          fields: [
-            defineField({
-              name: 'label',
-              title: 'Label',
-              type: 'string',
-              description: 'What visitors see, e.g. "Events".',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'href',
-              title: 'Address',
-              type: 'string',
-              description: 'A page on this site like /worship, or a full web address like https://example.com.',
-              validation: (Rule) => Rule.required(),
-            }),
-          ],
-          preview: { select: { title: 'label', subtitle: 'href' } },
-        }),
+        // The shared link object (./navLink.ts). Existing menu items already
+        // carry _type "navLink", so they keep working unchanged and simply gain
+        // the page picker.
+        defineArrayMember({ type: 'navLink' }),
         defineArrayMember({
           type: 'object',
           name: 'navGroup',
@@ -227,7 +238,8 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'The titled link columns in the footer, for example "Visit", "Get Involved", "Connect". Drag to reorder. Leave empty to use the built-in default columns. The "Get in touch" column (email, phone, social) always shows automatically. Aim for three columns so the footer grid stays balanced.',
+        'The titled link columns in the footer, for example "Visit", "Get Involved", "Connect". Drag to reorder. Leave empty to use the built-in default columns. The "Get in touch" column (email, phone, social) always shows automatically. Aim for three columns so the footer grid stays balanced; four is the most that fits.',
+      validation: (Rule) => Rule.max(4),
       of: [
         defineArrayMember({
           type: 'object',
@@ -247,10 +259,14 @@ export const siteSettings = defineType({
               title: 'Links',
               type: 'array',
               of: [
+                // Shared link object first, so "Add item" reaches for it.
+                defineArrayMember({ type: 'navLink' }),
+                // The original hand-typed link, kept so the columns seeded
+                // before the picker existed stay editable in place.
                 defineArrayMember({
                   type: 'object',
                   name: 'footerLink',
-                  title: 'Link',
+                  title: 'Link (typed address)',
                   icon: LinkIcon,
                   fields: [
                     defineField({
@@ -270,7 +286,7 @@ export const siteSettings = defineType({
                   preview: { select: { title: 'label', subtitle: 'href' } },
                 }),
               ],
-              validation: (Rule) => Rule.required().min(1),
+              validation: (Rule) => Rule.required().min(1).max(8),
             }),
           ],
           preview: {
@@ -282,6 +298,89 @@ export const siteSettings = defineType({
           },
         }),
       ],
+    }),
+
+    // The button at the right of the header (and at the top of the phone menu).
+    // Everything is optional: an empty label keeps the built-in "Request info"
+    // pointing at Get Started, and turning it off removes the button everywhere.
+    defineField({
+      name: 'headerCta',
+      title: 'Header button',
+      type: 'object',
+      group: 'navigation',
+      description:
+        'The one button at the right of the header. Leave the boxes blank to keep the built-in "Request info" button.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: 'show',
+          title: 'Show the header button',
+          type: 'boolean',
+          description: 'Turn off to remove the button from the header and the phone menu.',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'label',
+          title: 'Button text',
+          type: 'string',
+          description: 'Leave blank for "Request info".',
+        }),
+        defineField({
+          name: 'link',
+          title: 'Where the button goes',
+          type: 'navLink',
+          description: 'Leave blank to keep pointing at the Get Started page.',
+        }),
+      ],
+      preview: {
+        select: { show: 'show', label: 'label' },
+        prepare: ({ show, label }) => ({
+          title: label || 'Request info',
+          subtitle: show === false ? 'Hidden' : 'Header button',
+        }),
+      },
+    }),
+
+    // Small on/off switches for the bits of contact detail the header carries.
+    // Both are ON unless explicitly turned off, so an untouched site is
+    // unchanged (the site reads a blank value as "yes").
+    defineField({
+      name: 'showEmail',
+      title: 'Show the email address in the menu',
+      type: 'boolean',
+      group: 'navigation',
+      description:
+        'The "Get in touch" email at the foot of the phone menu. On unless you turn it off.',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'showSocials',
+      title: 'Show social buttons in the menu',
+      type: 'boolean',
+      group: 'navigation',
+      description:
+        'The Instagram and Facebook buttons at the foot of the phone menu. On unless you turn it off.',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'showFooterSocials',
+      title: 'Show social buttons in the footer',
+      type: 'boolean',
+      group: 'navigation',
+      description: 'The "Follow along" buttons in the footer. On unless you turn it off.',
+      initialValue: true,
+    }),
+
+    // The small print row along the very bottom of the footer.
+    defineField({
+      name: 'legalNav',
+      title: 'Footer small-print links',
+      type: 'array',
+      group: 'navigation',
+      description:
+        'The little links beside the copyright line at the very bottom, e.g. Pricing, Privacy, Accessibility. Leave empty to keep those three.',
+      validation: (Rule) => Rule.max(6),
+      of: [defineArrayMember({ type: 'navLink' })],
     }),
 
     // ── Worship times ─────────────────────────────────────────────────────────
@@ -300,10 +399,31 @@ export const siteSettings = defineType({
         'The one place to set your Sunday service time. It updates the header, footer, home page, worship page, and your Google listing automatically. Leave a field blank to use the built-in default.',
       options: { collapsible: false },
       fields: [
-        defineField({ name: 'time', title: 'Time', type: 'string', description: 'How the time reads on the site. Example: "11am".' }),
-        defineField({ name: 'day', title: 'Day', type: 'string', description: 'The day of the week, singular. Example: "Sunday". The site adds "s" or "every" where needed.' }),
-        defineField({ name: 'startTime24', title: 'Start time, 24-hour (for search engines)', type: 'string', description: 'Used in the data Google reads. 24-hour clock. Example: "11:00".' }),
-        defineField({ name: 'endTime24', title: 'End time, 24-hour (for search engines)', type: 'string', description: 'Used in the data Google reads. 24-hour clock. Example: "12:15".' }),
+        defineField({
+          name: 'time',
+          title: 'Time',
+          type: 'string',
+          description: 'How the time reads on the site. Example: "11am".',
+        }),
+        defineField({
+          name: 'day',
+          title: 'Day',
+          type: 'string',
+          description:
+            'The day of the week, singular. Example: "Sunday". The site adds "s" or "every" where needed.',
+        }),
+        defineField({
+          name: 'startTime24',
+          title: 'Start time, 24-hour (for search engines)',
+          type: 'string',
+          description: 'Used in the data Google reads. 24-hour clock. Example: "11:00".',
+        }),
+        defineField({
+          name: 'endTime24',
+          title: 'End time, 24-hour (for search engines)',
+          type: 'string',
+          description: 'Used in the data Google reads. 24-hour clock. Example: "12:15".',
+        }),
       ],
     }),
 
@@ -315,14 +435,16 @@ export const siteSettings = defineType({
       name: 'watchUrl',
       title: 'Livestream / Watch URL',
       type: 'url',
-      description: 'Where "Watch Live" points (YouTube channel or livestream). Leave blank to use the Sermons page.',
+      description:
+        'Where "Watch Live" points (YouTube channel or livestream). Leave blank to use the Sermons page.',
       group: 'connect',
     }),
     defineField({
       name: 'giveUrl',
       title: 'Giving link',
       type: 'url',
-      description: 'Online giving portal (e.g. Vanco, Subsplash Giving). Leave blank to use the Give page.',
+      description:
+        'Online giving portal (e.g. Vanco, Subsplash Giving). Leave blank to use the Give page.',
       group: 'connect',
     }),
     defineField({
@@ -336,21 +458,24 @@ export const siteSettings = defineType({
       name: 'directoryUrl',
       title: 'Member directory link',
       type: 'url',
-      description: 'Link to an online member directory (e.g. Planning Center, Instant Church Directory). Leave blank to hide.',
+      description:
+        'Link to an online member directory (e.g. Planning Center, Instant Church Directory). Leave blank to hide.',
       group: 'connect',
     }),
     defineField({
       name: 'registrationBaseUrl',
       title: 'Registration / sign-up base link',
       type: 'url',
-      description: 'Default place to register for events when an event has no link of its own (e.g. a Planning Center or Eventbrite organizer page).',
+      description:
+        'Default place to register for events when an event has no link of its own (e.g. a Planning Center or Eventbrite organizer page).',
       group: 'connect',
     }),
     defineField({
       name: 'prayerUrl',
       title: 'Prayer / connection card link',
       type: 'url',
-      description: 'Link to a prayer-request or connection-card form. Surfaces as a footer link when set.',
+      description:
+        'Link to a prayer-request or connection-card form. Surfaces as a footer link when set.',
       group: 'connect',
     }),
 
@@ -362,7 +487,8 @@ export const siteSettings = defineType({
       name: 'seoImage',
       title: 'Default social share image',
       type: 'image',
-      description: 'The image shown when any page is shared on social media (the Open Graph image). Use a wide image, about 1200 by 630 pixels. Individual pages can override this. Leave blank to use the auto-generated branded cards.',
+      description:
+        'The image shown when any page is shared on social media (the Open Graph image). Use a wide image, about 1200 by 630 pixels. Individual pages can override this. Leave blank to use the auto-generated branded cards.',
       options: { hotspot: true },
       group: 'social',
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
@@ -378,7 +504,8 @@ export const siteSettings = defineType({
       name: 'footerCreditUrl',
       title: 'Footer credit URL',
       type: 'url',
-      description: 'Optional. When set, the footer credit becomes a link to this URL (opens in a new tab).',
+      description:
+        'Optional. When set, the footer credit becomes a link to this URL (opens in a new tab).',
       group: 'social',
     }),
 
@@ -398,14 +525,59 @@ export const siteSettings = defineType({
           description: 'When off, the newsletter block does not render anywhere on the site.',
           initialValue: false,
         }),
-        defineField({ name: 'providerLabel', title: 'Provider label', type: 'string', description: 'Internal label only. Example: "MailerLite". Not shown to visitors.' }),
-        defineField({ name: 'formActionUrl', title: 'Form action URL', type: 'url', description: "The embedded-form POST endpoint from your email provider's dashboard." }),
-        defineField({ name: 'audienceId', title: 'Audience / list ID', type: 'string', description: 'Your provider list or audience ID.' }),
-        defineField({ name: 'heading', title: 'Heading', type: 'string', description: 'Headline above the signup form. Example: "Get our newsletter in your inbox."' }),
-        defineField({ name: 'blurb', title: 'Blurb', type: 'text', rows: 3, description: 'One or two sentences under the heading explaining what subscribers get.' }),
-        defineField({ name: 'buttonLabel', title: 'Button label', type: 'string', initialValue: 'Subscribe' }),
-        defineField({ name: 'successMessage', title: 'Success message', type: 'text', rows: 2, description: 'Message shown after a successful signup.' }),
-        defineField({ name: 'consentNote', title: 'Consent note', type: 'text', rows: 2, description: 'Small-print consent line near the submit button. Link to /privacy included automatically.' }),
+        defineField({
+          name: 'providerLabel',
+          title: 'Provider label',
+          type: 'string',
+          description: 'Internal label only. Example: "MailerLite". Not shown to visitors.',
+        }),
+        defineField({
+          name: 'formActionUrl',
+          title: 'Form action URL',
+          type: 'url',
+          description: "The embedded-form POST endpoint from your email provider's dashboard.",
+        }),
+        defineField({
+          name: 'audienceId',
+          title: 'Audience / list ID',
+          type: 'string',
+          description: 'Your provider list or audience ID.',
+        }),
+        defineField({
+          name: 'heading',
+          title: 'Heading',
+          type: 'string',
+          description:
+            'Headline above the signup form. Example: "Get our newsletter in your inbox."',
+        }),
+        defineField({
+          name: 'blurb',
+          title: 'Blurb',
+          type: 'text',
+          rows: 3,
+          description: 'One or two sentences under the heading explaining what subscribers get.',
+        }),
+        defineField({
+          name: 'buttonLabel',
+          title: 'Button label',
+          type: 'string',
+          initialValue: 'Subscribe',
+        }),
+        defineField({
+          name: 'successMessage',
+          title: 'Success message',
+          type: 'text',
+          rows: 2,
+          description: 'Message shown after a successful signup.',
+        }),
+        defineField({
+          name: 'consentNote',
+          title: 'Consent note',
+          type: 'text',
+          rows: 2,
+          description:
+            'Small-print consent line near the submit button. Link to /privacy included automatically.',
+        }),
       ],
     }),
 

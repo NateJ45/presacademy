@@ -748,280 +748,6 @@ export type FaqItem = {
   displayOrder?: number;
 };
 
-export type AccessibilityPage = {
-  _id: string;
-  _type: 'accessibilityPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroScriptAccent?: string;
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & SectionResources)
-    | ({
-        _key: string;
-      } & SectionKeyDates)
-    | ({
-        _key: string;
-      } & SectionPricingTiers)
-    | ({
-        _key: string;
-      } & Embed)
-    | ({
-        _key: string;
-      } & SectionLegalBody)
-    | ({
-        _key: string;
-      } & SectionNumberedCards)
-    | ({
-        _key: string;
-      } & SectionScholarship)
-    | ({
-        _key: string;
-      } & SectionLedgerStats)
-    | ({
-        _key: string;
-      } & SectionEditorialColumns)
-    | ({
-        _key: string;
-      } & SectionInlineBand)
-    | ({
-        _key: string;
-      } & SectionFaqGrouped)
-    | ({
-        _key: string;
-      } & SectionEventGrid)
-    | ({
-        _key: string;
-      } & SectionRuledList)
-    | ({
-        _key: string;
-      } & SectionContactDetails)
-    | ({
-        _key: string;
-      } & SectionRequestPanel)
-    | ({
-        _key: string;
-      } & SectionCourseRail)
-    | ({
-        _key: string;
-      } & SectionTicker)
-    | ({
-        _key: string;
-      } & SectionFacultyRail)
-    | ({
-        _key: string;
-      } & SectionTestimonialRail)
-  >;
-};
-
-export type PrivacyPage = {
-  _id: string;
-  _type: 'privacyPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroScriptAccent?: string;
-  flexibleSections?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & SectionResources)
-    | ({
-        _key: string;
-      } & SectionKeyDates)
-    | ({
-        _key: string;
-      } & SectionPricingTiers)
-    | ({
-        _key: string;
-      } & Embed)
-    | ({
-        _key: string;
-      } & SectionLegalBody)
-    | ({
-        _key: string;
-      } & SectionNumberedCards)
-    | ({
-        _key: string;
-      } & SectionScholarship)
-    | ({
-        _key: string;
-      } & SectionLedgerStats)
-    | ({
-        _key: string;
-      } & SectionEditorialColumns)
-    | ({
-        _key: string;
-      } & SectionInlineBand)
-    | ({
-        _key: string;
-      } & SectionFaqGrouped)
-    | ({
-        _key: string;
-      } & SectionEventGrid)
-    | ({
-        _key: string;
-      } & SectionRuledList)
-    | ({
-        _key: string;
-      } & SectionContactDetails)
-    | ({
-        _key: string;
-      } & SectionRequestPanel)
-    | ({
-        _key: string;
-      } & SectionCourseRail)
-    | ({
-        _key: string;
-      } & SectionTicker)
-    | ({
-        _key: string;
-      } & SectionFacultyRail)
-    | ({
-        _key: string;
-      } & SectionTestimonialRail)
-  >;
-};
-
 export type NotFoundPage = {
   _id: string;
   _type: 'notFoundPage';
@@ -1071,17 +797,22 @@ export type SiteSettings = {
     crop?: SanityImageCrop;
     _type: 'image';
   };
+  logo?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
   addressLine?: string;
   cityStateZip?: string;
   geoLat?: number;
   geoLng?: number;
   navItems?: Array<
-    | {
-        label?: string;
-        href?: string;
-        _type: 'navLink';
+    | ({
         _key: string;
-      }
+      } & NavLink)
     | {
         label?: string;
         links?: Array<{
@@ -1096,15 +827,33 @@ export type SiteSettings = {
   >;
   footerColumns?: Array<{
     title?: string;
-    links?: Array<{
-      label?: string;
-      href?: string;
-      _type: 'footerLink';
-      _key: string;
-    }>;
+    links?: Array<
+      | ({
+          _key: string;
+        } & NavLink)
+      | {
+          label?: string;
+          href?: string;
+          _type: 'footerLink';
+          _key: string;
+        }
+    >;
     _type: 'footerColumn';
     _key: string;
   }>;
+  headerCta?: {
+    show?: boolean;
+    label?: string;
+    link?: NavLink;
+  };
+  showEmail?: boolean;
+  showSocials?: boolean;
+  showFooterSocials?: boolean;
+  legalNav?: Array<
+    {
+      _key: string;
+    } & NavLink
+  >;
   worshipService?: {
     time?: string;
     day?: string;
@@ -1141,6 +890,127 @@ export type SiteSettings = {
     successMessage?: string;
     consentNote?: string;
   };
+};
+
+export type HomePageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'homePage';
+};
+
+export type AboutPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'aboutPage';
+};
+
+export type FaqPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'faqPage';
+};
+
+export type ContactPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'contactPage';
+};
+
+export type EventsPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'eventsPage';
+};
+
+export type PrivacyPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'privacyPage';
+};
+
+export type AccessibilityPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'accessibilityPage';
+};
+
+export type CoursesPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'coursesPage';
+};
+
+export type FacultyPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'facultyPage';
+};
+
+export type PricingPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'pricingPage';
+};
+
+export type GetStartedPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'getStartedPage';
+};
+
+export type ForYouPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'forYouPage';
+};
+
+export type ResourcesPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'resourcesPage';
+};
+
+export type PageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'page';
+};
+
+export type NavLink = {
+  _type: 'navLink';
+  label?: string;
+  linkType?: 'internal' | 'external';
+  internalPage?:
+    | HomePageReference
+    | AboutPageReference
+    | FaqPageReference
+    | ContactPageReference
+    | EventsPageReference
+    | PrivacyPageReference
+    | AccessibilityPageReference
+    | CoursesPageReference
+    | FacultyPageReference
+    | PricingPageReference
+    | GetStartedPageReference
+    | ForYouPageReference
+    | ResourcesPageReference
+    | PageReference;
+  externalUrl?: string;
+  href?: string;
 };
 
 export type SectionTestimonialRail = {
@@ -1704,6 +1574,280 @@ export type SectionRichText = {
   background?: Background;
 };
 
+export type AccessibilityPage = {
+  _id: string;
+  _type: 'accessibilityPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroScriptAccent?: string;
+  flexibleSections?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionMediaShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
+      } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
+  >;
+};
+
+export type PrivacyPage = {
+  _id: string;
+  _type: 'privacyPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  heroScriptAccent?: string;
+  flexibleSections?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionMediaShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
+      } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
+  >;
+};
+
 export type Embed = {
   _type: 'embed';
   title?: string;
@@ -1711,90 +1855,6 @@ export type Embed = {
   url?: string;
   html?: string;
   aspect?: string;
-};
-
-export type HomePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'homePage';
-};
-
-export type AboutPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'aboutPage';
-};
-
-export type FaqPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'faqPage';
-};
-
-export type ContactPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'contactPage';
-};
-
-export type EventsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'eventsPage';
-};
-
-export type CoursesPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'coursesPage';
-};
-
-export type FacultyPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'facultyPage';
-};
-
-export type PricingPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'pricingPage';
-};
-
-export type GetStartedPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'getStartedPage';
-};
-
-export type ForYouPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'forYouPage';
-};
-
-export type ResourcesPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'resourcesPage';
-};
-
-export type PageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'page';
 };
 
 export type CtaBlock = {
@@ -3716,10 +3776,23 @@ export type AllSanitySchemaTypes =
   | Event
   | FaqCategoryReference
   | FaqItem
-  | AccessibilityPage
-  | PrivacyPage
   | NotFoundPage
   | SiteSettings
+  | HomePageReference
+  | AboutPageReference
+  | FaqPageReference
+  | ContactPageReference
+  | EventsPageReference
+  | PrivacyPageReference
+  | AccessibilityPageReference
+  | CoursesPageReference
+  | FacultyPageReference
+  | PricingPageReference
+  | GetStartedPageReference
+  | ForYouPageReference
+  | ResourcesPageReference
+  | PageReference
+  | NavLink
   | SectionTestimonialRail
   | SectionFacultyRail
   | SectionTicker
@@ -3757,19 +3830,9 @@ export type AllSanitySchemaTypes =
   | SectionCardGrid
   | SectionImageText
   | SectionRichText
+  | AccessibilityPage
+  | PrivacyPage
   | Embed
-  | HomePageReference
-  | AboutPageReference
-  | FaqPageReference
-  | ContactPageReference
-  | EventsPageReference
-  | CoursesPageReference
-  | FacultyPageReference
-  | PricingPageReference
-  | GetStartedPageReference
-  | ForYouPageReference
-  | ResourcesPageReference
-  | PageReference
   | CtaBlock
   | Page
   | ResourcesPage
