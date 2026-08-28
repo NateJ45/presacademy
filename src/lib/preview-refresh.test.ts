@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-refresh — the scheduler that stopped the preview melting the Worker
 // =============================================================================

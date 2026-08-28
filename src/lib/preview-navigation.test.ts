@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-navigation — the bounce-aware page-switch state machine
 // =============================================================================

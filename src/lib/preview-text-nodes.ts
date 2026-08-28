@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-text-nodes — matching draft fields to the text on the page (2026-08-28)
 // =============================================================================

@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-stega — reading (and putting back) the invisible marks in preview text
 // (2026-08-28)

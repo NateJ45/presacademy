@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-live-draft — the contract for the Studio's local-edit-state channel
 // (2026-08-28)

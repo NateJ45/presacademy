@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-refresh — one refresh at a time, and never a stale one (2026-08-28)
 // =============================================================================

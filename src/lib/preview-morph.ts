@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // preview-morph — update the preview in place instead of rebuilding it
 // (2026-08-28)
