@@ -4,6 +4,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { inCanvasControls } from './overlay/index.ts';
 import { SOFT_REFRESH_EVENT, useInstantText } from './overlay/useInstantText.ts';
 import { startTiming } from './overlay/timing.ts';
+import {
+  createRefreshState,
+  onChange as onRefreshChange,
+  onSettled,
+  onStart,
+  shouldStart,
+} from '../../lib/preview-refresh.ts';
 
 // Studio-driven navigation (the navigator side panel, document locations, the
 // preview URL bar) reaches the iframe through this adapter. The DEFAULT is
@@ -72,6 +79,10 @@ const mpaHistory: HistoryAdapter = {
 //        never reintroduce an interval poll here.
 //     b. MANUAL: the comlink `refresh` handler — the preview's Refresh (⟳)
 //        button, kept as the fallback if the stream is down.
+//     Both triggers go through the SCHEDULER in src/lib/preview-refresh.ts:
+//     single-flight, stale-response discard, and a floor on the interval between
+//     renders. Read that file before touching anything below — it is where the
+//     six-concurrent-renders 1102 and the reverting-text bug are written up.
 //  3. The IN-CANVAS CONTROLS (`components`, 2026-08-28): swatches on a hovered
 //     section, an accent-word picker on a heading, a text card on the curated
 //     lines. They live in ./overlay/, they write through the optimistic
@@ -96,7 +107,12 @@ interface Props {
 
 export default function VisualEditingOverlay({ pageId }: Props) {
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const pending = useRef<Array<() => void>>([]);
+  /** The scheduler's state. A ref, not React state: no render depends on it. */
+  const schedule = useRef(createRefreshState());
+  /** Callers whose change no started refresh covers yet. */
+  const waiting = useRef<Array<() => void>>([]);
+  /** Callers the in-flight refresh covers, resolved only if it is accepted. */
+  const covered = useRef<Array<() => void>>([]);
 
   // Job 4: swap changed plain strings in as the edit arrives, without waiting
   // for the refetch below. Safe to call here rather than inside <VisualEditing>
@@ -104,47 +120,103 @@ export default function VisualEditingOverlay({ pageId }: Props) {
   // not React context, so sibling order does not matter.
   useInstantText(pageId);
 
-  // Coalesce a burst of mutations (autosave fires several in quick succession)
-  // into a single refetch, and resolve every awaiting refresh when it lands.
-  //
-  // THE DEBOUNCE IS 80ms, down from 250. It exists to collapse a burst into one
-  // refetch, not to wait for the editor to stop typing — the Studio's own
-  // autosave has already done that batching before a single event reaches us, so
-  // the extra 170ms bought nothing but latency. Instant text (below) covers the
-  // remaining wait for plain strings; this window only needs to be long enough
-  // that the two or three events one save produces share a refetch.
+  // `tick` and `runRefresh` call each other (a refresh that settles asks whether
+  // another is owed). A ref breaks the cycle without either one changing
+  // identity, which matters: `softRefresh` is a dependency of the SSE effect,
+  // and a new identity there would tear down and reopen the listen connection.
+  const tickRef = useRef<() => void>(() => {});
+
+  // ONE refresh: fetch this preview URL, and swap in the fresh <main> — unless
+  // the scheduler says the sequence moved while we were out, in which case this
+  // HTML is older than what the page already shows and swapping it in is the
+  // reverting-text bug. Discarded responses cost a render and change nothing;
+  // the follow-up the scheduler arms renders the truth.
+  const runRefresh = useCallback(async () => {
+    const stop = startTiming('soft-refresh');
+    let html: string | null = null;
+    try {
+      const res = await fetch(window.location.href, {
+        headers: { 'x-preview-soft-refresh': '1' },
+      });
+      html = await res.text();
+    } catch {
+      // The fetch itself failed. Settle the scheduler first so the state cannot
+      // be left with a phantom refresh in flight, then fall back to a reload.
+      schedule.current = onSettled(schedule.current, Date.now()).state;
+      // A reload answers everyone, covered and waiting alike — but resolve them
+      // rather than leaving promises the ⟳ button would spin on until it lands.
+      [...covered.current, ...waiting.current].forEach((resolve) => resolve());
+      covered.current = [];
+      waiting.current = [];
+      window.location.reload();
+      return;
+    }
+
+    const settled = onSettled(schedule.current, Date.now());
+    schedule.current = settled.state;
+    if (!settled.accepted) {
+      stop('discarded (stale)');
+      // This refresh covered nobody. Its callers roll into the follow-up, which
+      // the scheduler has already marked dirty for.
+      waiting.current = [...covered.current, ...waiting.current];
+      covered.current = [];
+      tickRef.current();
+      return;
+    }
+
+    const resolvers = covered.current;
+    covered.current = [];
+    try {
+      const next = new DOMParser().parseFromString(html, 'text/html').querySelector('#main');
+      const current = document.getElementById('main');
+      if (next && current) {
+        current.replaceWith(next);
+        // The instant-text path indexes the old text nodes and may be holding
+        // swaps this HTML predates. Tell it to rebuild and re-apply. Belt and
+        // braces now that stale HTML never lands: the classic race is gone, but
+        // an instant swap can still be newer than an ACCEPTED render (the
+        // sequence only counts /preview/live signals, and the comlink is faster
+        // than the query index this render read).
+        window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
+        stop('main swapped');
+      } else window.location.reload();
+    } finally {
+      resolvers.forEach((resolve) => resolve());
+    }
+    tickRef.current();
+  }, []);
+
+  // Ask the scheduler what to do, and do exactly that: start now, arm one timer
+  // for the instant a gate opens, or nothing. Never more than one timer.
+  const tick = useCallback(() => {
+    const now = Date.now();
+    const decision = shouldStart(schedule.current, now);
+    clearTimeout(timer.current);
+    if (decision.start) {
+      schedule.current = onStart(schedule.current, now);
+      covered.current = [...covered.current, ...waiting.current];
+      waiting.current = [];
+      void runRefresh();
+      return;
+    }
+    if (decision.waitMs > 0) timer.current = setTimeout(() => tickRef.current(), decision.waitMs);
+  }, [runRefresh]);
+  tickRef.current = tick;
+
+  // A change arrived. Register the caller, advance the sequence (which is what
+  // makes any in-flight response stale), and let the scheduler decide the rest.
   const softRefresh = useCallback(
     () =>
       new Promise<void>((resolve) => {
-        pending.current.push(resolve);
-        clearTimeout(timer.current);
-        timer.current = setTimeout(async () => {
-          const resolvers = pending.current;
-          pending.current = [];
-          const stop = startTiming('soft-refresh');
-          try {
-            const res = await fetch(window.location.href, {
-              headers: { 'x-preview-soft-refresh': '1' },
-            });
-            const html = await res.text();
-            const next = new DOMParser().parseFromString(html, 'text/html').querySelector('#main');
-            const current = document.getElementById('main');
-            if (next && current) {
-              current.replaceWith(next);
-              // The instant-text path indexes the old text nodes and may be
-              // holding swaps this HTML predates. Tell it to rebuild and re-apply.
-              window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
-              stop('main swapped');
-            } else window.location.reload();
-          } catch {
-            window.location.reload();
-          } finally {
-            resolvers.forEach((r) => r());
-          }
-        }, 80);
+        waiting.current.push(resolve);
+        schedule.current = onRefreshChange(schedule.current, Date.now());
+        tick();
       }),
-    [],
+    [tick],
   );
+
+  // Never leave a timer behind on unmount.
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   // Auto-refresh: subscribe to the Worker's change stream WHILE THIS PREVIEW
   // TAB IS VISIBLE. Relevance filtering already happened server-side in the
@@ -153,6 +225,16 @@ export default function VisualEditingOverlay({ pageId }: Props) {
   // would otherwise hold the listen connection open and keep reconnecting —
   // each reconnect a fresh non-CDN Sanity request on the free-plan quota.
   // Hidden → close; visible again → reopen and do ONE catch-up refetch.
+  //
+  // AND THE BFCACHE (2026-08-28). A standalone /preview tab that navigates away
+  // can be frozen rather than unloaded, and a frozen page's EventSource is NOT
+  // guaranteed to be torn down — the upstream Sanity listen behind it would keep
+  // its Worker invocation alive for a page nobody is looking at. Chrome fires
+  // `visibilitychange` before `pagehide` and the close above covers it, but
+  // Safari has shipped versions that go straight to `pagehide`, so it gets its
+  // own handler; `pageshow` restores the connection with the same catch-up a
+  // tab-switch gets. Cheap, and the failure it prevents is invisible until the
+  // Worker starts refusing connections.
   useEffect(() => {
     let es: EventSource | null = null;
     let wasHidden = false;
@@ -182,10 +264,21 @@ export default function VisualEditingOverlay({ pageId }: Props) {
       if (reopening) void softRefresh();
     };
 
+    // Frozen or unloading: drop the connection, and remember that we did so the
+    // restore below takes the catch-up path rather than assuming nothing moved.
+    const onPageHide = () => {
+      wasHidden = true;
+      close();
+    };
+
     sync();
     document.addEventListener('visibilitychange', sync);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', sync);
     return () => {
       document.removeEventListener('visibilitychange', sync);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', sync);
       close();
     };
   }, [pageId, softRefresh]);

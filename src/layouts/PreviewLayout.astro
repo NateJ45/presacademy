@@ -38,16 +38,46 @@ interface Props {
 }
 const { title, draftMode, pageId } = Astro.props;
 
+// ---------------------------------------------------------------------------
+// THE SOFT-REFRESH RENDER IS A CHEAPER RENDER (2026-08-28)
+// ---------------------------------------------------------------------------
+// The overlay's reconcile refetch sends `x-preview-soft-refresh: 1` and then
+// consumes exactly one thing from the response: `#main`. Everything this shell
+// draws AROUND <main> — the announcement bar, the header, the footer — is
+// parsed and thrown away. Each of those cost a Sanity round trip, on a route
+// that measures ~0.9s per render against a public page's ~0.1s, and a burst of
+// edits runs this repeatedly.
+//
+// So on a soft refresh those two fetches are skipped. This is safe in the
+// narrow, checkable sense that matters: NOTHING inside `#main` reads either
+// value. `chromeSettings` feeds only Header and Footer, `announcement` only
+// AnnouncementBar, and all three are siblings of <main> in the body below.
+// The page body's own settings come from the route's separate
+// `getSiteSettings(draftFetch)` (src/pages/preview/[...slug].astro), which is
+// untouched. The `#main` HTML is therefore byte-for-byte what a full render
+// produces — which is the only thing the swap can see.
+//
+// The chrome still renders, from its null fallbacks, so this response is a
+// valid page rather than a fragment. Nobody looks at it: the header is only
+// ever sent by the refetch in VisualEditingOverlay.tsx, never by a navigation.
+// Preview-only either way — the static build never reaches this route.
+const softRefresh = Astro.request.headers.get('x-preview-soft-refresh') === '1';
+
 // Draft-aware settings for the chrome, through the SAME projection the live
 // site uses (src/lib/queries.ts). The raw document this used to fetch left every
 // menu link's page reference undereferenced, so a picked page had no address in
 // the preview. Null-safe: Header and Footer render their fallbacks cleanly when
 // the doc is missing.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw doc, same loose shape BaseLayout passes
-const chromeSettings = await previewFetch<any>(
-  draftMode,
-  `*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`,
-).catch(() => null);
+// Loose type: the raw doc, the same shape BaseLayout passes. (The
+// no-explicit-any disable this line used to carry is gone — the rule stopped
+// reporting here once the fetch moved into the branch below, and an unused
+// directive is itself a lint warning.)
+const chromeSettings = softRefresh
+  ? null
+  : await previewFetch<any>(
+      draftMode,
+      `*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`,
+    ).catch(() => null);
 
 // The site-wide notice bar, draft-aware (2026-08-28). The live site reads the
 // same query in BaseLayout, but only published documents and only at build
@@ -55,9 +85,11 @@ const chromeSettings = await previewFetch<any>(
 // appears the moment it is drafted, in its real place above the header, and a
 // click in Edit mode opens the announcement itself. Loose type: the raw doc,
 // the same shape BaseLayout passes.
-const announcement = await previewFetch<any>(draftMode, ACTIVE_ANNOUNCEMENT_QUERY, {
-  now: new Date().toISOString(),
-}).catch(() => null);
+const announcement = softRefresh
+  ? null
+  : await previewFetch<any>(draftMode, ACTIVE_ANNOUNCEMENT_QUERY, {
+      now: new Date().toISOString(),
+    }).catch(() => null);
 
 // Header opens the doc at its identity fields, footer at the mission line, so
 // each click lands the editor near what that piece of chrome actually shows.
