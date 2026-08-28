@@ -9,7 +9,11 @@ const { block, defaultTone = 'default' } = Astro.props as { block: any; defaultT
 const imageRight = (block?.imageSide ?? 'right') !== 'left';
 const hasImage = !!block?.image?.asset;
 const tone = block?.background?.tone ?? defaultTone;
-const onDark = !!(block?.background?.image?.asset || block?.background?.videoUrl) || tone === 'chapel' || tone === 'chapelDeep';
+// Every fixed dark surface has to be listed here, or the body keeps its
+// light-mode ink on a dark slab. "ink" joined the two greens on 2026-08-28
+// (src/lib/surfaces.ts marks the set with `themeStatic`).
+const DARK_SURFACES = new Set(['chapel', 'chapelDeep', 'ink']);
+const onDark = !!(block?.background?.image?.asset || block?.background?.videoUrl) || DARK_SURFACES.has(tone);
 const ptDark = onDark
   ? '[&_p]:text-current [&_h3]:text-current [&_h4]:text-current [&_li]:text-current [&_a]:text-current [&_strong]:text-current'
   : '';

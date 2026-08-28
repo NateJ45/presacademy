@@ -3,6 +3,11 @@
 // Body is plain text so it inherits the SectionShell tone color. The media side
 // is editor-controlled.
 import SanityImage from '@/components/SanityImage.astro';
+// Appearance controls (2026-08-28): accent word in the heading, rich twin for
+// the body. Both optional; absent, the markup is unchanged.
+import InlineRich from '@/components/InlineRich.astro';
+import { hasInlineRich } from '@/lib/inline-rich';
+import { splitHeadingAccent } from '@/lib/heading-accent';
 
 const { block } = Astro.props as { block: any };
 const mediaLeft = (block?.mediaSide ?? 'left') !== 'right';
@@ -19,17 +24,31 @@ function toEmbed(url: string | null): string | null {
 }
 const embedUrl = toEmbed(videoUrl);
 const hasMedia = !!embedUrl || hasImage;
+const ha = splitHeadingAccent(block?.heading, block?.headingAccent);
+const richBodyText = hasInlineRich(block?.bodyRich);
 const pill =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
 ---
 
 {
-  block && (block.heading || block.body || hasMedia) && (
+  block && (block.heading || block.body || richBodyText || hasMedia) && (
     <div class="mx-auto max-w-content px-m grid grid-cols-1 md:grid-cols-2 gap-l md:gap-section-md items-center">
       <div class={mediaLeft ? 'md:order-2' : 'md:order-1'}>
         {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
-        {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
-        {block.body && <p class="mt-m opacity-85 leading-relaxed whitespace-pre-line">{block.body}</p>}
+        {block.heading && (
+          <h2 class="mt-s font-display text-h2">
+            {ha.found ? (
+              <Fragment>{ha.before}<span class="heading-accent">{ha.word}</span>{ha.after}</Fragment>
+            ) : (
+              block.heading
+            )}
+          </h2>
+        )}
+        {richBodyText ? (
+          <p class="mt-m opacity-85 leading-relaxed whitespace-pre-line"><InlineRich value={block.bodyRich} /></p>
+        ) : (
+          block.body && <p class="mt-m opacity-85 leading-relaxed whitespace-pre-line">{block.body}</p>
+        )}
         {block.ctaLabel && block.ctaUrl && (
           <div class="mt-l">
             <a href={block.ctaUrl} class={pill}>{block.ctaLabel}</a>

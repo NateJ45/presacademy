@@ -8,6 +8,9 @@
 // `embed` object (embed.ts) is also allowed in flexibleSections.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { hasInlineRich } from '../../lib/inline-rich';
+import { ACCENT_OPTIONS, SURFACE_OPTIONS } from '../../lib/surfaces';
+import { AccentSwatchInput, SurfaceSwatchInput } from '../components/SwatchInput';
 
 // Reusable rich-text body (paragraphs, headings, lists, links).
 const richBody = {
@@ -63,20 +66,32 @@ export function bgField() {
     description:
       'Optional. Set a brand color tone, or drop in a background photo/video with a dark overlay so text stays readable.',
     fields: [
+      // The surface: a background and the text treatment designed to sit on it,
+      // picked as one thing. The list and the swatch colours both come from
+      // src/lib/surfaces.ts, and every pair in it is measured against WCAG AA by
+      // src/lib/surfaces.test.ts. The four original values are unchanged; "card"
+      // and "ink" are the additions.
       defineField({
         name: 'tone',
-        title: 'Color tone',
+        title: 'Surface',
         type: 'string',
-        options: {
-          list: [
-            { title: 'Default (paper)', value: 'default' },
-            { title: 'Warm', value: 'warm' },
-            { title: 'Forest green', value: 'chapel' },
-            { title: 'Forest deep', value: 'chapelDeep' },
-          ],
-          layout: 'radio',
-        },
+        description: 'Pick a background. The text colour comes with it.',
+        options: { list: SURFACE_OPTIONS, layout: 'radio' },
         initialValue: 'default',
+        components: { input: SurfaceSwatchInput },
+      }),
+      // The accent: the small colour inside the section (the rule before an
+      // eyebrow, an accent word in the heading, the fill on a primary button).
+      // "Green" is the house look and is what a section with no choice renders,
+      // so leaving this alone changes nothing.
+      defineField({
+        name: 'accent',
+        title: 'Accent colour',
+        type: 'string',
+        description: 'The small colour inside the section: eyebrow rule, accent word, button.',
+        options: { list: ACCENT_OPTIONS, layout: 'radio' },
+        initialValue: 'green',
+        components: { input: AccentSwatchInput },
       }),
       defineField({
         name: 'image',
@@ -121,6 +136,75 @@ export function bgField() {
   });
 }
 
+// =============================================================================
+// Wave 2a: inline emphasis on curated plain-string body fields (2026-08-28)
+// =============================================================================
+// A handful of short SUPPORT-TEXT fields (a subhead, an intro, a body line) are
+// plain strings, so an editor could not italicise a course name or bold one
+// promise inside them. Each of those now has a "rich twin": a sibling portable
+// text field allowing exactly two marks, bold and italic, and nothing else.
+//
+// The rules that make this safe to ship against a live dataset:
+//   - the plain field keeps its name, its type and its stored value,
+//   - the twin is a NEW field, so no document has one and every page renders
+//     the string exactly as before (scripts/page-parity.mjs holds that line),
+//   - the plain field HIDES only once the twin holds text, so an editor never
+//     sees two boxes both claiming to be the subhead,
+//   - the twin is always visible, so it is discoverable without a hunt.
+// Headlines and display text are deliberately NOT on the list. One emphasis
+// device per heading is the site's rule, and that device is the accent word
+// below.
+const inlineRichBody = {
+  type: 'array' as const,
+  of: [
+    defineArrayMember({
+      type: 'block',
+      // One style, two marks, no lists, no links, no annotations. The Studio
+      // toolbar collapses to a bold button and an italic button.
+      styles: [{ title: 'Normal', value: 'normal' }],
+      lists: [],
+      marks: {
+        decorators: [
+          { title: 'Bold', value: 'strong' },
+          { title: 'Italic', value: 'em' },
+        ],
+        annotations: [],
+      },
+    }),
+  ],
+};
+
+/** The rich twin of a plain string field. Title matches the field it twins. */
+function richTwin(name: string, title: string) {
+  return defineField({
+    name,
+    title,
+    ...inlineRichBody,
+    description: 'You can bold or italicize here.',
+  });
+}
+
+/** Hide the plain field once its twin holds text. */
+function hideWhenRich(twin: string) {
+  return ({ parent }: { parent?: Record<string, unknown> }) => hasInlineRich(parent?.[twin]);
+}
+
+/**
+ * Wave 2b: one word of a big heading, set in the section's accent colour.
+ * The sibling of the existing scriptAccent device, and held to the same rule:
+ * at most one accent per heading. Matching is case-insensitive and stops at the
+ * first hit; a word that is not in the heading simply does nothing.
+ */
+function headingAccentField() {
+  return defineField({
+    name: 'headingAccent',
+    title: 'Accent word in the heading',
+    type: 'string',
+    description:
+      'Optional. Type a word or short phrase from the heading above and it is set in the section accent colour. Leave it blank for a plain heading.',
+  });
+}
+
 export const sectionRichText = defineType({
   name: 'sectionRichText',
   title: 'Text section',
@@ -128,6 +212,7 @@ export const sectionRichText = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    headingAccentField(),
     defineField({ name: 'body', title: 'Body', ...richBody }),
     defineField({
       name: 'align',
@@ -200,7 +285,15 @@ export const sectionCardGrid = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
+    headingAccentField(),
+    defineField({
+      name: 'subhead',
+      title: 'Subhead',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('subheadRich'),
+    }),
+    richTwin('subheadRich', 'Subhead'),
     defineField({
       name: 'columns',
       title: 'Columns',
@@ -278,7 +371,15 @@ export const sectionCtaBand = defineType({
       type: 'string',
       validation: (R) => R.required(),
     }),
-    defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
+    headingAccentField(),
+    defineField({
+      name: 'subhead',
+      title: 'Subhead',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('subheadRich'),
+    }),
+    richTwin('subheadRich', 'Subhead'),
     defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
     defineField({
       name: 'ctaUrl',
@@ -364,7 +465,15 @@ export const sectionFeatureCards = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    headingAccentField(),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('introRich'),
+    }),
+    richTwin('introRich', 'Intro'),
     defineField({
       name: 'columns',
       title: 'Columns',
@@ -472,7 +581,14 @@ export const sectionAccordion = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('introRich'),
+    }),
+    richTwin('introRich', 'Intro'),
     defineField({
       name: 'items',
       title: 'Questions',
@@ -554,7 +670,14 @@ export const sectionSteps = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('introRich'),
+    }),
+    richTwin('introRich', 'Intro'),
     defineField({
       name: 'steps',
       title: 'Steps',
@@ -631,7 +754,15 @@ export const sectionMediaFeature = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'body', title: 'Body', type: 'text', rows: 4 }),
+    headingAccentField(),
+    defineField({
+      name: 'body',
+      title: 'Body',
+      type: 'text',
+      rows: 4,
+      hidden: hideWhenRich('bodyRich'),
+    }),
+    richTwin('bodyRich', 'Body'),
     defineField({
       name: 'mediaSide',
       title: 'Media side',
@@ -715,7 +846,15 @@ export const sectionMediaShowcase = defineType({
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
+    headingAccentField(),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'text',
+      rows: 2,
+      hidden: hideWhenRich('introRich'),
+    }),
+    richTwin('introRich', 'Intro'),
     defineField({
       name: 'mediaType',
       title: 'What goes in the arched frame?',

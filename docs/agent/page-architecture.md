@@ -51,6 +51,16 @@ Each page is a Sanity singleton whose built-in copy and images are editable fiel
 
 (If you later enable a starter module, its `docs/modules/` doc documents the visibility toggle that gates it.)
 
+### Appearance controls (2026-08-28)
+
+The "how does this section look" half of the page builder. All of it is enums and curated fields; there is no colour picker and no free-form CSS anywhere in the editing surface.
+
+- **`src/lib/surfaces.ts` is the single source of truth.** It holds the six surface pairs (`default`, `warm`, `card`, `chapel`, `chapelDeep`, `ink`) and the three accents (`green`, `brass`, `ink`). Each surface names the CSS custom properties it resolves to per role (bg / text / heading / link) plus the literal hexes the Studio swatch dots draw with. `SectionShell.astro` reads it for classes, `src/sanity/components/SwatchInput.tsx` reads it for dots, and `src/lib/surfaces.test.ts` reads it for the **contrast gate**: every pair is measured against the real declarations in `globals.css`, in both themes, and must clear WCAG AA (4.5:1 body and links, 3:1 for the accent as a rule or as display text). A failing pair gets fixed; the threshold does not move.
+- **The accent is wired once, at the shell.** `SectionShell` adds one class, and `globals.css` re-points `--section-accent` (the `.eyebrow` rule and `.heading-accent`) plus `--color-primary` / `--color-primary-dark` (every `bg-primary` / `bg-primary-dark` pill in the subtree). No block component carries an accent branch. The default accent emits **no class**, which is what keeps already-published sections byte-identical.
+- **Rich twins** (`src/lib/inline-rich.ts`, `InlineRich.astro`). Seven curated plain-string support fields gained a sibling `<name>Rich` portable-text field restricted to `strong` + `em`. The renderer prefers the twin when it holds text and otherwise renders the string exactly as before; the plain field hides once the twin is filled. Headlines are deliberately excluded.
+- **Accent words in headings** (`src/lib/heading-accent.ts`). The colour sibling of `scriptAccent`. Note the stega trap: in preview both the heading and the accent word arrive with invisible marker characters, so both sides are stripped with `plain()` before matching, and on a hit the CLEANED heading is what renders (which costs click-to-edit on that one heading, in preview only, only when an accent is set).
+- **New enum fields go in `NON_STEGA_FIELDS`** (`src/lib/cms-preview.ts`). `accent` and `headingAccent` were added there; `tone` and `padding` were already listed.
+
 ### Header + footer nav
 
 The header menu and the footer link columns are **editor-driven** (`siteSettings.navItems` and `siteSettings.footerColumns`), with the built-in `FALLBACK_NAV_ITEMS` in `Header.astro` and the default columns in `Footer.astro` rendering only when those fields are empty. See `editor-vs-hardcoded.md`.

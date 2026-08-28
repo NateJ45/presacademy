@@ -16,7 +16,8 @@ export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
 export type Background = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: BackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -40,7 +41,8 @@ export type BackgroundImage = {
 };
 
 export type SectionImageTextBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionImageTextBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -66,7 +68,8 @@ export type FeatureCardImage = {
 };
 
 export type SectionFeatureCardsBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionFeatureCardsBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -83,7 +86,8 @@ export type SectionFeatureCardsBackgroundImage = {
 };
 
 export type SectionCardGridBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionCardGridBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -100,7 +104,8 @@ export type SectionCardGridBackgroundImage = {
 };
 
 export type SectionStatsBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionStatsBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -117,7 +122,8 @@ export type SectionStatsBackgroundImage = {
 };
 
 export type SectionMediaShowcaseBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionMediaShowcaseBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -134,7 +140,8 @@ export type SectionMediaShowcaseBackgroundImage = {
 };
 
 export type SectionGalleryBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionGalleryBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -151,7 +158,8 @@ export type SectionGalleryBackgroundImage = {
 };
 
 export type SectionAccordionBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionAccordionBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -168,7 +176,8 @@ export type SectionAccordionBackgroundImage = {
 };
 
 export type SectionMediaFeatureBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionMediaFeatureBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -185,7 +194,8 @@ export type SectionMediaFeatureBackgroundImage = {
 };
 
 export type SectionStepsBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionStepsBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -202,7 +212,8 @@ export type SectionStepsBackgroundImage = {
 };
 
 export type SectionDynamicListBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionDynamicListBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -219,7 +230,8 @@ export type SectionDynamicListBackgroundImage = {
 };
 
 export type SectionLogosBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionLogosBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -236,7 +248,8 @@ export type SectionLogosBackgroundImage = {
 };
 
 export type SectionQuoteBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionQuoteBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -253,7 +266,8 @@ export type SectionQuoteBackgroundImage = {
 };
 
 export type SectionCtaBandBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionCtaBandBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -270,7 +284,8 @@ export type SectionCtaBandBackgroundImage = {
 };
 
 export type SectionFaqListBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionFaqListBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -300,7 +315,8 @@ export type ResourceFile = {
 };
 
 export type SectionResourcesBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionResourcesBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -317,7 +333,8 @@ export type SectionResourcesBackgroundImage = {
 };
 
 export type SectionKeyDatesBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionKeyDatesBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -334,7 +351,8 @@ export type SectionKeyDatesBackgroundImage = {
 };
 
 export type SectionPricingTiersBackground = {
-  tone?: 'default' | 'warm' | 'chapel' | 'chapelDeep';
+  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+  accent?: 'green' | 'brass' | 'ink';
   image?: SectionPricingTiersBackgroundImage;
   videoUrl?: string;
   overlay?: number;
@@ -1401,7 +1419,22 @@ export type SectionMediaShowcase = {
   _type: 'sectionMediaShowcase';
   eyebrow?: string;
   heading?: string;
+  headingAccent?: string;
   intro?: string;
+  introRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   mediaType?: 'slideshow' | 'video';
   images?: Array<{
     asset?: SanityImageAssetReference;
@@ -1443,7 +1476,22 @@ export type SectionMediaFeature = {
   _type: 'sectionMediaFeature';
   eyebrow?: string;
   heading?: string;
+  headingAccent?: string;
   body?: string;
+  bodyRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   mediaSide?: 'left' | 'right';
   videoUrl?: string;
   image?: {
@@ -1482,6 +1530,20 @@ export type SectionSteps = {
   eyebrow?: string;
   heading?: string;
   intro?: string;
+  introRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   steps?: Array<{
     title?: string;
     body?: string;
@@ -1515,6 +1577,20 @@ export type SectionAccordion = {
   eyebrow?: string;
   heading?: string;
   intro?: string;
+  introRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   items?: Array<{
     question?: string;
     answer?: string;
@@ -1544,7 +1620,22 @@ export type SectionFeatureCards = {
   _type: 'sectionFeatureCards';
   eyebrow?: string;
   heading?: string;
+  headingAccent?: string;
   intro?: string;
+  introRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   columns?: '2' | '3' | '4';
   cards?: Array<{
     image?: FeatureCardImage;
@@ -1611,7 +1702,22 @@ export type SectionCtaBand = {
   _type: 'sectionCtaBand';
   eyebrow?: string;
   headline?: string;
+  headingAccent?: string;
   subhead?: string;
+  subheadRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   ctaLabel?: string;
   ctaUrl?: string;
   background?: SectionCtaBandBackground;
@@ -1628,7 +1734,22 @@ export type SectionCardGrid = {
   _type: 'sectionCardGrid';
   eyebrow?: string;
   heading?: string;
+  headingAccent?: string;
   subhead?: string;
+  subheadRich?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
   columns?: '2' | '3' | '4';
   cards?: Array<{
     title?: string;
@@ -1681,6 +1802,7 @@ export type SectionRichText = {
   _type: 'sectionRichText';
   eyebrow?: string;
   heading?: string;
+  headingAccent?: string;
   body?: Array<{
     children?: Array<{
       marks?: Array<string>;

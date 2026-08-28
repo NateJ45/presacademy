@@ -702,28 +702,132 @@ export const guides: Guide[] = [
       { kind: 'h', text: "Change a section's background" },
       {
         kind: 'p',
-        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). Open it to find:',
-      },
-      {
-        kind: 'bullets',
-        items: [
-          '**Color tone**: pick a brand mood. The choices are **Default (paper)**, **Warm**, **Forest green**, and **Forest deep**. The text color adjusts on its own to stay readable.',
-          '**Background image or video**: put a photo or video behind the section. An **Overlay darkness** slider keeps the words readable on top.',
-          '**Vertical spacing**: Compact, Normal, or Spacious, to make the section shorter or taller.',
-        ],
-      },
-      {
-        kind: 'callout',
-        tone: 'primary',
-        title: 'It stays on-brand',
-        text: 'You are choosing from set brand tones, not raw colors, so whatever you pick looks like it belongs. More on that in the brand guide.',
+        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent colour, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). All of it is walked through in its own guide, "Change how a section looks".',
       },
       { kind: 'h', text: 'The dashed box on a new section' },
       {
         kind: 'p',
         text: 'A section you have just added has nothing in it yet, so in **Preview** it shows a dashed box with the section name and one line saying what to type. Fill the section in and the box is replaced by the real thing. The dashed box is a preview aid only, so visitors never see it.',
       },
-      { kind: 'seealso', items: ['The brand: colors & fonts', 'Photos & images'] },
+      {
+        kind: 'seealso',
+        items: ['Change how a section looks', 'The brand: colors & fonts', 'Photos & images'],
+      },
+    ],
+  },
+
+  {
+    slug: 'section-looks',
+    category: 'Website pages & menus',
+    title: 'Change how a section looks',
+    icon: '🎨',
+    lead: 'Give a section a different background, a different accent colour, a bolded word, or one word of the heading picked out in colour. All of it from the page picture, all of it on-brand.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Pages', '(any page)', 'Preview', '(click a section)'],
+        link: { pane: 'pages' },
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Work on the page picture',
+        text: 'Open **Preview**, click the section you want to change, and the edit panel opens beside it. Every control below is in there, and the page picture updates as you go, so you are never guessing.',
+      },
+
+      { kind: 'h', text: 'The surface: pick a background' },
+      {
+        kind: 'p',
+        text: 'Open **Section background** and you will see a row of colour dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a colour. There are six.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Paper**: the ordinary page surface. This is what a section uses if you never touch it.',
+          '**Warm**: a quiet step away from the page. Good for a change of pace halfway down.',
+          '**Bright card**: the clean raised surface. It reads well directly above or below Warm.',
+          '**Forest green**: the signature green band, with cream text.',
+          '**Forest deep**: the deepest green, for a closing band you want to feel heavy.',
+          '**Ink**: a near-black band. Use it once on a page, not twice.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'You cannot make it unreadable',
+        text: 'Every one of the six is a background and a text colour that were designed as one unit and are checked against the accessibility contrast standard by an automatic test. There is no colour picker here on purpose. Whatever you pick, the words stay readable, in light mode and in dark mode.',
+      },
+      {
+        kind: 'p',
+        text: 'Some dots are split down the diagonal. That means the surface follows the reader’s own light or dark setting, and the two halves are the two versions. A dot in one solid colour is a fixed band: it looks the same either way.',
+      },
+
+      { kind: 'h', text: 'The accent: the small colour inside' },
+      {
+        kind: 'p',
+        text: 'Just under the surface row is **Accent colour**, three dots. This is the section’s small colour: the short rule before an eyebrow label, an accent word in the heading, and the fill on a button inside the section.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Green**: the house accent. This is what a section uses if you leave it alone.',
+          '**Brass**: warmer and more formal. It suits a green or ink band.',
+          '**Ink**: no colour at all, the quietest option.',
+        ],
+      },
+
+      { kind: 'h', text: 'Bold and italic in a subhead' },
+      {
+        kind: 'p',
+        text: 'A few short support lines used to be plain typing with no way to emphasise anything. Those now have a second box under the first, with a bold button and an italic button and nothing else. Type in the second box and it is used instead; the plain box tidies itself away so you are not looking at two copies of the same line.',
+      },
+      {
+        kind: 'p',
+        text: 'You will find it on the **Subhead** of the card grid and the call-to-action band, the **Intro** of feature cards, numbered steps, the FAQ accordion and the media showcase, and the **Body** of the media feature.',
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'A little goes a long way',
+        text: 'Bold one phrase, not a sentence. If everything is emphasised, nothing is. Headlines are deliberately left out of this: they have their own device, below.',
+      },
+
+      { kind: 'h', text: 'One word of the heading in colour' },
+      {
+        kind: 'p',
+        text: 'Sections with a big heading have a box called **Accent word in the heading**. Type a word or a short phrase that already appears in the heading, and it is set in the section’s accent colour on the page. Leave it blank and the heading is plain.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Write the heading first.',
+          'Copy one word out of it into **Accent word in the heading**. Capitals do not matter.',
+          'Watch the page picture. If nothing changes, the word is not in the heading, so check the spelling.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'One accent per heading',
+        text: 'The first match is the one that gets coloured, and one is the limit by design. Two coloured words in one heading stop reading as emphasis and start reading as decoration.',
+      },
+
+      { kind: 'h', text: 'The rest of the background panel' },
+      {
+        kind: 'bullets',
+        items: [
+          '**Background image or video**: put a photo or a video behind the section. The **Overlay darkness** slider dims it so the words stay readable on top.',
+          '**Vertical spacing**: Compact, Normal or Spacious, to make the section shorter or taller.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'Some sections have no background control',
+        text: 'The **Page sections (Rule & Ledger)** blocks come styled to match the page they belong to, so they have no surface or accent choice. That is deliberate, not a gap: those are the parts of the site that should never drift.',
+      },
+      { kind: 'seealso', items: ['Add & arrange sections', 'The brand: colors & fonts'] },
     ],
   },
 

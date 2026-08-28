@@ -223,7 +223,10 @@
   display: inline-block;
   width: 1.5rem;
   height: 1px;
-  background: var(--primary);
+  /* --section-accent is set by the section's ACCENT choice (see the block at
+     the bottom of this file). Unset, the rule stays the house green it has
+     always been, so nothing published before the accent control changed. */
+  background: var(--section-accent, var(--primary));
   vertical-align: middle;
   margin-right: 0.625rem;
   position: relative;
@@ -635,6 +638,69 @@
   background-image:
     radial-gradient(ellipse 70% 60% at 50% 0%, rgba(241, 234, 217, 0.05), transparent 70%),
     linear-gradient(to bottom, var(--color-chapel), var(--color-chapel-deep));
+}
+
+/* ---------- Section appearance controls (Wave 1, 2026-08-28) -----------
+   The editor-facing half of these lives in src/lib/surfaces.ts, which is the
+   single source of truth for the values below and is what the contrast gate
+   (src/lib/surfaces.test.ts) measures. Do not add a colour here without adding
+   it there.
+
+   Ink band. The third fixed surface, alongside the two greens: a near-black
+   slab that is the same colour on a light or a dark page, carrying warm cream
+   text (14.4:1). Paired with `text-chapel-foreground` by SectionShell. */
+.surface-ink {
+  background-color: var(--color-accent-dark);
+}
+
+/* Section ACCENT. One class on the <section>, and the whole subtree follows,
+   because everything it re-points is already a custom property the components
+   read: `--section-accent` is the eyebrow rule and the heading accent word,
+   and `--color-primary` / `--color-primary-dark` are the fills behind every
+   `bg-primary` / `bg-primary-dark` pill. No block component needed a colour
+   edit, and the DEFAULT accent (green) emits no class at all, so every section
+   published before this control renders exactly as it did.
+
+   The fills are static hexes in both themes, matching how the site's primary
+   pill has always worked; the rule colour is a theme-aware token so it stays
+   legible on a light or a dark page. */
+.accent-brass {
+  --section-accent: var(--gold-ink);
+  --color-primary: #6E5128;
+  --color-primary-dark: #5A4120;
+}
+.accent-ink {
+  --section-accent: var(--foreground);
+  --color-primary: #1F1B18;
+  --color-primary-dark: #141210;
+}
+
+/* On the three theme-STATIC bands a theme-aware rule colour would flip with the
+   reader's page theme rather than with the band it sits on, so pin it. The
+   unqualified rule covers the default (green) accent; the two-class rules win
+   on specificity for the others. */
+.bg-chapel,
+.bg-chapel-deep,
+.surface-ink {
+  --section-accent: #9CC6AC;
+}
+.bg-chapel.accent-brass,
+.bg-chapel-deep.accent-brass,
+.surface-ink.accent-brass {
+  --section-accent: #C7A875;
+}
+.bg-chapel.accent-ink,
+.bg-chapel-deep.accent-ink,
+.surface-ink.accent-ink {
+  --section-accent: #F1EAD9;
+}
+
+/* The accent WORD inside a heading (Wave 2b). The section-accent colour, or the
+   theme-aware keyword green the site already used for this device when no
+   section sets an accent. Display-size text, measured at the 3:1 large-text
+   threshold by the gate. */
+.heading-accent {
+  color: var(--section-accent, var(--chapel-ink));
 }
 
 /* Tactile press on primary CTAs. Tap/click depresses ~1px so the press
