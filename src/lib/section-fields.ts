@@ -50,15 +50,35 @@ export const BACKGROUND_SECTION_TYPES: readonly string[] = [
   'sectionPricingTiers',
 ];
 
-/** Section types carrying `headingAccentField()`: one word of the heading in colour. */
-export const HEADING_ACCENT_SECTION_TYPES: readonly string[] = [
-  'sectionRichText',
-  'sectionCardGrid',
-  'sectionCtaBand',
-  'sectionFeatureCards',
-  'sectionMediaFeature',
-  'sectionMediaShowcase',
-];
+/**
+ * Section types carrying `headingAccentField()`, and THE FIELD EACH ONE'S
+ * ACCENT WORD IS MATCHED AGAINST.
+ *
+ * The name is not always `heading`: `sectionCtaBand` calls its big line
+ * `headline`. That is not a typo to fix, because the value is in the dataset,
+ * and it is exactly why this is a map rather than a list — a control that
+ * assumed `heading` would read an empty string on the CTA band and quietly
+ * offer no words at all. The drift gate in section-fields.test.ts reads the
+ * field name straight out of the schema (the field declared immediately before
+ * `headingAccentField()`, which is the one its own description points at), so
+ * this cannot fall out of step again.
+ */
+export const HEADING_ACCENT_FIELDS: Readonly<Record<string, string>> = {
+  sectionRichText: 'heading',
+  sectionCardGrid: 'heading',
+  sectionCtaBand: 'headline',
+  sectionFeatureCards: 'heading',
+  sectionMediaFeature: 'heading',
+  sectionMediaShowcase: 'heading',
+};
+
+/** The section types that offer an accent word. */
+export const HEADING_ACCENT_SECTION_TYPES: readonly string[] = Object.keys(HEADING_ACCENT_FIELDS);
+
+/** Every name a heading field goes by, for the synchronous path gate. */
+export const HEADING_FIELD_NAMES: ReadonlySet<string> = new Set(
+  Object.values(HEADING_ACCENT_FIELDS),
+);
 
 /** A curated plain-string field and the rich twin that supersedes it. */
 export interface RichTwin {
@@ -113,6 +133,19 @@ export function hasBackground(type?: string | null): boolean {
 /** Does this section type carry `headingAccent`? */
 export function hasHeadingAccent(type?: string | null): boolean {
   return HEADING_ACCENT_SECTION_TYPES.includes(String(type ?? ''));
+}
+
+/**
+ * The heading field an accent word is matched against on this section type, or
+ * null when the type has no accent word at all. Pass `field` to also require
+ * that the clicked field IS that heading, so a click on some other string on a
+ * card grid does not open the word picker.
+ */
+export function headingAccentFieldFor(type?: string | null, field?: string | null): string | null {
+  const name = HEADING_ACCENT_FIELDS[String(type ?? '')];
+  if (!name) return null;
+  if (field === undefined) return name;
+  return String(field ?? '') === name ? name : null;
 }
 
 /**
@@ -216,13 +249,25 @@ export function overlayControlsForPath(path?: string | null): OverlayControl[] {
     return name in HERO_TEXT_FIELDS ? ['text'] : [];
   }
 
-  // The section wrapper itself: `flexibleSections[_key=="…"]` with nothing after
-  // it. This is the element `sectionEditAttr` puts on the band, and it is the
-  // only one that stands for the whole section.
-  if (section.rest.length === 0) return ['surface'];
-
+  // NOTE, from the deployed Studio (2026-08-28): a BARE array-item path
+  // (`flexibleSections[_key=="…"]`, nothing after it) gets no controls, and
+  // cannot. ElementOverlayInner builds the resolver context through
+  // `getField(node)` and bails on `!field`, and the schema hook resolves no
+  // FIELD for an array item on its own — so the resolver is never called for
+  // the section wrapper at all. The first version of this layer put the swatch
+  // row there, and it never mounted.
+  //
+  // The fix is to give the swatches a real field to hang on: Sections.astro
+  // renders a small handle inside each background-carrying section in preview,
+  // carrying `data-sanity` for `…[_key=="…"].background`. That is an object
+  // FIELD, so the context builds. The bare-item case is deliberately NOT kept
+  // as a fallback: it can never fire, and a branch that can never fire is a
+  // branch that will one day be trusted.
   const first = typeof section.rest[0] === 'string' ? section.rest[0] : '';
-  if (first === 'heading' && section.rest.length === 1) return ['headingAccent'];
+  if (first === 'background' && section.rest.length === 1) return ['surface'];
+  // The heading is `heading` on five of the six accent-word types and
+  // `headline` on the CTA band; the control confirms the pairing by type.
+  if (HEADING_FIELD_NAMES.has(first) && section.rest.length === 1) return ['headingAccent'];
   // Either half of a rich twin, and any span inside the rich half, opens the
   // same editor on the same twin.
   if (RICH_TWIN_FIELD_NAMES.has(first)) return ['text'];

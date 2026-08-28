@@ -25,11 +25,9 @@ export const TOOL = {
   font: '"Source Sans 3 Variable", ui-sans-serif, system-ui, -apple-system, sans-serif',
 } as const;
 
-/** The floating strip that sits in the corner of a section's outline. */
-export const bar: CSSProperties = {
+/** Everything a floating strip looks like, minus where it sits. */
+const barBase: CSSProperties = {
   position: 'absolute',
-  right: '8px',
-  bottom: '8px',
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
@@ -40,8 +38,33 @@ export const bar: CSSProperties = {
   boxShadow: TOOL.shadow,
   font: `500 12px/1.2 ${TOOL.font}`,
   color: TOOL.ink,
-  maxWidth: 'calc(100% - 16px)',
   flexWrap: 'wrap',
+};
+
+/**
+ * The strip inside a TEXT element's outline (a heading, a subhead). Those
+ * elements are comfortably bigger than the strip, so it sits in their corner.
+ */
+export const bar: CSSProperties = {
+  ...barBase,
+  right: '8px',
+  bottom: '8px',
+  maxWidth: 'calc(100% - 16px)',
+};
+
+/**
+ * The strip that hangs off the SURFACE HANDLE. The handle is a 28px square, so
+ * a strip inside its corner would be a strip inside a 28px box: this one hangs
+ * just below it and grows leftwards from the handle's right edge, which keeps
+ * it on screen because the handle itself is pinned to the section's top-right.
+ * The percentage max-width of `bar` would resolve against those 28px, so this
+ * one is bounded by the viewport instead.
+ */
+export const handleBar: CSSProperties = {
+  ...barBase,
+  right: 0,
+  top: 'calc(100% + 6px)',
+  maxWidth: 'min(78vw, 480px)',
 };
 
 /** A card that opens from a control: the word picker, the text editor. */

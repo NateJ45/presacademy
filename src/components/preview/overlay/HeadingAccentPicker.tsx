@@ -18,7 +18,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { OverlayComponentProps } from '@sanity/visual-editing';
 import { splitHeadingWords, isAccentedWord } from '../../../lib/heading-accent.ts';
-import { hasHeadingAccent } from '../../../lib/section-fields.ts';
+import { headingAccentFieldFor } from '../../../lib/section-fields.ts';
 import { readSectionPath } from '../../../lib/sanity-path.ts';
 import { setAt, unsetAt, useDraftDocument } from './useDraftDocument.ts';
 import { usePopover } from './usePopover.ts';
@@ -26,12 +26,14 @@ import { bar, button, card, caption, TOOL } from './styles.ts';
 
 interface Loaded {
   type?: string;
+  /** True once the clicked field IS this type's heading field. */
+  matches: boolean;
   heading: string;
   accent: string;
 }
 
 export default function HeadingAccentPicker(props: OverlayComponentProps): React.ReactNode {
-  const { node, PointerEvents, element } = props;
+  const { node, PointerEvents, element, focused } = props;
   const section = readSectionPath(node.path);
   const key = section?.key;
   const { read, write } = useDraftDocument(node.id);
@@ -54,15 +56,20 @@ export default function HeadingAccentPicker(props: OverlayComponentProps): React
         ? (list.find((s) => (s as { _key?: string })?._key === section.key) as
             Record<string, unknown> | undefined)
         : undefined;
+      const type = typeof found?._type === 'string' ? found._type : undefined;
+      // WHICH field is the heading depends on the type: five of the six call it
+      // `heading`, the CTA band calls it `headline`. Reading the wrong one
+      // would leave the picker with no words to offer and no way to say why.
+      const clicked = typeof section.rest[0] === 'string' ? section.rest[0] : '';
+      const headingField = headingAccentFieldFor(type, clicked);
+      const stored = headingField ? found?.[headingField] : undefined;
       setLoaded({
-        type: typeof found?._type === 'string' ? found._type : undefined,
+        type,
+        matches: headingField !== null,
         // The stored heading, not the rendered one: no stega, and no accent
         // markup already applied. The element's own text is the fallback for a
         // heading that is rendering its schema default.
-        heading:
-          typeof found?.heading === 'string' && found.heading !== ''
-            ? found.heading
-            : (element.textContent ?? ''),
+        heading: typeof stored === 'string' && stored !== '' ? stored : (element.textContent ?? ''),
         accent: typeof found?.headingAccent === 'string' ? found.headingAccent : '',
       });
     });
@@ -71,7 +78,10 @@ export default function HeadingAccentPicker(props: OverlayComponentProps): React
     };
   }, [read, key, section?.array, element]);
 
-  if (!section || !loaded || !hasHeadingAccent(loaded.type)) return null;
+  // Selected, not merely on screen: `activated` in this host means "in the
+  // viewport", so an ungated control would appear on every matching element at
+  // once. Clicking the words is already the gesture for choosing them.
+  if (!focused || !section || !loaded || !loaded.matches) return null;
 
   const tokens = splitHeadingWords(loaded.heading);
   if (!tokens.some((t) => t.word)) return null;

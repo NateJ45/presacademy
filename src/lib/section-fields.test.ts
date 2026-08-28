@@ -4,11 +4,13 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
   BACKGROUND_SECTION_TYPES,
+  HEADING_ACCENT_FIELDS,
   HEADING_ACCENT_SECTION_TYPES,
   RICH_TWINS,
   adaptToneToNeighbour,
   hasBackground,
   hasHeadingAccent,
+  headingAccentFieldFor,
   overlayControlsForPath,
   resolveTextTarget,
   richTwinFor,
@@ -68,6 +70,26 @@ test('HEADING_ACCENT_SECTION_TYPES matches every type calling headingAccentField
   assert.deepEqual([...HEADING_ACCENT_SECTION_TYPES].sort(), actual.sort());
 });
 
+test('HEADING_ACCENT_FIELDS names the field each accent word is matched against', () => {
+  // `headingAccentField()`'s own description says "a word or short phrase from
+  // the heading ABOVE", so the field declared immediately before it IS the
+  // heading. Five types call it `heading`; sectionCtaBand calls it `headline`,
+  // and reading `heading` there would silently offer no words at all.
+  const actual: Record<string, string> = {};
+  for (const [name, body] of BODIES) {
+    const at = body.indexOf('headingAccentField(),');
+    if (at < 0) continue;
+    const declared = [
+      ...body.slice(0, at).matchAll(/^ {4}defineField\(\{ name: '(\w+)'|^ {6}name: '(\w+)',/gm),
+    ].map((m) => m[1] || m[2]);
+    const field = declared[declared.length - 1];
+    assert.ok(field, `${name}: no field declared before headingAccentField()`);
+    actual[name] = field;
+  }
+  assert.deepEqual(HEADING_ACCENT_FIELDS, actual);
+  assert.equal(actual.sectionCtaBand, 'headline', 'the CTA band is the odd one out');
+});
+
 test('RICH_TWINS matches every richTwin() in the schema, plain half included', () => {
   const actual: Record<string, { plain: string; rich: string }> = {};
   for (const [name, body] of BODIES) {
@@ -88,6 +110,18 @@ test('RICH_TWINS matches every richTwin() in the schema, plain half included', (
 // =============================================================================
 // The lookups
 // =============================================================================
+
+test('headingAccentFieldFor pairs a type with its own heading field', () => {
+  assert.equal(headingAccentFieldFor('sectionRichText'), 'heading');
+  assert.equal(headingAccentFieldFor('sectionCtaBand'), 'headline');
+  assert.equal(headingAccentFieldFor('sectionGallery'), null);
+  // With a field name it also demands the pairing.
+  assert.equal(headingAccentFieldFor('sectionCtaBand', 'headline'), 'headline');
+  assert.equal(headingAccentFieldFor('sectionCtaBand', 'heading'), null);
+  assert.equal(headingAccentFieldFor('sectionRichText', 'heading'), 'heading');
+  assert.equal(headingAccentFieldFor('sectionRichText', 'headline'), null);
+  assert.equal(headingAccentFieldFor(undefined, undefined), null);
+});
 
 test('hasBackground and hasHeadingAccent are closed over the registry', () => {
   assert.equal(hasBackground('sectionCardGrid'), true);
@@ -201,15 +235,32 @@ test('the input is never mutated', () => {
 // What the in-canvas layer offers, from a path alone
 // =============================================================================
 
-test('the section wrapper gets the swatch row', () => {
-  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"]'), ['surface']);
-  assert.deepEqual(overlayControlsForPath('sections[_key=="k"]'), ['surface']);
+test('the surface handle, not the section wrapper, gets the swatch row', () => {
+  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"].background'), ['surface']);
+  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].background'), ['surface']);
 });
 
-test('a section heading gets the accent-word picker', () => {
+test('a BARE array-item path gets nothing, because a custom component cannot mount there', () => {
+  // The host resolves the overlay context through getField(), which returns no
+  // field for an array item on its own, so the resolver is never called for the
+  // section wrapper. Keeping a branch for it would be keeping a lie.
+  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"]'), []);
+  assert.deepEqual(overlayControlsForPath('sections[_key=="k"]'), []);
+});
+
+test('a section heading gets the accent-word picker, under either of its names', () => {
   assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"].heading'), [
     'headingAccent',
   ]);
+  // sectionCtaBand's big line. This is the path that never matched before.
+  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"].headline'), [
+    'headingAccent',
+  ]);
+});
+
+test('a nested heading deeper in a section is left alone', () => {
+  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].cards[_key=="c"].heading'), []);
+  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].background.tone'), []);
 });
 
 test('either half of a rich twin opens the text card', () => {
@@ -231,8 +282,6 @@ test('the hero strings get the text card, and nothing else on the document does'
 
 test('everything else is left to the host overlay', () => {
   assert.deepEqual(overlayControlsForPath('sections[_key=="k"].eyebrow'), []);
-  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].background.tone'), []);
-  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].cards[_key=="c"].heading'), []);
   assert.deepEqual(overlayControlsForPath('navItems[_key=="n"].label'), []);
   assert.deepEqual(overlayControlsForPath(''), []);
   assert.deepEqual(overlayControlsForPath(undefined), []);
@@ -313,4 +362,51 @@ test('stega markers never reach the box', () => {
   const stega = '\u200B\u{E0041}\uFEFF';
   const doc = { heroHeadline: `A place to th${stega}ink` };
   assert.equal(resolveTextTarget(doc, 'heroHeadline')?.text, 'A place to think');
+});
+
+// =============================================================================
+// The surface handle in Sections.astro
+// =============================================================================
+// The handle is the only reason the swatch row can mount at all, and it is the
+// only markup this mission adds to a rendered page. Two promises are worth a
+// gate: it is PREVIEW ONLY (page-parity.mjs proves the live HTML is unchanged,
+// but only for pages it compares), and there is EXACTLY ONE per section, only
+// for section types that have a background to change.
+
+const SECTIONS_ASTRO = readFileSync(
+  fileURLToPath(new URL('../components/Sections.astro', import.meta.url)),
+  'utf8',
+);
+
+test('the handle is rendered once, gated on editDoc and on having a background', () => {
+  const assignments = [...SECTIONS_ASTRO.matchAll(/const handleAttr =/g)];
+  assert.equal(assignments.length, 1, 'exactly one handle is computed');
+
+  const uses = [...SECTIONS_ASTRO.matchAll(/data-sanity=\{handleAttr\}/g)];
+  assert.equal(uses.length, 1, 'exactly one handle is rendered');
+
+  // The gate: the same `editDoc` that gates the wrapper, plus the registry.
+  const gate = SECTIONS_ASTRO.slice(
+    SECTIONS_ASTRO.indexOf('const handleAttr ='),
+    SECTIONS_ASTRO.indexOf('sectionFieldEditAttr(editDoc'),
+  );
+  assert.ok(gate.includes('editAttr &&'), 'handle rides the preview-only wrapper gate');
+  assert.ok(gate.includes('editDoc &&'), 'handle is gated on editDoc');
+  assert.ok(gate.includes('hasBackground(block._type)'), 'handle is gated on the registry');
+});
+
+test('the handle targets the background object, never the bare array item', () => {
+  assert.ok(
+    SECTIONS_ASTRO.includes("sectionFieldEditAttr(editDoc, block._key, 'background')"),
+    'the handle names a field, which is what makes the overlay context resolve',
+  );
+});
+
+test('nothing outside the editDoc branch can emit a handle', () => {
+  // The live/static render returns `rendered` untouched. If the handle ever
+  // escaped that branch it would ship to visitors, and page-parity would only
+  // catch it on the thirteen pages it compares.
+  const branch = SECTIONS_ASTRO.slice(SECTIONS_ASTRO.indexOf('return editAttr ? ('));
+  assert.ok(branch.includes('data-surface-handle'), 'the handle lives in the editAttr branch');
+  assert.equal(SECTIONS_ASTRO.split('data-surface-handle').length - 1, 1, 'and only there');
 });

@@ -28,7 +28,7 @@ import {
 import { hasBackground } from '../../../lib/section-fields.ts';
 import { readSectionPath } from '../../../lib/sanity-path.ts';
 import { useDraftDocument, setInside } from './useDraftDocument.ts';
-import { bar, caption, chip, divider } from './styles.ts';
+import { caption, chip, divider, handleBar } from './styles.ts';
 
 /** The Studio swatch draws theme-aware surfaces as a split dot. So does this. */
 function swatchFill(surface: SurfacePair): string {
@@ -49,7 +49,7 @@ interface Chosen {
 }
 
 export default function SurfaceChips(props: OverlayComponentProps): React.ReactNode {
-  const { node, PointerEvents } = props;
+  const { node, PointerEvents, focused } = props;
   const section = readSectionPath(node.path);
   const key = section?.key;
   const { read, write } = useDraftDocument(node.id);
@@ -81,7 +81,13 @@ export default function SurfaceChips(props: OverlayComponentProps): React.ReactN
     // `key` identifies the section; `read` is stable per document.
   }, [read, key, section?.array]);
 
-  if (!section || !chosen || !hasBackground(chosen.type)) return null;
+  // ONLY WHEN SELECTED. In this host `activated` means "in the viewport", not
+  // "hovered" (controller.ts activates on intersection), and the overlay renders
+  // every activated element. Drawing the swatches unconditionally would put a
+  // row of colour dots on every section on screen at once. The always-visible
+  // affordance is the small palette handle Sections.astro paints in the page;
+  // clicking it selects this node, and the swatches are the result.
+  if (!focused || !section || !chosen || !hasBackground(chosen.type)) return null;
 
   const choose = (fieldName: 'tone' | 'accent', value: string) => {
     setChosen((current) => (current ? { ...current, [fieldName]: value } : current));
@@ -89,7 +95,7 @@ export default function SurfaceChips(props: OverlayComponentProps): React.ReactN
   };
 
   return (
-    <PointerEvents style={bar} aria-label="Section colours">
+    <PointerEvents style={handleBar} aria-label="Section colours">
       <span style={caption}>Surface</span>
       {SECTION_SURFACES.map((surface) => (
         <button

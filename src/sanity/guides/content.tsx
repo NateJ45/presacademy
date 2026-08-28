@@ -685,7 +685,7 @@ export const guides: Guide[] = [
       {
         kind: 'bullets',
         items: [
-          'The **big headline** at the top of a page is a field in the `Hero` tab, not a block. Same for the photo behind it. In **Preview** the headline and the line under it each carry an `✎ Edit here` button, so you can reword them without leaving the page picture.',
+          'The **big headline** at the top of a page is a field in the `Hero` tab, not a block. Same for the photo behind it. In **Preview**, clicking the headline or the line under it puts an `✎ Edit here` button on it, so you can reword them without leaving the page picture.',
           'The **closing call to action** at the bottom of a page has its own fields, so it is always there.',
           'The **course catalog** with its filters, and the **faculty roster**, are drawn by the Courses and Faculty pages themselves. They always sit below the sections you add, so a section you add to Courses lands above the catalog.',
         ],
@@ -702,7 +702,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: "Change a section's background" },
       {
         kind: 'p',
-        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent colour, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). In **Preview** you can skip the panel: hover a section and a small row of colour dots appears in its bottom corner, so you can change the background from the page itself. All of it is walked through in its own guide, "Change how a section looks".',
+        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent colour, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). In **Preview** you can skip the panel: every section that has a background shows a small palette button in its top corner, and clicking it brings up the colour dots on the page itself. All of it is walked through in its own guide, "Change how a section looks".',
       },
       { kind: 'h', text: 'The dashed box on a new section' },
       {
@@ -800,7 +800,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'The surface: pick a background' },
       {
         kind: 'p',
-        text: 'Open **Section background** and you will see a row of colour dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a colour. There are six. The same six dots, and the three accent dots below them, also float in the bottom corner of a section when you hover it in **Preview**, so you can try a background without opening anything.',
+        text: 'Open **Section background** and you will see a row of colour dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a colour. There are six. The same six dots, and the three accent dots beside them, also appear in **Preview** when you click the small palette button in a section’s top corner, so you can try a background without opening anything.',
       },
       {
         kind: 'bullets',
@@ -845,7 +845,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'You will find it on the **Subhead** of the card grid and the call-to-action band, the **Intro** of feature cards, numbered steps, the FAQ accordion and the media showcase, and the **Body** of the media feature. In **Preview**, hovering one of those lines puts an `✎ Edit here` button on it, which opens a small box over the line with the same bold and italic buttons, so you can type it in place.',
+        text: 'You will find it on the **Subhead** of the card grid and the call-to-action band, the **Intro** of feature cards, numbered steps, the FAQ accordion and the media showcase, and the **Body** of the media feature. In **Preview**, clicking one of those lines puts an `✎ Edit here` button on it, which opens a small box over the line with the same bold and italic buttons, so you can type it in place.',
       },
       {
         kind: 'callout',
@@ -857,7 +857,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'One word of the heading in colour' },
       {
         kind: 'p',
-        text: 'Sections with a big heading have a box called **Accent word in the heading**. Type a word or a short phrase that already appears in the heading, and it is set in the section’s accent colour on the page. Leave it blank and the heading is plain. Easier still: hover the heading in **Preview**, press `Colour a word`, and click the word you want, which cannot be misspelled because you are picking it out of the heading itself.',
+        text: 'Sections with a big heading have a box called **Accent word in the heading**. Type a word or a short phrase that already appears in the heading, and it is set in the section’s accent colour on the page. Leave it blank and the heading is plain. Easier still: click the heading in **Preview**, press `Colour a word`, and click the word you want, which cannot be misspelled because you are picking it out of the heading itself.',
       },
       {
         kind: 'steps',

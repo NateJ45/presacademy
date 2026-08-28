@@ -9,8 +9,9 @@
 // render their own section background and are passed through unwrapped.
 import SectionShell from '@/components/SectionShell.astro';
 import SectionCoach from '@/components/SectionCoach.astro';
-import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import { sectionEditAttr, sectionFieldEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import { sectionCoach } from '@/lib/section-coach';
+import { hasBackground } from '@/lib/section-fields';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -174,6 +175,47 @@ const DEFAULT_TONE: Record<string, string> = {
     // no rect to outline. With no `editDoc` there is no wrapper at all, so the
     // live HTML does not change.
     const editAttr = editDoc && block._key ? sectionEditAttr(editDoc, block._key) : undefined;
-    return editAttr ? <div data-sanity={editAttr}>{rendered}</div> : rendered;
+    // ---------------------------------------------------------------------
+    // The surface handle (2026-08-28) — PREVIEW ONLY, same `editDoc` gate
+    // ---------------------------------------------------------------------
+    // The in-canvas swatch row needs a node the Studio schema resolves to a
+    // FIELD; the wrapper above names a bare array item, which resolves to none,
+    // so a custom overlay component can never mount on it (verified in a
+    // deployed Studio, see sectionFieldEditAttr). This little square is that
+    // node: it points at the section's `background` object, so clicking it
+    // selects that field and the overlay answers with the swatch row.
+    //
+    // Exactly one per section, and only for section types that HAVE a
+    // background — the Rule & Ledger sections come styled to match the page
+    // they belong to and get no handle at all.
+    //
+    // TOP-RIGHT, INSIDE the band, not the bottom-right corner the controls
+    // were first specced for. A section is usually taller than the viewport, so
+    // its bottom-right corner is below the fold exactly when the editor is
+    // looking at the section; its top-right is on screen the moment the band
+    // is. It renders after the content so it paints above it, and it carries
+    // its styles inline because this shell loads no preview-only stylesheet.
+    const handleAttr =
+      editAttr && editDoc && block._key && hasBackground(block._type)
+        ? sectionFieldEditAttr(editDoc, block._key, 'background')
+        : undefined;
+    return editAttr ? (
+      <div data-sanity={editAttr} style="position:relative">
+        {rendered}
+        {handleAttr && (
+          <div
+            data-sanity={handleAttr}
+            data-surface-handle
+            title="Section colours"
+            aria-hidden="true"
+            style="position:absolute;top:12px;right:12px;z-index:5;width:28px;height:28px;border-radius:999px;background:#FFFFFF;border:1px solid rgba(31,27,24,0.18);box-shadow:0 2px 8px rgba(31,27,24,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;"
+          >
+            🎨
+          </div>
+        )}
+      </div>
+    ) : (
+      rendered
+    );
   })
 }

@@ -89,7 +89,7 @@ function seedBox(box: HTMLElement, runs: InlineRun[]): void {
 }
 
 export default function TextPopover(props: OverlayComponentProps): React.ReactNode {
-  const { node, PointerEvents } = props;
+  const { node, PointerEvents, focused } = props;
   const { read, write } = useDraftDocument(node.id);
   const [target, setTarget] = useState<TextTarget | null>(null);
   const [open, setOpen] = useState(false);
@@ -131,7 +131,10 @@ export default function TextPopover(props: OverlayComponentProps): React.ReactNo
     }
   }, [open, target]);
 
-  if (!target) return null;
+  // Selected, not merely on screen: `activated` in this host means "in the
+  // viewport", so an ungated control would appear on every matching element at
+  // once. Clicking the words is already the gesture for choosing them.
+  if (!focused || !target) return null;
 
   const save = () => {
     if (target.kind === 'plain') {
