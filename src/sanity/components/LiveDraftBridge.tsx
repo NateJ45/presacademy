@@ -26,9 +26,14 @@ import { LIVE_DRAFT_MESSAGE } from '../../lib/preview-live-draft';
 //  - It renders NULL and holds no state of its own. Mounted from the navigator,
 //    which already resolves which page the preview is showing, and unmounted the
 //    moment that resolution goes away.
-//  - `'low'` priority. The local store offers it (the Studio's own
-//    PostMessageRefreshMutations asks for the same thing) precisely so a
-//    passive observer cannot compete with the form the editor is typing into.
+//  - DEFAULT priority, deliberately not `'low'`. The Studio's own
+//    PostMessageRefreshMutations asks for `'low'` because it only needs to
+//    know THAT a document changed, eventually; we need to know WHAT it says,
+//    now. Measured live 2026-08-28: under `'low'` the store coalesced
+//    isolated keystrokes into the autosave commit, so one keystroke reached
+//    the preview in 413ms and the next in 1429ms - the editor's "still a
+//    second or two". The trailing throttle below, not the store's
+//    scheduler, is what keeps this cheap.
 //  - THROTTLED, TRAILING. A keystroke is one snapshot; a burst is one post.
 //  - It never throws. A missing iframe, a cross-origin one, a frame that has
 //    navigated away mid-post: all of it is swallowed, because failing here must
@@ -82,7 +87,7 @@ export function LiveDraftBridge({ documentId, documentType }: Props) {
   // The third argument is the priority the local store schedules this observer
   // at. Verified against sanity 6.4's own declaration:
   //   useEditState(publishedDocId, docTypeName, priority?, version?)
-  const { draft } = useEditState(documentId, documentType, 'low');
+  const { draft } = useEditState(documentId, documentType, 'default');
 
   // The newest snapshot, and the timer that will send it. A ref rather than
   // state: this component renders nothing, so re-rendering it would be pure cost.
