@@ -2,6 +2,8 @@ import { VisualEditing } from '@sanity/visual-editing/react';
 import type { HistoryAdapter, HistoryRefresh } from '@sanity/visual-editing';
 import { useCallback, useEffect, useRef } from 'react';
 import { inCanvasControls } from './overlay/index.ts';
+import { SOFT_REFRESH_EVENT, useInstantText } from './overlay/useInstantText.ts';
+import { startTiming } from './overlay/timing.ts';
 
 // Studio-driven navigation (the navigator side panel, document locations, the
 // preview URL bar) reaches the iframe through this adapter. The DEFAULT is
@@ -75,6 +77,15 @@ const mpaHistory: HistoryAdapter = {
 //     lines. They live in ./overlay/, they write through the optimistic
 //     document API (no token in the browser), and their edits come back through
 //     the same refresh loop above as any other change. See ./overlay/index.ts.
+//  4. INSTANT TEXT (`useInstantText`, 2026-08-28): the refresh above is the
+//     COMPLETE answer, and it is not the FAST one. Plain strings are swapped
+//     into the page the moment the edit reaches the frame over the comlink,
+//     which is well before the server can re-render it. See
+//     ./overlay/useInstantText.ts for what it will and will not touch, and why
+//     it re-applies itself after each refresh.
+//
+// TIMING. Set `localStorage.previewTiming = '1'` in the preview frame to have
+// both paths log how long they took. See ./overlay/timing.ts.
 // =============================================================================
 
 interface Props {
@@ -87,8 +98,21 @@ export default function VisualEditingOverlay({ pageId }: Props) {
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pending = useRef<Array<() => void>>([]);
 
+  // Job 4: swap changed plain strings in as the edit arrives, without waiting
+  // for the refetch below. Safe to call here rather than inside <VisualEditing>
+  // — the optimistic actor it reads is module state in @sanity/visual-editing,
+  // not React context, so sibling order does not matter.
+  useInstantText(pageId);
+
   // Coalesce a burst of mutations (autosave fires several in quick succession)
   // into a single refetch, and resolve every awaiting refresh when it lands.
+  //
+  // THE DEBOUNCE IS 80ms, down from 250. It exists to collapse a burst into one
+  // refetch, not to wait for the editor to stop typing — the Studio's own
+  // autosave has already done that batching before a single event reaches us, so
+  // the extra 170ms bought nothing but latency. Instant text (below) covers the
+  // remaining wait for plain strings; this window only needs to be long enough
+  // that the two or three events one save produces share a refetch.
   const softRefresh = useCallback(
     () =>
       new Promise<void>((resolve) => {
@@ -97,6 +121,7 @@ export default function VisualEditingOverlay({ pageId }: Props) {
         timer.current = setTimeout(async () => {
           const resolvers = pending.current;
           pending.current = [];
+          const stop = startTiming('soft-refresh');
           try {
             const res = await fetch(window.location.href, {
               headers: { 'x-preview-soft-refresh': '1' },
@@ -104,14 +129,19 @@ export default function VisualEditingOverlay({ pageId }: Props) {
             const html = await res.text();
             const next = new DOMParser().parseFromString(html, 'text/html').querySelector('#main');
             const current = document.getElementById('main');
-            if (next && current) current.replaceWith(next);
-            else window.location.reload();
+            if (next && current) {
+              current.replaceWith(next);
+              // The instant-text path indexes the old text nodes and may be
+              // holding swaps this HTML predates. Tell it to rebuild and re-apply.
+              window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
+              stop('main swapped');
+            } else window.location.reload();
           } catch {
             window.location.reload();
           } finally {
             resolvers.forEach((r) => r());
           }
-        }, 250);
+        }, 80);
       }),
     [],
   );

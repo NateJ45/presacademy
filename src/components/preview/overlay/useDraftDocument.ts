@@ -57,6 +57,13 @@ export function unsetAt(path: PathSegment[]): DraftPatch[] {
 export interface DraftDocument {
   /** The current draft snapshot, or null when it cannot be read yet. */
   read: () => Promise<Record<string, unknown> | null>;
+  /**
+   * The same snapshot, with ONE attempt and no console warning. For callers that
+   * run on every edit rather than on a hover: the retry-and-warn behaviour of
+   * `read` would put a 250ms sleep and a log line in a hot path, and there is
+   * nothing to recover — the next edit brings another chance a moment later.
+   */
+  readNow: () => Promise<Record<string, unknown> | null>;
   /** The value at a path in the current draft, or undefined. */
   readAt: (path: PathSegment[]) => Promise<unknown>;
   /** Apply patches to the draft and commit. Resolves false when it could not. */
@@ -88,6 +95,15 @@ export function useDraftDocument(documentId: string): DraftDocument {
     return null;
   }, [getDocument, documentId]);
 
+  const readNow = useCallback(async () => {
+    try {
+      const doc = getDocument<Record<string, unknown>>(documentId);
+      return (await doc.getSnapshot()) as Record<string, unknown> | null;
+    } catch {
+      return null;
+    }
+  }, [getDocument, documentId]);
+
   const readAt = useCallback(
     async (path: PathSegment[]) => valueAtPath(await read(), path),
     [read],
@@ -110,5 +126,5 @@ export function useDraftDocument(documentId: string): DraftDocument {
     [getDocument, documentId],
   );
 
-  return { read, readAt, write };
+  return { read, readNow, readAt, write };
 }

@@ -60,6 +60,17 @@ export const GET: APIRoute = async ({ cookies, url }) => {
   // Signal-only: we tell the overlay THAT something changed, never what.
   upstream.searchParams.set('includeResult', 'false');
   upstream.searchParams.set('includeMutations', 'false');
+  // DO NOT change this to "transaction" to make the preview feel faster.
+  // "query" means Sanity waits until the change is visible to a QUERY before
+  // signalling, which is precisely what the overlay does next: it refetches this
+  // page from the server. A "transaction" event fires earlier, and the refetch
+  // it triggered would return data that is still stale — re-rendering the page
+  // with the OLD words. Worse, the overlay's instant-text path
+  // (src/components/preview/overlay/useInstantText.ts) has usually already put
+  // the NEW words on the page by then, so the early refresh would visibly undo
+  // them. The earlier signal already reaches the frame by a different road: the
+  // Studio relays its own transaction-visibility listen over the comlink, and
+  // that is what instant text listens to. This one stays slow on purpose.
   upstream.searchParams.set('visibility', 'query');
   upstream.searchParams.set('tag', 'presacademy.preview-live');
 

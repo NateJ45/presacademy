@@ -35,7 +35,7 @@ How it fits together (ported from the WCP site 2026-08-25; that repo's architect
 - `/preview/**` and `/api/draft-mode/*` are the site's only **SSR** routes (`prerender = false`). Everything else stays statically built. They are `noindex` and never appear in the sitemap.
 - `src/lib/cms-preview.ts` is a THIRD Sanity client, separate from `src/lib/sanity.ts` (build-time): it reads the token from the **Worker runtime env** per request, uses `perspective: 'drafts'`, and turns on **stega** so click-to-edit works.
 - **Never compare a stega-encoded string in logic.** Stega hides ~1KB of invisible markers inside every string it touches, so `tone === 'chapel'` is `false` on an encoded value and the component silently picks the wrong branch, in preview only. Every enum that drives rendering is excluded via `NON_STEGA_FIELDS` in `cms-preview.ts`. **Add any new logic-driving dropdown field to that list.**
-- `src/pages/preview/live.ts` is an **SSE proxy**: it holds ONE long-lived connection to Sanity's listen API server-side (the token never reaches the browser) and forwards a tiny "change" signal. `VisualEditingOverlay` soft-refetches the page and swaps `#main`. It is event-driven on purpose. **Never replace it with an interval poll** (that is what burned the WCP Sanity quota).
+- `src/pages/preview/live.ts` is an **SSE proxy**: it holds ONE long-lived connection to Sanity's listen API server-side (the token never reaches the browser) and forwards a tiny "change" signal. `VisualEditingOverlay` soft-refetches the page and swaps `#main`. It is event-driven on purpose. **Never replace it with an interval poll** (that is what burned the WCP Sanity quota). Its `visibility: 'query'` is also load-bearing: an earlier signal would refetch data the query index has not caught up with. That refetch is the COMPLETE path, not the fast one — `useInstantText` (2026-08-28) swaps changed plain strings into the page the moment the Studio's own mutation reaches the frame over the comlink, keeping each text node's stega so click-to-edit never degrades. Set `localStorage.previewTiming = '1'` in the preview frame to have both paths log their timings.
 - The preview cookie carries an **unforgeable fingerprint** of the server-side token (`src/lib/preview-auth.ts`), not the package's default `'true'`.
 - Preview pages render the REAL chrome (2026-08-28): a slim status bar, then the announcement bar, Header, the page, and Footer. This was safe only once `PreviewLayout`'s click interceptor existed; before it, a header link bounced the editor's iframe onto the live site. Header and Footer each sit in a `data-sanity` wrapper pointed at `siteSettings`, and the announcement bar in one pointed at the announcement it is showing, so a click in Edit mode opens the owning document in the edit panel.
 - **The announcement bar previews draft-aware.** `src/components/AnnouncementBar.astro` holds the markup; `BaseLayout` feeds it the build-time published answer and `PreviewLayout` the draft-aware one, both through `ACTIVE_ANNOUNCEMENT_QUERY` in `src/lib/queries.ts`. One query, two readers, so a notice previews exactly as it will ship. On the live site it appears at the next rebuild, which the field descriptions and the Studio guide both say out loud.
@@ -155,33 +155,33 @@ rather than a canonical file.
 
 ## Routes summary
 
-| Path | Source | Notes |
-|---|---|---|
-| `/` | `src/pages/index.astro` | Home: split hero (`HomeHero`, page-level); the body is editor-owned sections (wayfinding ledger, start-here rail, stats, ticker, course + faculty + testimonial strips) |
-| `/about` | `src/pages/about.astro` | About page singleton |
-| `/courses` | `src/pages/courses/index.astro` | Course catalog + filters (topic, teacher, term); catalog is a pinned code region |
-| `/courses/[slug]` | `src/pages/courses/[slug].astro` | Course detail: sessions, pricing, instructors |
-| `/faculty` | `src/pages/faculty/index.astro` | Faculty index; the roster is a pinned code region |
-| `/faculty/[slug]` | `src/pages/faculty/[slug].astro` | Faculty profile: degrees, publications, courses taught |
-| `/events` | `src/pages/events/index.astro` | Events: info sessions, lectures, term starts |
-| `/events/[slug]` | `src/pages/events/[slug].astro` | Event detail |
-| `/pricing` | `src/pages/pricing.astro` | Pricing tiers + scholarships |
-| `/for-you` | `src/pages/for-you.astro` | "Find your path" audience routing |
-| `/get-started` | `src/pages/get-started.astro` | Express-interest + Calendly intro |
-| `/resources` | `src/pages/resources.astro` | Resources page |
-| `/faq` | `src/pages/faq.astro` | FAQ page + faqItem collection grouped by category |
-| `/contact` | `src/pages/contact.astro` | Contact details + map |
-| `/privacy` | `src/pages/privacy.astro` | Privacy policy singleton, static fallback when the doc is absent |
-| `/accessibility` | `src/pages/accessibility.astro` | Accessibility statement singleton + static fallback; barrier-report contact from `siteSettings` |
-| `/[slug]` | `src/pages/[slug].astro` | Custom pages: the `page` collection + the 19-block page builder (with a `RESERVED` slug guard) |
-| `/style-guide` | `src/pages/style-guide.astro` | SECRET internal brand reference: noindex, unlinked, sitemap-excluded |
-| `/studio` | `@sanity/astro` (mounted) | The embedded Sanity Studio (SSR shell) |
-| `/preview/**` | `src/pages/preview/[...slug].astro` | SSR draft preview for the Studio's Presentation tool. noindex, sitemap-excluded |
-| `/preview/live` | `src/pages/preview/live.ts` | SSE proxy for preview auto-refresh (403 without the Studio cookie) |
-| `/api/draft-mode/*` | `src/pages/api/draft-mode/` | Turns draft mode on/off for the preview |
-| `/api/stats` | `src/pages/api/stats.ts` | SSR. Feeds the Studio's "Site stats" tool with Cloudflare Workers analytics for this Worker. Gated on the Studio preview cookie (401 without it); 503 naming the missing variable until `CF_ANALYTICS_TOKEN` is set |
-| `/sitemap-index.xml` | `@astrojs/sitemap` (auto) | Production sitemap |
-| `/404` | `src/pages/404.astro` | Custom 404 |
+| Path                 | Source                              | Notes                                                                                                                                                                                                               |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                  | `src/pages/index.astro`             | Home: split hero (`HomeHero`, page-level); the body is editor-owned sections (wayfinding ledger, start-here rail, stats, ticker, course + faculty + testimonial strips)                                             |
+| `/about`             | `src/pages/about.astro`             | About page singleton                                                                                                                                                                                                |
+| `/courses`           | `src/pages/courses/index.astro`     | Course catalog + filters (topic, teacher, term); catalog is a pinned code region                                                                                                                                    |
+| `/courses/[slug]`    | `src/pages/courses/[slug].astro`    | Course detail: sessions, pricing, instructors                                                                                                                                                                       |
+| `/faculty`           | `src/pages/faculty/index.astro`     | Faculty index; the roster is a pinned code region                                                                                                                                                                   |
+| `/faculty/[slug]`    | `src/pages/faculty/[slug].astro`    | Faculty profile: degrees, publications, courses taught                                                                                                                                                              |
+| `/events`            | `src/pages/events/index.astro`      | Events: info sessions, lectures, term starts                                                                                                                                                                        |
+| `/events/[slug]`     | `src/pages/events/[slug].astro`     | Event detail                                                                                                                                                                                                        |
+| `/pricing`           | `src/pages/pricing.astro`           | Pricing tiers + scholarships                                                                                                                                                                                        |
+| `/for-you`           | `src/pages/for-you.astro`           | "Find your path" audience routing                                                                                                                                                                                   |
+| `/get-started`       | `src/pages/get-started.astro`       | Express-interest + Calendly intro                                                                                                                                                                                   |
+| `/resources`         | `src/pages/resources.astro`         | Resources page                                                                                                                                                                                                      |
+| `/faq`               | `src/pages/faq.astro`               | FAQ page + faqItem collection grouped by category                                                                                                                                                                   |
+| `/contact`           | `src/pages/contact.astro`           | Contact details + map                                                                                                                                                                                               |
+| `/privacy`           | `src/pages/privacy.astro`           | Privacy policy singleton, static fallback when the doc is absent                                                                                                                                                    |
+| `/accessibility`     | `src/pages/accessibility.astro`     | Accessibility statement singleton + static fallback; barrier-report contact from `siteSettings`                                                                                                                     |
+| `/[slug]`            | `src/pages/[slug].astro`            | Custom pages: the `page` collection + the 19-block page builder (with a `RESERVED` slug guard)                                                                                                                      |
+| `/style-guide`       | `src/pages/style-guide.astro`       | SECRET internal brand reference: noindex, unlinked, sitemap-excluded                                                                                                                                                |
+| `/studio`            | `@sanity/astro` (mounted)           | The embedded Sanity Studio (SSR shell)                                                                                                                                                                              |
+| `/preview/**`        | `src/pages/preview/[...slug].astro` | SSR draft preview for the Studio's Presentation tool. noindex, sitemap-excluded                                                                                                                                     |
+| `/preview/live`      | `src/pages/preview/live.ts`         | SSE proxy for preview auto-refresh (403 without the Studio cookie)                                                                                                                                                  |
+| `/api/draft-mode/*`  | `src/pages/api/draft-mode/`         | Turns draft mode on/off for the preview                                                                                                                                                                             |
+| `/api/stats`         | `src/pages/api/stats.ts`            | SSR. Feeds the Studio's "Site stats" tool with Cloudflare Workers analytics for this Worker. Gated on the Studio preview cookie (401 without it); 503 naming the missing variable until `CF_ANALYTICS_TOKEN` is set |
+| `/sitemap-index.xml` | `@astrojs/sitemap` (auto)           | Production sitemap                                                                                                                                                                                                  |
+| `/404`               | `src/pages/404.astro`               | Custom 404                                                                                                                                                                                                          |
 
 **The page-builder conversion is COMPLETE** (Phases 0 through 5, 2026-08-26 and 2026-08-27; the plan is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`, now marked done). **All thirteen singleton routes** render their whole body from `flexibleSections` through `src/components/SingletonPage.astro`, with `src/lib/default-sections.ts` supplying the same copy when the array is empty (so the credential-less CI build still renders complete pages). Each page file is now queries + JSON-LD + `SingletonPage`; the photo-hero pages and home pass their hero in through the `hero` slot, so its scoped style stays off the text-hero pages.
 
@@ -284,34 +284,34 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 
 **Note:** some `docs/agent/` deep-dives still carry examples from the builds this repo descends from. Trust the patterns; ignore off-brand nouns, and fix them when you touch a file.
 
-| Area | Doc |
-|---|---|
-| **Open loops registry (read early each session)** | `docs/PENDING.md` |
-| **Test-suite map (which suite covers what)** | `docs/TESTING.md` |
-| **Design brief (one-file system: palette, type, motion, idioms, hard rules)** | `design.md`; live visual reference: the secret `/style-guide` route |
-| **Product strategy (register, users, anti-references, design principles)** | `PRODUCT.md` (root); companion to `design.md`, read by the Impeccable design skill |
-| Stack detail + astro.config landmines | `docs/agent/stack-and-config.md` |
-| Page + section architecture, nav, visibility toggles | `docs/agent/page-architecture.md` |
-| Brand colors + theme system (light/dark discipline) | `docs/agent/theme-and-color.md` |
-| Polish layer (card-lift, scroll, Lenis, script accents) | `docs/agent/polish-layer.md` |
-| Animation layer (Lenis, motion, scroll-reveal, Ken Burns hero) | `docs/agent/animation.md` |
-| Typography + spacing tokens | `docs/agent/design-tokens.md` |
-| Component catalog + long-read layout | `docs/agent/components.md` |
-| Component sourcing guide (approved sources, token-remap cheat sheet) | `docs/agent/component-sources.md` |
-| Error + empty states | `docs/agent/error-states.md` |
-| Image handling | `docs/agent/images.md` |
-| Accessibility | `docs/agent/accessibility.md` |
-| SEO + JSON-LD | `docs/agent/seo.md` |
-| Performance budgets + Lighthouse | `docs/agent/performance.md` |
-| Content data + Sanity integration | `docs/agent/sanity.md` |
-| Content editability (live page-by-page map) | `docs/agent/content-editability-audit.md` |
-| Deployment + env vars + rebuild model | `docs/agent/deployment.md` |
-| CI/CD, staging preview, Sanity backups, uptime, hCaptcha (ops hardening) | `docs/agent/ci-cd-and-ops.md` |
-| Change history | `docs/agent/changelog.md` |
-| Launch-gate checklist | `docs/bootstrap/setup-checklist.md` |
-| Research (peer audits, lay-school IA patterns, the 2026-06 brand-direction debate) | `docs/research/` |
-| Placeholder media licensing | `src/assets/placeholders/MANIFEST.md` |
+| Area                                                                               | Doc                                                                                |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Open loops registry (read early each session)**                                  | `docs/PENDING.md`                                                                  |
+| **Test-suite map (which suite covers what)**                                       | `docs/TESTING.md`                                                                  |
+| **Design brief (one-file system: palette, type, motion, idioms, hard rules)**      | `design.md`; live visual reference: the secret `/style-guide` route                |
+| **Product strategy (register, users, anti-references, design principles)**         | `PRODUCT.md` (root); companion to `design.md`, read by the Impeccable design skill |
+| Stack detail + astro.config landmines                                              | `docs/agent/stack-and-config.md`                                                   |
+| Page + section architecture, nav, visibility toggles                               | `docs/agent/page-architecture.md`                                                  |
+| Brand colors + theme system (light/dark discipline)                                | `docs/agent/theme-and-color.md`                                                    |
+| Polish layer (card-lift, scroll, Lenis, script accents)                            | `docs/agent/polish-layer.md`                                                       |
+| Animation layer (Lenis, motion, scroll-reveal, Ken Burns hero)                     | `docs/agent/animation.md`                                                          |
+| Typography + spacing tokens                                                        | `docs/agent/design-tokens.md`                                                      |
+| Component catalog + long-read layout                                               | `docs/agent/components.md`                                                         |
+| Component sourcing guide (approved sources, token-remap cheat sheet)               | `docs/agent/component-sources.md`                                                  |
+| Error + empty states                                                               | `docs/agent/error-states.md`                                                       |
+| Image handling                                                                     | `docs/agent/images.md`                                                             |
+| Accessibility                                                                      | `docs/agent/accessibility.md`                                                      |
+| SEO + JSON-LD                                                                      | `docs/agent/seo.md`                                                                |
+| Performance budgets + Lighthouse                                                   | `docs/agent/performance.md`                                                        |
+| Content data + Sanity integration                                                  | `docs/agent/sanity.md`                                                             |
+| Content editability (live page-by-page map)                                        | `docs/agent/content-editability-audit.md`                                          |
+| Deployment + env vars + rebuild model                                              | `docs/agent/deployment.md`                                                         |
+| CI/CD, staging preview, Sanity backups, uptime, hCaptcha (ops hardening)           | `docs/agent/ci-cd-and-ops.md`                                                      |
+| Change history                                                                     | `docs/agent/changelog.md`                                                          |
+| Launch-gate checklist                                                              | `docs/bootstrap/setup-checklist.md`                                                |
+| Research (peer audits, lay-school IA patterns, the 2026-06 brand-direction debate) | `docs/research/`                                                                   |
+| Placeholder media licensing                                                        | `src/assets/placeholders/MANIFEST.md`                                              |
 
 ---
 
-*Structure: this file is the always-loaded constitution. Deep reference lives under `docs/agent/`. Change history is in `docs/agent/changelog.md`. Tactical playbook: `OPERATIONS.md`.*
+_Structure: this file is the always-loaded constitution. Deep reference lives under `docs/agent/`. Change history is in `docs/agent/changelog.md`. Tactical playbook: `OPERATIONS.md`._
