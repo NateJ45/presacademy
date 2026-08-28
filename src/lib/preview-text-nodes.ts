@@ -27,6 +27,10 @@
 // Everything that does not match is simply not touched, and the soft refresh
 // that follows a second later renders it correctly. A missed instant update is
 // invisible; a wrong one is a lie about what the page says.
+//
+// `applyKnownChange` widens WHICH value counts as "the old one" — a whole set of
+// values the field is known to have held — without loosening the match itself,
+// which stays exact. See its own note for why that is still the same promise.
 // =============================================================================
 import { reattachStega, sourceKey, splitStega, stegaSource } from './preview-stega.ts';
 
@@ -75,6 +79,28 @@ export function indexStegaNodes<T extends TextLike>(
 export function applyTextChange(node: TextLike, previous: string, next: string): boolean {
   const { cleaned, encoded } = splitStega(node.data);
   if (cleaned !== previous || previous === next) return false;
+  node.data = reattachStega(next, encoded);
+  return true;
+}
+
+/**
+ * Swap a node's visible characters when it reads exactly one of `known`.
+ *
+ * The generalisation of `applyTextChange` used by the pending-swap re-apply
+ * after a soft refresh, where the question is not "does this node still show the
+ * value the burst started from" but "is this node showing a STALE version of
+ * this field" — and server HTML that started rendering mid-burst holds an
+ * INTERMEDIATE value, which is stale but is not the starting one.
+ *
+ * The match is still exact against a value the field is KNOWN to have held (the
+ * caller's job: see `PendingSwap.seen`), so nothing here can invent text. A node
+ * already showing `next` is done, not stale, and returns false — that is how the
+ * caller tells "the server caught up" from "still waiting".
+ */
+export function applyKnownChange(node: TextLike, known: readonly string[], next: string): boolean {
+  const { cleaned, encoded } = splitStega(node.data);
+  if (cleaned === next) return false;
+  if (!known.includes(cleaned)) return false;
   node.data = reattachStega(next, encoded);
   return true;
 }

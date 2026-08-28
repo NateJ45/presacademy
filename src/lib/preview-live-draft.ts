@@ -125,10 +125,63 @@ export interface PendingSwap {
   previous: string;
   /** The text that should be on the page now. */
   next: string;
+  /**
+   * Every OTHER value this field has been seen to hold this session, oldest
+   * first, starting with `previous`. Never contains `next`.
+   *
+   * WHY A HISTORY AND NOT JUST `previous` (2026-08-28). The re-apply after a
+   * refresh used to insist the node read exactly `previous`, on the reasoning
+   * that server HTML is either up to date or still showing the value the burst
+   * started from. It can be neither: a render that started mid-burst reads the
+   * query index at ITS OWN instant, so the words it carries are an INTERMEDIATE
+   * value — the editor's sentence as it stood half a second ago. That HTML
+   * matches neither `previous` nor `next`, so the re-apply could not correct it
+   * and the editor watched half a sentence sit on the page until the following
+   * render. (The seq bump in useInstantText is the real fix; this is the belt to
+   * its braces, for any render that slips through accepted anyway.)
+   *
+   * WHY IT IS STILL SAFE. Every value in here is one this field ACTUALLY HELD in
+   * a draft snapshot we diffed, and the node was matched to the field by its
+   * stega identity, not by searching for words. So "this node shows a value from
+   * this field's own past" means exactly "this node is showing a stale render of
+   * this field", and writing the newest value is a correction, not a guess. A
+   * node showing anything else — a transformed rendering, another editor's
+   * words, a value from before this session — matches nothing and is left alone,
+   * which is the same rule as before: a missed instant update is invisible; a
+   * wrong one is a lie about what the page says.
+   */
+  seen: string[];
 }
 
 /** Never remember more pending swaps than an editing burst can plausibly make. */
 export const MAX_PENDING = 200;
+
+/**
+ * How many past values to keep per field.
+ *
+ * A render is at most a second or two behind, and the local channel posts at
+ * most every 60ms, so a dozen values covers far more history than any accepted
+ * render can be carrying. The cost of the cap being too small is one uncorrected
+ * intermediate for one refresh; the cost of no cap is a map that grows for as
+ * long as the editor keeps typing into one field.
+ */
+export const MAX_SEEN = 12;
+
+/**
+ * Add a value to a field's history, oldest first, within the cap.
+ *
+ * The OLDEST entry is the value the very first server render of this burst is
+ * still going to arrive holding, so it is the one the history can least afford
+ * to lose: the cap eats from just after it.
+ */
+function addSeen(seen: readonly string[], value: string, max: number): string[] {
+  if (seen.includes(value)) return [...seen];
+  const next = [...seen];
+  while (next.length >= max && next.length > 1) next.splice(1, 1);
+  if (next.length >= max) next.shift();
+  next.push(value);
+  return next;
+}
 
 /**
  * Record a swap, SOURCE-AGNOSTICALLY — the memory is keyed by field, never by
@@ -143,7 +196,12 @@ export const MAX_PENDING = 200;
  *  - When `next` comes back around to that original `previous`, the field is
  *    exactly where the server thinks it is (the editor undid it, or typed a
  *    character and deleted it), so the entry is dropped rather than kept as a
- *    swap that would re-apply itself to a no-op.
+ *    swap that would re-apply itself to a no-op. Its history goes with it: the
+ *    field is level with the server, so there is nothing left to correct.
+ *
+ * Every value the field passes through on the way is kept in `seen`, which is
+ * what lets the re-apply recognise an INTERMEDIATE value in server HTML rather
+ * than only the value the burst started from. See `PendingSwap.seen`.
  */
 export function rememberSwap(
   pending: Map<string, PendingSwap>,
@@ -151,6 +209,7 @@ export function rememberSwap(
   previous: string,
   next: string,
   max: number = MAX_PENDING,
+  maxSeen: number = MAX_SEEN,
 ): void {
   const already = pending.get(key);
   const first = already?.previous ?? previous;
@@ -161,5 +220,10 @@ export function rememberSwap(
   // A field this page does not show still costs one entry — cheap, and dropped
   // at the next refresh — but the map must not grow without a bound.
   if (!already && pending.size >= max) return;
-  pending.set(key, { key, previous: first, next });
+  // The value this entry was showing a moment ago is now history, and so is the
+  // value the caller diffed FROM (normally the same thing, but the two channels
+  // can hand over mid-burst). `next` is where the field is now, never history.
+  const base = already ? addSeen(already.seen, already.next, maxSeen) : [];
+  const seen = addSeen(base, previous, maxSeen).filter((value) => value !== next);
+  pending.set(key, { key, previous: first, next, seen });
 }

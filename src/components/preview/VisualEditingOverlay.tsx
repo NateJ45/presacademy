@@ -98,7 +98,10 @@ const mpaHistory: HistoryAdapter = {
 //     into the page the moment the edit reaches the frame over the comlink,
 //     which is well before the server can re-render it. See
 //     ./overlay/useInstantText.ts for what it will and will not touch, and why
-//     it re-applies itself after each refresh.
+//     it re-applies itself after each refresh. It is ALSO a change event for the
+//     scheduler above (`noteInstantChange`): the document it just applied is the
+//     newest one anybody knows about, so any render started before it is stale
+//     even though no SSE signal has arrived for it yet.
 //
 // TIMING. Set `localStorage.previewTiming = '1'` in the preview frame to have
 // both paths log how long they took. See ./overlay/timing.ts.
@@ -129,17 +132,42 @@ export default function VisualEditingOverlay({ pageId }: Props) {
    */
   const lastMarkup = useRef<string | null>(null);
 
-  // Job 4: swap changed plain strings in as the edit arrives, without waiting
-  // for the refetch below. Safe to call here rather than inside <VisualEditing>
-  // — the optimistic actor it reads is module state in @sanity/visual-editing,
-  // not React context, so sibling order does not matter.
-  useInstantText(pageId);
-
   // `tick` and `runRefresh` call each other (a refresh that settles asks whether
   // another is owed). A ref breaks the cycle without either one changing
   // identity, which matters: `softRefresh` is a dependency of the SSE effect,
   // and a new identity there would tear down and reopen the listen connection.
   const tickRef = useRef<() => void>(() => {});
+
+  // INSTANT TEXT IS ALSO A CHANGE EVENT (2026-08-28). The scheduler decides a
+  // completed render is stale by comparing the sequence it was stamped with
+  // against the newest one known — and until this callback existed, "known"
+  // meant only what the SSE stream had reported, which runs at Sanity's
+  // transaction visibility, about a second behind the keystroke. So a render
+  // that started before the words below were typed still looked current when it
+  // landed, and the morph wrote the server's half-finished sentence over the
+  // finished one: the editor's "half my text disappears, then comes back".
+  //
+  // Bumping here makes staleness a property of the newest DOCUMENT rather than
+  // of the slowest channel. It marks the state dirty as well, on purpose: the
+  // server still has to render the newest text eventually, and a discard that
+  // scheduled nothing would leave the page correct only by instant text's grace,
+  // with structural edits unrendered. The extra bumps cost no extra renders —
+  // single flight plus the rate limit cap STARTS at one per
+  // REFRESH_MIN_INTERVAL_MS however many changes arrive between them — they only
+  // move renders from "accepted with stale words" to "discarded, retried".
+  //
+  // No resolver is registered: nobody is awaiting a promise for this, unlike
+  // `softRefresh`, which serves the comlink's ⟳ button.
+  const noteInstantChange = useCallback(() => {
+    schedule.current = onRefreshChange(schedule.current, Date.now());
+    tickRef.current();
+  }, []);
+
+  // Job 4: swap changed plain strings in as the edit arrives, without waiting
+  // for the refetch below. Safe to call here rather than inside <VisualEditing>
+  // — the optimistic actor it reads is module state in @sanity/visual-editing,
+  // not React context, so sibling order does not matter.
+  useInstantText(pageId, noteInstantChange);
 
   // ONE refresh: fetch this preview URL, and swap in the fresh <main> — unless
   // the scheduler says the sequence moved while we were out, in which case this
@@ -208,10 +236,10 @@ export default function VisualEditingOverlay({ pageId }: Props) {
         lastMarkup.current = markup;
         // The instant-text path indexes the old text nodes and may be holding
         // swaps this HTML predates. Tell it to rebuild and re-apply. Belt and
-        // braces now that stale HTML never lands: the classic race is gone, but
-        // an instant swap can still be newer than an ACCEPTED render (the
-        // sequence only counts /preview/live signals, and the comlink is faster
-        // than the query index this render read).
+        // braces now that every instant-text document bumps the sequence too: a
+        // render begun after the newest document we know of should be carrying
+        // its words, but it read the QUERY INDEX, which the local channel does
+        // not wait for, so it can still be a version behind.
         window.dispatchEvent(new CustomEvent(SOFT_REFRESH_EVENT));
         stop('main morphed');
       } else {

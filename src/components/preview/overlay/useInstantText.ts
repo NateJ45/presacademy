@@ -57,13 +57,26 @@
 // refresh, which renders them correctly a moment later. A missed instant update
 // is invisible. A wrong one would be the preview lying about the page.
 //
-// THE ONE ORDERING HAZARD, and how it is handled. The soft refresh replaces
-// <main> with server-rendered HTML, and that HTML can be OLDER than what this
-// already wrote, because the server reads the query index and the comlink does
-// not wait for it. Left alone, the instant text would flicker back to the old
-// words for a beat. So every swap this makes is remembered, and after each
-// refresh the pending ones are re-applied to the fresh DOM — and dropped as soon
-// as the server's own HTML says the same thing. (The other half of that
+// THE ONE ORDERING HAZARD, and the TWO things that handle it. The soft refresh
+// reconciles server-rendered HTML into <main>, and that HTML can be OLDER than
+// what this already wrote, because the server reads the query index and neither
+// channel above waits for it.
+//
+//   FIRST, IT SHOULD NOT LAND AT ALL. Every document applied here bumps the
+//   refresh scheduler's change sequence (the `onDocument` callback the overlay
+//   passes in), so a render that started before it is discarded on arrival
+//   rather than morphed in. Before that bump the sequence moved only on the SSE
+//   change events — Sanity's transaction visibility, a second behind the
+//   keystroke — so a render begun mid-burst looked current when it landed and
+//   wrote a HALF-TYPED sentence over the finished one. That was the editor's
+//   "half my text disappears, then a second later it comes back".
+//
+//   SECOND, IF ONE LANDS ANYWAY. Every swap this makes is remembered, and after
+//   each refresh the pending ones are re-applied to the fresh DOM — and dropped
+//   as soon as the server's own HTML says the same thing. The re-apply matches
+//   any value the field has passed through this session, not only the one the
+//   burst started from, precisely because an intermediate is what a mid-burst
+//   render carries. (The other half of that
 // reasoning lives in src/pages/preview/live.ts: the listen there must keep
 // `visibility: "query"`, because a faster signal would trigger a refetch of
 // data that is still stale, and stale HTML is exactly what this has to undo.)
@@ -73,7 +86,12 @@ import { useOptimisticActor } from '@sanity/visual-editing/react';
 import { isEmptyActor } from '@sanity/visual-editing/optimistic';
 import { diffStringFields } from '../../../lib/preview-text-diff.ts';
 import { sourceKey } from '../../../lib/preview-stega.ts';
-import { applyTextChange, indexStegaNodes, showsText } from '../../../lib/preview-text-nodes.ts';
+import {
+  applyKnownChange,
+  applyTextChange,
+  indexStegaNodes,
+  showsText,
+} from '../../../lib/preview-text-nodes.ts';
 import {
   acceptsSource,
   parseLiveDraft,
@@ -105,9 +123,18 @@ interface ActorEvent {
  */
 const ACTOR_EVENTS = ['mutation', 'rebased.local', 'rebased.remote', 'sync'] as const;
 
-export function useInstantText(pageId: string): void {
+export function useInstantText(pageId: string, onDocument?: () => void): void {
   const { readNow } = useDraftDocument(pageId);
   const actor = useOptimisticActor();
+
+  /**
+   * The overlay's "a newer document exists" hook, held in a ref so its identity
+   * never re-subscribes the two feeds below.
+   */
+  const notify = useRef(onDocument);
+  useEffect(() => {
+    notify.current = onDocument;
+  });
 
   /** The document as it read at the last swap — the diff's left-hand side. */
   const lastSeen = useRef<Record<string, unknown> | null>(null);
@@ -162,6 +189,22 @@ export function useInstantText(pageId: string): void {
       // Nothing to compare against on the first read: the page was just
       // server-rendered from this very document.
       if (!previous) return;
+
+      // THE NEWEST DOCUMENT WE KNOW OF IS NOW THIS ONE, and that is a fact the
+      // refresh scheduler has to hear about — before the diff, because it is
+      // true whether or not a plain string changed. Its staleness stamp used to
+      // be bumped only by the SSE change events, which run at Sanity's
+      // transaction visibility, roughly a second behind the keystroke. Any
+      // render started before this document therefore looked CURRENT when it
+      // landed, and was morphed in carrying the server's older words — a PARTIAL
+      // version of the sentence the editor had already typed. That is the "half
+      // my text disappears, then comes back" report. The bump makes staleness a
+      // property of the newest KNOWN document rather than of the slowest
+      // channel: such a render is now discarded, and the follow-up it schedules
+      // renders the truth. Cost is bounded by the scheduler, not by typing
+      // speed: single-flight plus REFRESH_MIN_INTERVAL_MS caps starts at one per
+      // 1200ms no matter how many bumps arrive between them.
+      notify.current?.();
 
       const changes = diffStringFields(previous, next);
       if (changes.length === 0) return;
@@ -260,7 +303,13 @@ export function useInstantText(pageId: string): void {
         }
         let reapplied = false;
         for (const node of bucket) {
-          if (applyTextChange(node, swap.previous, swap.next)) reapplied = true;
+          // Any value this field has passed through counts as "stale render of
+          // this field", not just the one the burst started from: an accepted
+          // render that began mid-burst carries an INTERMEDIATE value, which
+          // `swap.previous` alone would not recognise. `swap.seen` is the whole
+          // set and never contains `swap.next`, so a node the server HAS caught
+          // up with is still left alone.
+          if (applyKnownChange(node, swap.seen, swap.next)) reapplied = true;
         }
         // Nothing on the page matches either value any more — the field is gone,
         // moved, or rendered differently. Stop carrying it.

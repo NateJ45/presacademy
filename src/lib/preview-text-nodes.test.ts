@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { applyTextChange, indexStegaNodes, showsText } from './preview-text-nodes.ts';
+import {
+  applyKnownChange,
+  applyTextChange,
+  indexStegaNodes,
+  showsText,
+} from './preview-text-nodes.ts';
 import { sourceKey, splitStega, stegaSource } from './preview-stega.ts';
 
 // The same real runs the stega tests use; see src/lib/preview-stega.test.ts for
@@ -104,6 +109,53 @@ test('works on a node with no stega at all, when the text still matches', () => 
   const bare = node('Our story');
   assert.equal(applyTextChange(bare, 'Our story', 'Our stories'), true);
   assert.equal(bare.data, 'Our stories');
+});
+
+// --- applyKnownChange: correcting a node that shows ANY past value -----------
+// The re-apply after a soft refresh. A render that started mid-burst arrives
+// holding an INTERMEDIATE value, which `applyTextChange` (exact match on the
+// value the burst started from) could not correct — the half-typed sentence sat
+// on the page until the next render.
+
+test('corrects a node showing an intermediate value the field passed through', () => {
+  const half = node('Our sto', SECTION_RUN);
+  assert.equal(applyKnownChange(half, ['Our story', 'Our st', 'Our sto'], 'Our stories'), true);
+  assert.equal(splitStega(half.data).cleaned, 'Our stories');
+  assert.deepEqual(stegaSource(half.data), {
+    id: 'homePage',
+    type: 'homePage',
+    path: 'flexibleSections[_key=="a1b2"].heading',
+  });
+});
+
+test('still corrects a node showing the original value', () => {
+  const original = node('Our story', SECTION_RUN);
+  assert.equal(applyKnownChange(original, ['Our story', 'Our stor'], 'Our stories'), true);
+  assert.equal(splitStega(original.data).cleaned, 'Our stories');
+});
+
+test('leaves a node showing the current value alone — the server caught up', () => {
+  const landed = node('Our stories', SECTION_RUN);
+  assert.equal(applyKnownChange(landed, ['Our story', 'Our stories'], 'Our stories'), false);
+  assert.equal(splitStega(landed.data).cleaned, 'Our stories');
+});
+
+test('refuses text this field has never held', () => {
+  // Someone else's edit, a transformed rendering, a value from before this
+  // session: unrecognised is unrecognised, and writing would be a lie.
+  const stranger = node('A whole other headline', SECTION_RUN);
+  assert.equal(applyKnownChange(stranger, ['Our story', 'Our stor'], 'Our stories'), false);
+  assert.equal(splitStega(stranger.data).cleaned, 'A whole other headline');
+
+  // And a partial rendering (a heading split around its accent word) is not a
+  // past value either, however much of the old text it contains.
+  const split = node('Our', SECTION_RUN);
+  assert.equal(applyKnownChange(split, ['Our story', 'Our stor'], 'Our stories'), false);
+});
+
+test('refuses everything when the field has no history at all', () => {
+  const any = node('Our story', SECTION_RUN);
+  assert.equal(applyKnownChange(any, [], 'Our stories'), false);
 });
 
 test('reads what a node currently shows, ignoring the invisible half', () => {

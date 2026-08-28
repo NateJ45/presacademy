@@ -37,6 +37,22 @@
 //      that HTML predates a change we already know about — it is not swapped in
 //      at any price. It marks the state dirty instead, and the follow-up renders
 //      the truth. This is the fix for the revert above.
+//
+//      WHAT COUNTS AS "A CHANGE WE KNOW ABOUT" IS THE WHOLE GAME (2026-08-28).
+//      The sequence was bumped only by the SSE change events, which fire at
+//      Sanity's transaction visibility — about a second behind the keystroke.
+//      The instant-text path learns of the same edit in ~100ms over the Studio's
+//      local channel, so between those two instants a render could START before
+//      an edit, LAND after it, and still be judged current: the morph then wrote
+//      the server's half-typed sentence over the finished one, and the editor
+//      watched half their text vanish for a second. So every document instant
+//      text applies now calls `onChange` too (wired in VisualEditingOverlay).
+//      Staleness is a property of the newest KNOWN document, not of the slowest
+//      channel that could have told us about it.
+//
+//      This raises the number of DISCARDS during a typing burst and not the
+//      number of RENDERS: rules 1 and 3 cap starts at one per
+//      REFRESH_MIN_INTERVAL_MS no matter how many changes arrive between them.
 //   3. RATE LIMIT. A floor on the interval between the STARTS of consecutive
 //      refreshes. Instant text already makes the page LOOK right for plain
 //      strings, so the refresh is a CORRECTNESS pass, not a latency-critical
@@ -100,7 +116,8 @@ export function createRefreshState(): RefreshState {
 }
 
 /**
- * A change arrived (an SSE `change`, a comlink refresh, a visibility catch-up).
+ * A change arrived (an SSE `change`, a comlink refresh, a visibility catch-up,
+ * or a document the instant-text path has just applied to the page).
  *
  * Always advances `changeSeq`, which is what makes an in-flight response stale.
  * `dirtySince` marks the START of the run, so a burst is debounced from its
