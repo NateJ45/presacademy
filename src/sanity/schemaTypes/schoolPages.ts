@@ -30,6 +30,7 @@ import {
   FLEXIBLE_SECTIONS_DESCRIPTION,
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { SEO_GROUP, seoFields } from './seo';
 
 interface PageDefaults {
@@ -53,6 +54,10 @@ export function definePageSingleton(
       { name: 'hero', title: 'Hero' },
       { name: 'sections', title: 'Page sections' },
       SEO_GROUP,
+      // Scheduled publishing (see ./_publishAt.ts). The group and the field are
+      // spread together, always: a field naming a group its type never declared
+      // is a hard Studio 6.4 crash, not a warning.
+      PUBLISH_AT_GROUP,
       ...(extra.groups ?? []),
     ],
     fields: [
@@ -117,6 +122,7 @@ export function definePageSingleton(
         description:
           'The button in the closing call-to-action band at the bottom of the page. Leave empty to use the built-in default.',
       }),
+      publishAtField(),
       ...(extra.fields ?? []),
     ],
     preview: { prepare: () => ({ title }) },

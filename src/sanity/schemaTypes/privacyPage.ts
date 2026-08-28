@@ -17,6 +17,7 @@ import {
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const privacyPage = defineType({
   name: 'privacyPage',
@@ -28,6 +29,7 @@ export const privacyPage = defineType({
     SEO_GROUP,
     { name: 'hero', title: 'Hero' },
     { name: 'sections', title: 'Page sections' },
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // SEO
@@ -92,6 +94,7 @@ export const privacyPage = defineType({
 
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
+    publishAtField(),
   ],
   preview: { prepare: () => ({ title: 'Privacy Policy Page' }) },
 });

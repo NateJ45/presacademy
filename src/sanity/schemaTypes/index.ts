@@ -28,6 +28,7 @@ import { page } from './page';
 import { pricingTier } from './pricingTier';
 import { privacyPage } from './privacyPage';
 import { schoolPageSingletons } from './schoolPages';
+import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
 import { teachingArea } from './teachingArea';
 import { term } from './term';
@@ -74,4 +75,8 @@ export const schemaTypes = [
 
   // Generic page (build new pages at /<slug> with the block library)
   page,
+
+  // A section kept from one page, ready to add to another (PORTS.md card 24).
+  // Not website content: it is a tool that lives beside the pages it serves.
+  sectionPreset,
 ];

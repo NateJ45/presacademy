@@ -32,6 +32,11 @@ import { SeoPreviewPane } from './src/sanity/components/SeoPreviewPane';
 import { HealthTool } from './src/sanity/components/HealthTool';
 import { SetupWizard } from './src/sanity/components/SetupWizard';
 import { ArchiveAction, RestoreAction, DeleteForeverAction } from './src/sanity/actions/archive';
+import { shareDraftLinkAction } from './src/sanity/components/shareDraftLink';
+import { SaveSectionPresetAction } from './src/sanity/actions/saveSectionPreset';
+import { CheckPageAction } from './src/sanity/actions/checkPage';
+import { PAGE_BUILDER_TYPES } from './src/sanity/pageBuilderConfig';
+import { SINGLETON_PREVIEW_PATHS } from './src/sanity/resolve';
 
 // =============================================================================
 // Studio theme — brand fonts + a real light AND dark mode
@@ -268,11 +273,24 @@ export default defineConfig({
     //    Archive ("move to trash"), and append Restore + Delete forever (each
     //    renders only when the document is actually in the trash). Everything
     //    else (publish, duplicate, ...) stays.
+    //  - page-builder types: "Save a section as preset..." (PORTS.md card 24)
+    //    and "Check this page..." (card 25), the two courtesy verbs a page
+    //    gets. Neither blocks publish and neither edits anything on its own.
+    //  - shareable types: "Copy share link" (card 19), on the documents that
+    //    HAVE a /preview route to show. See SHAREABLE_TYPES below.
     actions: (prev, { schemaType }) => {
+      const extras = [
+        ...(PAGE_BUILDER_TYPES.has(schemaType) ? [SaveSectionPresetAction, CheckPageAction] : []),
+        ...(SHAREABLE_TYPES.has(schemaType) ? [shareDraftLinkAction] : []),
+      ];
+
       if (SINGLETON_TYPES.has(schemaType)) {
-        return prev.filter(
-          ({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action || ''),
-        );
+        return [
+          ...prev.filter(
+            ({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action || ''),
+          ),
+          ...extras,
+        ];
       }
       if (ARCHIVABLE_TYPES.has(schemaType)) {
         return [
@@ -280,12 +298,24 @@ export default defineConfig({
           ArchiveAction,
           RestoreAction,
           DeleteForeverAction,
+          ...extras,
         ];
       }
-      return prev;
+      return [...prev, ...extras];
     },
   },
 });
+
+// Documents a share link can be minted for (PORTS.md card 19).
+//
+// The link points at a /preview/* route, and this site has those routes for the
+// page singletons and for custom `page` documents only (see
+// src/pages/preview/[...slug].astro). A course, a faculty member or an event
+// resolves to a LIVE address through pathForDoc, and `/preview` + that address
+// is a route that does not exist, so offering the action there would hand an
+// editor a link to a 404. Those documents preview through their index page
+// instead, which is what src/sanity/resolve.ts already says.
+const SHAREABLE_TYPES = new Set<string>([...Object.keys(SINGLETON_PREVIEW_PATHS), 'page']);
 
 // Singleton document types — one instance each, not duplicable.
 const SINGLETON_TYPES = new Set<string>([

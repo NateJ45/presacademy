@@ -350,6 +350,124 @@ export type SectionPricingTiersBackgroundImage = {
   _type: 'image';
 };
 
+export type SectionPreset = {
+  _id: string;
+  _type: 'sectionPreset';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sectionType?: string;
+  section?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionMediaShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
+      } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
+  >;
+  note?: string;
+};
+
 export type CourseReference = {
   _ref: string;
   _type: 'reference';
@@ -1710,6 +1828,7 @@ export type AccessibilityPage = {
         _key: string;
       } & SectionTestimonialRail)
   >;
+  publishAt?: string;
 };
 
 export type PrivacyPage = {
@@ -1848,6 +1967,7 @@ export type PrivacyPage = {
         _key: string;
       } & SectionTestimonialRail)
   >;
+  publishAt?: string;
 };
 
 export type Embed = {
@@ -2020,6 +2140,7 @@ export type Page = {
     _type: 'image';
   };
   hideFromSearch?: boolean;
+  publishAt?: string;
 };
 
 export type ResourcesPage = {
@@ -2159,6 +2280,7 @@ export type ResourcesPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   listIntro?: string;
   emptyStateBody?: string;
   finalCtaEyebrow?: string;
@@ -2303,6 +2425,7 @@ export type ForYouPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   personasIntro?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -2446,6 +2569,7 @@ export type GetStartedPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
   finalCtaSubhead?: string;
@@ -2588,6 +2712,7 @@ export type PricingPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   pricingIntro?: string;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -2731,6 +2856,7 @@ export type FacultyPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   directoryIntro?: string;
   aggregateTrustLine?: string;
   emptyState?: string;
@@ -2876,6 +3002,7 @@ export type CoursesPage = {
       } & SectionTestimonialRail)
   >;
   finalCta?: CtaBlock;
+  publishAt?: string;
   catalogIntro?: string;
   emptyState?: string;
   detailTrustLine?: string;
@@ -3176,6 +3303,7 @@ export type ContactPage = {
         _key: string;
       } & SectionTestimonialRail)
   >;
+  publishAt?: string;
 };
 
 export type FaqPage = {
@@ -3329,6 +3457,7 @@ export type FaqPage = {
         _key: string;
       } & SectionTestimonialRail)
   >;
+  publishAt?: string;
 };
 
 export type AboutPage = {
@@ -3470,6 +3599,7 @@ export type AboutPage = {
     _type: 'image';
   };
   hideFromSearch?: boolean;
+  publishAt?: string;
 };
 
 export type HomePage = {
@@ -3623,6 +3753,7 @@ export type HomePage = {
     _type: 'image';
   };
   hideFromSearch?: boolean;
+  publishAt?: string;
 };
 
 export type MediaTag = {
@@ -3772,6 +3903,7 @@ export type AllSanitySchemaTypes =
   | SectionKeyDatesBackgroundImage
   | SectionPricingTiersBackground
   | SectionPricingTiersBackgroundImage
+  | SectionPreset
   | CourseReference
   | Testimonial
   | SanityImageCrop

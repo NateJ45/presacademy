@@ -36,7 +36,12 @@ const richBody = {
             type: 'object',
             title: 'Link',
             fields: [
-              { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
+              {
+                name: 'href',
+                type: 'url',
+                title: 'URL',
+                validation: (R: any) => R.uri({ allowRelative: true }),
+              },
               { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab' },
             ],
           },
@@ -55,7 +60,8 @@ export function bgField() {
     title: 'Section background',
     type: 'object',
     options: { collapsible: true, collapsed: true },
-    description: 'Optional. Set a brand color tone, or drop in a background photo/video with a dark overlay so text stays readable.',
+    description:
+      'Optional. Set a brand color tone, or drop in a background photo/video with a dark overlay so text stays readable.',
     fields: [
       defineField({
         name: 'tone',
@@ -78,13 +84,15 @@ export function bgField() {
         type: 'image',
         options: { hotspot: true },
         fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-        description: 'Sits behind the section under a dark overlay. Text is shown in white over it.',
+        description:
+          'Sits behind the section under a dark overlay. Text is shown in white over it.',
       }),
       defineField({
         name: 'videoUrl',
         title: 'Background video URL (optional)',
         type: 'url',
-        description: 'A direct .mp4 or .webm file URL. Plays muted, looped, behind the section. Overrides the image.',
+        description:
+          'A direct .mp4 or .webm file URL. Plays muted, looped, behind the section. Overrides the image.',
       }),
       defineField({
         name: 'overlay',
@@ -92,7 +100,8 @@ export function bgField() {
         type: 'number',
         initialValue: 55,
         validation: (R) => R.min(0).max(90),
-        description: 'Only applies when an image or video is set. Higher = darker, for better text contrast.',
+        description:
+          'Only applies when an image or video is set. Higher = darker, for better text contrast.',
       }),
       defineField({
         name: 'padding',
@@ -124,12 +133,21 @@ export const sectionRichText = defineType({
       name: 'align',
       title: 'Alignment',
       type: 'string',
-      options: { list: [{ title: 'Left', value: 'left' }, { title: 'Center', value: 'center' }], layout: 'radio' },
+      options: {
+        list: [
+          { title: 'Left', value: 'left' },
+          { title: 'Center', value: 'center' },
+        ],
+        layout: 'radio',
+      },
       initialValue: 'left',
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Text section' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Text section' }),
+  },
 });
 
 export const sectionImageText = defineType({
@@ -148,17 +166,31 @@ export const sectionImageText = defineType({
       name: 'imageSide',
       title: 'Image side',
       type: 'string',
-      options: { list: [{ title: 'Left', value: 'left' }, { title: 'Right', value: 'right' }], layout: 'radio' },
+      options: {
+        list: [
+          { title: 'Left', value: 'left' },
+          { title: 'Right', value: 'right' },
+        ],
+        layout: 'radio',
+      },
       initialValue: 'right',
     }),
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'body', title: 'Body', ...richBody }),
     defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
-    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Button link',
+      type: 'string',
+      description: 'Internal path like "/get-started" or a full URL.',
+    }),
     bgField(),
   ],
-  preview: { select: { title: 'heading', media: 'image' }, prepare: ({ title, media }) => ({ title: title || 'Image + text', media }) },
+  preview: {
+    select: { title: 'heading', media: 'image' },
+    prepare: ({ title, media }) => ({ title: title || 'Image + text', media }),
+  },
 });
 
 export const sectionCardGrid = defineType({
@@ -185,9 +217,19 @@ export const sectionCardGrid = defineType({
           type: 'object',
           name: 'card',
           fields: [
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({ name: 'body', title: 'Body', type: 'text', rows: 3 }),
-            defineField({ name: 'link', title: 'Link', type: 'string', description: 'Optional. Makes the card clickable.' }),
+            defineField({
+              name: 'link',
+              title: 'Link',
+              type: 'string',
+              description: 'Optional. Makes the card clickable.',
+            }),
           ],
           preview: { select: { title: 'title', subtitle: 'body' } },
         }),
@@ -195,7 +237,10 @@ export const sectionCardGrid = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Card grid' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Card grid' }),
+  },
 });
 
 export const sectionQuote = defineType({
@@ -203,8 +248,19 @@ export const sectionQuote = defineType({
   title: 'Quote / scripture',
   type: 'object',
   fields: [
-    defineField({ name: 'quote', title: 'Quote', type: 'text', rows: 3, validation: (R) => R.required() }),
-    defineField({ name: 'attribution', title: 'Attribution', type: 'string', description: 'e.g. a person or a scripture reference.' }),
+    defineField({
+      name: 'quote',
+      title: 'Quote',
+      type: 'text',
+      rows: 3,
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'attribution',
+      title: 'Attribution',
+      type: 'string',
+      description: 'e.g. a person or a scripture reference.',
+    }),
     bgField(),
   ],
   preview: { select: { title: 'quote', subtitle: 'attribution' } },
@@ -216,13 +272,26 @@ export const sectionCtaBand = defineType({
   type: 'object',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headline',
+      title: 'Headline',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
     defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
-    defineField({ name: 'ctaUrl', title: 'Button link', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Button link',
+      type: 'string',
+      description: 'Internal path like "/get-started" or a full URL.',
+    }),
     bgField(),
   ],
-  preview: { select: { title: 'headline' }, prepare: ({ title }) => ({ title: title || 'CTA band' }) },
+  preview: {
+    select: { title: 'headline' },
+    prepare: ({ title }) => ({ title: title || 'CTA band' }),
+  },
 });
 
 export const sectionForm = defineType({
@@ -232,7 +301,13 @@ export const sectionForm = defineType({
   fields: [
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
-    defineField({ name: 'form', title: 'Form', type: 'reference', to: [{ type: 'form' }], validation: (R) => R.required() }),
+    defineField({
+      name: 'form',
+      title: 'Form',
+      type: 'reference',
+      to: [{ type: 'form' }],
+      validation: (R) => R.required(),
+    }),
     // -------------------------------------------------------------------------
     // The four fields the Contact page needed (2026-08-26, Phase 2).
     // -------------------------------------------------------------------------
@@ -255,7 +330,12 @@ export const sectionForm = defineType({
       },
       initialValue: 'embedded',
     }),
-    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string', description: 'Small line above the heading. Shown in the "Page body" style.' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Eyebrow',
+      type: 'string',
+      description: 'Small line above the heading. Shown in the "Page body" style.',
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
@@ -271,7 +351,10 @@ export const sectionForm = defineType({
         'Safety net. If the form above is ever missing, the section shows an email button instead of a broken form. Example: "Email the Office".',
     }),
   ],
-  preview: { select: { title: 'heading', form: 'form.title' }, prepare: ({ title, form }) => ({ title: title || form || 'Form' }) },
+  preview: {
+    select: { title: 'heading', form: 'form.title' },
+    prepare: ({ title, form }) => ({ title: title || form || 'Form' }),
+  },
 });
 
 export const sectionFeatureCards = defineType({
@@ -306,9 +389,19 @@ export const sectionFeatureCards = defineType({
               fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
             }),
             defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({ name: 'body', title: 'Body', type: 'text', rows: 3 }),
-            defineField({ name: 'badge', title: 'Badge (optional)', type: 'string', description: 'Small tag, e.g. "New" or "Weekly".' }),
+            defineField({
+              name: 'badge',
+              title: 'Badge (optional)',
+              type: 'string',
+              description: 'Small tag, e.g. "New" or "Weekly".',
+            }),
             defineField({ name: 'ctaLabel', title: 'Link label', type: 'string' }),
             defineField({ name: 'ctaUrl', title: 'Link URL', type: 'string' }),
           ],
@@ -318,7 +411,10 @@ export const sectionFeatureCards = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Feature cards' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Feature cards' }),
+  },
 });
 
 export const sectionStats = defineType({
@@ -345,8 +441,19 @@ export const sectionStats = defineType({
           type: 'object',
           name: 'stat',
           fields: [
-            defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "9", "100%", "6 weeks". Free text so you can write "200+".', validation: (R) => R.required() }),
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'value',
+              title: 'Value',
+              type: 'string',
+              description: 'e.g. "9", "100%", "6 weeks". Free text so you can write "200+".',
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({ name: 'note', title: 'Note (optional)', type: 'string' }),
           ],
           preview: { select: { title: 'value', subtitle: 'label' } },
@@ -375,8 +482,19 @@ export const sectionAccordion = defineType({
           type: 'object',
           name: 'qa',
           fields: [
-            defineField({ name: 'question', title: 'Question', type: 'string', validation: (R) => R.required() }),
-            defineField({ name: 'answer', title: 'Answer', type: 'text', rows: 4, validation: (R) => R.required() }),
+            defineField({
+              name: 'question',
+              title: 'Question',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'answer',
+              title: 'Answer',
+              type: 'text',
+              rows: 4,
+              validation: (R) => R.required(),
+            }),
           ],
           preview: { select: { title: 'question' } },
         }),
@@ -384,7 +502,10 @@ export const sectionAccordion = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'FAQ / accordion' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'FAQ / accordion' }),
+  },
 });
 
 export const sectionGallery = defineType({
@@ -420,7 +541,10 @@ export const sectionGallery = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Photo gallery' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Photo gallery' }),
+  },
 });
 
 export const sectionSteps = defineType({
@@ -440,7 +564,12 @@ export const sectionSteps = defineType({
           type: 'object',
           name: 'step',
           fields: [
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({ name: 'body', title: 'Body', type: 'text', rows: 3 }),
           ],
           preview: { select: { title: 'title', subtitle: 'body' } },
@@ -459,7 +588,13 @@ export const sectionLogos = defineType({
   fields: [
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
-    defineField({ name: 'grayscale', title: 'Grayscale logos', type: 'boolean', initialValue: true, description: 'Show logos in grayscale, full color on hover.' }),
+    defineField({
+      name: 'grayscale',
+      title: 'Grayscale logos',
+      type: 'boolean',
+      initialValue: true,
+      description: 'Show logos in grayscale, full color on hover.',
+    }),
     defineField({
       name: 'items',
       title: 'Logos',
@@ -469,7 +604,12 @@ export const sectionLogos = defineType({
           type: 'image',
           options: { hotspot: true },
           fields: [
-            defineField({ name: 'alt', title: 'Name / alt text', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'alt',
+              title: 'Name / alt text',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({ name: 'url', title: 'Link (optional)', type: 'url' }),
           ],
         }),
@@ -478,7 +618,10 @@ export const sectionLogos = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Logos / partners' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Logos / partners' }),
+  },
 });
 
 export const sectionMediaFeature = defineType({
@@ -493,10 +636,21 @@ export const sectionMediaFeature = defineType({
       name: 'mediaSide',
       title: 'Media side',
       type: 'string',
-      options: { list: [{ title: 'Left', value: 'left' }, { title: 'Right', value: 'right' }], layout: 'radio' },
+      options: {
+        list: [
+          { title: 'Left', value: 'left' },
+          { title: 'Right', value: 'right' },
+        ],
+        layout: 'radio',
+      },
       initialValue: 'left',
     }),
-    defineField({ name: 'videoUrl', title: 'Video URL (YouTube/Vimeo)', type: 'url', description: 'Shows an embedded player. Takes priority over the image.' }),
+    defineField({
+      name: 'videoUrl',
+      title: 'Video URL (YouTube/Vimeo)',
+      type: 'url',
+      description: 'Shows an embedded player. Takes priority over the image.',
+    }),
     defineField({
       name: 'image',
       title: 'Image (used if no video)',
@@ -508,7 +662,10 @@ export const sectionMediaFeature = defineType({
     defineField({ name: 'ctaUrl', title: 'Button link', type: 'string' }),
     bgField(),
   ],
-  preview: { select: { title: 'heading', media: 'image' }, prepare: ({ title, media }) => ({ title: title || 'Media feature', media }) },
+  preview: {
+    select: { title: 'heading', media: 'image' },
+    prepare: ({ title, media }) => ({ title: title || 'Media feature', media }),
+  },
 });
 
 export const sectionDynamicList = defineType({
@@ -534,10 +691,19 @@ export const sectionDynamicList = defineType({
       initialValue: 'featuredCourses',
       validation: (R) => R.required(),
     }),
-    defineField({ name: 'count', title: 'How many', type: 'number', initialValue: 3, validation: (R) => R.min(1).max(12) }),
+    defineField({
+      name: 'count',
+      title: 'How many',
+      type: 'number',
+      initialValue: 3,
+      validation: (R) => R.min(1).max(12),
+    }),
     bgField(),
   ],
-  preview: { select: { title: 'heading', source: 'source' }, prepare: ({ title, source }) => ({ title: title || 'Dynamic list', subtitle: source }) },
+  preview: {
+    select: { title: 'heading', source: 'source' },
+    prepare: ({ title, source }) => ({ title: title || 'Dynamic list', subtitle: source }),
+  },
 });
 
 export const sectionMediaShowcase = defineType({
@@ -631,23 +797,36 @@ export const sectionFaqList = defineType({
       title: 'Filter by category (reference)',
       type: 'reference',
       to: [{ type: 'faqCategory' }],
-      description: 'Optional. Show only FAQ items in this category. Takes priority over the plain text filter below.',
+      description:
+        'Optional. Show only FAQ items in this category. Takes priority over the plain text filter below.',
     }),
     defineField({
       name: 'categoryString',
       title: 'Filter by category (plain text)',
       type: 'string',
-      description: 'Optional. Used only when the reference above is not set. Match the exact category name, e.g. "Tuition".',
+      description:
+        'Optional. Used only when the reference above is not set. Match the exact category name, e.g. "Tuition".',
     }),
     defineField({
       name: 'limit',
       title: 'How many to show',
       type: 'number',
-      description: 'Maximum number of FAQ items to display. Leave empty to show all in the category.',
+      description:
+        'Maximum number of FAQ items to display. Leave empty to show all in the category.',
       validation: (R) => R.min(1).max(50),
     }),
-    defineField({ name: 'ctaLabel', title: 'Link label (optional)', type: 'string', description: 'Shows a text link at the bottom, e.g. "See all FAQ".' }),
-    defineField({ name: 'ctaUrl', title: 'Link URL (optional)', type: 'string', description: 'Internal path like "/faq" or a full URL.' }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Link label (optional)',
+      type: 'string',
+      description: 'Shows a text link at the bottom, e.g. "See all FAQ".',
+    }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Link URL (optional)',
+      type: 'string',
+      description: 'Internal path like "/faq" or a full URL.',
+    }),
     bgField(),
   ],
   preview: {
@@ -678,10 +857,32 @@ export const sectionResources = defineType({
           type: 'object',
           name: 'resource',
           fields: [
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required() }),
-            defineField({ name: 'description', title: 'Description', type: 'text', rows: 2, description: 'Optional. One line on what this document is.' }),
-            defineField({ name: 'file', title: 'File (upload)', type: 'file', description: 'The document to download. Takes priority over the link below.' }),
-            defineField({ name: 'url', title: 'External link (alternative)', type: 'url', description: 'Used only when no file is uploaded. A link to a document hosted elsewhere.' }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 2,
+              description: 'Optional. One line on what this document is.',
+            }),
+            defineField({
+              name: 'file',
+              title: 'File (upload)',
+              type: 'file',
+              description: 'The document to download. Takes priority over the link below.',
+            }),
+            defineField({
+              name: 'url',
+              title: 'External link (alternative)',
+              type: 'url',
+              description:
+                'Used only when no file is uploaded. A link to a document hosted elsewhere.',
+            }),
           ],
           preview: { select: { title: 'title', subtitle: 'description' } },
         }),
@@ -689,7 +890,10 @@ export const sectionResources = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Resources / downloads' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Resources / downloads' }),
+  },
 });
 
 export const sectionKeyDates = defineType({
@@ -711,12 +915,35 @@ export const sectionKeyDates = defineType({
           type: 'object',
           name: 'keyDate',
           fields: [
-            defineField({ name: 'date', title: 'Date', type: 'date', options: { dateFormat: 'MMM D, YYYY' }, validation: (R) => R.required() }),
-            defineField({ name: 'endDate', title: 'End date (optional)', type: 'date', options: { dateFormat: 'MMM D, YYYY' }, description: 'For a range, such as a term that runs several weeks.' }),
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required(), description: 'What happens on this date. Example: "Fall term begins".' }),
+            defineField({
+              name: 'date',
+              title: 'Date',
+              type: 'date',
+              options: { dateFormat: 'MMM D, YYYY' },
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'endDate',
+              title: 'End date (optional)',
+              type: 'date',
+              options: { dateFormat: 'MMM D, YYYY' },
+              description: 'For a range, such as a term that runs several weeks.',
+            }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (R) => R.required(),
+              description: 'What happens on this date. Example: "Fall term begins".',
+            }),
             defineField({ name: 'description', title: 'Description', type: 'text', rows: 2 }),
             defineField({ name: 'ctaLabel', title: 'Link label (optional)', type: 'string' }),
-            defineField({ name: 'ctaUrl', title: 'Link URL (optional)', type: 'string', description: 'Internal path like "/get-started" or a full URL.' }),
+            defineField({
+              name: 'ctaUrl',
+              title: 'Link URL (optional)',
+              type: 'string',
+              description: 'Internal path like "/get-started" or a full URL.',
+            }),
           ],
           preview: { select: { title: 'label', subtitle: 'date' } },
         }),
@@ -724,7 +951,10 @@ export const sectionKeyDates = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Key dates' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Key dates' }),
+  },
 });
 
 export const sectionPricingTiers = defineType({
@@ -737,8 +967,18 @@ export const sectionPricingTiers = defineType({
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
-    defineField({ name: 'ctaLabel', title: 'Card button label', type: 'string', description: 'The button on each tier card. Leave empty for "Express interest".' }),
-    defineField({ name: 'ctaUrl', title: 'Card button link', type: 'string', description: 'Where each tier button goes. Leave empty for "/get-started".' }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Card button label',
+      type: 'string',
+      description: 'The button on each tier card. Leave empty for "Express interest".',
+    }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Card button link',
+      type: 'string',
+      description: 'Where each tier button goes. Leave empty for "/get-started".',
+    }),
     // -------------------------------------------------------------------------
     // The two fields the Pricing page needed (2026-08-26, Phase 2).
     // -------------------------------------------------------------------------
@@ -777,7 +1017,10 @@ export const sectionPricingTiers = defineType({
     }),
     bgField(),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Tuition tiers' }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Tuition tiers' }),
+  },
 });
 
 // =============================================================================
@@ -867,8 +1110,18 @@ export const sectionLegalBody = defineType({
                 type: 'object',
                 title: 'Link',
                 fields: [
-                  { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
-                  { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false },
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (R: any) => R.uri({ allowRelative: true }),
+                  },
+                  {
+                    name: 'openInNewTab',
+                    type: 'boolean',
+                    title: 'Open in new tab',
+                    initialValue: false,
+                  },
                 ],
               },
             ],
@@ -940,12 +1193,19 @@ export const sectionNumberedCards = defineType({
     'A grid of numbered cards (01, 02, 03...), each with a title, a line of copy, and an optional button. Good for "who this is for", beliefs, or steps.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', description: 'Optional. Leave empty when the cards speak for themselves, as on the For You page.' }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      description:
+        'Optional. Leave empty when the cards speak for themselves, as on the For You page.',
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
       type: 'string',
-      description: 'Only needed if you want to link straight to this section, e.g. /about#our-beliefs. Leave empty and one is made from the heading.',
+      description:
+        'Only needed if you want to link straight to this section, e.g. /about#our-beliefs. Leave empty and one is made from the heading.',
     }),
     defineField({
       name: 'landmarkLabel',
@@ -965,8 +1225,20 @@ export const sectionNumberedCards = defineType({
           type: 'object',
           name: 'numberedCard',
           fields: [
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (R) => R.required(), description: 'Example: "The small-group leader".' }),
-            defineField({ name: 'body', title: 'Body', type: 'text', rows: 2, description: 'One line on what this card promises.' }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (R) => R.required(),
+              description: 'Example: "The small-group leader".',
+            }),
+            defineField({
+              name: 'body',
+              title: 'Body',
+              type: 'text',
+              rows: 2,
+              description: 'One line on what this card promises.',
+            }),
             defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
             defineField({
               name: 'href',
@@ -1036,12 +1308,18 @@ export const sectionScholarship = defineType({
     'One important thing said plainly, on the warm paper surface. Used by the Pricing page for the scholarship promise.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headline',
+      title: 'Headline',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
       type: 'string',
-      description: 'Only needed if you want to link straight to this section, e.g. /pricing#scholarships.',
+      description:
+        'Only needed if you want to link straight to this section, e.g. /pricing#scholarships.',
     }),
     defineField({ name: 'body', title: 'Body', type: 'text', rows: 4 }),
     defineField({
@@ -1097,14 +1375,26 @@ export const sectionLedgerStats = defineType({
           type: 'object',
           name: 'ledgerStat',
           fields: [
-            defineField({ name: 'value', title: 'Value', type: 'string', validation: (R) => R.required(), description: 'Free text, so "Free", "Per course" and "9" all work.' }),
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'value',
+              title: 'Value',
+              type: 'string',
+              validation: (R) => R.required(),
+              description: 'Free text, so "Free", "Per course" and "9" all work.',
+            }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (R) => R.required(),
+            }),
             defineField({
               name: 'count',
               title: 'Count up to this number',
               type: 'boolean',
               initialValue: false,
-              description: 'Animates from zero when the band scrolls into view. Only for plain numbers, never for a year.',
+              description:
+                'Animates from zero when the band scrolls into view. Only for plain numbers, never for a year.',
             }),
           ],
           preview: { select: { title: 'value', subtitle: 'label' } },
@@ -1116,7 +1406,8 @@ export const sectionLedgerStats = defineType({
       name: 'variant',
       title: 'Layout',
       type: 'string',
-      description: 'How the cells are divided. Both are brand-locked; pick the one that matches the page.',
+      description:
+        'How the cells are divided. Both are brand-locked; pick the one that matches the page.',
       options: {
         list: [
           { title: 'Three across (Pricing)', value: 'trio' },
@@ -1183,7 +1474,12 @@ export const sectionEditorialColumns = defineType({
           type: 'object',
           name: 'editorialColumn',
           fields: [
-            defineField({ name: 'eyebrow', title: 'Label', type: 'string', description: 'The small gold line above, e.g. "Our mission".' }),
+            defineField({
+              name: 'eyebrow',
+              title: 'Label',
+              type: 'string',
+              description: 'The small gold line above, e.g. "Our mission".',
+            }),
             defineField({
               name: 'heading',
               title: 'Heading / statement',
@@ -1226,8 +1522,18 @@ export const sectionInlineBand = defineType({
     'A thin ruled strip: a line of copy on the left, one button on the right. Used on the About page to point at the faculty.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'headline', title: 'Headline', type: 'string', validation: (R) => R.required() }),
-    defineField({ name: 'ctaLabel', title: 'Button label', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'headline',
+      title: 'Headline',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Button label',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'ctaUrl',
       title: 'Button link',
@@ -1302,12 +1608,18 @@ export const sectionEventGrid = defineType({
     'Cards for every upcoming one-time event: info sessions, lectures, term starts. Past events drop off by themselves.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
       type: 'string',
-      description: 'Only needed to link straight to this section. Leave empty for "upcoming-heading".',
+      description:
+        'Only needed to link straight to this section. Leave empty for "upcoming-heading".',
     }),
     defineField({
       name: 'emptyCopy',
@@ -1339,12 +1651,18 @@ export const sectionRuledList = defineType({
     'A ruled list of the things that happen on a repeating schedule: the monthly info session, the lecture series, visiting a class.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
       type: 'string',
-      description: 'Only needed to link straight to this section. Leave empty for "recurring-heading".',
+      description:
+        'Only needed to link straight to this section. Leave empty for "recurring-heading".',
     }),
   ],
   preview: {
@@ -1377,7 +1695,12 @@ export const sectionContactDetails = defineType({
       initialValue: 'Contact details',
       validation: (R) => R.required(),
     }),
-    defineField({ name: 'whoToReachLabel', title: '"Who to reach" label', type: 'string', initialValue: 'Who to reach' }),
+    defineField({
+      name: 'whoToReachLabel',
+      title: '"Who to reach" label',
+      type: 'string',
+      initialValue: 'Who to reach',
+    }),
     defineField({
       name: 'reasons',
       title: 'Who to reach, row by row',
@@ -1389,15 +1712,39 @@ export const sectionContactDetails = defineType({
           type: 'object',
           name: 'contactReason',
           fields: [
-            defineField({ name: 'label', title: 'Reason', type: 'string', validation: (R) => R.required(), description: 'Example: "Courses and enrollment".' }),
-            defineField({ name: 'value', title: 'Link text', type: 'string', validation: (R) => R.required(), description: 'What the link says: an email address, or a phrase like "Request information".' }),
-            defineField({ name: 'href', title: 'Link', type: 'string', validation: (R) => R.required(), description: 'An internal path like "/pricing", or "mailto:someone@example.org".' }),
+            defineField({
+              name: 'label',
+              title: 'Reason',
+              type: 'string',
+              validation: (R) => R.required(),
+              description: 'Example: "Courses and enrollment".',
+            }),
+            defineField({
+              name: 'value',
+              title: 'Link text',
+              type: 'string',
+              validation: (R) => R.required(),
+              description:
+                'What the link says: an email address, or a phrase like "Request information".',
+            }),
+            defineField({
+              name: 'href',
+              title: 'Link',
+              type: 'string',
+              validation: (R) => R.required(),
+              description: 'An internal path like "/pricing", or "mailto:someone@example.org".',
+            }),
           ],
           preview: { select: { title: 'label', subtitle: 'value' } },
         }),
       ],
     }),
-    defineField({ name: 'gettingHereLabel', title: '"Getting here" label', type: 'string', initialValue: 'Getting here' }),
+    defineField({
+      name: 'gettingHereLabel',
+      title: '"Getting here" label',
+      type: 'string',
+      initialValue: 'Getting here',
+    }),
     defineField({ name: 'gettingHereBody', title: 'Getting here', type: 'text', rows: 3 }),
     defineField({
       name: 'mapTitle',
@@ -1431,7 +1778,12 @@ export const sectionRequestPanel = defineType({
     'The express-interest form beside a panel offering a free intro call, a class visit, and a syllabus. Used by the Get Started page.',
   fields: [
     defineField({ name: 'requestEyebrow', title: 'Form eyebrow', type: 'string' }),
-    defineField({ name: 'requestHeadline', title: 'Form heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'requestHeadline',
+      title: 'Form heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({ name: 'requestBody', title: 'Form intro', type: 'text', rows: 2 }),
     defineField({
       name: 'form',
@@ -1503,7 +1855,8 @@ export const sectionCourseRail = defineType({
       name: 'source',
       title: 'Which courses',
       type: 'string',
-      description: 'Where the cards come from. Set the flags on the courses themselves in the catalog.',
+      description:
+        'Where the cards come from. Set the flags on the courses themselves in the catalog.',
       options: {
         list: [
           { title: 'Courses marked "Start here"', value: 'startHere' },
@@ -1530,7 +1883,12 @@ export const sectionCourseRail = defineType({
       validation: (R) => R.required(),
     }),
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
@@ -1548,7 +1906,8 @@ export const sectionCourseRail = defineType({
       name: 'linkLabel',
       title: '"See all" link text',
       type: 'string',
-      description: 'Shown in the header of the catalog-preview style only. Leave empty for no link.',
+      description:
+        'Shown in the header of the catalog-preview style only. Leave empty for no link.',
       hidden: ({ parent }) => parent?.variant !== 'feature',
     }),
     defineField({
@@ -1579,7 +1938,9 @@ export const sectionCourseRail = defineType({
     select: { title: 'heading', subtitle: 'eyebrow', source: 'source' },
     prepare: ({ title, subtitle, source }) => ({
       title: title || 'Course rail',
-      subtitle: [subtitle, source === 'featured' ? 'Featured courses' : 'Start here'].filter(Boolean).join(' - '),
+      subtitle: [subtitle, source === 'featured' ? 'Featured courses' : 'Start here']
+        .filter(Boolean)
+        .join(' - '),
     }),
   },
 });
@@ -1632,7 +1993,12 @@ export const sectionFacultyRail = defineType({
     'A row of teacher cards pulled straight from the faculty roster, on the warm surface, with a link out to the full roster.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
@@ -1647,8 +2013,18 @@ export const sectionFacultyRail = defineType({
       description: 'Leave empty for three, which fills the row.',
       validation: (R) => R.min(1).integer(),
     }),
-    defineField({ name: 'linkLabel', title: '"See all" link text', type: 'string', description: 'Leave empty for no link.' }),
-    defineField({ name: 'linkHref', title: '"See all" link', type: 'string', description: 'Where that link goes, usually "/faculty".' }),
+    defineField({
+      name: 'linkLabel',
+      title: '"See all" link text',
+      type: 'string',
+      description: 'Leave empty for no link.',
+    }),
+    defineField({
+      name: 'linkHref',
+      title: '"See all" link',
+      type: 'string',
+      description: 'Where that link goes, usually "/faculty".',
+    }),
   ],
   preview: {
     select: { title: 'heading', subtitle: 'eyebrow' },
@@ -1671,12 +2047,18 @@ export const sectionTestimonialRail = defineType({
     'The quotes marked "Featured", set three across under a gold rule. Edit the quotes themselves in the Testimonials collection.',
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
-    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (R) => R.required() }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'headingId',
       title: 'Anchor id (optional)',
       type: 'string',
-      description: 'Only needed to link straight to this section. Leave empty for "testimonial-rail".',
+      description:
+        'Only needed to link straight to this section. Leave empty for "testimonial-rail".',
     }),
     defineField({
       name: 'limit',
@@ -1898,10 +2280,23 @@ export const FLEXIBLE_SECTIONS_DESCRIPTION =
 /**
  * Ready-made array `options` for every flexibleSections field: the grouped,
  * searchable "+ Add" menu. Spread or assign as the array field's `options`.
+ *
+ * THE GRID VIEW (2026-08-28). `views` adds a picture mode beside the list, so
+ * an editor chooses a section by LOOK rather than by name. Each tile asks for
+ * /studio-thumbs/<sectionType>.jpg, which are real screenshots of this site's
+ * own sections, generated from the built pages by scripts/studio-thumbs.mjs
+ * (`npm run build && npm run studio-thumbs`). A type with no example on the
+ * site gets a branded placeholder, so a tile is never a broken image. The list
+ * view stays available and stays the default fallback for anyone who prefers
+ * names.
  */
 export const FLEXIBLE_SECTIONS_OPTIONS = {
   insertMenu: {
     filter: true,
+    views: [
+      { name: 'grid' as const, previewImageUrl: (name: string) => `/studio-thumbs/${name}.jpg` },
+      { name: 'list' as const },
+    ],
     groups: INSERT_MENU_GROUPS,
   },
 };

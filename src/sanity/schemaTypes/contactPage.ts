@@ -15,6 +15,7 @@ import {
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const contactPage = defineType({
   name: 'contactPage',
@@ -28,6 +29,7 @@ export const contactPage = defineType({
     { name: 'content', title: 'Page copy' },
     { name: 'sections', title: 'Page sections' },
     // removed empty interior-designer scheduling group during church remodel
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // ---- Search & sharing (shared definition: ./seo.ts) ----
@@ -145,6 +147,7 @@ export const contactPage = defineType({
 
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
+    publishAtField(),
   ],
   preview: { prepare: () => ({ title: 'Contact Page' }) },
 });

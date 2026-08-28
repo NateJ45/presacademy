@@ -40,6 +40,7 @@ import {
   TagIcon,
   TrashIcon,
   CommentIcon,
+  BlockElementIcon,
 } from '@sanity/icons';
 
 const API_VERSION = '2025-01-01';
@@ -86,6 +87,8 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'teachingArea',
   'pricingTier',
   'testimonial',
+  // Saved sections (placed under Pages below).
+  'sectionPreset',
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
   'media.tag',
@@ -95,12 +98,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
  * A singleton desk item: one document, form view only. The static site has no
  * live draft preview, so we do NOT attach an iframe "Preview" view.
  */
-function singleton(
-  S: StructureBuilder,
-  schemaType: string,
-  title: string,
-  icon: any,
-) {
+function singleton(S: StructureBuilder, schemaType: string, title: string, icon: any) {
   return S.listItem()
     .title(title)
     .id(schemaType)
@@ -230,6 +228,15 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
 
               // Custom pages (collection): build new pages at /<slug> with blocks.
               collection(S, 'page', 'Custom Pages', DocumentTextIcon),
+
+              S.divider(),
+
+              // Saved sections: bands kept from one page, ready to drop on
+              // another. They sit under Pages because that is the only place
+              // they are ever used. Made with "Save a section as preset..." in a
+              // page's publish menu; added from the Saved sections group beside
+              // the live preview.
+              collection(S, 'sectionPreset', 'Saved Sections', BlockElementIcon),
             ]),
         ),
 
@@ -330,5 +337,7 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
 
       // Safety net: surface any document type we have NOT explicitly placed above
       // (and keep the hidden set, including media.tag, out of the desk root).
-      ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_DEFAULT.has(item.getId() as string)),
+      ...S.documentTypeListItems().filter(
+        (item) => !HIDDEN_FROM_DEFAULT.has(item.getId() as string),
+      ),
     ]);

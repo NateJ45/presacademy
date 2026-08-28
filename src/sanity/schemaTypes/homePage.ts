@@ -24,6 +24,7 @@ import {
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const homePage = defineType({
   name: 'homePage',
@@ -36,6 +37,7 @@ export const homePage = defineType({
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
     SEO_GROUP,
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // ---- Hero ----
@@ -153,6 +155,7 @@ export const homePage = defineType({
 
     // ---- Search & sharing (shared definition: ./seo.ts) ----
     ...seoFields({ group: 'seo' }),
+    publishAtField(),
   ],
   preview: { prepare: () => ({ title: 'Home Page' }) },
 });

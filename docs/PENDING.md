@@ -10,6 +10,31 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Wire a deploy webhook so publishing rebuilds the site** (2026-08-28,
+  opened with PORTS.md card 20). Nothing in this repo rebuilds the public
+  site when a document is published: `.github/workflows/` has CI, a
+  staging deploy on push to `staging`, backup and uptime, and now
+  `publish-due.yml`. Production is `npm run deploy`, by hand. That was
+  survivable while every publish had a human beside it, but scheduled
+  publishing makes the gap visible: a page can publish itself at 6am and
+  still not be on the website. The Studio guide "Schedule a page to
+  publish itself" says so out loud rather than promising something the
+  repo cannot keep. The fix is a Sanity webhook (Project → API → Webhooks)
+  pointed at a `repository_dispatch` workflow that runs the same steps as
+  `deploy-staging.yml` against the production Worker. Worth debouncing so
+  a burst of edits does not queue a dozen builds. Note the existing
+  "Start here" guide already tells editors the site "rebuilds itself",
+  so today that sentence is aspirational too.
+- **Set the `SANITY_AUTH_TOKEN` repo secret, or comment the
+  `publish-due.yml` schedule back out** (2026-08-28). The new workflow
+  runs at `*/30` with the house two-job gate, so with the secret missing
+  it warns and skips 48 times a day, which is the same small waste that
+  got `sanity-backup.yml` and `uptime.yml` disabled in 2026-07. Scheduled
+  publishing is inert either way until the secret exists, and it must be
+  a WRITE token here (Editor permission), not the read token the backup
+  workflow wants. Pick one: set the secret, or comment out the two
+  `schedule:` lines until you do.
+
 - **Set the `SANITY_TOKEN` Worker secret before the next deploy.** The new
   SSR preview routes read it at request time. Locally it lives in
   `.dev.vars` (gitignored, already written). In production:

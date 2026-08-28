@@ -155,6 +155,49 @@ All GROQ queries live in `src/lib/queries.ts`. Each page has a typed query funct
 
 **Vision/GROQ plugin gating.** The `visionTool()` plugin (the in-Studio GROQ query runner) is conditionally registered only when `process.env.NODE_ENV !== 'production'`. The Vision tab appears in local dev Studio but does not clutter the hosted editor.
 
+### Publishing confidence + the section palette (2026-08-28, PORTS.md cards 19/20/24/25)
+
+Four Studio capabilities ported from `ncs-astro-sanity-starter`. The files carrying the
+`PORTABLE: canonical copy` marker on their first line are byte-identical to the starter's
+copies and must not be edited here; `node scripts/sync-check.mjs` proves it. Everything
+repo-specific lives in `src/sanity/pageBuilderConfig.ts`, which is the ONE file to edit
+when a section type, a route, or a builder field name changes.
+
+- **Share a draft** (`src/sanity/components/shareDraftLink.tsx`). "Copy share link" in a
+  page's publish menu and a share button on each row of the preview page list. It mints a
+  Presentation preview secret and hands back a `/api/draft-mode/enable?...` URL, so an
+  outside reviewer reads the draft with no Sanity login. The secret's TTL is a hard-coded
+  hour inside `@sanity/preview-url-secret` and cannot be widened, and every surface says
+  so. Offered only for the types in `SHAREABLE_TYPES` (`sanity.config.ts`): the ones with
+  a real `/preview/*` route. Share links need HTTPS, so test them deployed.
+- **Publish later** (`src/sanity/schemaTypes/_publishAt.ts`, `scripts/publish-due.mjs`,
+  `.github/workflows/publish-due.yml`). A "Publishing" tab with one datetime field; a
+  dependency-free script publishes anything due every half hour. `PUBLISH_AT_GROUP` and
+  `publishAtField()` are spread TOGETHER into a type's `groups` and `fields`, always: a
+  field naming a group its type never declared is a fatal Studio 6.4 runtime error. It is
+  on `page` and on every page singleton that has a `groups` array; `eventsPage` is
+  deliberately group-less, so it is skipped. NOTE: this publishes the DOCUMENT. The public
+  site is a static build deployed by hand, so a scheduled page reaches the website at the
+  next build (see `docs/PENDING.md`).
+- **Saved sections** (`src/sanity/schemaTypes/sectionPreset.ts`,
+  `src/sanity/actions/saveSectionPreset.tsx`, `addSectionToPage` in
+  `src/sanity/pageOps.ts`). "Save a section as preset..." captures one band of a page as a
+  `sectionPreset` document; the "Saved sections" group under the preview page list adds a
+  COPY of it to the draft of whichever page the preview is showing, at the bottom.
+- **Check this page** (`src/lib/page-checks.ts` + its tests,
+  `src/sanity/actions/checkPage.tsx`). A courtesy read-through for missing alt text, empty
+  sections, and links to addresses no page owns. It never blocks publish and never edits.
+
+**Insert-menu thumbnails.** `FLEXIBLE_SECTIONS_OPTIONS` in `blocks.ts` adds a grid view to
+the "+ Add section" picker, each tile loading `/studio-thumbs/<sectionType>.jpg`.
+Regenerate those images with `npm run build && npm run studio-thumbs`
+(`scripts/studio-thumbs.mjs`). They are screenshots of this site's own built pages, so
+re-run after a design change or a new section type. This renderer stamps no per-section
+attribute on the live HTML (page-parity holds it byte-identical), so the script locates a
+section by its POSITION among `main`'s children, verified against text it fetched from
+Sanity. A type with no example anywhere on the site gets a branded placeholder. The whole
+folder is about 200 KB at 600px / JPEG quality 80.
+
 ### Auto-populated lists
 
 Several pages pull their content from collections automatically:

@@ -18,6 +18,7 @@ import {
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const accessibilityPage = defineType({
   name: 'accessibilityPage',
@@ -29,6 +30,7 @@ export const accessibilityPage = defineType({
     SEO_GROUP,
     { name: 'hero', title: 'Hero' },
     { name: 'sections', title: 'Page sections' },
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // SEO
@@ -93,6 +95,7 @@ export const accessibilityPage = defineType({
 
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
+    publishAtField(),
   ],
   preview: { prepare: () => ({ title: 'Accessibility Page' }) },
 });

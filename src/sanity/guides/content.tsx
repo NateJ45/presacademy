@@ -397,6 +397,191 @@ export const guides: Guide[] = [
   },
 
   {
+    slug: 'share-a-draft',
+    category: 'Website pages & menus',
+    title: 'Show someone a draft',
+    icon: '🔗',
+    lead: 'Send a page to somebody for a read before it goes live, without publishing it and without giving them a Studio login.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Preview', 'the page list on the left', 'the share button'],
+        link: { tool: 'presentation' },
+      },
+      {
+        kind: 'p',
+        text: 'You have rewritten a page and you want one person to read it first. You do not want to publish it, and you do not want to set them up with an account. A **share link** is the answer: a web address that shows your current draft to anyone who opens it, with no login at all.',
+      },
+      { kind: 'h', text: 'Make one' },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Preview** (the eye icon at the top) and find the page in the list on the left.',
+          'Click the small share button beside it. The link is copied to your clipboard right away.',
+          'Paste it into an email or a text message.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'The same thing lives in the arrow beside the `Publish` button when you have a page open, as **Copy share link**. Use whichever you are already looking at.',
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'A share link works for about an hour',
+        text: 'After that it stops working and whoever has it sees an error page. That is deliberate: a link that lasted forever would be a permanent private door into your unpublished writing. If somebody comes back to you the next day, click the share button again and send them a fresh one. It takes a second.',
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'What they see',
+        text: 'They see the page exactly as it stands right now, including edits you have not published. They cannot change anything, and they cannot reach any other part of the Studio. Send it to people you would have read the page over your shoulder.',
+      },
+      {
+        kind: 'seealso',
+        items: ['Schedule a page to publish itself', 'Check a page before you publish it'],
+      },
+    ],
+  },
+
+  {
+    slug: 'schedule-a-publish',
+    category: 'Website pages & menus',
+    title: 'Schedule a page to publish itself',
+    icon: '⏰',
+    lead: 'Write it now, have it go live at a time you choose, without being at your computer.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['any page', 'the Publishing tab', 'Publish automatically at'],
+      },
+      {
+        kind: 'p',
+        text: 'Every page has a **Publishing** tab with one field in it: **Publish automatically at**. Set a date and time, leave the page as a draft, and it publishes itself.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page and write it as usual. Do NOT click `Publish`.',
+          'Open the **Publishing** tab and set **Publish automatically at** to the date and time you want.',
+          'Leave the page. Your work is saved as a draft, as always.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'The time is your own local time',
+        text: 'Pick 9:00 AM and you get 9:00 AM your morning. The check runs every half hour, so treat it as "some time in that half hour", not to the second.',
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Publishing and appearing are two steps',
+        text: 'At the time you set, the page publishes here in the Studio. It appears on the website at the next site rebuild, the same as anything else you publish. So schedule it a comfortable margin ahead of when it needs to be readable, not at the exact minute.',
+      },
+      {
+        kind: 'p',
+        text: 'Changed your mind? Clear the field before the time arrives and nothing happens. Want it out now instead? Just click `Publish` as usual; the schedule is dropped on the way through, so it cannot publish itself again later.',
+      },
+      { kind: 'seealso', items: ['Show someone a draft', 'Check a page before you publish it'] },
+    ],
+  },
+
+  {
+    slug: 'saved-sections',
+    category: 'Website pages & menus',
+    title: 'Save a section and reuse it',
+    icon: '📌',
+    lead: 'Keep a band you got right, then drop a copy of it onto any other page.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['a page', 'the arrow beside Publish', 'Save a section as preset'],
+      },
+      {
+        kind: 'p',
+        text: 'You spent twenty minutes getting a "Request information" band exactly right and you want the same band on three more pages. Save it once, add it wherever you like.',
+      },
+      { kind: 'h', text: 'Save one' },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page that has the section on it.',
+          'Click the small arrow beside `Publish`, then **Save a section as preset...**',
+          'Pick the section from the list. They are numbered the same way they are on the page.',
+          'Give it a name you will recognise later, then **Save section**.',
+        ],
+      },
+      { kind: 'h', text: 'Add it to another page' },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Preview** (the eye icon at the top) and click the page you want it on.',
+          'At the bottom of the page list, open **Saved sections**.',
+          'Click the `+` beside the one you want. It lands at the bottom of that page as a draft.',
+          'Drag it up to where it belongs, change whatever is different, then `Publish`.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'It is a copy, not a link',
+        text: 'Changing the saved section later never changes the pages you already added it to, and changing one of those pages never changes the saved section. So you can adjust the wording page by page without breaking anything.',
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'Where they live',
+        text: 'Under **Pages**, at the bottom, as **Saved Sections**. Open one there to rename it, edit it, or throw it away. They are a tool for you, not part of the website, so nothing you do to them appears to visitors.',
+      },
+      { kind: 'seealso', items: ['Add & arrange sections', 'Copy, archive & restore a page'] },
+    ],
+  },
+
+  {
+    slug: 'check-a-page',
+    category: 'Website pages & menus',
+    title: 'Check a page before you publish it',
+    icon: '🔎',
+    lead: 'A quick second pair of eyes: missing photo descriptions, sections with nothing in them, and links that go nowhere.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['a page', 'the arrow beside Publish', 'Check this page'],
+      },
+      {
+        kind: 'p',
+        text: 'Click the small arrow beside `Publish` and choose **Check this page...**. It reads the page as it stands, including edits you have not published, and tells you what it noticed.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Photos without a description**: alt text is the sentence a screen reader says out loud, and what shows if a photo fails to load.',
+          '**Sections with nothing in them**: a section you added and never filled in, which would show up blank.',
+          '**Links worth a look**: a link to an address on our own site that no page seems to live at.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'It never stops you publishing',
+        text: 'Nothing here blocks the `Publish` button and nothing gets changed for you. Every line is a suggestion. A page can be perfectly fine and still be listed, so read it, use your judgement, and publish when you are happy.',
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'It can be wrong, in both directions',
+        text: 'Some photos are pure decoration and genuinely need no description. Sections that fill themselves from a list (courses, faculty, events, FAQs) are skipped, because their words live in that list and not on the page. And the link check only compares the first part of an address, so a link it flags is a question, not a verdict.',
+      },
+      { kind: 'seealso', items: ['Photos & images', 'Show someone a draft'] },
+    ],
+  },
+
+  {
     slug: 'sections',
     category: 'Website pages & menus',
     title: 'Add & arrange sections',

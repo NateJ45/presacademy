@@ -6,6 +6,7 @@
 import { defineType, defineField } from 'sanity';
 import { archivedField } from './archived';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { SEO_GROUP, seoFields } from './seo';
 
 export const page = defineType({
@@ -17,6 +18,7 @@ export const page = defineType({
     { name: 'hero', title: 'Hero' },
     { name: 'content', title: 'Sections' },
     SEO_GROUP,
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
@@ -65,6 +67,7 @@ export const page = defineType({
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
     ...seoFields({ group: 'seo' }),
+    publishAtField(),
   ],
   preview: {
     select: { title: 'title', slug: 'slug.current' },

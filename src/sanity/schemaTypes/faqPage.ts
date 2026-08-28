@@ -13,6 +13,7 @@ import {
   FLEXIBLE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const faqPage = defineType({
   name: 'faqPage',
@@ -25,6 +26,7 @@ export const faqPage = defineType({
     { name: 'hero', title: 'Hero' },
     { name: 'sections', title: 'Page sections' },
     { name: 'final', title: 'Final CTA' },
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // ---- Search & sharing (shared definition: ./seo.ts) ----
@@ -156,6 +158,7 @@ export const faqPage = defineType({
 
       options: FLEXIBLE_SECTIONS_OPTIONS,
     }),
+    publishAtField(),
   ],
   preview: { prepare: () => ({ title: 'FAQ Page' }) },
 });

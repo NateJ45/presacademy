@@ -1,0 +1,85 @@
+name: Publish scheduled drafts
+
+# Free-tier scheduled publishing. Sanity's own Scheduled Drafts needs the Growth
+# plan, so instead: an editor sets "Publish automatically at" on a draft in the
+# Studio, and this job publishes it once the time has passed.
+# See scripts/publish-due.mjs and src/sanity/schemaTypes/_publishAt.ts.
+#
+# ── WHY THIS JOB DOES NOT RUN `npm ci` ───────────────────────────────────────
+# At */30 this runs 48 times a day. Installing the full dependency tree each
+# time would burn a few minutes of Actions time per run in order to make three
+# HTTP calls. publish-due.mjs is therefore dependency-free: it uses global fetch
+# against Sanity's HTTP API, so the job is checkout + setup-node + node, a few
+# seconds. Do NOT add an install step here; if the script ever needs a package,
+# that is the signal that the design broke, not that the job needs npm.
+#
+# ── WHAT "PUBLISHED" MEANS ON A STATIC SITE ──────────────────────────────────
+# This publishes the DOCUMENT in Sanity. The public site is a static build
+# (astro output: 'static') deployed by hand with `npm run deploy`, and there is
+# no deploy webhook on publish anywhere in this repo. So a page this job
+# publishes is live in the Studio within the half hour, and reaches the website
+# at the next site build. The field description in the Studio and the "Schedule
+# a page to publish itself" guide both say so, and docs/PENDING.md carries the
+# recommendation to wire a Sanity webhook -> deploy so the two agree.
+#
+# ── SETUP, per this repo's house pattern (see sanity-backup.yml) ─────────────
+#   1. Set the SANITY_AUTH_TOKEN repo secret. It must be a WRITE token here
+#      (unlike the backup workflow, where a read token is enough): create it at
+#      sanity.io/manage -> API -> Tokens with Editor permission.
+#   2. Nothing else. The project id is this project's own and is not a secret
+#      (it ships in the client bundle), so it is written in below exactly as
+#      sanity-backup.yml writes it.
+#
+# The two-job gate is the load-bearing part: with the secret missing, the
+# workflow logs a warning and skips rather than failing. workflow_dispatch stays
+# on, so a manual run always works.
+#
+# ── HONEST TIMING ────────────────────────────────────────────────────────────
+# */30 means "within about half an hour of the time the editor picked", and the
+# field description in the Studio says exactly that. GitHub's scheduler is also
+# best-effort and can be delayed under load, so treat this as a soft promise.
+on:
+  schedule:
+    - cron: '*/30 * * * *' # every half hour
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SANITY_AUTH_TOKEN not set; skipping scheduled publishing. See docs/agent/ci-cd-and-ops.md."
+          fi
+
+  publish:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No install step on purpose. See the header.
+      - name: Publish anything whose time has come
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          # This project's PUBLIC Sanity id (not a secret; it ships in the
+          # client bundle), written in the same way sanity-backup.yml does.
+          SANITY_PROJECT_ID: uz2sl3zp
+          SANITY_DATASET: production
+        # --apply is what turns the script from a dry run into a publish. The
+        # script defaults to dry-run precisely so that a human running it by
+        # hand cannot publish by accident.
+        run: node scripts/publish-due.mjs --apply
