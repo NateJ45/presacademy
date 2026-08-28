@@ -36,14 +36,14 @@
     "@portabletext/react": "^6.2.0",
     "@portabletext/types": "^4.0.2",
     "@sanity/astro": "3.4.2",
-    "@sanity/client": "7.26.2",
+    "@sanity/client": "7.23.0",
     "@sanity/icons": "^3.8.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/orderable-document-list": "2.0.9",
     "@sanity/preview-url-secret": "4.0.8",
     "@sanity/ui": "3.3.5",
     "@sanity/vision": "6.4.0",
-    "@sanity/visual-editing": "5.7.3",
+    "@sanity/visual-editing": "5.4.5",
     "@tabler/icons-react": "^3.44.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
@@ -84,6 +84,6 @@
   },
   "overrides": {
     "sanity-plugin-utils": "2.0.6",
-    "@sanity/visual-editing": "5.7.3"
+    "@sanity/visual-editing": "5.4.5"
   }
 }
