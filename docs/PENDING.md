@@ -10,6 +10,18 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Click-through the two Presentation fixes in the DEPLOYED Studio**
+  (2026-08-28). Both were reported live and neither can be reproduced
+  locally, so both need your eyes once staging is up. (1) The section
+  **🎨 handle** now opens a labelled "Section style" card instead of a bare
+  column of dots: open it, move the mouse down onto the rows, and it should
+  stay put until you press ✕, Escape, or click the page. Picking a colour
+  should recolour the band immediately and keep the card open so you can
+  set the accent too. (2) Clicking a page in the left-hand page list should
+  move the preview on the FIRST click. If it still bounces, the retry now
+  fires automatically, so what you should see is a brief flicker back and
+  then the right page, never a second click. If either is still wrong, say
+  which of the two and what you saw.
 - **Wire a deploy webhook so publishing rebuilds the site** (2026-08-28,
   opened with PORTS.md card 20). Nothing in this repo rebuilds the public
   site when a document is published: `.github/workflows/` has CI, a

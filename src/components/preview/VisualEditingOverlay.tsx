@@ -10,18 +10,45 @@ import { inCanvasControls } from './overlay/index.ts';
 // change while the page never did. An MPA adapter instead: any push/replace to
 // a different URL is a REAL load. Module-level so the overlay never
 // resubscribes on re-render. (Ported from the WCP site, 2026-08-25.)
+//
+// TWO NOTES ON THE HOST, both read out of the pinned sources (2026-08-28):
+//
+//  - `subscribe` REPORTS. The host's History.tsx posts whatever we hand the
+//    callback as `visual-editing/navigate`, and Presentation treats a reported
+//    url that differs from its own bookkeeping as "the frame moved here" and
+//    rewrites `params.preview` to match. So this report is not decorative: it is
+//    the frame's authoritative statement of where it is, and it must be exact.
+//  - Presentation DROPS a navigation asked for while its overlay channel is not
+//    connected, while still recording the target as though it had been made.
+//    Nothing in the frame can recover that; the Studio side has to ask again.
+//    See src/lib/preview-navigation.ts, which is where that retry lives.
+//
+const locationNow = () => window.location.pathname + window.location.search;
+
 const mpaHistory: HistoryAdapter = {
   subscribe: (navigate) => {
-    navigate({ type: 'replace', url: window.location.pathname + window.location.search });
+    navigate({ type: 'replace', url: locationNow() });
     return () => {};
   },
   update: (update) => {
-    const current = window.location.pathname + window.location.search;
-    if (update.type === 'push' || update.type === 'replace') {
-      if (update.url !== current) window.location.assign(update.url);
-    } else if (update.type === 'pop') {
+    if (update.type === 'pop') {
       window.history.back();
+      return;
     }
+    if (update.type !== 'push' && update.type !== 'replace') return;
+    // Compare like for like. Presentation normally sends a root-relative path,
+    // but it sends an absolute URL when its param holds one, and a bare string
+    // comparison against pathname+search would then load the page we are on.
+    let next = update.url;
+    try {
+      const target = new URL(update.url, window.location.href);
+      if (target.origin !== window.location.origin) return;
+      next = target.pathname + target.search;
+    } catch {
+      // Not parseable as a URL at all: fall through and compare the raw string.
+    }
+    if (next === locationNow()) return;
+    window.location.assign(update.url);
   },
 };
 

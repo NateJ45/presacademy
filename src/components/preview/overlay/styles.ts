@@ -53,18 +53,108 @@ export const bar: CSSProperties = {
 };
 
 /**
- * The strip that hangs off the SURFACE HANDLE. The handle is a 28px square, so
- * a strip inside its corner would be a strip inside a 28px box: this one hangs
- * just below it and grows leftwards from the handle's right edge, which keeps
- * it on screen because the handle itself is pinned to the section's top-right.
- * The percentage max-width of `bar` would resolve against those 28px, so this
- * one is bounded by the viewport instead.
+ * The ANCHOR the surface panel hangs from. The handle is a 28px square pinned to
+ * the section's top-right, so the panel drops from its bottom edge and grows
+ * leftwards, which keeps it on screen.
+ *
+ * FLUSH, WITH NO DEAD GAP (2026-08-28). The visible card is offset from the
+ * handle by `paddingTop` on THIS box rather than by `top: calc(100% + 6px)`, so
+ * the six pixels between handle and card belong to the overlay too. Pointer
+ * events on this element are `all` (it is rendered through the host's
+ * `PointerEvents`), which is what makes the host treat a pointer crossing that
+ * strip as "still on overlay chrome" — see the deferred-leave branch of
+ * `mouseleave` in the host's controller.ts, which only defers when
+ * `findOverlayElement(relatedTarget)` finds an overlay ancestor.
  */
-export const handleBar: CSSProperties = {
-  ...barBase,
+export const handleAnchor: CSSProperties = {
+  position: 'absolute',
   right: 0,
-  top: 'calc(100% + 6px)',
-  maxWidth: 'min(78vw, 480px)',
+  top: '100%',
+  paddingTop: '6px',
+  zIndex: 3,
+};
+
+/** The surface panel itself: a small labelled card, not a bare row of dots. */
+export const panel: CSSProperties = {
+  width: '208px',
+  maxWidth: 'calc(100vw - 24px)',
+  borderRadius: '10px',
+  background: TOOL.paper,
+  border: `1px solid ${TOOL.line}`,
+  boxShadow: TOOL.shadow,
+  font: `400 13px/1.4 ${TOOL.font}`,
+  color: TOOL.ink,
+  textAlign: 'left',
+  overflow: 'hidden',
+};
+
+/** The panel's title bar: what this is, and the way out of it. */
+export const panelHead: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '8px',
+  padding: '8px 8px 8px 10px',
+  borderBottom: `1px solid ${TOOL.line}`,
+};
+
+/** The ✕. Square, quiet, and big enough to hit. */
+export const closeButton: CSSProperties = {
+  appearance: 'none',
+  border: '1px solid transparent',
+  background: 'transparent',
+  color: TOOL.muted,
+  borderRadius: '6px',
+  width: '22px',
+  height: '22px',
+  lineHeight: 1,
+  padding: 0,
+  cursor: 'pointer',
+  font: `600 13px/1 ${TOOL.font}`,
+  flex: '0 0 auto',
+};
+
+/** One choice: a colour dot, its name, and a tick when it is the current one. */
+export function optionRow(selected: boolean, hovered: boolean): CSSProperties {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '5px 10px',
+    appearance: 'none',
+    border: 'none',
+    borderLeft: `2px solid ${selected ? TOOL.ink : 'transparent'}`,
+    background: hovered ? 'rgba(31, 27, 24, 0.06)' : 'transparent',
+    color: TOOL.ink,
+    font: `${selected ? 600 : 400} 13px/1.3 ${TOOL.font}`,
+    textAlign: 'left',
+    cursor: 'pointer',
+  };
+}
+
+/** The dot inside an option row. Same split-fill idea as the Studio swatch. */
+export function optionDot(background: string, size = 16): CSSProperties {
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+    borderRadius: '999px',
+    border: `1px solid ${TOOL.line}`,
+    background,
+    flex: '0 0 auto',
+  };
+}
+
+/** The little uppercase heading over a group of rows inside the panel. */
+export const groupLabel: CSSProperties = {
+  display: 'block',
+  padding: '8px 10px 4px',
+  borderTop: `1px solid ${TOOL.line}`,
+  font: `600 10px/1.2 ${TOOL.font}`,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  color: TOOL.muted,
 };
 
 /** A card that opens from a control: the word picker, the text editor. */
@@ -103,36 +193,12 @@ export const primaryButton: CSSProperties = {
   borderColor: TOOL.ink,
 };
 
-/** A round colour chip: a surface swatch or an accent dot. */
-export function chip(background: string, selected: boolean, size = 20): CSSProperties {
-  return {
-    width: `${size}px`,
-    height: `${size}px`,
-    padding: 0,
-    borderRadius: '999px',
-    border: `1px solid ${TOOL.line}`,
-    background,
-    cursor: 'pointer',
-    appearance: 'none',
-    flex: '0 0 auto',
-    boxShadow: selected ? `0 0 0 2px ${TOOL.paper}, 0 0 0 4px ${TOOL.ring}` : 'none',
-  };
-}
-
 /** Small muted caption text inside a bar or a card. */
 export const caption: CSSProperties = {
   font: `600 10px/1.2 ${TOOL.font}`,
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
   color: TOOL.muted,
-};
-
-/** A thin vertical rule between two groups of chips. */
-export const divider: CSSProperties = {
-  width: '1px',
-  alignSelf: 'stretch',
-  background: TOOL.line,
-  margin: '0 2px',
 };
 
 /** The editing surface in the text popover: textarea and contenteditable alike. */
