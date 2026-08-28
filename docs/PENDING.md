@@ -92,6 +92,44 @@ that section when it gets long.
 
 ## Open — code/content work queued
 
+- **Re-test undo/redo in the deployed Studio, then discard the
+  `drafts.pricingPage` fixture** (2026-08-28, opened with the card 27 bug
+  fix). The fix is unit-tested but nothing in this repo can exercise a real
+  Studio, so these four need a human with the deployed Studio open:
+  1. **The original repro.** Open a page in Presentation, change a section
+     background with an in-canvas chip (card 28), then `Undo last change`
+     from the `Publish` menu. On a page whose draft did not exist before the
+     chip, the correct behaviour is now that the DRAFT IS REMOVED and the
+     page falls back to its published state. Confirm the toast says
+     "Draft change undone" and the value actually moves.
+  2. **Multi-step undo.** Make three separate changes, then undo three
+     times, and confirm it walks back three states rather than
+     oscillating between two. This is what the server-assigned transaction
+     id fix buys, and it is the part with no live evidence yet.
+  3. **`drafts.pricingPage` is a leftover test fixture** with
+     `flexibleSections[0].background.tone = 'chapel'` and three no-op
+     transactions on it from the broken build. It has a published twin, so
+     one undo should now remove it cleanly. DO NOT PUBLISH IT. If undo
+     does not take it, discard the draft in the Studio.
+  4. **Whole-document write vs. the optimistic actor.** Undo writes the
+     whole document with `createOrReplace` while Presentation may be
+     holding in-flight local patches for the same draft. The transaction
+     log shows no sign of this having happened during the incident, but it
+     is not proven safe: try an undo immediately after a chip click, with
+     the preview open, and watch whether the preview and the form agree.
+     If they diverge, the fix is to send a narrower patch rather than a
+     whole-document replace.
+- **Ctrl+Z is not heard while focus is inside the Presentation preview
+  iframe** (2026-08-28, known limit, deliberately not fixed). A key pressed
+  over the page picture goes to the iframe's window, not the Studio's, so
+  the shortcut does nothing right after using an in-canvas chip. The two
+  document actions are unaffected and the guide now says to use them or to
+  click into the Studio panel first. Fixing it means a postMessage protocol
+  between the public preview island
+  (`src/components/preview/overlay/`) and the Studio layout wrapper: key
+  handling shipped in a public bundle plus an origin check, for a shortcut
+  with a working button two inches away. Reconsider only if editors
+  actually ask.
 - **The Events page's empty-state line reads oddly.** The copy ends in a full
   sentence ("...is a course.") while the block appends a link reading "course."
   to it. Carried across faithfully by the conversion, so nothing changed, but an
@@ -208,13 +246,13 @@ that section when it gets long.
   drag-to-reorder lists, Checkup + New term setup tools, real dark mode.
 - 2026-08-25 — **Upgraded to Astro 7 + Sanity Studio v6.**
 - 2026-08-25 — **Cut loose from the church starter**: removed `modules/`
-  + `docs/modules/`, `rebrand.mjs` + bootstrap configs,
-  `seed-starter-content.mjs`, `seed-placeholder-images.mjs`,
-  `docs/bootstrap/NEW-PROJECT.md`, the church-era placeholder photos and
-  videos, the `upstream` git remote, and the dead deps (`@astrojs/mdx`,
-  `@astrojs/rss`, `react-photo-album`, `yet-another-react-lightbox`,
-  studio `sanity-plugin-iframe-pane`). Renamed the Studio workspace
-  `churchstarter` → `presacademy`. Rewrote `README.md` and `CLAUDE.md`
-  for the academy (fixing the typegen-in-build contradiction and the
-  ghost component lists). Swapped the six church-era hero fallbacks to
-  `acad-*` images.
+  - `docs/modules/`, `rebrand.mjs` + bootstrap configs,
+    `seed-starter-content.mjs`, `seed-placeholder-images.mjs`,
+    `docs/bootstrap/NEW-PROJECT.md`, the church-era placeholder photos and
+    videos, the `upstream` git remote, and the dead deps (`@astrojs/mdx`,
+    `@astrojs/rss`, `react-photo-album`, `yet-another-react-lightbox`,
+    studio `sanity-plugin-iframe-pane`). Renamed the Studio workspace
+    `churchstarter` → `presacademy`. Rewrote `README.md` and `CLAUDE.md`
+    for the academy (fixing the typegen-in-build contradiction and the
+    ghost component lists). Swapped the six church-era hero fallbacks to
+    `acad-*` images.

@@ -748,6 +748,12 @@ export const guides: Guide[] = [
         title: 'Inside a text box, the text box wins',
         text: 'If your cursor is in a heading, a paragraph or any other box you type in, Ctrl+Z undoes your typing, the way it does everywhere else. That is on purpose. Click outside the box first if you want to undo the bigger thing, like the section you just dragged.',
       },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'On the page picture, use the menu',
+        text: 'The keyboard shortcut is not heard while you are clicking around the **Preview** picture itself, because the picture is a little window running the real website. Click into the panel beside it first, or just use **Undo last change** in the `Publish` menu, which always works.',
+      },
       { kind: 'h', text: 'What it can and cannot reach' },
       {
         kind: 'bullets',
