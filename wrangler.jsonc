@@ -22,9 +22,20 @@
     // field, asset misses invoke the Worker and Astro renders the 404 page itself
     // (exactly the WCP repo's shape).
     "directory": "./dist/client",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+  },
+  // Plain (non-secret) runtime values.
+  //
+  // CF_ACCOUNT_ID names the Cloudflare account whose Workers analytics the
+  // Studio's "Site stats" panel reads (src/pages/api/stats.ts). An account id
+  // NAMES an account, it does not open one, so it is not a secret. Its partner
+  // CF_ANALYTICS_TOKEN is a real secret (Account Analytics · Read, one
+  // permission, read-only), set with `npx wrangler secret put
+  // CF_ANALYTICS_TOKEN` and never written here. Same account as the WCP site.
+  "vars": {
+    "CF_ACCOUNT_ID": "7e75a15ddc72aae04dca71aca5c7294b",
   },
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
 }

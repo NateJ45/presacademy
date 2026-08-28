@@ -41,6 +41,7 @@ import {
   TrashIcon,
   CommentIcon,
   BlockElementIcon,
+  ArrowRightIcon,
 } from '@sanity/icons';
 
 const API_VERSION = '2025-01-01';
@@ -87,8 +88,9 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'teachingArea',
   'pricingTier',
   'testimonial',
-  // Saved sections (placed under Pages below).
+  // Saved sections + redirects (both placed under Pages below).
   'sectionPreset',
+  'redirect',
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
   'media.tag',
@@ -237,6 +239,17 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
               // page's publish menu; added from the Saved sections group beside
               // the live preview.
               collection(S, 'sectionPreset', 'Saved Sections', BlockElementIcon),
+
+              S.divider(),
+
+              // Redirects: old address -> new address. Most entries are filed
+              // automatically when a page's web address changes on publish
+              // (components/slugRedirect.tsx); the editor adds one by hand for
+              // an address that never existed on this site (a link from an old
+              // site, or a printed card).
+              S.documentTypeListItem('redirect')
+                .title('Redirects (old links)')
+                .icon(ArrowRightIcon),
             ]),
         ),
 

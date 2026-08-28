@@ -9,7 +9,7 @@
 // @sanity/astro mounts this config at /studio (astro.config.mjs); the sanity
 // CLI (sanity.cli.ts) uses it for typegen and dataset commands.
 
-import { defineConfig, type Tool } from 'sanity';
+import { defineConfig, type DocumentActionComponent, type Tool } from 'sanity';
 import { structureTool, type DefaultDocumentNodeResolver } from 'sanity/structure';
 import { presentationTool } from 'sanity/presentation';
 import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
@@ -31,8 +31,10 @@ import { documentBadges } from './src/sanity/components/documentBadges';
 import { SeoPreviewPane } from './src/sanity/components/SeoPreviewPane';
 import { HealthTool } from './src/sanity/components/HealthTool';
 import { SetupWizard } from './src/sanity/components/SetupWizard';
+import { StatsTool } from './src/sanity/components/StatsTool';
 import { ArchiveAction, RestoreAction, DeleteForeverAction } from './src/sanity/actions/archive';
 import { shareDraftLinkAction } from './src/sanity/components/shareDraftLink';
+import { withSlugRedirect } from './src/sanity/components/slugRedirect';
 import { SaveSectionPresetAction } from './src/sanity/actions/saveSectionPreset';
 import { CheckPageAction } from './src/sanity/actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './src/sanity/pageBuilderConfig';
@@ -167,6 +169,15 @@ const setupTool: Tool = {
   component: SetupWizard,
   icon: () => '🍂',
 };
+// Site stats — the read-only traffic panel a Squarespace refugee looks for.
+// It reads the site's own /api/stats endpoint (Cloudflare Workers analytics for
+// this Worker). Honest labels: the number is REQUESTS SERVED, not page views.
+const statsTool: Tool = {
+  name: 'site-stats',
+  title: 'Site stats',
+  component: StatsTool,
+  icon: () => '📈',
+};
 
 export default defineConfig({
   name: 'presacademy',
@@ -200,8 +211,8 @@ export default defineConfig({
     },
   },
 
-  // Navbar tools: the built-ins plus Checkup and New term setup.
-  tools: (prev) => [...prev, checkupTool, setupTool],
+  // Navbar tools: the built-ins plus Checkup, New term setup and Site stats.
+  tools: (prev) => [...prev, checkupTool, setupTool, statsTool],
 
   plugins: [
     structureTool({
@@ -278,33 +289,53 @@ export default defineConfig({
     //    gets. Neither blocks publish and neither edits anything on its own.
     //  - shareable types: "Copy share link" (card 19), on the documents that
     //    HAVE a /preview route to show. See SHAREABLE_TYPES below.
-    actions: (prev, { schemaType }) => {
-      const extras = [
-        ...(PAGE_BUILDER_TYPES.has(schemaType) ? [SaveSectionPresetAction, CheckPageAction] : []),
-        ...(SHAREABLE_TYPES.has(schemaType) ? [shareDraftLinkAction] : []),
-      ];
-
-      if (SINGLETON_TYPES.has(schemaType)) {
-        return [
-          ...prev.filter(
-            ({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action || ''),
-          ),
-          ...extras,
-        ];
-      }
-      if (ARCHIVABLE_TYPES.has(schemaType)) {
-        return [
-          ...prev.filter(({ action }) => action !== 'delete'),
-          ArchiveAction,
-          RestoreAction,
-          DeleteForeverAction,
-          ...extras,
-        ];
-      }
-      return [...prev, ...extras];
+    //  - safe rename (PORTS.md card 22): whatever list the branches below
+    //    produce, the stock Publish is wrapped so a changed web address files
+    //    an old -> new redirect FIRST. The wrapper asks pathForDoc for the old
+    //    and the new path, so it is a no-op on every fixed-path singleton and
+    //    does its work on `page`, `event`, `course` and `facultyMember` (the
+    //    four types whose address is built from a slug). It never blocks
+    //    publish. See src/sanity/components/slugRedirect.tsx.
+    actions: (prev, context) => {
+      const list = pageActions(prev, context);
+      return list.map((action) =>
+        action.action === 'publish' ? withSlugRedirect(action) : action,
+      );
     },
   },
 });
+
+/**
+ * The document-action list before the safe-rename wrapper is applied. Split out
+ * of the resolver above only so the wrapping happens in ONE place, whichever
+ * branch produced the list.
+ */
+function pageActions(
+  prev: DocumentActionComponent[],
+  { schemaType }: { schemaType: string },
+): DocumentActionComponent[] {
+  const extras = [
+    ...(PAGE_BUILDER_TYPES.has(schemaType) ? [SaveSectionPresetAction, CheckPageAction] : []),
+    ...(SHAREABLE_TYPES.has(schemaType) ? [shareDraftLinkAction] : []),
+  ];
+
+  if (SINGLETON_TYPES.has(schemaType)) {
+    return [
+      ...prev.filter(({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action || '')),
+      ...extras,
+    ];
+  }
+  if (ARCHIVABLE_TYPES.has(schemaType)) {
+    return [
+      ...prev.filter(({ action }) => action !== 'delete'),
+      ArchiveAction,
+      RestoreAction,
+      DeleteForeverAction,
+      ...extras,
+    ];
+  }
+  return [...prev, ...extras];
+}
 
 // Documents a share link can be minted for (PORTS.md card 19).
 //

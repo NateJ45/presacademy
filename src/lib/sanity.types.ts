@@ -350,6 +350,18 @@ export type SectionPricingTiersBackgroundImage = {
   _type: 'image';
 };
 
+export type Redirect = {
+  _id: string;
+  _type: 'redirect';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  from?: string;
+  to?: string;
+  permanent?: boolean;
+  note?: string;
+};
+
 export type SectionPreset = {
   _id: string;
   _type: 'sectionPreset';
@@ -3903,6 +3915,7 @@ export type AllSanitySchemaTypes =
   | SectionKeyDatesBackgroundImage
   | SectionPricingTiersBackground
   | SectionPricingTiersBackgroundImage
+  | Redirect
   | SectionPreset
   | CourseReference
   | Testimonial

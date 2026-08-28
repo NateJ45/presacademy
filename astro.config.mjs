@@ -7,12 +7,22 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 import { fetchHiddenPagePaths } from './scripts/lib/hidden-pages.mjs';
+import { fetchRedirectDocs } from './scripts/lib/redirects.mjs';
+import { buildRedirectMap } from './src/lib/redirects.ts';
 
 // Pages an editor switched "Hide this page from search engines" on, as
 // site-relative paths. Read once, here, because @astrojs/sitemap's filter is
 // synchronous. The lookup never throws: with no project, no token or no
 // network it returns [] and the sitemap is exactly what it always was.
 const hiddenPagePaths = await fetchHiddenPagePaths();
+
+// Editor-managed redirects. Each published `redirect` document becomes one
+// entry in Astro's `redirects` map below, which the Cloudflare adapter emits as
+// a real 301/302. Most entries are filed automatically when a page's web
+// address changes on publish (src/sanity/components/slugRedirect.tsx); the
+// shaping rules live in src/lib/redirects.ts, so the Studio and the build agree
+// on what a path is. Fail-open to none, same as the hidden-page lookup above.
+const cmsRedirects = buildRedirectMap(await fetchRedirectDocs());
 
 // https://astro.build/config
 export default defineConfig({
@@ -30,6 +40,11 @@ export default defineConfig({
   // The adapter's default would otherwise wire up the IMAGES binding which
   // is meant for SSR sites that want on-demand transforms (we don't).
   adapter: cloudflare({ imageService: 'compile' }),
+  // Old address -> new address forwards, managed by the editor in the Studio
+  // and read at build time above. A repo that also needs hand-written launch
+  // redirects puts them BEFORE the spread, so an editor entry can correct one
+  // without a code change.
+  redirects: { ...cmsRedirects },
   // The /style-guide route is an internal brand reference: kept out of the
   // sitemap (and noindex'd in BaseLayout) so it stays unlinked and unindexed.
   integrations: [

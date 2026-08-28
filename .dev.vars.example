@@ -2,3 +2,10 @@
 # production uses `wrangler secret put SANITY_TOKEN`).
 # A Sanity token with read access to drafts (Viewer is enough).
 SANITY_TOKEN=
+
+# Cloudflare API token for the Studio's "Site stats" panel (/api/stats).
+# ONE permission: Account · Account Analytics · Read. Read-only, so it can
+# change nothing. Production uses `wrangler secret put CF_ANALYTICS_TOKEN`.
+# Its partner CF_ACCOUNT_ID is NOT a secret and lives in wrangler.jsonc vars.
+# Leave blank and the panel says, in plain language, that it is not set up yet.
+CF_ANALYTICS_TOKEN=

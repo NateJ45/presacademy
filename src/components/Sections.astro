@@ -8,7 +8,9 @@
 // background (token tone, or image/video with overlay). The original blocks
 // render their own section background and are passed through unwrapped.
 import SectionShell from '@/components/SectionShell.astro';
+import SectionCoach from '@/components/SectionCoach.astro';
 import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import { sectionCoach } from '@/lib/section-coach';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -148,8 +150,16 @@ const DEFAULT_TONE: Record<string, string> = {
     // for the Pricing page). It then paints its own <section>, exactly like the
     // ported types below. Absent the field, nothing changes.
     const dt = DEFAULT_TONE[block._type] ?? 'default';
-    const rendered =
-      SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
+    // Preview-only empty-state coaching (2026-08-28). A section that holds none
+    // of its own content renders as a dashed "here is what goes here" note
+    // instead of the band of empty padding an editor used to get right after
+    // inserting it. Gated on `editDoc`, which ONLY the /preview routes pass, so
+    // the live static build takes the identical path it always did.
+    // See src/lib/section-coach.ts for the per-type emptiness tests.
+    const coach = editDoc ? sectionCoach(block) : null;
+    const rendered = coach ? (
+      <SectionCoach name={coach.name} hint={coach.hint} />
+    ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
         <SectionShell background={block.background} defaultTone={dt}>
           <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
         </SectionShell>

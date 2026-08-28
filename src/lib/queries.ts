@@ -147,18 +147,20 @@ export async function getSiteSettings(fetcher = sanityFetch) {
 // The single active announcement: enabled, started (or no start), not yet
 // ended (or no end). Most urgent first, then soonest to end. "now" resolves at
 // build time; a scheduled rebuild refreshes the active banner.
-export async function getActiveAnnouncement() {
-  const now = new Date().toISOString();
-  return sanityFetch(
-    `*[_type == "announcement" && archived != true && enabled == true
+// Exported so PreviewLayout can run the SAME query through the draft-aware
+// client. One query, two readers: a notice previews exactly as it will ship.
+// `_id` is only read by the preview (it needs a document to point the edit
+// attribute at); the live bar ignores it.
+export const ACTIVE_ANNOUNCEMENT_QUERY = `*[_type == "announcement" && archived != true && enabled == true
       && (!defined(startDate) || startDate <= $now)
       && (!defined(endDate) || endDate >= $now)]
       | order(select(style == "urgent" => 0, style == "special" => 1, 2) asc, endDate asc)[0]{
-        message, style, link
-      }`,
-    { now },
-    null,
-  );
+        _id, message, style, link
+      }`;
+
+export async function getActiveAnnouncement() {
+  const now = new Date().toISOString();
+  return sanityFetch(ACTIVE_ANNOUNCEMENT_QUERY, { now }, null);
 }
 
 // ---- Worship resources (bulletins, orders of worship, The Record) ---------

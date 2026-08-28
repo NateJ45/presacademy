@@ -27,6 +27,7 @@ import { notFoundPage } from './notFoundPage';
 import { page } from './page';
 import { pricingTier } from './pricingTier';
 import { privacyPage } from './privacyPage';
+import { redirect } from './redirect';
 import { schoolPageSingletons } from './schoolPages';
 import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
@@ -79,4 +80,8 @@ export const schemaTypes = [
   // A section kept from one page, ready to add to another (PORTS.md card 24).
   // Not website content: it is a tool that lives beside the pages it serves.
   sectionPreset,
+
+  // An old address -> new address forward (PORTS.md card 22). Filed for the
+  // editor when a published page is renamed; also addable by hand.
+  redirect,
 ];

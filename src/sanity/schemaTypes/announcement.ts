@@ -21,21 +21,24 @@ export const announcement = defineType({
       name: 'title',
       title: 'Internal name',
       type: 'string',
-      description: 'For your reference in the Studio (e.g. "Christmas Eve services"). Not shown on the site.',
+      description:
+        'For your reference in the Studio (e.g. "Christmas Eve services"). Not shown on the site.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'message',
       title: 'Message',
       type: 'string',
-      description: 'The text shown in the banner. Example: "Join us for Christmas Eve worship at 5pm and 11pm."',
+      description:
+        'The text shown in the banner. Example: "Join us for Christmas Eve worship at 5pm and 11pm." It appears on the website at the next rebuild, a few minutes after you publish, the same as any other change. You can see it right away in the preview.',
       validation: (Rule) => Rule.required().max(160),
     }),
     defineField({
       name: 'style',
       title: 'Style',
       type: 'string',
-      description: 'Info = calm green. Special = gold, for seasonal good news. Urgent = red, for closures.',
+      description:
+        'Info = calm green. Special = gold, for seasonal good news. Urgent = red, for closures.',
       options: {
         list: [
           { title: 'Info', value: 'info' },
@@ -65,7 +68,8 @@ export const announcement = defineType({
       name: 'startDate',
       title: 'Show from (optional)',
       type: 'datetime',
-      description: 'Leave blank to show immediately. Set to schedule the banner ahead of time.',
+      description:
+        'Leave blank to show immediately. Set to schedule the banner ahead of time. The window is read when the site rebuilds, so a start or end time takes effect at the next rebuild rather than to the minute.',
     }),
     defineField({
       name: 'endDate',
@@ -82,9 +86,18 @@ export const announcement = defineType({
     }),
   ],
   preview: {
-    select: { title: 'message', style: 'style', enabled: 'enabled', start: 'startDate', end: 'endDate' },
+    select: {
+      title: 'message',
+      style: 'style',
+      enabled: 'enabled',
+      start: 'startDate',
+      end: 'endDate',
+    },
     prepare: ({ title, style, enabled, start, end }) => {
-      const window = [start ? new Date(start).toLocaleDateString() : null, end ? new Date(end).toLocaleDateString() : null]
+      const window = [
+        start ? new Date(start).toLocaleDateString() : null,
+        end ? new Date(end).toLocaleDateString() : null,
+      ]
         .filter(Boolean)
         .join(' to ');
       return {

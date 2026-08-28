@@ -58,8 +58,12 @@ export const PAGE_BUILDER_TYPES = new Set<string>(Object.keys(SECTION_HOST_TYPES
  * Keep roughly in step with src/sanity/schemaTypes/blocks.ts. A name that
  * drifts off this list only ever costs a false "worth a look", never a wrong
  * page.
+ *
+ * EXPORTED because src/lib/section-coach.ts needs the same answer: a section
+ * that fills itself has nothing for the editor to type, so the preview must
+ * never coach it. One list, two readers.
  */
-const SELF_FILLING_SECTIONS = [
+export const SELF_FILLING_SECTIONS = [
   'sectionContactDetails',
   'sectionCourseRail',
   'sectionDynamicList',

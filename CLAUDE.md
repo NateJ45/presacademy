@@ -37,7 +37,9 @@ How it fits together (ported from the WCP site 2026-08-25; that repo's architect
 - **Never compare a stega-encoded string in logic.** Stega hides ~1KB of invisible markers inside every string it touches, so `tone === 'chapel'` is `false` on an encoded value and the component silently picks the wrong branch, in preview only. Every enum that drives rendering is excluded via `NON_STEGA_FIELDS` in `cms-preview.ts`. **Add any new logic-driving dropdown field to that list.**
 - `src/pages/preview/live.ts` is an **SSE proxy**: it holds ONE long-lived connection to Sanity's listen API server-side (the token never reaches the browser) and forwards a tiny "change" signal. `VisualEditingOverlay` soft-refetches the page and swaps `#main`. It is event-driven on purpose. **Never replace it with an interval poll** (that is what burned the WCP Sanity quota).
 - The preview cookie carries an **unforgeable fingerprint** of the server-side token (`src/lib/preview-auth.ts`), not the package's default `'true'`.
-- Preview pages render chrome-less (a slim bar says so). The real Header/Footer link to the live site and would bounce the editor's iframe out of the preview.
+- Preview pages render the REAL chrome (2026-08-28): a slim status bar, then the announcement bar, Header, the page, and Footer. This was safe only once `PreviewLayout`'s click interceptor existed; before it, a header link bounced the editor's iframe onto the live site. Header and Footer each sit in a `data-sanity` wrapper pointed at `siteSettings`, and the announcement bar in one pointed at the announcement it is showing, so a click in Edit mode opens the owning document in the edit panel.
+- **The announcement bar previews draft-aware.** `src/components/AnnouncementBar.astro` holds the markup; `BaseLayout` feeds it the build-time published answer and `PreviewLayout` the draft-aware one, both through `ACTIVE_ANNOUNCEMENT_QUERY` in `src/lib/queries.ts`. One query, two readers, so a notice previews exactly as it will ship. On the live site it appears at the next rebuild, which the field descriptions and the Studio guide both say out loud.
+- **Empty sections coach instead of rendering a blank band (2026-08-28).** A section holding none of its own content renders `src/components/SectionCoach.astro`, a dashed note naming the section and saying what to type. The per-type emptiness tests live in `src/lib/section-coach.ts` (23 types; the 12 self-filling ones from `SELF_FILLING_SECTIONS` in `pageBuilderConfig.ts` are excluded, because they fetch their own collection and this file cannot see that fetch). Gated strictly on `editDoc` in `Sections.astro`, exactly like the section edit attributes, so the live build is untouched. `src/lib/section-coach.test.ts` reads the renderer's own MAP and fails if a rendered type is neither coached nor self-filling, so a NEW section type must be added to one list or the other.
 - **ALL THIRTEEN singleton pages preview in FULL fidelity** (the page-builder conversion finished 2026-08-26). Each page's body is a Sanity section array rendered by the shared `src/components/SingletonPage.astro`, which the page file and the preview route both use, so the preview cannot drift from the page; the preview passes a draft-aware `fetcher` into the same query function the page calls. Converting a new page upgrades its preview automatically: add its type to `CONVERTED_PAGE_FETCHERS` in the preview route in the same commit. `HomeBody.astro`, which pioneered the one-template contract, was deleted when home converted last.
 - Heroes and closing CTAs stay **page-level fields** (decision D2), and the two hero kinds with scoped CSS render from the PAGE into `SingletonPage`'s `hero` slot: the photo `Hero` (faq, contact, privacy, accessibility) and home's `HomeHero`. Astro collects CSS from the module graph, so importing either into the shared renderer would inject its styles into all thirteen pages.
 - **Auto sections read PUBLISHED collection data in the preview**, with one exception: home passes the draft fetcher down (`SingletonPage` → `Sections` → the auto blocks), because its preview showed draft courses, faculty and testimonials before the conversion. Pass it from another page's preview branch the day that page needs it.
@@ -112,9 +114,17 @@ which. Files the starter owns carry a first-line marker:
 // PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 ```
 
-Marked here as of 2026-08-27: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
-`scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`.
+Sixteen files are marked here as of 2026-08-28, and `node scripts/sync-check.mjs` lists
+them all. Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
+`scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
+`src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
+`src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
+`src/sanity/components/slugRedirect.tsx`.
 `scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
+
+`src/lib/site-stats.ts` is deliberately **unmarked for now**: it is repo-agnostic and the
+starter should adopt it, but the starter has no copy yet. Add the marker to both in the
+sync session that ports it.
 
 Check for drift with:
 
@@ -169,6 +179,7 @@ rather than a canonical file.
 | `/preview/**` | `src/pages/preview/[...slug].astro` | SSR draft preview for the Studio's Presentation tool. noindex, sitemap-excluded |
 | `/preview/live` | `src/pages/preview/live.ts` | SSE proxy for preview auto-refresh (403 without the Studio cookie) |
 | `/api/draft-mode/*` | `src/pages/api/draft-mode/` | Turns draft mode on/off for the preview |
+| `/api/stats` | `src/pages/api/stats.ts` | SSR. Feeds the Studio's "Site stats" tool with Cloudflare Workers analytics for this Worker. Gated on the Studio preview cookie (401 without it); 503 naming the missing variable until `CF_ANALYTICS_TOKEN` is set |
 | `/sitemap-index.xml` | `@astrojs/sitemap` (auto) | Production sitemap |
 | `/404` | `src/pages/404.astro` | Custom 404 |
 

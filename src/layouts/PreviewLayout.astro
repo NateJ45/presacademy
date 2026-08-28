@@ -25,8 +25,9 @@ import '../styles/globals.css';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import VisualEditingOverlay from '@/components/preview/VisualEditingOverlay.tsx';
+import AnnouncementBar from '@/components/AnnouncementBar.astro';
 import { previewFetch } from '@/lib/cms-preview';
-import { SITE_SETTINGS_PROJECTION } from '@/lib/queries';
+import { ACTIVE_ANNOUNCEMENT_QUERY, SITE_SETTINGS_PROJECTION } from '@/lib/queries';
 import { docEditAttr } from '@/lib/preview-edit-attr';
 
 interface Props {
@@ -48,10 +49,24 @@ const chromeSettings = await previewFetch<any>(
   `*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`,
 ).catch(() => null);
 
+// The site-wide notice bar, draft-aware (2026-08-28). The live site reads the
+// same query in BaseLayout, but only published documents and only at build
+// time, so an editor could not see a notice until it had shipped. Here it
+// appears the moment it is drafted, in its real place above the header, and a
+// click in Edit mode opens the announcement itself. Loose type: the raw doc,
+// the same shape BaseLayout passes.
+const announcement = await previewFetch<any>(draftMode, ACTIVE_ANNOUNCEMENT_QUERY, {
+  now: new Date().toISOString(),
+}).catch(() => null);
+
 // Header opens the doc at its identity fields, footer at the mission line, so
 // each click lands the editor near what that piece of chrome actually shows.
 const headerAttr = docEditAttr('siteSettings', 'siteSettings', 'title');
 const footerAttr = docEditAttr('siteSettings', 'siteSettings', 'mission');
+// The bar opens the announcement it is showing, at its message field.
+const announcementAttr = announcement?._id
+  ? docEditAttr(announcement._id, 'announcement', 'message')
+  : undefined;
 ---
 
 <!doctype html>
@@ -105,6 +120,7 @@ const footerAttr = docEditAttr('siteSettings', 'siteSettings', 'mission');
     {/* The real site chrome, draft-aware, each piece an editable surface. The
         wrapper divs are REAL block boxes on purpose: the overlay outlines the
         element's rect (same rule as sectionEditAttr). */}
+    <AnnouncementBar announcement={announcement} editAttr={announcementAttr} />
     <div data-sanity={headerAttr}>
       <Header siteSettings={chromeSettings} />
     </div>

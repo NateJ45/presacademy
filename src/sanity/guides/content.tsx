@@ -397,6 +397,63 @@ export const guides: Guide[] = [
   },
 
   {
+    slug: 'rename-a-page',
+    category: 'Website pages & menus',
+    title: 'Renaming a page keeps old links working',
+    icon: '🔗',
+    lead: "Change a page's web address and the old one keeps working. The Studio files the forward for you.",
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Pages', 'Redirects (old links)'],
+        link: { pane: 'pages;redirect' },
+      },
+      { kind: 'h', text: 'What used to go wrong' },
+      {
+        kind: 'p',
+        text: 'A page lives at an address, like /open-house. Change the address and every bookmark, every Google result, and every link from another website points at nothing. The visitor gets a "page not found".',
+      },
+      { kind: 'h', text: 'What happens now' },
+      {
+        kind: 'p',
+        text: 'When you change the web address of a page that is already published and click `Publish`, the Studio writes a **redirect** first: anyone who uses the old address is sent to the new one. You get a short message saying so. You do not have to do anything.',
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'It never stops you publishing',
+        text: 'If the forward cannot be written for any reason, your page still publishes and you get a note asking you to add the redirect by hand. Your work is never held up by it.',
+      },
+      { kind: 'h', text: 'Add one by hand' },
+      {
+        kind: 'p',
+        text: 'Use this for an address that never existed on this site: a link from the old website, or one printed on a card.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Pages**, then **Redirects (old links)**, then `+`.',
+          'In **Old address**, type the address people are still using, starting with a slash, like "/open-house".',
+          'In **Send them to**, type where they should land, like "/events", or a full https:// link.',
+          'Leave **Permanent move?** on unless the forward is temporary.',
+          'Click `Publish`.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Redirects start working at the next rebuild',
+        text: 'Like everything else you publish, a redirect reaches the website when the site rebuilds, a few minutes later. Test the old address after that, not straight away.',
+      },
+      {
+        kind: 'seealso',
+        items: ['Copy, archive & restore a page', 'How a page looks in Google'],
+      },
+    ],
+  },
+
+  {
     slug: 'share-a-draft',
     category: 'Website pages & menus',
     title: 'Show someone a draft',
@@ -660,6 +717,11 @@ export const guides: Guide[] = [
         tone: 'primary',
         title: 'It stays on-brand',
         text: 'You are choosing from set brand tones, not raw colors, so whatever you pick looks like it belongs. More on that in the brand guide.',
+      },
+      { kind: 'h', text: 'The dashed box on a new section' },
+      {
+        kind: 'p',
+        text: 'A section you have just added has nothing in it yet, so in **Preview** it shows a dashed box with the section name and one line saying what to type. Fill the section in and the box is replaced by the real thing. The dashed box is a preview aid only, so visitors never see it.',
       },
       { kind: 'seealso', items: ['The brand: colors & fonts', 'Photos & images'] },
     ],
@@ -1136,6 +1198,15 @@ export const guides: Guide[] = [
         title: 'Only one shows at a time',
         text: 'If several are enabled, the site shows the current one based on the dates. You do not have to delete old announcements, just disable them. (The `Checkup` tool in the top bar flags any left on past their end date.)',
       },
+      { kind: 'h', text: 'See it before it goes out' },
+      {
+        kind: 'p',
+        text: 'Open any page and click the `Presentation` tab. The banner appears at the top of the preview exactly where it will sit on the real site, drafts included, so you can read it in place before you publish. Click the banner in the preview to jump back to the announcement and edit the wording.',
+      },
+      {
+        kind: 'p',
+        text: 'On the live website the banner appears at the next rebuild, a few minutes after you publish, like any other change.',
+      },
     ],
   },
 
@@ -1321,6 +1392,47 @@ export const guides: Guide[] = [
         text: `Changing the fonts or the actual color values would affect the whole site and is easy to get wrong, so it stays a code change on purpose. If a campaign needs a special color or font, email ${SITE.contactName} at ${SITE.contactEmail} and they will set it up properly.`,
       },
       { kind: 'seealso', items: ['Add & arrange sections'] },
+    ],
+  },
+
+  {
+    slug: 'site-stats',
+    category: 'Look, brand & housekeeping',
+    title: 'How busy the website has been',
+    icon: '📈',
+    lead: 'A simple traffic panel in the top bar: how many requests the site answered, day by day.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site stats (top bar)'],
+        link: { tool: 'site-stats' },
+      },
+      { kind: 'h', text: 'What the number is' },
+      {
+        kind: 'p',
+        text: 'It counts every **request** the website answers. One person reading one page makes many requests: the page itself, each photo, the fonts. So the number is much larger than the number of people.',
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'It is not a count of people',
+        text: 'Use it to compare one week with another. A rise means more interest. Do not quote it as visitors, because it is not, and the panel says so on the page.',
+      },
+      { kind: 'h', text: 'The first time you open it' },
+      {
+        kind: 'p',
+        text: 'The panel asks you to open the site preview once, so it knows you work here. Open any page from the left menu, click the `Presentation` tab so the website appears beside it, then come back and click `Try again`. You only do this once on each computer.',
+      },
+      { kind: 'h', text: 'If it says it is not set up yet' },
+      {
+        kind: 'p',
+        text: `That is a one-time website setup step, not something you can fix from here. Email ${SITE.contactName} at ${SITE.contactEmail}.`,
+      },
+      {
+        kind: 'p',
+        text: 'Days run in UTC, so a day in this panel starts in the late evening our time. The deeper report, including which countries people come from, lives in the Cloudflare dashboard.',
+      },
     ],
   },
 
