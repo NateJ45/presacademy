@@ -93,6 +93,16 @@ const NON_STEGA_FIELDS = new Set([
   // portable text meant to be clicked into, so they KEEP their stega.
   'accent',
   'headingAccent',
+  // Layout variants, 2026-08-28 (Wave 3). Audited, and NOTHING was added, which
+  // is the point of the note: the wave's two new fields are both named
+  // `columns` (on sectionSteps and sectionDynamicList), and `columns` has been
+  // on this list from the start. `imageSide`, `mediaSide` and `padding` are
+  // here too, so the media-side and vertical-spacing controls the wave rewords
+  // and documents are already safe. Every one of them is looked up in a map in
+  // src/lib/layout-variants.ts or SectionShell.astro, so an encoded value would
+  // miss the map and silently render the DEFAULT layout in the preview while
+  // the live page showed the chosen one. Recorded because "no change needed" is
+  // only trustworthy when someone actually looked.
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

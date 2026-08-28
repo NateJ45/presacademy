@@ -7,17 +7,15 @@
 import InlineRich from '@/components/InlineRich.astro';
 import { hasInlineRich } from '@/lib/inline-rich';
 import { splitHeadingAccent } from '@/lib/heading-accent';
+// Wave 3 (2026-08-28): the column classes moved to src/lib/layout-variants.ts,
+// which holds this block's map verbatim. Same strings, one place.
+import { columnsClass } from '@/lib/layout-variants';
 
 const { block } = Astro.props as { block: any };
 const cards = block?.cards ?? [];
 const ha = splitHeadingAccent(block?.heading, block?.headingAccent);
 const richSubhead = hasInlineRich(block?.subheadRich);
-const COLS: Record<string, string> = {
-  '2': 'sm:grid-cols-2',
-  '3': 'sm:grid-cols-2 lg:grid-cols-3',
-  '4': 'sm:grid-cols-2 lg:grid-cols-4',
-};
-const colClass = COLS[block?.columns ?? '3'] ?? COLS['3'];
+const colClass = columnsClass('sectionCardGrid', block?.columns);
 ---
 
 {

@@ -10,6 +10,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { hasInlineRich } from '../../lib/inline-rich';
 import { ACCENT_OPTIONS, SURFACE_OPTIONS } from '../../lib/surfaces';
+import { columnFallback, columnOptions, sideOptions } from '../../lib/layout-variants';
 import { AccentSwatchInput, SurfaceSwatchInput } from '../components/SwatchInput';
 
 // Reusable rich-text body (paragraphs, headings, lists, links).
@@ -205,6 +206,31 @@ function headingAccentField() {
   });
 }
 
+/**
+ * Wave 3, 2026-08-28: the column control, one field built from one registry.
+ *
+ * The list an editor sees and the classes the site emits both come from
+ * src/lib/layout-variants.ts, so a block cannot offer a count it has no layout
+ * for. `initialValue` is that block's existing default, which is also what a
+ * section stored before this control existed renders, so nothing already
+ * published moves.
+ *
+ * A LAYOUT knob, not content: `columns` is already in SETTING_KEYS
+ * (src/lib/page-checks.ts) and in NON_STEGA_FIELDS (src/lib/cms-preview.ts),
+ * so setting it never makes an empty section read as filled and the preview
+ * never sees a stega-encoded value where an exact match is needed.
+ */
+function columnsField(type: string, phoneNote = 'On a phone these always stack into one column.') {
+  return defineField({
+    name: 'columns',
+    title: 'How many across',
+    type: 'string',
+    description: `This is the widest screen. ${phoneNote}`,
+    options: { list: columnOptions(type), layout: 'radio' },
+    initialValue: columnFallback(type),
+  });
+}
+
 export const sectionRichText = defineType({
   name: 'sectionRichText',
   title: 'Text section',
@@ -249,15 +275,10 @@ export const sectionImageText = defineType({
     }),
     defineField({
       name: 'imageSide',
-      title: 'Image side',
+      title: 'Which side is the picture on?',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Left', value: 'left' },
-          { title: 'Right', value: 'right' },
-        ],
-        layout: 'radio',
-      },
+      description: 'On a phone the picture is always under the words.',
+      options: { list: sideOptions('Picture'), layout: 'radio' },
       initialValue: 'right',
     }),
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
@@ -294,13 +315,7 @@ export const sectionCardGrid = defineType({
       hidden: hideWhenRich('subheadRich'),
     }),
     richTwin('subheadRich', 'Subhead'),
-    defineField({
-      name: 'columns',
-      title: 'Columns',
-      type: 'string',
-      options: { list: ['2', '3', '4'], layout: 'radio' },
-      initialValue: '3',
-    }),
+    columnsField('sectionCardGrid'),
     defineField({
       name: 'cards',
       title: 'Cards',
@@ -474,13 +489,7 @@ export const sectionFeatureCards = defineType({
       hidden: hideWhenRich('introRich'),
     }),
     richTwin('introRich', 'Intro'),
-    defineField({
-      name: 'columns',
-      title: 'Columns',
-      type: 'string',
-      options: { list: ['2', '3', '4'], layout: 'radio' },
-      initialValue: '3',
-    }),
+    columnsField('sectionFeatureCards'),
     defineField({
       name: 'cards',
       title: 'Cards',
@@ -534,13 +543,7 @@ export const sectionStats = defineType({
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
-    defineField({
-      name: 'columns',
-      title: 'Columns',
-      type: 'string',
-      options: { list: ['2', '3', '4'], layout: 'radio' },
-      initialValue: '3',
-    }),
+    columnsField('sectionStats'),
     defineField({
       name: 'items',
       title: 'Stats',
@@ -632,13 +635,7 @@ export const sectionGallery = defineType({
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 2 }),
-    defineField({
-      name: 'columns',
-      title: 'Columns',
-      type: 'string',
-      options: { list: ['2', '3', '4'], layout: 'radio' },
-      initialValue: '3',
-    }),
+    columnsField('sectionGallery', 'On a phone photos show two across.'),
     defineField({
       name: 'images',
       title: 'Photos',
@@ -678,6 +675,7 @@ export const sectionSteps = defineType({
       hidden: hideWhenRich('introRich'),
     }),
     richTwin('introRich', 'Intro'),
+    columnsField('sectionSteps'),
     defineField({
       name: 'steps',
       title: 'Steps',
@@ -765,15 +763,10 @@ export const sectionMediaFeature = defineType({
     richTwin('bodyRich', 'Body'),
     defineField({
       name: 'mediaSide',
-      title: 'Media side',
+      title: 'Which side is the video or photo on?',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Left', value: 'left' },
-          { title: 'Right', value: 'right' },
-        ],
-        layout: 'radio',
-      },
+      description: 'On a phone the video or photo is always under the words.',
+      options: { list: sideOptions('Video or photo'), layout: 'radio' },
       initialValue: 'left',
     }),
     defineField({
@@ -829,6 +822,7 @@ export const sectionDynamicList = defineType({
       initialValue: 3,
       validation: (R) => R.min(1).max(12),
     }),
+    columnsField('sectionDynamicList'),
     bgField(),
   ],
   preview: {

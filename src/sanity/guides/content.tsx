@@ -262,7 +262,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'The preview is editable too',
-        text: 'Open **Preview** (the eye icon at the top) and you get the page as visitors see it, beside the fields. Hover a section there and it outlines, with a small toolbar: add a section above or below it, duplicate it, remove it, or drag it to a new spot. Click any words to jump to the box that holds them. Everything you do in the picture lands in the same fields, so use whichever feels easier, and `Publish` when you are happy.',
+        text: 'Open **Preview** (the eye icon at the top) and you get the page as visitors see it, beside the fields. Hover a section there and it outlines. **Right-click inside the outline** for the section menu: add a section above or below it (with pictures of each kind), duplicate it, move it, or remove it. The small tag at the outline's corner is a handle you can drag. Click any words to jump to the box that holds them. Everything you do in the picture lands in the same fields, so use whichever feels easier, and `Publish` when you are happy.',
       },
       { kind: 'h', text: 'The empty-box rule (friendly and important)' },
       {
@@ -658,7 +658,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'On the page picture, or in the list',
-        text: 'Open **Preview** and hover a section on the page picture. It outlines, and a small toolbar appears: **add a section above or below it**, **duplicate** it, **remove** it, or **drag** it to a new place in the page. That is usually the quickest way, because you are looking at the thing you are moving. The `Page sections` list described below does all the same jobs, and is the place to go when a page has no sections yet.',
+        text: 'Open **Preview** and hover a section on the page picture. It outlines. **Right-click inside the outline** and a menu appears: **insert a section before or after it** (a picture picker of every kind), **duplicate** it, **move** it, or **remove** it. Drag the small tag at the outline's corner to pull it to a new place. That is usually the quickest way, because you are looking at the thing you are moving. The `Page sections` list described below does all the same jobs, and is the place to go when a page has no sections yet.',
       },
       { kind: 'h', text: 'Add a section' },
       {
@@ -696,7 +696,7 @@ export const guides: Guide[] = [
         items: [
           'Drag a section by the dots on its left to move it. Top of the list is top of the page.',
           'Click the `⋮` menu on a section and choose **Remove** to delete it. (Removing a section is undoable before you publish.)',
-          'In **Preview**, do the same on the page itself: drag a section to a new spot, or use its toolbar to duplicate or remove it.',
+          'In **Preview**, do the same on the page itself: right-click a section for its menu (insert, duplicate, move, remove), or drag its corner tag to a new spot.',
         ],
       },
       { kind: 'h', text: "Change a section's background" },
@@ -721,7 +721,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Change how a section looks',
     icon: '🎨',
-    lead: 'Give a section a different background, a different accent colour, a bolded word, or one word of the heading picked out in colour. All of it from the page picture, all of it on-brand.',
+    lead: 'Give a section a different background, a different accent colour, a bolded word, one word of the heading picked out in colour, or a different arrangement. All of it from the page picture, all of it on-brand.',
     diy: 'self',
     body: [
       {
@@ -813,12 +813,31 @@ export const guides: Guide[] = [
         text: 'The first match is the one that gets coloured, and one is the limit by design. Two coloured words in one heading stop reading as emphasis and start reading as decoration.',
       },
 
+      { kind: 'h', text: 'Layout: how the section is arranged' },
+      {
+        kind: 'p',
+        text: 'Two more controls sit on the section itself rather than in the background panel, and they change the arrangement rather than the colour. Not every section has them, because not every section has more than one arrangement that we are happy to put your name on.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Which side is the picture on?** on the image + text section, and **Which side is the video or photo on?** on the media feature. Two choices, left or right. Use it to alternate down a long page so two picture sections in a row do not face the same way.',
+          '**How many across** on the card grid, feature cards, stats, the photo gallery, numbered steps and the dynamic list. Pick two, three or four (steps and the dynamic list offer two or three, because a step is a paragraph and does not survive a quarter-width column). Two is the one to reach for when a section holds exactly two things and a three-across row is leaving an empty gap.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Phones are not part of the choice',
+        text: 'Every one of these is about the widest screen. On a phone the words always come first and the picture underneath, and the grids always stack (the photo gallery always shows two across). So there is no setting here that can make the site awkward on a phone.',
+      },
+
       { kind: 'h', text: 'The rest of the background panel' },
       {
         kind: 'bullets',
         items: [
           '**Background image or video**: put a photo or a video behind the section. The **Overlay darkness** slider dims it so the words stay readable on top.',
-          '**Vertical spacing**: Compact, Normal or Spacious, to make the section shorter or taller.',
+          '**Vertical spacing**: Compact, Normal or Spacious, to make the section shorter or taller. This is the density control: Compact when a short section is floating in too much room, Spacious for a band you want to feel like a pause.',
         ],
       },
       {

@@ -3,10 +3,16 @@
 // faculty) into any page. Fetches at build time based on the chosen source.
 // Cards are light surfaces; section heading inherits the tone color.
 import { getFeaturedCourses, getUpcomingEvents, getFaculty, getTestimonials } from '@/lib/queries';
+// Wave 3 (2026-08-28): the three-across grid became an editor choice of two or
+// three. Three is the default and emits the exact string that was inline here,
+// so every published list is unchanged. The choice is layout only: it does not
+// touch `count`, which is still what decides how many items are fetched.
+import { columnsClass } from '@/lib/layout-variants';
 
 const { block } = Astro.props as { block: any };
 const count = Math.min(12, Math.max(1, Number(block?.count ?? 3)));
 const source = block?.source ?? 'featuredCourses';
+const colClass = columnsClass('sectionDynamicList', block?.columns);
 
 const fmt = (d: string) =>
   d ? new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
@@ -58,7 +64,7 @@ if (source === 'featuredCourses') {
           {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
         </div>
       )}
-      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-m list-none p-0" data-stagger-grid>
+      <ul class={`grid grid-cols-1 ${colClass} gap-m list-none p-0`} data-stagger-grid>
         {items.map((it) => {
           const inner = it.isQuote ? (
             <Fragment>

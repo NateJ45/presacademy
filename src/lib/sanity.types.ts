@@ -1469,6 +1469,7 @@ export type SectionDynamicList = {
   intro?: string;
   source?: 'featuredCourses' | 'upcomingEvents' | 'faculty' | 'testimonials';
   count?: number;
+  columns?: '2' | '3';
   background?: SectionDynamicListBackground;
 };
 
@@ -1544,6 +1545,7 @@ export type SectionSteps = {
     _type: 'block';
     _key: string;
   }>;
+  columns?: '2' | '3';
   steps?: Array<{
     title?: string;
     body?: string;

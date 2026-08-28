@@ -5,10 +5,15 @@
 // markup is exactly what it was.
 import InlineRich from '@/components/InlineRich.astro';
 import { hasInlineRich } from '@/lib/inline-rich';
+// Wave 3 (2026-08-28): the three-across grid became an editor choice of two or
+// three. Three is the default and emits the exact string that was inline here,
+// so every published steps section is unchanged.
+import { columnsClass } from '@/lib/layout-variants';
 
 const { block } = Astro.props as { block: any };
 const steps = block?.steps ?? [];
 const richIntro = hasInlineRich(block?.introRich);
+const colClass = columnsClass('sectionSteps', block?.columns);
 ---
 
 {
@@ -25,7 +30,7 @@ const richIntro = hasInlineRich(block?.introRich);
           )}
         </div>
       )}
-      <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-l list-none p-0 counter-reset" data-stagger-grid>
+      <ol class={`grid grid-cols-1 ${colClass} gap-l list-none p-0 counter-reset`} data-stagger-grid>
         {steps.map((s: any, i: number) => (
           <li class="flex gap-m">
             <span
