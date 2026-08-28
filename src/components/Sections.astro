@@ -11,7 +11,7 @@ import SectionShell from '@/components/SectionShell.astro';
 import SectionCoach from '@/components/SectionCoach.astro';
 import { sectionEditAttr, sectionFieldEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import { sectionCoach } from '@/lib/section-coach';
-import { hasBackground } from '@/lib/section-fields';
+import { backgroundApplies } from '@/lib/section-fields';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -196,7 +196,7 @@ const DEFAULT_TONE: Record<string, string> = {
     // is. It renders after the content so it paints above it, and it carries
     // its styles inline because this shell loads no preview-only stylesheet.
     const handleAttr =
-      editAttr && editDoc && block._key && hasBackground(block._type)
+      editAttr && editDoc && block._key && backgroundApplies(block._type, block)
         ? sectionFieldEditAttr(editDoc, block._key, 'background')
         : undefined;
     return editAttr ? (

@@ -9,6 +9,7 @@ import {
   RICH_TWINS,
   adaptToneToNeighbour,
   hasBackground,
+  backgroundApplies,
   hasHeadingAccent,
   headingAccentFieldFor,
   overlayControlsForPath,
@@ -392,7 +393,10 @@ test('the handle is rendered once, gated on editDoc and on having a background',
   );
   assert.ok(gate.includes('editAttr &&'), 'handle rides the preview-only wrapper gate');
   assert.ok(gate.includes('editDoc &&'), 'handle is gated on editDoc');
-  assert.ok(gate.includes('hasBackground(block._type)'), 'handle is gated on the registry');
+  assert.ok(
+    gate.includes('backgroundApplies(block._type, block)'),
+    'handle is gated per instance (registry + Rule & Ledger opt-outs)',
+  );
 });
 
 test('the handle targets the background object, never the bare array item', () => {
@@ -409,4 +413,15 @@ test('nothing outside the editDoc branch can emit a handle', () => {
   const branch = SECTIONS_ASTRO.slice(SECTIONS_ASTRO.indexOf('return editAttr ? ('));
   assert.ok(branch.includes('data-surface-handle'), 'the handle lives in the editAttr branch');
   assert.equal(SECTIONS_ASTRO.split('data-surface-handle').length - 1, 1, 'and only there');
+});
+
+test('backgroundApplies: the Rule & Ledger opt-out is per instance', () => {
+  // Carrying bgField() is not honouring it: pricingTiers in ledger mode
+  // renders a fixed band and must offer no swatches (an editor's first live
+  // test hit exactly this). Standard mode keeps the control.
+  assert.equal(backgroundApplies('sectionPricingTiers', { surface: 'ledger' }), false);
+  assert.equal(backgroundApplies('sectionPricingTiers', { surface: 'standard' }), true);
+  assert.equal(backgroundApplies('sectionPricingTiers', {}), true);
+  assert.equal(backgroundApplies('sectionCardGrid', { surface: 'ledger' }), true);
+  assert.equal(backgroundApplies('sectionTicker', {}), false);
 });

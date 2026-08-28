@@ -130,6 +130,24 @@ export function hasBackground(type?: string | null): boolean {
   return BACKGROUND_SECTION_TYPES.includes(String(type ?? ''));
 }
 
+/**
+ * Does the background control ACTUALLY APPLY to this section instance?
+ * Carrying the field is not the same as honouring it: sectionPricingTiers in
+ * its "Rule & Ledger" band style renders a fixed, art-directed surface and its
+ * schema description promises "no background control" there (the Pricing page
+ * runs in that mode - an editor's first swatch test, 2026-08-28, changed
+ * nothing because of it). The handle and the swatch card must not offer a
+ * knob the renderer ignores, so both gate through this, per instance.
+ */
+export function backgroundApplies(
+  type?: string | null,
+  section?: Record<string, unknown> | null,
+): boolean {
+  if (!hasBackground(type)) return false;
+  if (type === 'sectionPricingTiers' && section && section['surface'] === 'ledger') return false;
+  return true;
+}
+
 /** Does this section type carry `headingAccent`? */
 export function hasHeadingAccent(type?: string | null): boolean {
   return HEADING_ACCENT_SECTION_TYPES.includes(String(type ?? ''));

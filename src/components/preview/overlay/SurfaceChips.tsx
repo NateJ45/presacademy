@@ -52,7 +52,7 @@ import {
   type AccentChoice,
   type SurfacePair,
 } from '../../../lib/surfaces.ts';
-import { hasBackground } from '../../../lib/section-fields.ts';
+import { backgroundApplies } from '../../../lib/section-fields.ts';
 import { readSectionPath } from '../../../lib/sanity-path.ts';
 import { useDraftDocument, setInside } from './useDraftDocument.ts';
 import { usePopover } from './usePopover.ts';
@@ -81,6 +81,8 @@ function accentFill(accent: AccentChoice): string {
 
 interface Chosen {
   type?: string;
+  /** The raw section item, for per-instance gating (Rule & Ledger opt-outs). */
+  raw: Record<string, unknown> | null;
   tone: string;
   accent: string;
 }
@@ -135,7 +137,7 @@ export default function SurfaceChips(props: OverlayComponentProps): React.ReactN
   const cardRef = useRef<HTMLDivElement>(null);
   // The card only exists once the document read has told us this section HAS a
   // background, so the autofocus that makes Escape reachable has to wait for it.
-  const showing = open && !!section && !!chosen && hasBackground(chosen.type);
+  const showing = open && !!section && !!chosen && backgroundApplies(chosen.type, chosen.raw);
   const { onKeyDown } = usePopover(showing, cardRef, () => setOpen(false));
 
   // One read on open. Every later value is the one this panel just set, so the
@@ -153,6 +155,7 @@ export default function SurfaceChips(props: OverlayComponentProps): React.ReactN
       const background = (found?.background ?? {}) as Record<string, unknown>;
       setChosen({
         type: typeof found?._type === 'string' ? found._type : undefined,
+        raw: found ?? null,
         // The stored defaults, which are what a section with no choice renders.
         tone: typeof background.tone === 'string' ? background.tone : 'default',
         accent: typeof background.accent === 'string' ? background.accent : 'green',
