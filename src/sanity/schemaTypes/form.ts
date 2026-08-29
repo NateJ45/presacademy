@@ -3,8 +3,24 @@
 // (Subsplash sign-up, Google Form, Planning Center). Referenced from pages
 // (contact, weddings, use-our-space) and, in Phase 4, droppable as a page block.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField, defineArrayMember, type ValidationContext } from 'sanity';
 import { archivedField } from './archived';
+
+// =============================================================================
+// Validation must never fire on a field the editor cannot see
+// =============================================================================
+// The whole `fields` array is HIDDEN when Form type is "Paste an external
+// embed", but hiding a field does not switch its validation off. So an editor
+// who built native fields, then switched the form to an embed, got Publish
+// refused for a blank label on a row that no longer appears anywhere in the
+// form. Nothing to click, nothing to fix.
+//
+// The fix is the one from the WCP site's hubNavMenu (2026-08-29): the rule
+// consults the same toggle the `hidden` callback reads, and passes when the
+// field is out of sight. Any NEW required rule inside this array needs the
+// same guard.
+const isEmbedForm = (ctx: ValidationContext) =>
+  (ctx.document as { mode?: string } | undefined)?.mode === 'embed';
 
 export const form = defineType({
   name: 'form',
@@ -24,7 +40,8 @@ export const form = defineType({
       name: 'title',
       title: 'Internal name',
       type: 'string',
-      description: 'For your reference in the Studio, e.g. "Wedding Inquiry". Not shown on the site.',
+      description:
+        'For your reference in the Studio, e.g. "Wedding Inquiry". Not shown on the site.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -34,7 +51,12 @@ export const form = defineType({
       options: { source: 'title' },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: 'heading', title: 'Heading (shown above the form)', type: 'string', group: 'content' }),
+    defineField({
+      name: 'heading',
+      title: 'Heading (shown above the form)',
+      type: 'string',
+      group: 'content',
+    }),
     defineField({ name: 'intro', title: 'Intro text', type: 'text', rows: 3, group: 'content' }),
     defineField({
       name: 'mode',
@@ -64,13 +86,30 @@ export const form = defineType({
           type: 'object',
           name: 'formField',
           fields: [
-            defineField({ name: 'label', title: 'Label', type: 'string', validation: (R) => R.required() }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (R) =>
+                R.custom((value, ctx) => {
+                  if (isEmbedForm(ctx)) return true;
+                  return value ? true : 'Required';
+                }),
+            }),
             defineField({
               name: 'name',
               title: 'Field key',
               type: 'string',
-              description: 'Sent with the submission, e.g. "email", "eventDate". Lowercase, no spaces.',
-              validation: (R) => R.required().regex(/^[a-zA-Z0-9_]+$/, { name: 'letters, numbers, underscore' }),
+              description:
+                'Sent with the submission, e.g. "email", "eventDate". Lowercase, no spaces.',
+              validation: (R) =>
+                R.custom((value, ctx) => {
+                  if (isEmbedForm(ctx)) return true;
+                  if (!value) return 'Required';
+                  return /^[a-zA-Z0-9_]+$/.test(String(value))
+                    ? true
+                    : 'Use letters, numbers and underscore only';
+                }),
             }),
             defineField({
               name: 'type',
@@ -88,9 +127,15 @@ export const form = defineType({
                 ],
               },
               initialValue: 'text',
-              validation: (R) => R.required(),
+              validation: (R) =>
+                R.custom((value, ctx) => (isEmbedForm(ctx) || value ? true : 'Required')),
             }),
-            defineField({ name: 'required', title: 'Required', type: 'boolean', initialValue: false }),
+            defineField({
+              name: 'required',
+              title: 'Required',
+              type: 'boolean',
+              initialValue: false,
+            }),
             defineField({ name: 'placeholder', title: 'Placeholder', type: 'string' }),
             defineField({ name: 'helpText', title: 'Help text', type: 'string' }),
             defineField({
@@ -141,7 +186,8 @@ export const form = defineType({
       type: 'text',
       rows: 2,
       group: 'fields',
-      description: 'Shown under the button. If it contains "privacy policy", that phrase links to /privacy.',
+      description:
+        'Shown under the button. If it contains "privacy policy", that phrase links to /privacy.',
       hidden: ({ parent }) => parent?.mode === 'embed',
     }),
 
@@ -178,7 +224,8 @@ export const form = defineType({
           name: 'notifyEmail',
           title: 'Notification email',
           type: 'string',
-          description: 'Where replies should go. Used as the mailto target when Service is "Open visitor email app".',
+          description:
+            'Where replies should go. Used as the mailto target when Service is "Open visitor email app".',
         }),
       ],
     }),
@@ -199,7 +246,8 @@ export const form = defineType({
       type: 'text',
       rows: 6,
       group: 'embed',
-      description: 'Paste the full embed code from Subsplash, Planning Center, Jotform, etc. Scripts are executed safely.',
+      description:
+        'Paste the full embed code from Subsplash, Planning Center, Jotform, etc. Scripts are executed safely.',
       hidden: ({ parent }) => parent?.mode !== 'embed',
     }),
   ],

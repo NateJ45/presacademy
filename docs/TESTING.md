@@ -5,13 +5,13 @@ code) is ported from the WCP site repo's safety net.
 
 ## The suites
 
-| Suite | Command | Browser / runtime | Covers |
-|---|---|---|---|
-| Unit tests | `npm test` | Node's built-in test runner (`node --test`, type-stripped) | Pure functions in `src/lib/*.test.ts`: sectionVisibility, slugify, utils, **theme-tokens** (see below) |
-| E2E — chromium | `npm run test:e2e` (or `npx playwright test`) | Desktop Chrome | ALL Playwright suites: smoke, axe a11y light + dark, dark-mode focus indicators, reflow at 320/768/1024/1440 |
-| E2E — webkit-iphone | same command (second project) | Real WebKit, iPhone 14 profile | The viewport-agnostic suites only: smoke + the light-mode axe sweep. Safari's engine finds layout/JS issues Chromium never will; reflow drives its own viewports, which conflicts with mobile emulation |
-| Lighthouse CI | `npx --yes @lhci/cli@0.14.x autorun` (after `npm run build`) | Headless Chrome, desktop preset | Category budgets on every fixed route per `lighthouserc.json`. **Accessibility is a hard error gate (minScore 1)**; SEO / best-practices warn at 0.95, performance warns at 0.85 |
-| CI guards | on push / PR (`.github/workflows/ci.yml`) | GitHub Actions | typegen-staleness guard, lint, empty-env Astro build, Studio build, unit tests, the full Playwright run, and the Lighthouse gate |
+| Suite               | Command                                                      | Browser / runtime                                          | Covers                                                                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit tests          | `npm test`                                                   | Node's built-in test runner (`node --test`, type-stripped) | Pure functions in `src/lib/*.test.ts`: sectionVisibility, slugify, utils, **theme-tokens** (see below)                                                                                                  |
+| E2E — chromium      | `npm run test:e2e` (or `npx playwright test`)                | Desktop Chrome                                             | ALL Playwright suites: smoke, axe a11y light + dark, dark-mode focus indicators, reflow at 320/768/1024/1440                                                                                            |
+| E2E — webkit-iphone | same command (second project)                                | Real WebKit, iPhone 14 profile                             | The viewport-agnostic suites only: smoke + the light-mode axe sweep. Safari's engine finds layout/JS issues Chromium never will; reflow drives its own viewports, which conflicts with mobile emulation |
+| Lighthouse CI       | `npx --yes @lhci/cli@0.14.x autorun` (after `npm run build`) | Headless Chrome, desktop preset                            | Category budgets on every fixed route per `lighthouserc.json`. **Accessibility is a hard error gate (minScore 1)**; SEO / best-practices warn at 0.95, performance warns at 0.85                        |
+| CI guards           | on push / PR (`.github/workflows/ci.yml`)                    | GitHub Actions                                             | typegen-staleness guard, lint, empty-env Astro build, Studio build, unit tests, the full Playwright run, and the Lighthouse gate                                                                        |
 
 ## What the Playwright suites assert
 
@@ -36,7 +36,7 @@ local build has content (`discoverDetailRoutes` in `tests/helpers.ts`).
   main-content control is focused and must show a visible indicator (outline
   or box-shadow that differs from rest). axe never focuses anything and has
   no focus-contrast rule — this pass covers that blind spot; the indicator's
-  *contrast* is pinned by `src/lib/theme-tokens.test.ts`.
+  _contrast_ is pinned by `src/lib/theme-tokens.test.ts`.
 - **`tests/reflow.spec.ts`** — WCAG 1.4.10: no horizontal overflow at a
   320px viewport, then a second sweep resizing through 1440/1024/768 without
   reload. Measured on `document.scrollingElement.scrollWidth` (+1px rounding
@@ -51,7 +51,21 @@ load choreography, `.img-curtain`, `.step-connector`, marquee/Ken Burns
 loops). The injected CSS mirrors the `prefers-reduced-motion` block in
 `src/styles/globals.css` — keep the two in sync when the motion vocabulary
 grows. Without settling, axe sees half-faded text (false contrast results)
-and *skips* still-hidden opacity-0 content entirely.
+and _skips_ still-hidden opacity-0 content entirely.
+
+## The Presentation drift gate
+
+`src/lib/sanity-resolve.test.ts` reads SOURCE TEXT (never imports the Studio
+modules) and pins the facts `src/sanity/resolve.ts` and `src/sanity/locations.ts`
+assume about the rest of the repo. It exists because a GROQ filter string is not
+type-checked against the schema: a filter naming a field that does not exist
+fails **silently**, and Presentation simply stops following the preview. The
+gate holds four things: `page.slug` is Sanity's `slug` type here (so the filters
+keep `.current`, deliberately the opposite of the WCP repo, where `page.slug` is
+a plain string that must hold slashes), the singleton routes are generated from
+one map and the `:slug` catch-all comes last, the "Used on" query looks in BOTH
+page-builder array names and excludes drafts and trashed pages, and every section
+type the "Used on" resolver watches for still exists in `blocks.ts`.
 
 ## The theme-token unit test
 
@@ -93,7 +107,7 @@ node scripts/page-parity.mjs compare privacy    # one page only
 Before diffing, each page's HTML is normalized so two identical rebuilds match
 exactly: `/_astro/` asset content hashes collapse to `.HASH.`, Astro's
 generated scoped-style ids collapse to `astro-cid-CID`, and whitespace
-*between* tags plus trailing whitespace is dropped. Everything else (text,
+_between_ tags plus trailing whitespace is dropped. Everything else (text,
 classes, ids, aria, inline styles, JSON-LD) stays byte-faithful, because that
 is exactly what must not drift. The script header explains each rule.
 
@@ -125,6 +139,7 @@ one-attribute change is caught with a unified diff.
   copy of the same logic. Linux CI is unaffected and stays on the stock
   binary. Delete the wrapper when @astrojs/cloudflare bumps its
   miniflare/workerd.
+
 - **Anything stale holding :4321 silently invalidates the e2e run.** The
   Playwright webServer has `reuseExistingServer` locally, so an orphaned
   server (a forgotten `wrangler dev`/`npm run preview`, an old http-server)
@@ -149,9 +164,9 @@ one-attribute change is caught with a unified diff.
   ```
 
   Never blanket-kill `node.exe`: the editor/agent session is itself node.
+
 - **Static-server trailing slashes.** `http-server` (the e2e server) serves
-  `/about` via a redirect to `/about/` — tests follow it and assert the final
-  200. It has NO clean-URL mapping, so the 404 page is addressed as
+  `/about` via a redirect to `/about/` — tests follow it and assert the final 200. It has NO clean-URL mapping, so the 404 page is addressed as
   `/404.html` in `tests/routes.ts`. `serve` (the Lighthouse server) DOES
   clean-map `/404` → `404.html`, so `lighthouserc.json` uses `/404`.
 - **Dark mode in tests = the visitor path, not a hack.** The theme choice

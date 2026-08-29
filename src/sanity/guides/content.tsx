@@ -1674,6 +1674,12 @@ export const guides: Guide[] = [
         title: 'If deleting is blocked',
         text: "When another document still points at this one (a course pointing at a term, for example), the Studio warns you instead of deleting, so the site never ends up with broken links. Open the document's `Used on` tab to see what links to it, remove those links, then delete.",
       },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'What `Used on` counts',
+        text: 'The list is worked out from your real content each time you open it, so it names every page that shows the document, not just one. Two things it adds on purpose: a course always lists the course catalog and a teacher always lists the faculty roster, because those pages list everyone automatically. A document nothing shows yet says so in plain words.',
+      },
       { kind: 'seealso', items: ['Do it yourself vs. ask for help'] },
     ],
   },
