@@ -114,13 +114,28 @@ which. Files the starter owns carry a first-line marker:
 // PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 ```
 
-Sixteen files are marked here as of 2026-08-28, and `node scripts/sync-check.mjs` lists
+Forty-two files are marked here as of 2026-08-28, and `node scripts/sync-check.mjs` lists
 them all. Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
 `scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
 `src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
 `src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
 `src/sanity/components/slugRedirect.tsx`.
 `scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
+
+**The in-canvas control layer joined them 2026-08-28** (PORTS.md cards 28 and 28b):
+`src/lib/sanity-path.ts`, `src/lib/inline-rich.ts`, `src/lib/inline-rich-write.ts`,
+`src/lib/heading-accent.ts` (+ the two canonical `.test.ts`), and
+`src/components/preview/overlay/{usePopover,useDraftDocument,styles}.ts`. Two seams keep
+them shareable, and BOTH are edited here rather than there:
+
+- `readSectionPath(path, arrayFields)` TAKES this schema's page-builder array names.
+  The list is `SECTION_ARRAY_FIELDS` in `src/lib/section-fields.ts`.
+- `src/components/preview/overlay/tool-theme.ts` holds the six palette values the
+  canonical `styles.ts` draws every control with. A rebrand edits that file alone.
+
+`src/components/preview/overlay/{index,tool-theme,HeadingAccentPicker,SurfaceChips,
+TextPopover,useInstantText,timing}.ts(x)` and `src/lib/section-fields.ts` stay per-repo
+on purpose: they name this schema's sections, fields and labels.
 
 `src/lib/site-stats.ts` is deliberately **unmarked for now**: it is repo-agnostic and the
 starter should adopt it, but the starter has no copy yet. Add the marker to both in the

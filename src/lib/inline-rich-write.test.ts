@@ -1,13 +1,16 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   htmlToRuns,
   htmlToInlineRich,
   inlineRichToHtml,
+  normalizeRuns,
   runsToHtml,
+  textToRuns,
   escapeHtml,
 } from './inline-rich-write.ts';
-import { inlineRichRuns } from './inline-rich.ts';
+import { RUN_BREAK, inlineRichRuns } from './inline-rich.ts';
 
 /** Predictable keys, so a whole document value can be asserted. */
 function counter() {
@@ -52,7 +55,7 @@ test('unknown tags keep their text and lose themselves', () => {
 });
 
 test('script and style contribute nothing at all', () => {
-  assert.deepEqual(htmlToRuns('safe<script>alert(1)</script> still safe'), [
+  assert.deepEqual(htmlToRuns('safe<script>doSomething(1)</script> still safe'), [
     { text: 'safe still safe', strong: false, em: false },
   ]);
   assert.deepEqual(htmlToRuns('<style>p{color:red}</style>text'), [
@@ -98,6 +101,20 @@ test('neighbours with the same marks are merged', () => {
   assert.deepEqual(htmlToRuns('<b>one</b><b>two</b>'), [
     { text: 'onetwo', strong: true, em: false },
   ]);
+});
+
+test('two spaces meeting ACROSS a mark boundary are still one space', () => {
+  // The merge above cannot fire here (the runs carry different marks), so
+  // without its own rule this stores "a" + "  b". The space is dropped from the
+  // SECOND run, because a leading space inside an emphasised span renders as an
+  // over-long underline or a wide bold.
+  assert.deepEqual(htmlToRuns('<b>a </b><i> b</i>'), [
+    { text: 'a ', strong: true, em: false },
+    { text: 'b', strong: false, em: true },
+  ]);
+  // And a break tag inside one mark still merges into a single run, so the new
+  // rule cannot cost a span where the old one already did the right thing.
+  assert.deepEqual(htmlToRuns('<b>a<br>b</b>'), [{ text: 'a b', strong: true, em: false }]);
 });
 
 test('a lone angle bracket is text, not a tag', () => {
@@ -178,4 +195,115 @@ test('a value survives the round trip unchanged', () => {
   const stored = htmlToInlineRich(html, counter());
   assert.equal(inlineRichToHtml(stored), html);
   assert.deepEqual(inlineRichRuns(stored), htmlToRuns(html));
+});
+
+// -----------------------------------------------------------------------------
+// multiline: the seam a repo whose twin renders <br /> between blocks turns on
+// -----------------------------------------------------------------------------
+
+test('multiline keeps a break instead of collapsing it to a space', () => {
+  assert.deepEqual(htmlToRuns('one<br>two', { multiline: true }), [
+    { text: 'one', strong: false, em: false },
+    { text: RUN_BREAK, strong: false, em: false },
+    { text: 'two', strong: false, em: false },
+  ]);
+  assert.deepEqual(htmlToRuns('<div>one</div><div>two</div>', { multiline: true }), [
+    { text: 'one', strong: false, em: false },
+    { text: RUN_BREAK, strong: false, em: false },
+    { text: 'two', strong: false, em: false },
+  ]);
+});
+
+test('multiline keeps each line its own marks, and never merges across a break', () => {
+  assert.deepEqual(htmlToRuns('<b>bold</b><br><i>italic</i>', { multiline: true }), [
+    { text: 'bold', strong: true, em: false },
+    { text: RUN_BREAK, strong: false, em: false },
+    { text: 'italic', strong: false, em: true },
+  ]);
+});
+
+test('multiline trims and drops blank lines, leading and trailing ones included', () => {
+  assert.deepEqual(
+    normalizeRuns([
+      { text: RUN_BREAK, strong: false, em: false },
+      { text: ' one ', strong: false, em: false },
+      { text: RUN_BREAK, strong: false, em: false },
+      { text: '   ', strong: false, em: false },
+      { text: RUN_BREAK, strong: false, em: false },
+      { text: ' two ', strong: false, em: false },
+      { text: RUN_BREAK, strong: false, em: false },
+    ]),
+    [
+      { text: 'one', strong: false, em: false },
+      { text: RUN_BREAK, strong: false, em: false },
+      { text: 'two', strong: false, em: false },
+    ],
+  );
+});
+
+test('a break inside the text of a run is whitespace, not a line', () => {
+  // Source formatting between two tags reaches the parser as a text node. It
+  // must never read as a deliberate break, or a pretty-printed paste would grow
+  // a line for every newline its author's editor happened to insert.
+  assert.deepEqual(htmlToRuns('<b>a\nb</b>', { multiline: true }), [
+    { text: 'a b', strong: true, em: false },
+  ]);
+  assert.deepEqual(normalizeRuns([{ text: 'a\nb', strong: false, em: false }]), [
+    { text: 'a b', strong: false, em: false },
+  ]);
+});
+
+test('multiline stores one block per line', () => {
+  assert.deepEqual(htmlToInlineRich('one<br>two', counter(), { multiline: true }), [
+    {
+      _type: 'block',
+      _key: 'k1',
+      style: 'normal',
+      markDefs: [],
+      children: [{ _type: 'span', _key: 'k2', text: 'one', marks: [] }],
+    },
+    {
+      _type: 'block',
+      _key: 'k3',
+      style: 'normal',
+      markDefs: [],
+      children: [{ _type: 'span', _key: 'k4', text: 'two', marks: [] }],
+    },
+  ]);
+  // The default is unchanged: one block, and the break is a space.
+  assert.deepEqual(htmlToInlineRich('one<br>two', counter()), [
+    {
+      _type: 'block',
+      _key: 'k1',
+      style: 'normal',
+      markDefs: [],
+      children: [{ _type: 'span', _key: 'k2', text: 'one two', marks: [] }],
+    },
+  ]);
+});
+
+test('runsToHtml seeds a break back into the box', () => {
+  assert.equal(
+    runsToHtml([
+      { text: 'one', strong: false, em: false },
+      { text: RUN_BREAK, strong: false, em: false },
+      { text: 'two', strong: false, em: false },
+    ]),
+    'one<br>two',
+  );
+});
+
+test('textToRuns reads a clipboard with no HTML flavour', () => {
+  assert.deepEqual(textToRuns('  two   words  '), [
+    { text: 'two words', strong: false, em: false },
+  ]);
+  assert.deepEqual(textToRuns('one\r\ntwo', { multiline: true }), [
+    { text: 'one', strong: false, em: false },
+    { text: RUN_BREAK, strong: false, em: false },
+    { text: 'two', strong: false, em: false },
+  ]);
+  // Without the seam a pasted newline is a space, like every other whitespace.
+  assert.deepEqual(textToRuns('one\ntwo'), [{ text: 'one two', strong: false, em: false }]);
+  assert.deepEqual(textToRuns(''), []);
+  assert.deepEqual(textToRuns(undefined), []);
 });

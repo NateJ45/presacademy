@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// useDraftDocument — the one supported way these controls change anything
+// useDraftDocument - the one supported way these controls change anything
 // (2026-08-28)
 // =============================================================================
 // A control floating over the page has no Sanity token and no write client, and
@@ -10,13 +11,18 @@
 // over the comlink to the parent Studio window, which applies it with the
 // editor's own session exactly as if they had typed in the form. That is why
 // every write here lands in the DRAFT, shows up in the Studio's unpublished-
-// changes badge, is covered by the Studio's undo, and still needs Publish.
+// changes badge, is covered by the Studio's undo (PORTS.md card 27), and still
+// needs Publish.
 //
 // The hook is only meaningful inside the <VisualEditing> tree with the optimistic
-// actor running, which is precisely when overlay components exist (Overlays.tsx
-// hands the resolver through only once `optimisticActorReady`). Outside that,
-// and before the document has streamed in, the underlying calls THROW; both are
+// actor running, which is precisely when overlay components exist (the host hands
+// the resolver through only once `optimisticActorReady`). Outside that, and
+// before the document has streamed in, the underlying calls THROW; both are
 // caught here and reported as "not now" rather than crashing the preview page.
+//
+// It is also the READ door for instant text (PORTS.md card 29), which is why
+// `readNow` exists beside `read`: that path runs on every keystroke and cannot
+// afford a retry sleep or a log line.
 //
 // The patch shape is @sanity/mutate's NodePatch: a path of segments and one
 // operation. It is typed locally rather than imported so the island depends on
@@ -36,7 +42,7 @@ export interface DraftPatch {
   op: PatchOp;
 }
 
-/** Set a value, creating any missing object on the way in. */
+/** Set a value. */
 export function setAt(path: PathSegment[], value: unknown): DraftPatch[] {
   return [{ path, op: { type: 'set', value } }];
 }
@@ -61,7 +67,7 @@ export interface DraftDocument {
    * The same snapshot, with ONE attempt and no console warning. For callers that
    * run on every edit rather than on a hover: the retry-and-warn behaviour of
    * `read` would put a 250ms sleep and a log line in a hot path, and there is
-   * nothing to recover — the next edit brings another chance a moment later.
+   * nothing to recover - the next edit brings another chance a moment later.
    */
   readNow: () => Promise<Record<string, unknown> | null>;
   /** The value at a path in the current draft, or undefined. */
@@ -74,12 +80,11 @@ export function useDraftDocument(documentId: string): DraftDocument {
   const { getDocument } = useDocuments();
 
   const read = useCallback(async () => {
-    // Overlays.tsx asks the actor to observe every document its elements
-    // mention, so by the time one of them is hovered the document is normally
-    // already there. "Normally" is not "always" on a cold frame, and
-    // getDocument() THROWS rather than resolving to nothing, so one retry turns
-    // a race into a beat of nothing happening instead of a control that never
-    // appears until the next hover.
+    // The host asks the actor to observe every document its elements mention, so
+    // by the time one of them is hovered the document is normally already there.
+    // "Normally" is not "always" on a cold frame, and getDocument() THROWS rather
+    // than resolving to nothing, so one retry turns a race into a beat of nothing
+    // happening instead of a control that never appears until the next hover.
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const doc = getDocument<Record<string, unknown>>(documentId);

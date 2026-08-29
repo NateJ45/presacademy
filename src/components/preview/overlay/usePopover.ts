@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// usePopover — Escape closes, Tab stays inside (2026-08-28)
+// usePopover - Escape closes, Tab stays inside (2026-08-28)
 // =============================================================================
 // The two floating cards in this layer (the word picker and the text editor) owe
 // the editor the same two keyboard promises any dialog does: Escape gets me out

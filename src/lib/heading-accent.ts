@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// Accent words in headings (Wave 2b, 2026-08-28)
+// Accent words in headings (2026-08-28)
 // =============================================================================
 // The site already had one designed way to emphasise part of a display heading:
 // scriptAccent (src/lib/scriptAccent.ts), which sets one word of a headline in
@@ -29,8 +30,7 @@
 // =============================================================================
 
 // Explicit .ts extension: this module is reached by `node --test` (see
-// heading-accent.test.ts), which resolves ESM specifiers literally. The same
-// convention is used by section-coach.ts for the same reason.
+// heading-accent.test.ts), which resolves ESM specifiers literally.
 import { plain } from './nav-href.ts';
 
 export interface HeadingAccentResult {
@@ -77,7 +77,7 @@ export function splitHeadingAccent(
 }
 
 // -----------------------------------------------------------------------------
-// Picking the word by clicking it (in-canvas controls, 2026-08-28)
+// Picking the word by clicking it (in-canvas controls, PORTS.md card 28)
 // -----------------------------------------------------------------------------
 // Typing the accent word into a box means reading the heading, choosing a word,
 // and copying it correctly; the guide even has a step for "if nothing changes,
