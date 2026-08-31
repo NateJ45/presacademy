@@ -150,8 +150,10 @@ const yearLabel = (y: number): string => `${y}–${String((y + 1) % 100).padStar
 
 function yearScopedEvents(S: StructureBuilder, icon: any) {
   const fall = currentFallYear();
-  // Undated events fall back to _createdAt so nothing ever hides.
-  const filter = `_type == "event" && ${NOT_ARCHIVED} && coalesce(start, _createdAt) >= $from && coalesce(start, _createdAt) < $to`;
+  // An UNDATED event is an ongoing one ("Monthly info session", "Visit a
+  // class") — it belongs in EVERY year pane, not in the year it happened to
+  // be created. Dated events bucket by their start.
+  const filter = `_type == "event" && ${NOT_ARCHIVED} && (!defined(start) || (start >= $from && start < $to))`;
 
   const yearPane = (y: number, paneTitle: string) =>
     S.listItem()
