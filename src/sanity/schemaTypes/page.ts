@@ -11,6 +11,13 @@ import { SEO_GROUP, seoFields } from './seo';
 
 export const page = defineType({
   name: 'page',
+  // Studio search matches the words editors see, not just internal titles
+  // (ported from the WCP site's search weights, 2026-08-31).
+  __experimental_search: [
+    { path: 'title', weight: 5 },
+    { path: 'heroHeadline', weight: 4 },
+    { path: 'heroSubhead', weight: 2 },
+  ],
   title: 'Page',
   type: 'document',
   groups: [

@@ -1,7 +1,9 @@
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { useClient, useWorkspace } from 'sanity';
 import { IntentLink, useRouter } from 'sanity/router';
-import { Box, Card, Stack, Text, Heading, Flex, Spinner } from '@sanity/ui';
+import { ToolHeading } from './ToolHeading';
+import { OPEN_EVENT as TOUR_OPEN_EVENT } from './StudioTour';
+import { Box, Button, Card, Stack, Text, Flex, Spinner } from '@sanity/ui';
 
 // =============================================================================
 // WelcomePane — the Studio landing screen
@@ -194,12 +196,21 @@ export function WelcomePane() {
       `}</style>
       <Stack space={5} style={{ maxWidth: 680, margin: '0 auto' }}>
         <Stack space={3}>
-          <Heading size={3}>👋 Welcome to The Presbyterian Academy Studio</Heading>
+          <ToolHeading>👋 Welcome to The Presbyterian Academy Studio</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
             This is where you edit the website. Nothing goes live until you click{' '}
             <strong>Publish</strong>, so click around and explore. New here? Open{' '}
             <strong>How This Works</strong> in the left menu for step-by-step walkthroughs.
           </Text>
+          <Box>
+            {/* Replays the first-visit tour (StudioTour.tsx listens). */}
+            <Button
+              mode="bleed"
+              padding={2}
+              text="Show the welcome tour again"
+              onClick={() => window.dispatchEvent(new CustomEvent(TOUR_OPEN_EVENT))}
+            />
+          </Box>
         </Stack>
 
         <Stack space={3}>

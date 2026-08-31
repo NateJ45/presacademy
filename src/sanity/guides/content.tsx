@@ -87,7 +87,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'The Studio vs. the website' },
       {
         kind: 'p',
-        text: 'This **Studio** is your control room. The **website** is what visitors see. You make changes here, and they appear on the website after you publish them. The Studio is private. The website is public.',
+        text: 'This **Studio** is your control room. The **website** is what visitors see. You make changes here, and they appear on the website after you publish them. The Studio is private. The website is public. (The first time you open the Studio it greets you with a short **welcome tour** — replay it any time from the **Welcome** page, "Show the welcome tour again".)',
       },
       { kind: 'h', text: 'The one rule: nothing is live until you Publish' },
       {
@@ -1317,6 +1317,10 @@ export const guides: Guide[] = [
     diy: 'self',
     body: [
       { kind: 'path', items: ['Events', '+ New event'], link: { pane: 'event' } },
+      {
+        kind: 'p',
+        text: 'The Events list opens on **This school year**, with one folder per past year behind it and an **Everything** list at the bottom — so this term’s events are always on top, however many years pile up.',
+      },
       { kind: 'h', text: 'Add an event' },
       {
         kind: 'steps',

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
-import { Badge, Box, Button, Card, Flex, Heading, Spinner, Stack, Text } from '@sanity/ui';
+import { ToolHeading } from './ToolHeading';
+import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
 
 // =============================================================================
 // HealthTool — a plain-language "what needs attention?" checkup (navbar tool)
@@ -314,7 +315,7 @@ export function HealthTool() {
     <Box padding={4}>
       <Stack space={5} style={{ maxWidth: 640, margin: '0 auto' }}>
         <Stack space={3}>
-          <Heading size={3}>🩺 Content checkup</Heading>
+          <ToolHeading>🩺 Content checkup</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
             A quick look for things worth fixing: courses or faculty missing their basics, terms and
             notices gone stale, empty SEO fields, and edits waiting to publish. Nothing is changed

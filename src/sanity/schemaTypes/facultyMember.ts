@@ -12,6 +12,9 @@ import { orderRankField } from '@sanity/orderable-document-list';
 
 export const facultyMember = defineType({
   name: 'facultyMember',
+  // Studio search matches the words editors see, not just internal titles
+  // (ported from the WCP site's search weights, 2026-08-31).
+  __experimental_search: [{ path: 'name', weight: 5 }],
   title: 'Faculty member',
   type: 'document',
   groups: [
@@ -75,7 +78,8 @@ export const facultyMember = defineType({
       name: 'specializations',
       title: 'Specializations (optional)',
       type: 'array',
-      description: 'Narrow research interests, in free text, distinct from the shared areas. Example: "Bavinck studies".',
+      description:
+        'Narrow research interests, in free text, distinct from the shared areas. Example: "Bavinck studies".',
       of: [{ type: 'string' }],
       group: 'identity',
     }),
@@ -83,7 +87,8 @@ export const facultyMember = defineType({
       name: 'ordination',
       title: 'Ordination',
       type: 'string',
-      description: 'Example: "Ordained minister of Word and Sacrament". Leave blank if not ordained.',
+      description:
+        'Example: "Ordained minister of Word and Sacrament". Leave blank if not ordained.',
       group: 'credentials',
     }),
     defineField({
@@ -105,20 +110,45 @@ export const facultyMember = defineType({
       name: 'degrees',
       title: 'Degrees',
       type: 'array',
-      description: 'Each degree, with the granting institution. Institution is required so a degree never shows without its school.',
+      description:
+        'Each degree, with the granting institution. Institution is required so a degree never shows without its school.',
       of: [
         defineArrayMember({
           type: 'object',
           name: 'degree',
           fields: [
-            defineField({ name: 'degree', title: 'Degree', type: 'string', description: 'Example: "PhD", "MDiv".', validation: (Rule) => Rule.required() }),
-            defineField({ name: 'field', title: 'Field (optional)', type: 'string', description: 'Example: "New Testament".' }),
-            defineField({ name: 'institution', title: 'Institution', type: 'string', validation: (Rule) => Rule.required() }),
-            defineField({ name: 'year', title: 'Year (optional)', type: 'string', description: 'A string, so "in progress" is allowed.' }),
+            defineField({
+              name: 'degree',
+              title: 'Degree',
+              type: 'string',
+              description: 'Example: "PhD", "MDiv".',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'field',
+              title: 'Field (optional)',
+              type: 'string',
+              description: 'Example: "New Testament".',
+            }),
+            defineField({
+              name: 'institution',
+              title: 'Institution',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'year',
+              title: 'Year (optional)',
+              type: 'string',
+              description: 'A string, so "in progress" is allowed.',
+            }),
           ],
           preview: {
             select: { degree: 'degree', field: 'field', institution: 'institution' },
-            prepare: ({ degree, field, institution }) => ({ title: [degree, field].filter(Boolean).join(', '), subtitle: institution }),
+            prepare: ({ degree, field, institution }) => ({
+              title: [degree, field].filter(Boolean).join(', '),
+              subtitle: institution,
+            }),
           },
         }),
       ],
@@ -158,14 +188,22 @@ export const facultyMember = defineType({
           type: 'object',
           name: 'publication',
           fields: [
-            defineField({ name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required() }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({ name: 'publisher', title: 'Publisher / venue', type: 'string' }),
             defineField({ name: 'year', title: 'Year', type: 'string' }),
             defineField({ name: 'url', title: 'Link (optional)', type: 'url' }),
           ],
           preview: {
             select: { title: 'title', publisher: 'publisher', year: 'year' },
-            prepare: ({ title, publisher, year }) => ({ title, subtitle: [publisher, year].filter(Boolean).join(', ') }),
+            prepare: ({ title, publisher, year }) => ({
+              title,
+              subtitle: [publisher, year].filter(Boolean).join(', '),
+            }),
           },
         }),
       ],
@@ -194,7 +232,14 @@ export const facultyMember = defineType({
                 name: 'link',
                 type: 'object',
                 title: 'Link',
-                fields: [{ name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) }],
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (R: any) => R.uri({ allowRelative: true }),
+                  },
+                ],
               },
             ],
           },
@@ -206,7 +251,8 @@ export const facultyMember = defineType({
       name: 'humanLine',
       title: 'One human line',
       type: 'string',
-      description: 'A single disarming sentence so the depth reads inviting. Shown in italic. Example: "She makes the hardest passages feel like an open door."',
+      description:
+        'A single disarming sentence so the depth reads inviting. Shown in italic. Example: "She makes the hardest passages feel like an open door."',
       group: 'writing',
     }),
     defineField({
@@ -232,6 +278,13 @@ export const facultyMember = defineType({
     }),
   },
   orderings: [
-    { title: 'Display order', name: 'displayOrder', by: [{ field: 'displayOrder', direction: 'asc' }, { field: 'name', direction: 'asc' }] },
+    {
+      title: 'Display order',
+      name: 'displayOrder',
+      by: [
+        { field: 'displayOrder', direction: 'asc' },
+        { field: 'name', direction: 'asc' },
+      ],
+    },
   ],
 });

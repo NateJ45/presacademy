@@ -18,21 +18,24 @@ export const faqCategory = defineType({
       name: 'title',
       title: 'Category title',
       type: 'string',
-      description: 'The heading shown above this group of questions on the FAQ page, e.g. "Visiting" or "Kids & Family".',
+      description:
+        'The heading shown above this group of questions on the FAQ page, e.g. "Visiting" or "Kids & Family".',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug (optional)',
       type: 'slug',
-      description: 'Optional. An auto-generated URL fragment for future deep-link use. Not used on the FAQ page yet.',
+      description:
+        'Optional. An auto-generated URL fragment for future deep-link use. Not used on the FAQ page yet.',
       options: { source: 'title' },
     }),
     defineField({
       name: 'displayOrder',
       title: 'Display order',
       type: 'number',
-      description: 'Lower numbers appear first when categories are listed. Leave blank to rely on the faqPage categoryOrder list instead.',
+      description:
+        'Lower numbers appear first when categories are listed. Leave blank to rely on the faqPage categoryOrder list instead.',
     }),
   ],
   preview: {
@@ -46,7 +49,10 @@ export const faqCategory = defineType({
     {
       title: 'Display order',
       name: 'displayOrderAsc',
-      by: [{ field: 'displayOrder', direction: 'asc' }, { field: 'title', direction: 'asc' }],
+      by: [
+        { field: 'displayOrder', direction: 'asc' },
+        { field: 'title', direction: 'asc' },
+      ],
     },
   ],
 });

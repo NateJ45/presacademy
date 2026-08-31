@@ -91,6 +91,10 @@ export const pricingTier = defineType({
     }),
   },
   orderings: [
-    { title: 'Display order', name: 'displayOrder', by: [{ field: 'displayOrder', direction: 'asc' }] },
+    {
+      title: 'Display order',
+      name: 'displayOrder',
+      by: [{ field: 'displayOrder', direction: 'asc' }],
+    },
   ],
 });

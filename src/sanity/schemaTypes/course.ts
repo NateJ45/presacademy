@@ -14,6 +14,12 @@ import { archivedField } from './archived';
 
 export const course = defineType({
   name: 'course',
+  // Studio search matches the words editors see, not just internal titles
+  // (ported from the WCP site's search weights, 2026-08-31).
+  __experimental_search: [
+    { path: 'title', weight: 5 },
+    { path: 'summary', weight: 2 },
+  ],
   title: 'Course',
   type: 'document',
   groups: [
@@ -46,7 +52,8 @@ export const course = defineType({
       title: 'Summary',
       type: 'text',
       rows: 3,
-      description: 'One or two sentences. Shown on the catalog card and used as the meta description.',
+      description:
+        'One or two sentences. Shown on the catalog card and used as the meta description.',
       group: 'details',
       validation: (Rule) => Rule.max(240),
     }),
@@ -115,7 +122,8 @@ export const course = defineType({
       name: 'whoFor',
       title: 'Who this is for',
       type: 'array',
-      description: 'Two or three named human personas, not adjectives. Example: "Small-group leaders who teach the text".',
+      description:
+        'Two or three named human personas, not adjectives. Example: "Small-group leaders who teach the text".',
       of: [{ type: 'string' }],
       group: 'details',
     }),
@@ -129,7 +137,12 @@ export const course = defineType({
           type: 'object',
           name: 'courseSession',
           fields: [
-            defineField({ name: 'title', title: 'Session title', type: 'string', validation: (Rule) => Rule.required() }),
+            defineField({
+              name: 'title',
+              title: 'Session title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({ name: 'focus', title: 'Focus', type: 'text', rows: 2 }),
           ],
           preview: { select: { title: 'title', subtitle: 'focus' } },
@@ -155,10 +168,26 @@ export const course = defineType({
           type: 'object',
           name: 'courseOffering',
           fields: [
-            defineField({ name: 'term', title: 'Term', type: 'reference', to: [{ type: 'term' }], validation: (Rule) => Rule.required() }),
-            defineField({ name: 'schedule', title: 'Schedule', type: 'string', description: 'Example: "Tuesdays, 7 to 9pm, 8 weeks".' }),
+            defineField({
+              name: 'term',
+              title: 'Term',
+              type: 'reference',
+              to: [{ type: 'term' }],
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'schedule',
+              title: 'Schedule',
+              type: 'string',
+              description: 'Example: "Tuesdays, 7 to 9pm, 8 weeks".',
+            }),
             defineField({ name: 'sessions', title: 'Number of sessions', type: 'number' }),
-            defineField({ name: 'seatsNote', title: 'Seats note', type: 'string', description: 'Example: "A few seats left".' }),
+            defineField({
+              name: 'seatsNote',
+              title: 'Seats note',
+              type: 'string',
+              description: 'Example: "A few seats left".',
+            }),
             defineField({
               name: 'status',
               title: 'Status',
@@ -176,7 +205,10 @@ export const course = defineType({
           ],
           preview: {
             select: { term: 'term.title', schedule: 'schedule', status: 'status' },
-            prepare: ({ term, schedule, status }) => ({ title: term ?? 'Offering', subtitle: [schedule, status].filter(Boolean).join(' · ') }),
+            prepare: ({ term, schedule, status }) => ({
+              title: term ?? 'Offering',
+              subtitle: [schedule, status].filter(Boolean).join(' · '),
+            }),
           },
         }),
       ],
@@ -193,7 +225,8 @@ export const course = defineType({
       name: 'priceNote',
       title: 'Price note (optional override)',
       type: 'string',
-      description: 'If set, this text is shown instead of the tier amount. Example: "$195, audit $95".',
+      description:
+        'If set, this text is shown instead of the tier amount. Example: "$195, audit $95".',
       group: 'pricing',
     }),
     defineField({
@@ -219,8 +252,21 @@ export const course = defineType({
       initialValue: 10,
       group: 'details',
     }),
-    defineField({ name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo', validation: (Rule) => Rule.max(60).warning('Best kept under 60 characters.') }),
-    defineField({ name: 'seoDescription', title: 'SEO description', type: 'text', rows: 2, group: 'seo', validation: (Rule) => Rule.max(160).warning('Best kept under 160 characters.') }),
+    defineField({
+      name: 'seoTitle',
+      title: 'SEO title',
+      type: 'string',
+      group: 'seo',
+      validation: (Rule) => Rule.max(60).warning('Best kept under 60 characters.'),
+    }),
+    defineField({
+      name: 'seoDescription',
+      title: 'SEO description',
+      type: 'text',
+      rows: 2,
+      group: 'seo',
+      validation: (Rule) => Rule.max(160).warning('Best kept under 160 characters.'),
+    }),
     defineField({
       name: 'seoImage',
       title: 'Social share image',
@@ -232,10 +278,21 @@ export const course = defineType({
   ],
   preview: {
     select: { title: 'title', media: 'coverImage', area: 'teachingAreas.0.title' },
-    prepare: ({ title, media, area }) => ({ title: title ?? 'Untitled course', subtitle: area, media }),
+    prepare: ({ title, media, area }) => ({
+      title: title ?? 'Untitled course',
+      subtitle: area,
+      media,
+    }),
   },
   orderings: [
-    { title: 'Display order', name: 'displayOrder', by: [{ field: 'displayOrder', direction: 'asc' }, { field: 'title', direction: 'asc' }] },
+    {
+      title: 'Display order',
+      name: 'displayOrder',
+      by: [
+        { field: 'displayOrder', direction: 'asc' },
+        { field: 'title', direction: 'asc' },
+      ],
+    },
     { title: 'Title', name: 'titleAsc', by: [{ field: 'title', direction: 'asc' }] },
   ],
 });

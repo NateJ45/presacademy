@@ -80,10 +80,16 @@ export const term = defineType({
     select: { title: 'title', start: 'startDate', status: 'status' },
     prepare: ({ title, start, status }) => ({
       title: title ?? 'Untitled term',
-      subtitle: [start ? new Date(start).toLocaleDateString() : null, status].filter(Boolean).join(' · '),
+      subtitle: [start ? new Date(start).toLocaleDateString() : null, status]
+        .filter(Boolean)
+        .join(' · '),
     }),
   },
   orderings: [
-    { title: 'Start date (soonest first)', name: 'startAsc', by: [{ field: 'startDate', direction: 'asc' }] },
+    {
+      title: 'Start date (soonest first)',
+      name: 'startAsc',
+      by: [{ field: 'startDate', direction: 'asc' }],
+    },
   ],
 });
