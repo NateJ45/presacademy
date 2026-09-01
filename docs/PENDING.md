@@ -97,7 +97,9 @@ that section when it gets long.
   just absent.
 - **GitHub Actions secrets/variables may be unset.** `deploy-staging.yml`
   (needs `CLOUDFLARE_API_TOKEN`), `sanity-backup.yml` (needs
-  `SANITY_AUTH_TOKEN`), and `uptime.yml` (needs the `SITE_URL` repo
+  `SANITY_AUTH_TOKEN` AND `BACKUP_PASSPHRASE` — the artifact is encrypted
+  because the repo is public; keep an off-GitHub copy of the passphrase,
+  see docs/agent/ci-cd-and-ops.md), and `uptime.yml` (needs the `SITE_URL` repo
   variable) all warn-and-skip when their secret is missing, so staging
   deploys, nightly dataset backups, and uptime checks may be silently
   inert. Check the repo settings on GitHub and set whichever are missing.

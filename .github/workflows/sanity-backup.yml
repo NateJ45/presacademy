@@ -2,12 +2,21 @@ name: Sanity dataset backup
 
 # Nightly export of the production Sanity dataset (documents + assets) so a bad
 # mutation or an accidental "Remove field" in Studio is always recoverable.
-# Activates once the SANITY_AUTH_TOKEN secret is set (a read token is enough);
-# until then it logs a warning and skips. Restore steps: docs/agent/ci-cd-and-ops.md.
+# Activates once BOTH secrets exist: SANITY_AUTH_TOKEN (a read token is enough)
+# and BACKUP_PASSPHRASE (encrypts the artifact — see the warning below).
+# Until then it logs a warning and skips. Restore steps: docs/agent/ci-cd-and-ops.md.
+
+# WARNING: the export is ENCRYPTED before upload, and that is load-bearing.
+# This repo is PUBLIC, so any logged-in GitHub user can download workflow
+# artifacts. The dataset can hold directory and family content that must not
+# be public. A plaintext artifact publishes all of it. That is why the gate
+# refuses to export when BACKUP_PASSPHRASE is missing: skipping a backup is
+# recoverable, publishing the dataset is not. Never upload the tarball
+# without the openssl step. (Ported 2026-09-01 from wcp-website 73cfe3c.)
 
 # Schedule disabled 2026-07 (decision preserved through the 2026-08-26 history
 # scrub): SANITY_AUTH_TOKEN was never set, so the daily gate job billed a
-# minute a day just to log "skipping". Uncomment once the token secret exists
+# minute a day just to log "skipping". Uncomment once BOTH secrets exist
 # (setup: docs/agent/ci-cd-and-ops.md) — the nightly backup is genuinely worth
 # having as soon as real content lands. Manual runs still work.
 on:
@@ -24,12 +33,19 @@ jobs:
       - id: check
         env:
           TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
         run: |
-          if [ -n "$TOKEN" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ -z "$TOKEN" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::SANITY_AUTH_TOKEN not set; skipping backup. See docs/agent/ci-cd-and-ops.md."
+          elif [ -z "$PASSPHRASE" ]; then
+            # No passphrase means the artifact would upload as PLAINTEXT on a
+            # public repo. Refuse to export at all rather than publish the
+            # dataset — see the header warning.
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::BACKUP_PASSPHRASE not set; skipping backup so the dataset never uploads unencrypted. See docs/agent/ci-cd-and-ops.md."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
   export:
@@ -56,11 +72,25 @@ jobs:
           STAMP=$(date -u +%Y-%m-%d)
           npx sanity dataset export production "sanity-backup-$STAMP.tar.gz"
 
+      # Encrypt BEFORE upload — see the header warning. AES-256-CBC with a
+      # PBKDF2-stretched passphrase; openssl ships on every runner and every
+      # laptop a restore would happen on.
+      - name: Encrypt the export
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          for f in sanity-backup-*.tar.gz; do
+            openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt \
+              -in "$f" -out "$f.enc" -pass env:BACKUP_PASSPHRASE
+            rm "$f"
+          done
+          ls -lh sanity-backup-*.tar.gz.enc
+
       - name: Upload backup artifact
         uses: actions/upload-artifact@v4
         with:
           name: sanity-backup
-          path: sanity-backup-*.tar.gz
+          path: sanity-backup-*.tar.gz.enc
           # GitHub keeps artifacts 90 days. For longer or off-site retention,
           # push the tarball to R2/S3 here instead.
           retention-days: 90

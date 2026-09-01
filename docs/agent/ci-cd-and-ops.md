@@ -33,25 +33,33 @@ On every push to `staging`, deploys to a SEPARATE Cloudflare Worker, `presacadem
 
 ## Sanity backups (`.github/workflows/sanity-backup.yml`)
 
-Nightly (07:00 UTC) `sanity dataset export` of `production` (documents + assets), uploaded as a GitHub artifact kept 90 days. This is the safety net for a bad mutation or an accidental "Remove field" in Studio, neither of which is undoable otherwise.
+Nightly (07:00 UTC) `sanity dataset export` of `production` (documents + assets), encrypted with `openssl`, uploaded as a GitHub artifact kept 90 days. This is the safety net for a bad mutation or an accidental "Remove field" in Studio, neither of which is undoable otherwise.
 
-**To activate:** add the repo secret `SANITY_AUTH_TOKEN` (a **read** token from sanity.io/manage is enough). The project's public id (`uz2sl3zp`) is hard-coded in the workflow since it is not a secret.
+**The encryption is load-bearing.** This repo is PUBLIC, so any logged-in GitHub user can download workflow artifacts. The dataset can hold directory and family content that must never be public, so the workflow encrypts the tarball before upload and the gate refuses to export at all when `BACKUP_PASSPHRASE` is missing — skipping a backup is recoverable, publishing the dataset is not.
+
+**To activate:** add TWO repo secrets: `SANITY_AUTH_TOKEN` (a **read** token from sanity.io/manage is enough) and `BACKUP_PASSPHRASE` (a long random passphrase, e.g. `openssl rand -base64 32`). **Store a copy of the passphrase outside GitHub, somewhere the school/client can find it** — GitHub never shows a secret again, and a backup nobody can decrypt is no backup. The project's public id (`uz2sl3zp`) is hard-coded in the workflow since it is not a secret.
 
 ### Restore runbook
 
-1. Download the `sanity-backup` artifact from the relevant Actions run and unzip it to get `sanity-backup-YYYY-MM-DD.tar.gz`.
-2. **Verify before overwriting.** Import into a throwaway dataset first:
+1. Download the `sanity-backup` artifact from the relevant Actions run and unzip it to get `sanity-backup-YYYY-MM-DD.tar.gz.enc`.
+2. **Decrypt** with the stored passphrase:
+   ```bash
+   BACKUP_PASSPHRASE=*** openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
+     -in sanity-backup-YYYY-MM-DD.tar.gz.enc -out sanity-backup-YYYY-MM-DD.tar.gz \
+     -pass env:BACKUP_PASSPHRASE
+   ```
+3. **Verify before overwriting.** Import into a throwaway dataset first:
    ```bash
    cd studio
    SANITY_AUTH_TOKEN=*** npx sanity dataset create restore-check
    SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD.tar.gz restore-check
    ```
    Open the Studio against `restore-check` and confirm the content looks right.
-3. **Restore to production** once verified (this overwrites, so be deliberate):
+4. **Restore to production** once verified (this overwrites, so be deliberate):
    ```bash
    SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD.tar.gz production --replace
    ```
-4. Trigger a production rebuild (push to `main` or `/rebuild`) so the live site picks up the restored content.
+5. Trigger a production rebuild (push to `main` or `/rebuild`) so the live site picks up the restored content.
 
 For off-site or longer-than-90-day retention, push the tarball to R2/S3 in the workflow instead of (or in addition to) the artifact upload.
 
@@ -77,6 +85,7 @@ Note: hCaptcha's image puzzles are more intrusive than Turnstile's checkbox; we 
 | `CLOUDFLARE_API_TOKEN` | secret | deploy-staging | staging preview deploys |
 | `CLOUDFLARE_ACCOUNT_ID` | secret | deploy-staging | staging preview deploys |
 | `SANITY_AUTH_TOKEN` | secret | sanity-backup | nightly dataset backups (read token) |
+| `BACKUP_PASSPHRASE` | secret | sanity-backup | encrypts the backup artifact (public repo — required, keep an off-GitHub copy) |
 | `PUBLIC_SANITY_PROJECT_ID` | variable | deploy-staging | real content in the preview (optional) |
 | `PUBLIC_SANITY_DATASET` | variable | deploy-staging | real content in the preview (optional) |
 | `SITE_URL` | variable | uptime | hourly uptime check |
