@@ -22,6 +22,18 @@ updates:
       minor-and-patch:
         update-types: ["minor", "patch"]
     open-pull-requests-limit: 5
+    # The Sanity stack (sanity, @sanity/*, react, react-dom) is pinned to exact
+    # versions on purpose: 15cc9d1 pinned it to the versions proven in WCP, and
+    # bd66441/00d4f30 tried client 7.26.2 and reverted it. Dependabot bumping one
+    # member of that set (e.g. @sanity/preview-url-secret 4.0.8 -> 4.1.5) fails
+    # npm ci with an ERESOLVE against the pinned @sanity/client, and took the
+    # whole minor-and-patch group down with it on 2026-09-04. That stack moves
+    # by hand, together, when WCP has proven the next set.
+    ignore:
+      - dependency-name: "sanity"
+      - dependency-name: "@sanity/*"
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
 
   - package-ecosystem: github-actions
     directory: /
