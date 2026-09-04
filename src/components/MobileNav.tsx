@@ -1,7 +1,10 @@
 // Foundation, edit with care
-// Mobile nav drawer. Uses shadcn Sheet (Radix Dialog under the hood) so it
-// must be hydrated with client:only="react" — Radix's portal hook calls during
-// SSR throw "Invalid hook call" inside Astro.
+// Mobile nav drawer. Uses shadcn Sheet (Radix Dialog under the hood). Radix's
+// portal does not SSR cleanly inside Astro, so the component server-renders ONLY
+// the trigger button and mounts the Sheet after hydration (`mounted` below).
+// That is what lets Header.astro hydrate it with client:idle instead of
+// client:only: the button paints with the page, and React no longer downloads
+// inside the LCP window (it was ~100KB of the mobile critical path).
 //
 // Layout (top to bottom inside the sheet):
 //   1. Brand accent stripe (4px Warm Bronze) + "Menu" eyebrow
@@ -19,7 +22,7 @@
 // the Header, with sensible defaults so the menu renders cleanly before
 // content is wired up.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, Mail, Phone, ChevronRight } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -68,6 +71,10 @@ const DEFAULT_CTA = { show: true, label: 'Request info', href: '/get-started' };
 
 export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Props) {
   const [open, setOpen] = useState(false);
+  // False during SSR and the first client render, so the server and hydration
+  // markup match; the Sheet (with its portal) mounts on the next effect tick.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const tagline =
     siteSettings?.tagline ?? 'Serving and celebrating Jesus for the good of the world.';
@@ -78,18 +85,26 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
 
   const close = () => setOpen(false);
 
+  // The trigger is the same element before and after mount, so the button never
+  // jumps; only its behaviour arrives with the Sheet.
+  const trigger = (
+    <button
+      type="button"
+      aria-label="Open menu"
+      className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent transition-colors"
+    >
+      <Menu size={22} />
+    </button>
+  );
+
+  if (!mounted) {
+    return <div className="lg:hidden absolute right-m top-1/2 -translate-y-1/2">{trigger}</div>;
+  }
+
   return (
     <div className="lg:hidden absolute right-m top-1/2 -translate-y-1/2">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <button
-            type="button"
-            aria-label="Open menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent transition-colors"
-          >
-            <Menu size={22} />
-          </button>
-        </SheetTrigger>
+        <SheetTrigger asChild>{trigger}</SheetTrigger>
         <SheetContent
           side="right"
           className="w-[min(380px,90vw)] sm:max-w-none bg-background border-t-4 border-t-primary p-0 gap-0 flex flex-col overflow-y-auto"

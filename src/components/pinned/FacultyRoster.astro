@@ -44,7 +44,7 @@ const areaChips = (areas ?? [])
 <section class="bg-background" aria-labelledby="faculty-list">
   <div class="mx-auto max-w-content px-m pb-section-lg">
     <h2 id="faculty-list" class="sr-only">Faculty members</h2>
-    {areaChips.length > 0 && <FacultyFilter client:load areas={areaChips} />}
+    {areaChips.length > 0 && <FacultyFilter client:idle areas={areaChips} />}
     {faculty.length > 0 ? (
       <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
         {faculty.map((f: any) => <FacultyCard person={f} />)}
