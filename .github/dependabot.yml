@@ -34,6 +34,10 @@ updates:
       - dependency-name: "@sanity/*"
       - dependency-name: "react"
       - dependency-name: "react-dom"
+      # The sanity-plugin-* set is pinned for the same reason: 2026-09-04 the
+      # regenerated group bumped asset-source-unsplash and documents-pane, which
+      # import @sanity/ui/tooltip that the pinned @sanity/ui 3.3.5 does not export.
+      - dependency-name: "sanity-plugin-*"
 
   - package-ecosystem: github-actions
     directory: /
