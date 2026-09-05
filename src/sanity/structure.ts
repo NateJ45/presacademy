@@ -130,6 +130,79 @@ function collection(S: StructureBuilder, schemaType: string, title: string, icon
     );
 }
 
+// =============================================================================
+// Year-scoped Events (ported from the WCP site's yearScopedList, 2026-08-31)
+// =============================================================================
+// Events accumulate forever. A flat list means a year-three editor scrolls
+// past dozens of dead rows to find this term's — so Events opens as "This
+// school year" (the default view) plus one pane per past year, with an
+// Everything list at the bottom. Nothing moves or archives; this is
+// presentation only, and every pane keeps soft-deleted events out of sight
+// (NOT_ARCHIVED, same as collection()). School years run Aug 1 – Jul 31 and
+// are named by their fall ("2026–27").
+const FIRST_CONTENT_YEAR = 2026; // the site's first events
+
+const currentFallYear = (): number => {
+  const d = new Date();
+  return d.getMonth() >= 7 ? d.getFullYear() : d.getFullYear() - 1; // Aug+ = this fall
+};
+const yearLabel = (y: number): string => `${y}–${String((y + 1) % 100).padStart(2, '0')}`;
+
+function yearScopedEvents(S: StructureBuilder, icon: any) {
+  const fall = currentFallYear();
+  // An UNDATED event is an ongoing one ("Monthly info session", "Visit a
+  // class") — it belongs in EVERY year pane, not in the year it happened to
+  // be created. Dated events bucket by their start.
+  const filter = `_type == "event" && ${NOT_ARCHIVED} && (!defined(start) || (start >= $from && start < $to))`;
+
+  const yearPane = (y: number, paneTitle: string) =>
+    S.listItem()
+      .id(`year-${y}`)
+      .title(paneTitle)
+      .icon(icon)
+      .child(
+        S.documentList()
+          .id(`year-${y}`)
+          .title(paneTitle)
+          .schemaType('event')
+          .filter(filter)
+          .params({ from: `${y}-08-01`, to: `${y + 1}-08-01` })
+          .apiVersion(API_VERSION)
+          .defaultOrdering([{ field: 'start', direction: 'asc' }]),
+      );
+
+  const past: ReturnType<typeof yearPane>[] = [];
+  for (let y = fall - 1; y >= FIRST_CONTENT_YEAR; y--) past.push(yearPane(y, yearLabel(y)));
+
+  // .id('event') keeps the pane's address identical to the old flat list, so
+  // guide links and bookmarks still land here.
+  return S.listItem()
+    .id('event')
+    .title('Events')
+    .icon(icon)
+    .child(
+      S.list()
+        .id('event')
+        .title('Events')
+        .items([
+          yearPane(fall, `This school year (${yearLabel(fall)})`),
+          ...(past.length > 0 ? [S.divider().title('Past years'), ...past] : []),
+          S.divider(),
+          S.listItem()
+            .id('everything')
+            .title('Everything (all years)')
+            .icon(icon)
+            .child(
+              S.documentTypeList('event')
+                .id('everything')
+                .title('Events')
+                .filter(`_type == "event" && ${NOT_ARCHIVED}`)
+                .apiVersion(API_VERSION),
+            ),
+        ]),
+    );
+}
+
 /**
  * "How This Works" — a pinned, read-only help center built from repo data
  * (studio/guides/content.tsx), rendered by GuideView. Guides are grouped under
@@ -331,7 +404,7 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
       S.divider(),
 
       // Events — info sessions, lectures, workshops, term starts shown on /events
-      collection(S, 'event', 'Events', CalendarIcon),
+      yearScopedEvents(S, CalendarIcon),
 
       // ── Recently deleted ── soft-deleted content; restore or empty for good.
       S.divider().title('Trash'),

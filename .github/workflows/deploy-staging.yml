@@ -65,6 +65,11 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Reuses wrangler.jsonc (assets, entrypoint) but overrides the Worker
-          # name so production (presacademy) is never touched.
-          command: deploy --name presacademy-staging
+          # THE CONFIG FLAG IS LOAD-BEARING (fixed 2026-08-29). A plain
+          # `wrangler deploy` reads the SOURCE wrangler.jsonc, which knows
+          # nothing about the adapter's generated asset manifest, so every
+          # sub-route 404s on this hybrid static+SSR build - the same trap
+          # `npm run deploy` already avoids. Deploy the adapter's own config
+          # and override only the Worker name, so production (presacademy) is
+          # never touched.
+          command: deploy -c dist/server/wrangler.json --name presacademy-staging

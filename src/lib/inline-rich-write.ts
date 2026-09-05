@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
 // inline-rich-write — the WRITE half of the rich twins (2026-08-28)
 // =============================================================================
@@ -23,14 +24,34 @@
 // stored document, because the output is built from scratch out of plain strings
 // and two booleans.
 //
-// One paragraph, always. inline-rich.ts joins multiple blocks with a space when
-// it renders, because these fields are one sentence of support text inside one
-// <p>; so a line break typed in the popover becomes a space rather than a second
-// block that would only be flattened again.
+// ONE PARAGRAPH BY DEFAULT, LINES WHERE A REPO RENDERS THEM (2026-08-28, folded
+// back from the WCP repo). This template's inline-rich.ts joins multiple blocks
+// with a space when it renders, because these fields are one sentence of support
+// text inside one <p>; so a line break typed in the popover becomes a space
+// rather than a second block that would only be flattened again. WCP's twin
+// renders `<br />` BETWEEN blocks, so a volunteer who typed two lines in the
+// form has two blocks, and collapsing them here would delete a line break the
+// moment anybody opened the in-canvas card.
+//
+// Both are right for their own renderer, so the behaviour is a SEAM rather than
+// a fork: `RichWriteOptions.multiline` is off by default (one block, a break is
+// a space) and a repo whose reader renders breaks turns it on at its call sites.
+// A hard break travels through the run list as RUN_BREAK and `runsToInlineRich`
+// starts a new block at each one.
 // =============================================================================
 
 import type { InlineRichBlock, InlineRun } from './inline-rich.ts';
-import { inlineRichRuns } from './inline-rich.ts';
+import { RUN_BREAK, inlineRichRuns } from './inline-rich.ts';
+
+/** How a repo wants line breaks handled. See the header. */
+export interface RichWriteOptions {
+  /**
+   * Keep hard line breaks as separate blocks. Default false: a break becomes a
+   * space and the value is always ONE block, which is what a reader that joins
+   * blocks with a space wants.
+   */
+  multiline?: boolean;
+}
 
 // -----------------------------------------------------------------------------
 // HTML -> runs
@@ -85,7 +106,7 @@ function styleMarks(attrs: string): { strong: boolean; em: boolean } {
  * Flatten an HTML fragment to the runs the twin stores. Unknown tags keep their
  * text and lose themselves; script tags and friends lose both.
  */
-export function htmlToRuns(html?: string | null): InlineRun[] {
+export function htmlToRuns(html?: string | null, options: RichWriteOptions = {}): InlineRun[] {
   if (typeof html !== 'string' || html === '') return [];
 
   const raw: InlineRun[] = [];
@@ -97,8 +118,12 @@ export function htmlToRuns(html?: string | null): InlineRun[] {
   let i = 0;
 
   const pushText = (text: string) => {
-    if (text === '') return;
-    raw.push({ text, strong: strong > 0, em: em > 0 });
+    // Whitespace is squeezed HERE, not only in normalizeRuns, so that source
+    // formatting between two tags can never arrive as a run whose whole text is
+    // a newline - which normalizeRuns would then read as a deliberate break.
+    const squeezed = text.replace(/\s+/g, ' ');
+    if (squeezed === '') return;
+    raw.push({ text: squeezed, strong: strong > 0, em: em > 0 });
   };
 
   while (i < html.length) {
@@ -133,7 +158,11 @@ export function htmlToRuns(html?: string | null): InlineRun[] {
       continue;
     }
     if (BREAK_TAGS.has(tag)) {
-      pushText(' ');
+      // A break carries NO marks: it is a boundary, not text. Collapsed to a
+      // space it must inherit them instead, or `<b>a<br>b</b>` would store three
+      // spans where one says the same thing.
+      if (options.multiline) raw.push({ text: RUN_BREAK, strong: false, em: false });
+      else pushText(' ');
       if (tag === 'br') continue;
     }
 
@@ -164,30 +193,87 @@ export function htmlToRuns(html?: string | null): InlineRun[] {
 
 /**
  * Collapse runs into what should actually be stored: whitespace squeezed to
- * single spaces, neighbours with identical marks merged, the ends trimmed.
+ * single spaces, neighbours with identical marks merged, each LINE trimmed at
+ * both ends, and blank lines dropped.
+ *
+ * RUN_BREAK is a boundary, never text. Two runs on opposite sides of one never
+ * merge, so `bold\nitalic` keeps its two lines and its two marks. A value with
+ * no break in it is one line, which is the single-paragraph behaviour this
+ * function has always had.
  */
 export function normalizeRuns(runs: InlineRun[]): InlineRun[] {
-  const squeezed = runs
-    .map((r) => ({ ...r, text: r.text.replace(/\s+/g, ' ') }))
-    .filter((r) => r.text !== '');
-
-  const merged: InlineRun[] = [];
-  for (const run of squeezed) {
-    const last = merged[merged.length - 1];
-    if (last && last.strong === run.strong && last.em === run.em) {
-      // Two spaces meeting across a tag boundary are still one space.
-      last.text = (last.text + run.text).replace(/ {2,}/g, ' ');
+  // 1. Squeeze whitespace. Only a run whose WHOLE text is RUN_BREAK is a break;
+  //    a newline inside a run is ordinary whitespace and becomes a space.
+  const flat: InlineRun[] = [];
+  for (const run of runs) {
+    if (run.text === RUN_BREAK) {
+      flat.push({ text: RUN_BREAK, strong: false, em: false });
       continue;
     }
-    if (!last && run.text === ' ') continue;
-    merged.push({ ...run });
+    const text = run.text.replace(/\s+/g, ' ');
+    if (text !== '') flat.push({ ...run, text });
   }
 
-  if (merged.length) {
-    merged[0].text = merged[0].text.replace(/^ +/, '');
-    merged[merged.length - 1].text = merged[merged.length - 1].text.replace(/ +$/, '');
+  // 2. Group into lines, merging same-mark neighbours inside each line.
+  const lines: InlineRun[][] = [[]];
+  for (const run of flat) {
+    if (run.text === RUN_BREAK) {
+      lines.push([]);
+      continue;
+    }
+    let text = run.text;
+    const line = lines[lines.length - 1];
+    const last = line[line.length - 1];
+    if (last && last.strong === run.strong && last.em === run.em) {
+      // Two spaces meeting across a tag boundary are still one space.
+      last.text = (last.text + text).replace(/ {2,}/g, ' ');
+      continue;
+    }
+    // THE SAME RULE ACROSS A MARK BOUNDARY (2026-08-28, found porting this to
+    // ncs-church-starter). `<b>a </b><i> b</i>` cannot merge its two runs, so
+    // the collapse above never sees the pair and TWO spaces get stored. Drop it
+    // from the SECOND run rather than the first: a leading space inside an
+    // emphasised span renders as a wide bold or an over-long underline.
+    if (last?.text.endsWith(' ') && text.startsWith(' ')) text = text.slice(1);
+    if (text === '') continue;
+    if (!last && text === ' ') continue;
+    line.push({ ...run, text });
   }
-  return merged.filter((r) => r.text !== '');
+
+  // 3. Trim each line at both ends, then drop the lines that hold nothing.
+  const trimmed = lines
+    .map((line) => {
+      if (line.length) {
+        line[0].text = line[0].text.replace(/^ +/, '');
+        line[line.length - 1].text = line[line.length - 1].text.replace(/ +$/, '');
+      }
+      return line.filter((run) => run.text !== '');
+    })
+    .filter((line) => line.length > 0);
+
+  // 4. Re-join the surviving lines with a single break between them.
+  const out: InlineRun[] = [];
+  trimmed.forEach((line, i) => {
+    if (i > 0) out.push({ text: RUN_BREAK, strong: false, em: false });
+    out.push(...line);
+  });
+  return out;
+}
+
+/**
+ * Plain text as runs. The other half of a paste: a clipboard with no `text/html`
+ * flavour still has to reach the same normalizer, and in a repo that keeps line
+ * breaks the newlines in it are breaks rather than spaces.
+ */
+export function textToRuns(text?: string | null, options: RichWriteOptions = {}): InlineRun[] {
+  if (typeof text !== 'string' || text === '') return [];
+  if (!options.multiline) return normalizeRuns([{ text, strong: false, em: false }]);
+  const runs: InlineRun[] = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (i > 0) runs.push({ text: RUN_BREAK, strong: false, em: false });
+    if (line !== '') runs.push({ text: line, strong: false, em: false });
+  });
+  return normalizeRuns(runs);
 }
 
 // -----------------------------------------------------------------------------
@@ -200,38 +286,49 @@ export type KeyFactory = () => string;
 const randomKey: KeyFactory = () => Math.random().toString(36).slice(2, 12);
 
 /**
- * Build the one-block portable text value the twin stores, or `[]` when there
- * is nothing to store — which is what an editor who cleared the box meant, and
- * what makes the plain string underneath render again.
+ * Build the portable text value the twin stores: ONE BLOCK PER LINE, which is
+ * one block for any value that carries no RUN_BREAK.
+ *
+ * Returns `[]` when there is nothing to store — which is what an editor who
+ * cleared the box meant, and what makes the plain string underneath render
+ * again.
  */
 export function runsToInlineRich(
   runs: InlineRun[],
   nextKey: KeyFactory = randomKey,
 ): InlineRichBlock[] {
-  const kept = runs.filter((r) => r.text !== '');
-  if (!kept.some((r) => r.text.trim() !== '')) return [];
-  return [
-    {
-      _type: 'block',
-      _key: nextKey(),
-      style: 'normal',
-      markDefs: [],
-      children: kept.map((run) => ({
-        _type: 'span',
-        _key: nextKey(),
-        text: run.text,
-        marks: [...(run.strong ? ['strong'] : []), ...(run.em ? ['em'] : [])],
-      })),
-    } as InlineRichBlock,
-  ];
+  const lines: InlineRun[][] = [[]];
+  for (const run of runs) {
+    if (run.text === RUN_BREAK) lines.push([]);
+    else if (run.text !== '') lines[lines.length - 1].push(run);
+  }
+
+  return lines
+    .filter((line) => line.some((run) => run.text.trim() !== ''))
+    .map(
+      (line) =>
+        ({
+          _type: 'block',
+          _key: nextKey(),
+          style: 'normal',
+          markDefs: [],
+          children: line.map((run) => ({
+            _type: 'span',
+            _key: nextKey(),
+            text: run.text,
+            marks: [...(run.strong ? ['strong'] : []), ...(run.em ? ['em'] : [])],
+          })),
+        }) as InlineRichBlock,
+    );
 }
 
 /** The whole write direction: what the contenteditable holds -> what is stored. */
 export function htmlToInlineRich(
   html?: string | null,
   nextKey: KeyFactory = randomKey,
+  options: RichWriteOptions = {},
 ): InlineRichBlock[] {
-  return runsToInlineRich(htmlToRuns(html), nextKey);
+  return runsToInlineRich(htmlToRuns(html, options), nextKey);
 }
 
 // -----------------------------------------------------------------------------
@@ -247,6 +344,7 @@ export function escapeHtml(text: string): string {
 export function runsToHtml(runs: InlineRun[]): string {
   return runs
     .map((run) => {
+      if (run.text === RUN_BREAK) return '<br>';
       let html = escapeHtml(run.text);
       if (run.em) html = `<em>${html}</em>`;
       if (run.strong) html = `<strong>${html}</strong>`;

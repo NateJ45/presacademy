@@ -87,7 +87,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'The Studio vs. the website' },
       {
         kind: 'p',
-        text: 'This **Studio** is your control room. The **website** is what visitors see. You make changes here, and they appear on the website after you publish them. The Studio is private. The website is public.',
+        text: 'This **Studio** is your control room. The **website** is what visitors see. You make changes here, and they appear on the website after you publish them. The Studio is private. The website is public. (The first time you open the Studio it greets you with a short **welcome tour** — replay it any time from the **Welcome** page, "Show the welcome tour again".)',
       },
       { kind: 'h', text: 'The one rule: nothing is live until you Publish' },
       {
@@ -1317,6 +1317,10 @@ export const guides: Guide[] = [
     diy: 'self',
     body: [
       { kind: 'path', items: ['Events', '+ New event'], link: { pane: 'event' } },
+      {
+        kind: 'p',
+        text: 'The Events list opens on **This school year**, with one folder per past year behind it and an **Everything** list at the bottom — so this term’s events are always on top, however many years pile up.',
+      },
       { kind: 'h', text: 'Add an event' },
       {
         kind: 'steps',
@@ -1673,6 +1677,12 @@ export const guides: Guide[] = [
         tone: 'primary',
         title: 'If deleting is blocked',
         text: "When another document still points at this one (a course pointing at a term, for example), the Studio warns you instead of deleting, so the site never ends up with broken links. Open the document's `Used on` tab to see what links to it, remove those links, then delete.",
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'What `Used on` counts',
+        text: 'The list is worked out from your real content each time you open it, so it names every page that shows the document, not just one. Two things it adds on purpose: a course always lists the course catalog and a teacher always lists the faculty roster, because those pages list everyone automatically. A document nothing shows yet says so in plain words.',
       },
       { kind: 'seealso', items: ['Do it yourself vs. ask for help'] },
     ],

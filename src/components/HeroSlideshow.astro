@@ -113,6 +113,11 @@ ${slides
     </div>
   ) : (
     <div class={`${uid} relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+      {/* The eager first slide is the page's LCP, so it takes quality 60: the
+          campus photos are high-detail (grass, foliage) and came out as a
+          160KB AVIF at 72 on a 700px phone slot, which is the single biggest
+          transfer on the mobile critical path. The later slides keep 72; they
+          are deferred and download after the page has loaded. */}
       {slides.map((img, i) => (
         <div class="s" aria-hidden={i === 0 ? undefined : 'true'}>
           <SanityImage
@@ -121,8 +126,9 @@ ${slides
             height={cropHeight}
             loading={eager && i === 0 ? 'eager' : 'lazy'}
             fetchpriority={eager && i === 0 ? 'high' : undefined}
+            defer={i > 0}
             sizes={sizes}
-            quality={72}
+            quality={eager && i === 0 ? 60 : 72}
             alt={i === 0 ? undefined : ''}
             class="h-full w-full object-cover"
           />
@@ -132,3 +138,38 @@ ${slides
     </div>
   )
 }
+
+<script>
+  // Slides after the first render as blank placeholders (SanityImage `defer`)
+  // and get their real URLs here, once the page has finished loading. Every
+  // slide sits inside the hero box, so `loading="lazy"` never deferred them:
+  // on the mobile Lighthouse run three ~80KB slides downloaded at high
+  // priority next to the LCP image (2026-09-04). The first slide holds for
+  // seven seconds, so a swap a moment after `load` is invisible to a visitor.
+  // Astro bundles this once per page however many slideshows render, and the
+  // astro:page-load hook covers View Transitions navigations.
+  function hydrateSlides(): void {
+    const imgs = document.querySelectorAll<HTMLImageElement>('img[data-srcset]');
+    imgs.forEach((img) => {
+      const { src, srcset, sizes } = img.dataset;
+      if (sizes) img.sizes = sizes;
+      if (srcset) img.srcset = srcset;
+      if (src) img.src = src;
+      img.setAttribute('fetchpriority', 'low');
+      delete img.dataset.src;
+      delete img.dataset.srcset;
+      delete img.dataset.sizes;
+    });
+  }
+
+  function afterLoad(): void {
+    const go = (): void => {
+      window.setTimeout(hydrateSlides, 800);
+    };
+    if (document.readyState === 'complete') go();
+    else window.addEventListener('load', go, { once: true });
+  }
+
+  afterLoad();
+  document.addEventListener('astro:page-load', afterLoad);
+</script>

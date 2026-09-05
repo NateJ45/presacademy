@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// Inline rich text — the "rich twin" of a plain string field (Wave 2a, 2026-08-28)
+// Inline rich text - the "rich twin" of a plain string field (2026-08-28)
 // =============================================================================
 // Long body fields have had bold and italic for as long as they have been
 // portable text. The gap was the SHORT ones: a subhead, a lede, an intro. Those
@@ -14,8 +15,8 @@
 // as it always did, which is why a dataset with no twins renders byte-identical
 // HTML.
 //
-// This module is the shared reader: one emptiness test and one flattener, so
-// seven block components cannot each invent their own.
+// This module is the shared reader: one emptiness test and one flattener, so no
+// block component has to invent its own.
 // =============================================================================
 
 /** The shape the restricted portable-text array actually arrives in. */
@@ -29,12 +30,30 @@ export interface InlineRichBlock {
   children?: InlineRichSpan[];
 }
 
-/** One run of text and the two marks it may carry. */
+/**
+ * One run of text and the two marks it may carry.
+ *
+ * A run whose text is exactly RUN_BREAK is a HARD BREAK, not text. This
+ * template's reader never produces one (see `inlineRichRuns` below, which joins
+ * blocks with a space), but the write half is shared with repos whose twin
+ * renders `<br />` between blocks, so the vocabulary lives here.
+ */
 export interface InlineRun {
   text: string;
   strong: boolean;
   em: boolean;
 }
+
+/**
+ * The hard-break run. Compare with `run.text === RUN_BREAK`.
+ *
+ * It is a boundary, never text: two runs on opposite sides of one never merge,
+ * and `runsToInlineRich` starts a new block at each. Only a run whose WHOLE text
+ * is this string counts - a newline INSIDE a run is ordinary whitespace and
+ * squeezes to a space like any other, which is what keeps a pretty-printed paste
+ * from turning its source formatting into line breaks.
+ */
+export const RUN_BREAK = '\n';
 
 /**
  * True when the twin holds at least one non-blank character.

@@ -74,7 +74,7 @@ const termOptions = (terms ?? [])
   <div class="mx-auto max-w-content px-m py-section-lg">
     <h2 id="catalog" class="sr-only">All courses</h2>
     <div class="grid grid-cols-1 gap-l lg:grid-cols-[230px_1fr] lg:gap-x-12">
-      <CourseFilters client:load topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
+      <CourseFilters client:idle topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
 
       <div>
         {courses.length > 0 ? (

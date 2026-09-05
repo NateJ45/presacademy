@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { useClient, useWorkspace } from 'sanity';
+import { ToolHeading } from './ToolHeading';
 import { IntentLink, useRouter } from 'sanity/router';
-import { Badge, Box, Card, Flex, Heading, Spinner, Stack, Text } from '@sanity/ui';
+import { Badge, Box, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
 
 // =============================================================================
 // SetupWizard — the "new term, roll the site over" checklist (navbar tool)
@@ -291,7 +292,7 @@ export function SetupWizard() {
       `}</style>
       <Stack space={5} style={{ maxWidth: 680, margin: '0 auto' }}>
         <Stack space={3}>
-          <Heading size={3}>🍂 New term setup</Heading>
+          <ToolHeading>🍂 New term setup</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
             The season rollover, in order. Each card jumps you to the right place to update it.
             Nothing changes here, you edit and publish as usual. Work top to bottom.

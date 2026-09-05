@@ -336,8 +336,11 @@ function isGroupActive(items: { href: string }[]) {
       )}
     </div>
 
+    {/* client:idle, not client:only: the component server-renders its trigger
+        button and mounts the Radix Sheet after hydration, so React stays off
+        the LCP path (2026-09-04 Lighthouse pass). */}
     <MobileNav
-      client:only="react"
+      client:idle
       links={NAV_LINKS}
       siteSettings={mobileNavSettings}
       {...mobileCtaProps}

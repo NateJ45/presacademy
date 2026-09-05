@@ -12,15 +12,15 @@ Hardcoded constants that don't change between deploys: domain name, GitHub repo 
 
 ```ts
 // `_name` and `_domain` are set once; derived fields auto-update.
-const _name   = "The Presbyterian Academy";
-const _domain = "presbyterianacademy.org";
-const _slug   = slugifyName(_name); // "the-presbyterian-academy"
+const _name = 'The Presbyterian Academy';
+const _domain = 'presbyterianacademy.org';
+const _slug = slugifyName(_name); // "the-presbyterian-academy"
 
 export const site = {
   name: _name,
   domain: _domain,
   url: `https://www.${_domain}`,
-  storageKeyPrefix: _slug,        // derived — never needs manual editing
+  storageKeyPrefix: _slug, // derived — never needs manual editing
   themeStorageKey: _slug + '-theme',
   // ... etc
 } as const;
@@ -72,9 +72,11 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 > than copy hardcoded in the page. See `OPERATIONS.md` and the 2026-06-15 changelog.
 
 **Settings and globals:**
+
 - `siteSettings` (singleton) — school name, tagline, mission, public email + phone, **street address** (`addressLine` + `cityStateZip`), social links; a **`funder`** string (renders the footer line "Made possible by the [name]" on every page; clear it to hide the line); a **Navigation (menus)** group (`navItems` header menu + `footerColumns` footer columns); a **`favicon`** image; a **Connect & integrations** group (watch / give / app / directory / registration / prayer URLs); and a newsletter config. Phone + address surface site-wide (tap-to-call, header bar, footer, map links) and feed the LocalBusiness JSON-LD. Every field falls back to `src/data/site.ts` when blank.
 
 **School catalog collections:**
+
 - `course` — the catalog (title, syllabus copy, `coverImage`, sessions, `schedule`, `seatsNote`, pricing `tier` reference, instructor references, `teachingArea`, `term`, `featured`, `syllabusUrl` from an uploaded file). Drives `/courses` + `/courses/[slug]`.
 - `facultyMember` — instructors (name, `photo`, degrees, `denomination`/`ordination`, `yearsTeaching`, `specializations`, `email`, bio, publications). Drives `/faculty` + `/faculty/[slug]`.
 - `term` — academic terms (the date/term/city the home "next cohort" line and course schedules derive from).
@@ -88,6 +90,7 @@ The inline strings in `src/pages/*.astro` are **safety-net fallbacks** (the inli
 - `ctaBlock` — reusable object type (label + linkType + target) embedded in other schemas.
 
 **Page singletons:**
+
 - Core: `homePage`, `aboutPage`, `faqPage`, `contactPage`, `eventsPage`, `privacyPage`, `accessibilityPage`, `notFoundPage` (all created + seeded as of 2026-06-15). `homePage` and `aboutPage` were rewritten to school fields in the 2026-06-14 editability pass — see the field groups below.
 - Per-page school singletons (via the `definePageSingleton` factory, in `schoolPages.ts`): `coursesPage`, `facultyPage`, `pricingPage`, `getStartedPage`, `forYouPage`, `resourcesPage`.
 - `page` — generic type for brand-new pages at `/<slug>`, built entirely from the block library.
@@ -118,7 +121,7 @@ PUBLIC_SANITY_DATASET=production
 export async function sanityFetch<T>(
   query: string,
   params: Record<string, unknown> = {},
-  fallback: T
+  fallback: T,
 ): Promise<T> {
   if (isSanityUnconfigured()) return fallback;
   return client.fetch<T>(query, params);
@@ -201,6 +204,7 @@ folder is about 200 KB at 600px / JPEG quality 80.
 ### Auto-populated lists
 
 Several pages pull their content from collections automatically:
+
 - Courses on `/courses`: `course` documents, filterable by `teachingArea` / instructor / `term`; `featured` ones surface in the home Start-here rail.
 - Faculty on `/faculty`: `facultyMember` documents; each course links to the instructor(s) who teach it.
 - Events on `/events`: upcoming `event` documents by date; `featuredOnHome` ones appear on the home page.
@@ -217,10 +221,12 @@ This means adding an `event` with `featuredOnHome: true` makes it appear on both
 Two schema-level controls govern what Canvas sees:
 
 **Excluded from Canvas entirely** (`options.canvasApp.exclude: true`):
+
 - All page singletons + the generic `page` -- marketing copy is structural; edit fields directly in Studio.
 - `siteSettings` -- configuration, not prose.
 
 **Available in Canvas with per-field voice hints** (`options.canvasApp.purpose`):
+
 - `faqItem` -- question, answer (the `purpose` strings carry the warm, plain-English church voice).
 
 The `purpose` strings carry compressed voice guidance for each field. These are NOT a hard guardrail -- editors should still apply the project voice in review.
@@ -229,11 +235,12 @@ The `purpose` strings carry compressed voice guidance for each field. These are 
 
 **Activating Canvas** for the project (one-time): the toggle lives in [manage.sanity.io](https://manage.sanity.io) under the project's Canvas section.
 
-
 ## Live draft preview (2026-08-25)
 
 The Studio is **embedded at `/studio`** (`@sanity/astro`, mounted in `astro.config.mjs`); the hosted `*.sanity.studio` deploy is retired. The **Presentation** tool gives editors click-to-edit live preview of their unpublished drafts:
 
-- `src/sanity/resolve.ts` maps documents to `/preview/*` routes and back (`SINGLETON_PREVIEW_PATHS` is the singleton table; keep it in sync with `SINGLETON_BY_PATH` in `src/pages/preview/[...slug].astro`).
+- `src/sanity/resolve.ts` maps `/preview/*` routes to documents (`mainDocuments`). The singleton table `SINGLETON_PREVIEW_PATHS` is defined in `src/sanity/locations.ts` and re-exported here, which is where every caller imports it from; keep it in sync with `SINGLETON_BY_PATH` in `src/pages/preview/[...slug].astro`.
+- `src/sanity/locations.ts` maps documents back to pages: the **"Used on"** panel. It QUERIES the dataset rather than naming one page per type (the hardcoded version under-reported every document shown on more than one page, replaced 2026-08-29). Three arms: `references($id)` for documents a page picks by name, the section-type arm for self-filling blocks (a faculty strip fetches the roster itself, so no reference exists), and an ALWAYS list for the pinned code regions (every course is in the catalog, every teacher is in the roster). Read its header before editing it.
+- `src/lib/sanity-resolve.test.ts` is the **drift gate** over both files. Nothing type-checks a GROQ filter string against the schema, so a filter naming a field that does not exist fails silently: Presentation just stops following the preview. The test reads the schema source and pins that `page.slug` IS Sanity's `slug` type here (so the filters keep `.current`, the opposite of the WCP repo, which stores a plain string), the route order, both page-builder array names, and every section type the "Used on" resolver watches for.
 - `src/sanity/components/PreviewNavigator.tsx` docks a page list beside the preview: main pages vs custom pages, status dots (amber = published with unpublished edits, hollow = never published), a live-page link per published row, and "+ New page".
 - The site half lives in `src/lib/cms-preview.ts` (draft-aware stega client), `src/pages/preview/`, `src/pages/api/draft-mode/`, `src/layouts/PreviewLayout.astro`, and `src/components/preview/VisualEditingOverlay.tsx`. See CLAUDE.md → "Live draft preview" for the gotchas, especially the stega-on-enum trap.

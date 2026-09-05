@@ -1,23 +1,32 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// sanity-path — reading the `path` a visual-editing node carries (2026-08-28)
+// sanity-path - reading the `path` a visual-editing node carries (2026-08-28)
 // =============================================================================
 // Every element the Presentation overlay knows about arrives with a STUDIO PATH
-// string: `flexibleSections[_key=="a1b2"].heading`, or `heroHeadline`, or
-// `sections[_key=="x"].introRich[_key=="y"].children[_key=="z"].text`. To patch
-// the document the mutation API wants that path as an ARRAY of segments, with
-// array members addressed by key object:
+// string: `pageBuilder[_key=="a1b2"].heading`, or `heroHeadline`, or
+// `pageBuilder[_key=="x"].subheadRich[_key=="y"].children[_key=="z"].text`. To
+// patch the document the mutation API wants that path as an ARRAY of segments,
+// with array members addressed by key object:
 //
-//   ['flexibleSections', {_key: 'a1b2'}, 'heading']
+//   ['pageBuilder', {_key: 'a1b2'}, 'heading']
 //
 // The Studio has a parser for this (`@sanity/util/paths`), but it lives inside
-// the `sanity` package, and the in-canvas overlay ships in the PREVIEW ISLAND —
+// the `sanity` package, and the in-canvas overlay ships in the PREVIEW ISLAND -
 // a browser bundle that must not grow a Studio dependency. So: a small parser,
 // here, pure, and covered by src/lib/sanity-path.test.ts.
 //
 // The grammar is deliberately narrow. It handles exactly what the overlay hands
-// us — dotted property names, `[_key=="..."]` members, and numeric indices — and
+// us - dotted property names, `[_key=="..."]` members, and numeric indices - and
 // returns an empty path for anything it does not recognise, so a shape we have
 // never seen makes a control DISAPPEAR rather than write to a guessed location.
+//
+// CANONICAL EVOLUTION, ON THE WAY IN (2026-08-28). presacademy's ancestor of
+// this file baked its own two page-builder array names into a module constant,
+// which is exactly what stopped it from being shared: this template calls its
+// array `pageBuilder`, presacademy calls its two `flexibleSections` and
+// `sections`. `readSectionPath` now TAKES the names, and the repo's own list
+// lives beside the rest of its vocabulary in src/lib/section-fields.ts. Same
+// move card 22 made on `redirects.ts`, for the same reason.
 // =============================================================================
 
 /** One step along a document path. */
@@ -45,7 +54,7 @@ export function parseSanityPath(path?: string | null): PathSegment[] {
       const close = source.indexOf(']', i);
       if (close < 0) return [];
       const inner = source.slice(i + 1, close).trim();
-      const keyed = KEY_MEMBER.exec(inner);
+      const keyed = inner.match(KEY_MEMBER);
       if (keyed) {
         out.push({ _key: keyed[1] });
       } else if (/^\d+$/.test(inner)) {
@@ -106,12 +115,6 @@ export function valueAtPath(root: unknown, segments: PathSegment[]): unknown {
   return current;
 }
 
-/**
- * The two page-builder array field names in this schema. A section is an item
- * in one of them, and they are not interchangeable — see preview-edit-attr.ts.
- */
-export const SECTION_ARRAY_FIELDS = ['flexibleSections', 'sections'] as const;
-
 /** What a path tells us about the section it points into. */
 export interface SectionPathInfo {
   /** The array field the section lives in. */
@@ -126,15 +129,38 @@ export interface SectionPathInfo {
 
 /**
  * Read a path that points at a section item, or at anything inside one.
- * Returns null for a path that is not inside a page-builder array — a document
- * field like `heroHeadline`, or a node on some other document entirely.
+ *
+ * `arrayFields` is the repo's own list of page-builder array names. Returns null
+ * for a path that is not inside one of them - a document field like
+ * `heroHeadline`, a menu item, or a node on some other document entirely.
  */
-export function readSectionPath(path?: string | null): SectionPathInfo | null {
+export function readSectionPath(
+  path: string | null | undefined,
+  arrayFields: readonly string[],
+): SectionPathInfo | null {
   const segments = parseSanityPath(path);
   if (segments.length < 2) return null;
   const [array, member, ...rest] = segments;
   if (typeof array !== 'string') return null;
-  if (!(SECTION_ARRAY_FIELDS as readonly string[]).includes(array)) return null;
+  if (!arrayFields.includes(array)) return null;
   if (typeof member !== 'object' || member === null || !('_key' in member)) return null;
   return { array, key: member._key, itemPath: [array, { _key: member._key }], rest };
+}
+
+/**
+ * Find one section item in a document snapshot, by array field and `_key`.
+ *
+ * Every in-canvas control starts here: the path names the section, and only the
+ * document says what `_type` it is. That answer decides which control the editor
+ * may have, so it is read once and shared.
+ */
+export function sectionByKey(
+  doc: Record<string, unknown> | null | undefined,
+  array: string,
+  key: string,
+): Record<string, unknown> | null {
+  const list = doc?.[array];
+  if (!Array.isArray(list)) return null;
+  const found = list.find((item) => (item as { _key?: string } | null)?._key === key);
+  return (found as Record<string, unknown> | undefined) ?? null;
 }

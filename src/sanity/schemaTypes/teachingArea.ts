@@ -17,7 +17,8 @@ export const teachingArea = defineType({
       name: 'title',
       title: 'Name',
       type: 'string',
-      description: 'A subject area, in plain words. Example: "Scripture", "Reformed Theology", "Leading a Group".',
+      description:
+        'A subject area, in plain words. Example: "Scripture", "Reformed Theology", "Leading a Group".',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -46,6 +47,13 @@ export const teachingArea = defineType({
     select: { title: 'title', subtitle: 'description' },
   },
   orderings: [
-    { title: 'Display order', name: 'displayOrder', by: [{ field: 'displayOrder', direction: 'asc' }, { field: 'title', direction: 'asc' }] },
+    {
+      title: 'Display order',
+      name: 'displayOrder',
+      by: [
+        { field: 'displayOrder', direction: 'asc' },
+        { field: 'title', direction: 'asc' },
+      ],
+    },
   ],
 });

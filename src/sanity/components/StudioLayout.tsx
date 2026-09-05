@@ -9,6 +9,7 @@
 
 import { useEffect } from 'react';
 import type { LayoutProps } from 'sanity';
+import { StudioTour } from './StudioTour';
 
 const FONT_LINK_ID = 'brand-fonts';
 // Fraunces carries 600/700 too: the theme's heading slots (buildTheme in
@@ -43,5 +44,12 @@ export default function StudioLayout(props: LayoutProps) {
     document.head.appendChild(stylesheet);
   }, []);
 
-  return props.renderDefault(props);
+  return (
+    <>
+      {props.renderDefault(props)}
+      {/* First-visit welcome tour (see StudioTour.tsx). After the default
+          layout so it stacks above the Studio chrome. */}
+      <StudioTour />
+    </>
+  );
 }

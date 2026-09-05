@@ -28,6 +28,15 @@ import { normalizeRuns } from './inline-rich-write.ts';
 import { plain } from './nav-href.ts';
 import { parseSanityPath, readSectionPath, type PathSegment } from './sanity-path.ts';
 
+/**
+ * The two page-builder array fields in this schema. A section is an item in one
+ * of them, and they are not interchangeable — see preview-edit-attr.ts.
+ *
+ * `readSectionPath` is canonical and TAKES these names rather than baking any
+ * repo's in, so the list lives here beside the rest of this schema's vocabulary.
+ */
+export const SECTION_ARRAY_FIELDS: readonly string[] = ['flexibleSections', 'sections'];
+
 /** Section types carrying `bgField()`: a `background` object with tone + accent. */
 export const BACKGROUND_SECTION_TYPES: readonly string[] = [
   'sectionRichText',
@@ -257,7 +266,7 @@ export type OverlayControl = 'surface' | 'headingAccent' | 'text';
  * rendered in, and an empty list means the element gets nothing.
  */
 export function overlayControlsForPath(path?: string | null): OverlayControl[] {
-  const section = readSectionPath(path);
+  const section = readSectionPath(path, SECTION_ARRAY_FIELDS);
 
   if (!section) {
     // A document-level field. Only the two hero strings are offered; nothing
@@ -324,7 +333,7 @@ export function resolveTextTarget(
   doc: Record<string, unknown>,
   path?: string | null,
 ): TextTarget | null {
-  const section = readSectionPath(path);
+  const section = readSectionPath(path, SECTION_ARRAY_FIELDS);
 
   if (!section) {
     const segments = parseSanityPath(path);

@@ -77,6 +77,10 @@ export const testimonial = defineType({
     }),
   },
   orderings: [
-    { title: 'Display order', name: 'displayOrder', by: [{ field: 'displayOrder', direction: 'asc' }] },
+    {
+      title: 'Display order',
+      name: 'displayOrder',
+      by: [{ field: 'displayOrder', direction: 'asc' }],
+    },
   ],
 });

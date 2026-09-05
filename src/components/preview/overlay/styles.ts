@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// styles — the look of the in-canvas controls (2026-08-28)
+// styles - the look of the in-canvas controls (2026-08-28)
 // =============================================================================
 // These controls float OVER the page inside the Presentation preview, so they
 // have to read as tools rather than as content. That means a fixed light chrome
@@ -11,19 +12,26 @@
 // styled-components and its theme into the PREVIEW ISLAND, which is bundled with
 // the site. The whole layer is a few dozen inline styles instead; that is the
 // entire cost of keeping the public bundle where it was.
+//
+// CANONICAL, WITH ONE SEAM. presacademy and WCP each carry a near-identical copy
+// of this file whose only real difference is the six-value palette at the top:
+// one is Ink on Paper, the other is navy on white. That palette now lives in
+// ./tool-theme.ts, which is the per-repo half; everything below is the same
+// everywhere and is owned here. A fork edits tool-theme.ts and nothing else.
+//
+// SOME OF WHAT IS BELOW IS UNUSED IN THIS REPO, ON PURPOSE. `handleAnchor`,
+// `panel`, `panelHead`, `closeButton`, `optionRow`, `optionDot` and `groupLabel`
+// dress the SURFACE CARD that hangs off a section's corner handle in the sibling
+// repos. This template has no such card and will not grow one (PORTS.md card 26
+// and CLAUDE.md #9: blocks carry no colour field), but the vocabulary belongs to
+// the family rather than to one site, and re-deriving it in the next repo is
+// exactly what a library of record exists to prevent. They are plain top-level
+// consts, so the bundler drops the ones nobody imports.
 // =============================================================================
 import type { CSSProperties } from 'react';
+import { TOOL } from './tool-theme.ts';
 
-/** Fixed, theme-independent chrome: the same tool on a paper band or an ink one. */
-export const TOOL = {
-  paper: '#FFFFFF',
-  ink: '#1F1B18',
-  muted: '#6B625B',
-  line: 'rgba(31, 27, 24, 0.14)',
-  ring: '#1F1B18',
-  shadow: '0 6px 20px rgba(31, 27, 24, 0.22), 0 1px 2px rgba(31, 27, 24, 0.16)',
-  font: '"Source Sans 3 Variable", ui-sans-serif, system-ui, -apple-system, sans-serif',
-} as const;
+export { TOOL };
 
 /** Everything a floating strip looks like, minus where it sits. */
 const barBase: CSSProperties = {
@@ -53,16 +61,16 @@ export const bar: CSSProperties = {
 };
 
 /**
- * The ANCHOR the surface panel hangs from. The handle is a 28px square pinned to
- * the section's top-right, so the panel drops from its bottom edge and grows
- * leftwards, which keeps it on screen.
+ * The ANCHOR a panel hangs from when its trigger is a small square handle pinned
+ * to a section's top-right: the panel drops from the handle's bottom edge and
+ * grows leftwards, which keeps it on screen.
  *
  * FLUSH, WITH NO DEAD GAP (2026-08-28). The visible card is offset from the
  * handle by `paddingTop` on THIS box rather than by `top: calc(100% + 6px)`, so
  * the six pixels between handle and card belong to the overlay too. Pointer
  * events on this element are `all` (it is rendered through the host's
  * `PointerEvents`), which is what makes the host treat a pointer crossing that
- * strip as "still on overlay chrome" — see the deferred-leave branch of
+ * strip as "still on overlay chrome" - see the deferred-leave branch of
  * `mouseleave` in the host's controller.ts, which only defers when
  * `findOverlayElement(relatedTarget)` finds an overlay ancestor.
  */
@@ -74,7 +82,7 @@ export const handleAnchor: CSSProperties = {
   zIndex: 3,
 };
 
-/** The surface panel itself: a small labelled card, not a bare row of dots. */
+/** A panel of choices: a small labelled card, not a bare row of dots. */
 export const panel: CSSProperties = {
   width: '208px',
   maxWidth: 'calc(100vw - 24px)',
@@ -98,7 +106,7 @@ export const panelHead: CSSProperties = {
   borderBottom: `1px solid ${TOOL.line}`,
 };
 
-/** The ✕. Square, quiet, and big enough to hit. */
+/** The close control. Square, quiet, and big enough to hit. */
 export const closeButton: CSSProperties = {
   appearance: 'none',
   border: '1px solid transparent',
@@ -114,7 +122,7 @@ export const closeButton: CSSProperties = {
   flex: '0 0 auto',
 };
 
-/** One choice: a colour dot, its name, and a tick when it is the current one. */
+/** One choice: a colour dot, its name, and a mark when it is the current one. */
 export function optionRow(selected: boolean, hovered: boolean): CSSProperties {
   return {
     display: 'flex',
@@ -126,7 +134,7 @@ export function optionRow(selected: boolean, hovered: boolean): CSSProperties {
     appearance: 'none',
     border: 'none',
     borderLeft: `2px solid ${selected ? TOOL.ink : 'transparent'}`,
-    background: hovered ? 'rgba(31, 27, 24, 0.06)' : 'transparent',
+    background: hovered ? TOOL.line : 'transparent',
     color: TOOL.ink,
     font: `${selected ? 600 : 400} 13px/1.3 ${TOOL.font}`,
     textAlign: 'left',
@@ -146,7 +154,7 @@ export function optionDot(background: string, size = 16): CSSProperties {
   };
 }
 
-/** The little uppercase heading over a group of rows inside the panel. */
+/** The little uppercase heading over a group of rows inside a panel. */
 export const groupLabel: CSSProperties = {
   display: 'block',
   padding: '8px 10px 4px',
@@ -155,6 +163,22 @@ export const groupLabel: CSSProperties = {
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
   color: TOOL.muted,
+};
+
+/**
+ * A short explanatory line inside a panel, where a group of rows would be.
+ *
+ * Added 2026-08-28 for ncs-church-starter's surface card, which has to say WHY
+ * it is offering nothing when a section carries a background photo: that
+ * section paints white text over the picture and never wears its surface
+ * classes, so the choices would be a knob attached to nothing. A control that
+ * hides itself silently reads as a bug; one that says why reads as a rule.
+ */
+export const note: CSSProperties = {
+  margin: 0,
+  padding: '2px 10px 10px',
+  color: TOOL.muted,
+  font: `400 12px/1.4 ${TOOL.font}`,
 };
 
 /** A card that opens from a control: the word picker, the text editor. */

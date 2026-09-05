@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
-import { Badge, Box, Button, Card, Flex, Heading, Spinner, Stack, Text } from '@sanity/ui';
+import { ToolHeading } from './ToolHeading';
+import { Badge, Box, Button, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
 
 // =============================================================================
 // HealthTool — a plain-language "what needs attention?" checkup (navbar tool)
@@ -232,11 +233,25 @@ const CHECKS: Check[] = [
     },
   },
   {
-    // "Waiting to publish" — every document with unpublished edits, oldest first.
+    // "Waiting to publish" — every EDITOR document with unpublished edits,
+    // oldest first.
     id: 'drafts',
     run: async (c) => {
       const drafts = await c.fetch<{ _type: string; label?: string; _updatedAt: string }[]>(
-        `*[_id in path("drafts.**")] | order(_updatedAt asc) {
+        // `sanity.*` is excluded as a PATTERN, not by name. The Presentation
+        // tool mints a `sanity.previewUrlSecret` DRAFT on every preview
+        // session, so this check told an editor "4 edits waiting to publish"
+        // about internal secrets that no Studio pane can even open (found on
+        // the WCP site 2026-08-29, same code). A pattern also keeps any future
+        // platform type out without another edit here.
+        //
+        // There is no inbox/submission/trash type to exclude in this repo:
+        // forms post to Web3Forms (see schemaTypes/form.ts), and Delete is a
+        // soft-delete flag on real content (schemaTypes/archived.ts), not a
+        // separate document. `sectionPreset` and `redirect` are written
+        // PUBLISHED by their actions, so they never reach this list either.
+        // Add a type here the day one of those answers changes.
+        `*[_id in path("drafts.**") && !(_type match "sanity.*")] | order(_updatedAt asc) {
           _type, _updatedAt,
           "label": coalesce(title, name, question, quote, message, _type)
         }`,
@@ -300,11 +315,11 @@ export function HealthTool() {
     <Box padding={4}>
       <Stack space={5} style={{ maxWidth: 640, margin: '0 auto' }}>
         <Stack space={3}>
-          <Heading size={3}>🩺 Content checkup</Heading>
+          <ToolHeading>🩺 Content checkup</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
-            A quick look for things worth fixing: courses or faculty missing their basics, terms
-            and notices gone stale, empty SEO fields, and edits waiting to publish. Nothing is
-            changed here; it just points you to what to check.
+            A quick look for things worth fixing: courses or faculty missing their basics, terms and
+            notices gone stale, empty SEO fields, and edits waiting to publish. Nothing is changed
+            here; it just points you to what to check.
           </Text>
         </Stack>
 

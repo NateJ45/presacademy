@@ -51,6 +51,15 @@ interface Props {
    * its own heuristics for everything else.
    */
   fetchpriority?: 'high' | 'low' | 'auto';
+  /**
+   * Render the real URLs as data-src / data-srcset / data-sizes behind a blank
+   * 1x1 placeholder, so the browser fetches NOTHING until a script hydrates
+   * them. `loading="lazy"` cannot do this for an image that sits inside the
+   * viewport, and the Ken Burns slideshow stacks every slide inside the hero
+   * box, so all of them downloaded alongside the LCP image (2026-09-04).
+   * HeroSlideshow.astro owns the hydration script.
+   */
+  defer?: boolean;
 }
 
 const {
@@ -64,7 +73,12 @@ const {
   quality = 75,
   format = 'auto',
   fetchpriority,
+  defer = false,
 } = Astro.props;
+
+// A transparent 1x1 GIF: the src of a deferred image until its script swaps
+// the real URL in. Tiny, cacheable, and never a network request.
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 // Build the URL. If source is null/undefined we render nothing — pages should handle absence explicitly.
 if (!source?.asset) {
@@ -109,17 +123,21 @@ const srcset = widths.map((w) => `${buildUrl(w)} ${w}w`).join(', ');
 const src = buildUrl(width);
 
 const resolvedAlt = alt !== undefined ? alt : (source.alt ?? '');
+const resolvedSizes = sizes ?? `(max-width: ${width}px) 100vw, ${width}px`;
 ---
 
 <img
-  src={src}
-  srcset={srcset}
+  src={defer ? BLANK : src}
+  srcset={defer ? undefined : srcset}
+  sizes={defer ? undefined : resolvedSizes}
+  data-src={defer ? src : undefined}
+  data-srcset={defer ? srcset : undefined}
+  data-sizes={defer ? resolvedSizes : undefined}
   width={width}
   height={derivedHeight}
   alt={resolvedAlt}
   loading={loading}
   decoding="async"
   fetchpriority={fetchpriority}
-  sizes={sizes ?? `(max-width: ${width}px) 100vw, ${width}px`}
   class={className}
 />

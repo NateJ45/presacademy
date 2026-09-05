@@ -18,7 +18,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { OverlayComponentProps } from '@sanity/visual-editing';
 import { splitHeadingWords, isAccentedWord } from '../../../lib/heading-accent.ts';
-import { headingAccentFieldFor } from '../../../lib/section-fields.ts';
+import { headingAccentFieldFor, SECTION_ARRAY_FIELDS } from '../../../lib/section-fields.ts';
 import { readSectionPath } from '../../../lib/sanity-path.ts';
 import { setAt, unsetAt, useDraftDocument } from './useDraftDocument.ts';
 import { usePopover } from './usePopover.ts';
@@ -34,7 +34,7 @@ interface Loaded {
 
 export default function HeadingAccentPicker(props: OverlayComponentProps): React.ReactNode {
   const { node, PointerEvents, element, focused } = props;
-  const section = readSectionPath(node.path);
+  const section = readSectionPath(node.path, SECTION_ARRAY_FIELDS);
   const key = section?.key;
   const { read, write } = useDraftDocument(node.id);
   const [loaded, setLoaded] = useState<Loaded | null>(null);

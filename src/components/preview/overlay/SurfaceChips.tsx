@@ -52,7 +52,7 @@ import {
   type AccentChoice,
   type SurfacePair,
 } from '../../../lib/surfaces.ts';
-import { backgroundApplies } from '../../../lib/section-fields.ts';
+import { backgroundApplies, SECTION_ARRAY_FIELDS } from '../../../lib/section-fields.ts';
 import { readSectionPath } from '../../../lib/sanity-path.ts';
 import { useDraftDocument, setInside } from './useDraftDocument.ts';
 import { usePopover } from './usePopover.ts';
@@ -128,7 +128,7 @@ function applyClasses(
 
 export default function SurfaceChips(props: OverlayComponentProps): React.ReactNode {
   const { node, PointerEvents, focused, element } = props;
-  const section = readSectionPath(node.path);
+  const section = readSectionPath(node.path, SECTION_ARRAY_FIELDS);
   const key = section?.key;
   const { read, write } = useDraftDocument(node.id);
   const [chosen, setChosen] = useState<Chosen | null>(null);

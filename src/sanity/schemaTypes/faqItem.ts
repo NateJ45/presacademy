@@ -6,6 +6,9 @@ import { archivedField } from './archived';
 
 export const faqItem = defineType({
   name: 'faqItem',
+  // Studio search matches the words editors see, not just internal titles
+  // (ported from the WCP site's search weights, 2026-08-31).
+  __experimental_search: [{ path: 'question', weight: 5 }],
   title: 'FAQ Item',
   type: 'document',
   fields: [
@@ -57,8 +60,18 @@ export const faqItem = defineType({
                 type: 'object',
                 title: 'Link',
                 fields: [
-                  { name: 'href', type: 'url', title: 'URL', validation: (R: any) => R.uri({ allowRelative: true }) },
-                  { name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false },
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (R: any) => R.uri({ allowRelative: true }),
+                  },
+                  {
+                    name: 'openInNewTab',
+                    type: 'boolean',
+                    title: 'Open in new tab',
+                    initialValue: false,
+                  },
                 ],
               },
             ],
@@ -78,7 +91,8 @@ export const faqItem = defineType({
       type: 'string',
       hidden: true,
       readOnly: true,
-      description: 'Legacy hardcoded category string. Preserved for data safety; use Category (reference) below instead.',
+      description:
+        'Legacy hardcoded category string. Preserved for data safety; use Category (reference) below instead.',
       options: {
         list: [
           { title: 'Courses & Format', value: 'Courses & Format' },
@@ -98,7 +112,8 @@ export const faqItem = defineType({
       title: 'Category',
       type: 'reference',
       to: [{ type: 'faqCategory' }],
-      description: 'Which group this question belongs in. Replaces the legacy category field. Create categories under Content > FAQ Categories.',
+      description:
+        'Which group this question belongs in. Replaces the legacy category field. Create categories under Content > FAQ Categories.',
     }),
     defineField({
       name: 'displayOrder',

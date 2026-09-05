@@ -63,8 +63,9 @@ The kinetic motion system holds the CLS budget because every piece animates tran
 Cloudflare auto-injects an `X-Robots-Tag: noindex` response header on every `*.workers.dev` URL (it does not want preview subdomains indexed). Lighthouse's "Page is not blocked from indexing" / `is-crawlable` SEO audit reads that header and fails, which drags the whole SEO category down to ~66 on the preview. The **page itself is clean**: no `noindex` meta tag, a valid meta description, and a valid canonical. On the production custom domain (where Cloudflare does not inject the header) the same page scores SEO 100. So if a future preview run shows SEO 66 with that single failing audit, do NOT treat it as a regression — re-check on the real domain before investigating.
 
 **Levers that achieve this -- preserve unless you have a stronger reason than "I want to simplify":**
-- All islands hydrate at `client:idle` or `client:visible` except `MobileNav` (Radix Sheet portal requires `client:only="react"`)
-- Lenis init wrapped in `requestIdleCallback`
+- All islands hydrate at `client:idle` or `client:visible` (since 2026-09-04 that includes `MobileNav`: it server-renders only its trigger button and mounts the Radix Sheet after a `mounted` effect, which is what lets it leave `client:only="react"`; and the course/faculty filters moved from `client:load` to `client:idle`)
+- Lenis init wrapped in `requestIdleCallback` AND gated to wheel devices (`pointer: fine` + `min-width: 1024px`), so phones never load it
+- Ken Burns slides after the first are deferred (`SanityImage defer` + a post-`load` hydration script) so only the LCP slide downloads during first paint
 - Logo PNGs moved from `public/` to `src/assets/` so Astro emits WebPs
 - Single-img theme-aware logo (one fetch per page load instead of two)
 - SanityImage emits real width-descriptor srcset with 8 breakpoints (400-2400)
@@ -78,7 +79,7 @@ Cloudflare auto-injects an `X-Robots-Tag: noindex` response header on every `*.w
 | Component | Directive | Why |
 |---|---|---|
 | `ThemeToggle` | `client:idle` | Anti-FOUC inline script in `BaseLayout` already applies the correct theme class before first paint, so the React island only needs to hydrate by the time the visitor moves to click it. Demoting from `client:load` shaves real TBT off mobile Lighthouse runs. |
-| `MobileNav` | `client:only="react"` | Radix Sheet portal can't SSR |
+| `MobileNav` | `client:idle` | The Radix Sheet portal can't SSR, so the component renders only its trigger on the server and mounts the Sheet after hydration (`mounted` state). Was `client:only="react"` until 2026-09-04, which put React on the mobile LCP path. |
 | `ContactForm` | `client:visible` | Below the fold on most pages |
 | `BackToTop` | `client:idle` | Doesn't appear until the visitor scrolls 600px, so the JS doesn't need to race first paint |
 | `Toaster` (Sonner) | `client:idle` | Region only -- toast calls fire from elsewhere, plenty of time for the region to mount |
