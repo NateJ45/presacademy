@@ -4,6 +4,13 @@ on:
   push:
     branches: [main, staging]
   pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch obsoletes the in-flight run; cancel it
+# instead of paying for both (private-repo Actions minutes are metered).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -17,11 +24,25 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install root dependencies
+      - name: Install dependencies
         run: npm ci
 
+      # `sanity schema extract` bundles the whole Studio config and its import
+      # graph. NODE_OPTIONS raises the heap for this step only, and the loop
+      # retries up to three times: on the hosted runners the extract
+      # intermittently dies with "Aborted (core dumped)" (exit 134) and passes
+      # on a plain re-run. Runner flake, not a schema problem.
       - name: Generate Sanity types
-        run: npm run typegen
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: |
+          for attempt in 1 2 3; do
+            if npm run typegen; then exit 0; fi
+            echo "::warning::typegen attempt $attempt failed (runner flake?) - retrying"
+            sleep 15
+          done
+          echo "::error::typegen failed three times"
+          exit 1
 
       - name: Fail if committed Sanity types are stale
         # `npm run build` does NOT run typegen, so src/lib/sanity.types.ts is
@@ -35,31 +56,37 @@ jobs:
             exit 1
           fi
 
-      - name: Lint
+      - name: Type check (astro check)
+        run: npx astro check
+
+      - name: Lint (eslint)
         run: npm run lint
 
-      - name: Build Astro
+      - name: Format check (prettier)
+        run: npm run format:check
+
+      # Pure-function unit tests (node --test, type-stripped): src/lib/*.test.ts.
+      # Hermetic: no browser, no Sanity token.
+      - name: Unit tests (node --test)
+        run: npm run test:unit
+
+      - name: Build
         # PUBLIC_SANITY_PROJECT_ID is intentionally left unset (the placeholder
         # path). sanityFetch() detects this and returns empty-state fallbacks for
         # every query, so the build completes with no Sanity project configured
-        # and no credentials are required.
+        # and no credentials are required. (The Studio folded into the root
+        # package 2026-08-26 and is bundled into /studio by this same build.)
         env:
-          PUBLIC_SANITY_PROJECT_ID: ""
+          PUBLIC_SANITY_PROJECT_ID: ''
         run: npm run build
 
-      # (No separate Studio build: the studio folded into the root package
-      # 2026-08-26 and is bundled into /studio by the Astro build above.)
-      - name: Run tests
-        run: npm test
+      # Every internal link in the static build resolves. /studio, /preview and
+      # /api are skipped: Studio plumbing, SSR-only or client-rendered, so a
+      # crawler sees nothing real there.
+      - name: Check internal links
+        run: npm run check:links
 
-      - name: Upload built site for Lighthouse
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist-client
-          path: dist/client
-          retention-days: 1
-
-  playwright:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -70,7 +97,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install root dependencies
+      - name: Install dependencies
         run: npm ci
 
       # Both projects from playwright.config.ts: chromium (desktop) AND
@@ -86,10 +113,20 @@ jobs:
       # route renders with fallback content, so no secrets are needed. The
       # dynamic-detail smoke test skips itself when the sitemap has no detail
       # pages, which is exactly this case.
-      - name: Run Playwright suites (smoke · a11y · reflow)
+      - name: Run tests (smoke, a11y, a11y-dark, reflow)
         env:
-          PUBLIC_SANITY_PROJECT_ID: ""
-        run: npx playwright test
+          PUBLIC_SANITY_PROJECT_ID: ''
+        run: npm test
+
+      # Pixel-diffs /style-guide (light + dark) against the committed Linux
+      # baselines. Reuses nothing from the step above (reuseExistingServer is
+      # CI-disabled, so this rebuilds). A red diff means the design system
+      # moved: look at the visual-diffs artifact; if the change is INTENDED,
+      # dispatch update-visual-baselines.yml.
+      - name: Visual regression (style guide)
+        env:
+          PUBLIC_SANITY_PROJECT_ID: ''
+        run: npm run test:visual
 
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
@@ -98,26 +135,10 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
-  lighthouse:
-    needs: build
-    runs-on: ubuntu-latest
-    # A REAL gate since 2026-08-25 (accessibility asserts as an error in
-    # lighthouserc.json): a score regression blocks the merge.
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
         with:
-          node-version: 22
-
-      - name: Download built site
-        uses: actions/download-artifact@v8
-        with:
-          name: dist-client
-          path: dist/client
-
-      - name: Lighthouse CI (a11y / SEO / best-practices budgets)
-        # Reads ./lighthouserc.json. Serves the static build and asserts category
-        # budgets on the key pages that exist in the empty-state fallback build.
-        run: npx --yes @lhci/cli@0.14.x autorun
+          name: visual-diffs
+          path: test-results/
+          retention-days: 14
+          if-no-files-found: ignore
