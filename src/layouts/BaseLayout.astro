@@ -3,7 +3,7 @@
 // Site-wide layout. Provides:
 //   - <html lang>, document head, OG/Twitter meta
 //   - Anti-FOUC theme bootstrap (runs before first paint)
-//   - Cormorant Garamond font preload (LCP element on hero)
+//   - Web fonts via globals.css (metric-matched fallbacks, no preload; see note in head)
 //   - Cloudflare Web Analytics beacon (conditional)
 //   - Astro View Transitions <ClientRouter />
 //   - Skip-to-main link, Header, <main id="main">, Footer
@@ -173,10 +173,14 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={appleTouchHref} />
     {
-      /* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
-        Vite hashes the woff2 filename at build time so a static preload here
-        would 404. If hero h1 LCP needs faster fonts, switch to font-display: optional
-        or generate the preload tag from the built CSS manifest. */
+      /* Web fonts (Fraunces + Source Sans 3) come from the @fontsource imports
+        in globals.css with font-display: swap. They are deliberately NOT
+        preloaded: the metric-matched "Fallback" @font-face rules at the top
+        of globals.css make the swap shift-free (CLS ~0), and a preload only
+        puts ~100KB of font on the LCP critical path (measured 2026-09-06:
+        home LCP 1.5s to 2.6s in the mobile Lighthouse run for no CLS gain).
+        If a preload is ever wanted, import the file with a `?url` suffix so
+        the hashed /_astro/ path matches the one the CSS references. */
     }
 
     {/* Open Graph */}

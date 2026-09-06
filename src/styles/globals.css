@@ -13,6 +13,89 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ---------- Metric-matched fallback faces ------------------------------ */
+/* The @fontsource faces above are font-display: swap, so the first paint uses
+   a system font and the page reflows when Fraunces / Source Sans 3 arrive.
+   That reflow was a 0.10 to 0.22 CLS on the courses, resources and style
+   guide pages in the mobile Lighthouse gate (2026-09-05). These two families
+   are the system fonts the browser paints first, scaled so their average
+   glyph width and vertical metrics match the web font: text wraps on the
+   same words and lines take the same height, so the swap moves nothing.
+
+   How the numbers were made (2026-09-06, scratch scripts, not committed):
+   size-adjust is MEASURED, not computed from font tables. Both web fonts are
+   variable, and the advance widths in the woff2 tables describe the default
+   instance (Source Sans 3 at its lightest weight, Fraunces at its default
+   optical size), which is 4 to 12 percent off what the site renders. So
+   real sentences from the site were laid out in Chrome in the web font and
+   in the fallback face and size-adjust set where the widths match:
+     body 400: 93.8 percent of Arial     body italic: 91.4     body 600+: 89.5 (Arial Bold)
+     display: 113.5 percent of Times (h2/h3 sizes, 24 to 40px; the opsz axis
+              makes 64px hero type about 5 percent narrower still, tolerable
+              for a two-line heading)     display italic: 108.3
+   ascent/descent-override = web hhea ascent or descent / upm / size-adjust
+   (Fraunces 1956 and 510 on 2000; Source Sans 3 1024 and 400 on 1000).
+   Times New Roman and Arial are on Windows and macOS; Liberation Serif and
+   Liberation Sans are their metric-compatible twins on Linux (what the CI
+   runner's Chrome has), so the same numbers hold everywhere. Re-measure if
+   either web font package is upgraded to a new major (metrics change). */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  font-style: normal;
+  src:
+    local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('Tinos');
+  size-adjust: 113.5%;
+  ascent-override: 86.17%;
+  descent-override: 22.47%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Fraunces Fallback';
+  font-style: italic;
+  src:
+    local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'),
+    local('Liberation Serif Italic'), local('Tinos Italic');
+  size-adjust: 108.3%;
+  ascent-override: 90.3%;
+  descent-override: 23.55%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  font-style: normal;
+  font-weight: 100 599;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 93.8%;
+  ascent-override: 109.17%;
+  descent-override: 42.64%;
+  line-gap-override: 0%;
+}
+/* Semibold and up (buttons, nav, eyebrows) map to the real bold cut rather
+   than a synthetic bold of the regular, whose advances would stay regular
+   width while Source Sans 3 at 600 is 8 percent wider than at 400. */
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  font-style: normal;
+  font-weight: 600 900;
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  size-adjust: 89.5%;
+  ascent-override: 114.41%;
+  descent-override: 44.69%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  font-style: italic;
+  src:
+    local('Arial Italic'), local('Arial-ItalicMT'), local('Liberation Sans Italic'),
+    local('Arimo Italic');
+  size-adjust: 91.4%;
+  ascent-override: 112.04%;
+  descent-override: 43.76%;
+  line-gap-override: 0%;
+}
+
 /* ---------- Brand tokens ---------------------------------- */
 /* Reachable as utility classes: bg-bg, text-accent, border-secondary,
    font-display, text-h1, p-l, max-w-content. */
@@ -60,8 +143,12 @@
   ); /* Direction A: Romanesque arch retired -> quiet modern rounding */
 
   /* Fonts */
-  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
-  --font-body: 'Source Sans 3 Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* The "Fallback" families are the metric-matched @font-face rules above;
+     they must sit right after the web font so the swap is shift-free. */
+  --font-display: 'Fraunces Variable', 'Fraunces Fallback', Georgia, 'Times New Roman', serif;
+  --font-body:
+    'Source Sans 3 Variable', 'Source Sans 3 Fallback', system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
   --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;
 
