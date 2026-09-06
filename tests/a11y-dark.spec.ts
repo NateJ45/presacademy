@@ -33,7 +33,8 @@ test.use({
     cookies: [],
     origins: [
       {
-        origin: 'http://localhost:4321',
+        // Same port rule as playwright.config.ts (PLAYWRIGHT_PORT override).
+        origin: `http://localhost:${Number(process.env.PLAYWRIGHT_PORT) || 4321}`,
         localStorage: [{ name: site.themeStorageKey, value: 'dark' }],
       },
     ],
