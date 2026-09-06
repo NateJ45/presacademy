@@ -126,7 +126,7 @@ interface PreviewDoc {
 
 const singletonType = SINGLETON_BY_PATH[slug];
 
-const draftFetch = (q: string, p: Record<string, unknown> = {}, fallback: any = null) =>
+const draftFetch = (q: string, p: Record<string, unknown> = {}, fallback: any = null): Promise<any> =>
   previewFetch(draftMode, q, p).catch(() => fallback);
 
 // ---------------------------------------------------------------------------
@@ -339,11 +339,11 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
   {
     heroHeadline && (
       <Hero
-        eyebrow={doc.heroEyebrow ?? ''}
+        eyebrow={doc!.heroEyebrow ?? ''}
         headline={heroHeadline}
-        subhead={doc.heroSubhead ?? ''}
-        backgroundImage={(doc.heroImage as never) ?? null}
-        backgroundImages={(doc.heroImages as never) ?? null}
+        subhead={doc!.heroSubhead ?? ''}
+        backgroundImage={(doc!.heroImage as never) ?? null}
+        backgroundImages={(doc!.heroImages as never) ?? null}
         headingId="preview-hero"
         size="short"
       />
@@ -364,10 +364,10 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
   {
     hasFinalCta && (
       <FinalCta
-        eyebrow={doc.finalCtaEyebrow}
-        headline={doc.finalCtaHeadline}
-        subhead={doc.finalCtaSubhead}
-        cta={doc.finalCta ?? null}
+        eyebrow={doc!.finalCtaEyebrow}
+        headline={doc!.finalCtaHeadline}
+        subhead={doc!.finalCtaSubhead}
+        cta={doc!.finalCta ?? null}
       />
     )
   }

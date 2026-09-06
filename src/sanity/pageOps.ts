@@ -59,8 +59,14 @@ export interface PageOpsPatch {
   append: (path: string, items: unknown[]) => PageOpsPatch;
 }
 
-/** The patch builder `client.patch(id)` returns: the same verbs, plus commit. */
+/** The patch builder `client.patch(id)` returns: the same verbs, plus commit.
+ *  Each verb is re-declared to hand back the committable builder, so a chain
+ *  like `patch(id).setIfMissing().append().commit()` keeps its `commit`. */
 export interface PageOpsCommittablePatch extends PageOpsPatch {
+  set: (value: Record<string, unknown>) => PageOpsCommittablePatch;
+  unset: (paths: string[]) => PageOpsCommittablePatch;
+  setIfMissing: (value: Record<string, unknown>) => PageOpsCommittablePatch;
+  append: (path: string, items: unknown[]) => PageOpsCommittablePatch;
   commit: () => Promise<unknown>;
 }
 

@@ -16,10 +16,14 @@
 // above-the-fold hero images.
 
 import { urlFor, parseSanityAssetDimensions } from '@/lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url';
 
 interface SanityImageObject {
-  asset?: { _ref?: string; _id?: string };
-  alt?: string;
+  // `null` members: the site-settings logo (and any GROQ projection of an
+  // unset field) arrives as null, not undefined; the render guard below treats
+  // both the same.
+  asset?: { _ref?: string; _id?: string } | null;
+  alt?: string | null;
   hotspot?: { x: number; y: number; height: number; width: number };
   crop?: { top: number; bottom: number; left: number; right: number };
 }
@@ -84,19 +88,22 @@ const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAA
 if (!source?.asset) {
   return null;
 }
+// Past the guard the asset is known to exist; `image` carries that knowledge
+// into the helpers below, which take a non-null asset (astro check).
+const image = { ...source, asset: source.asset };
 
 // If the caller didn't pass an explicit height we derive one from the
 // asset's intrinsic dimensions so the rendered <img> always carries both
 // `width` and `height` attributes. Without both the browser can't reserve
 // aspect-ratio space and the page racks up CLS while images stream in
 // (this was the portfolio-detail CLS regression Lighthouse was flagging).
-const intrinsic = parseSanityAssetDimensions(source);
+const intrinsic = parseSanityAssetDimensions(image);
 const derivedHeight =
   height ?? (intrinsic ? Math.round((intrinsic.height * width) / intrinsic.width) : undefined);
 
 // Build a single optimized URL at a target width. Reusable for srcset entries.
 function buildUrl(targetWidth: number) {
-  let b = urlFor(source).width(targetWidth).quality(quality);
+  let b = urlFor(image as SanityImageSource).width(targetWidth).quality(quality);
   if (height) {
     // Caller-supplied height = aspect-ratio crop. Scale proportionally so
     // every srcset variant keeps the same crop ratio.

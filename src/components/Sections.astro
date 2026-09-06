@@ -12,6 +12,7 @@ import SectionCoach from '@/components/SectionCoach.astro';
 import { sectionEditAttr, sectionFieldEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import { sectionCoach } from '@/lib/section-coach';
 import { backgroundApplies } from '@/lib/section-fields';
+import type { SurfaceValue } from '@/lib/surfaces';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -136,7 +137,7 @@ const SHELL_AWARE = new Set([
 
 // Default background tone when the editor hasn't chosen one (the quote + CTA
 // bands were originally chapel green, so they keep that look by default).
-const DEFAULT_TONE: Record<string, string> = {
+const DEFAULT_TONE: Record<string, SurfaceValue> = {
   sectionQuote: 'chapel',
   sectionCtaBand: 'chapel',
 };
