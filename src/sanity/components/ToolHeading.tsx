@@ -28,7 +28,7 @@ export function ToolHeading({ children }: { children: ReactNode }) {
           flex: 'none',
         }}
       >
-        <img src={churchMark} alt="" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+        <img src={churchMark.src} alt="" style={{ width: 28, height: 28, objectFit: 'contain' }} />
       </span>
       <Heading size={3}>{children}</Heading>
     </Flex>

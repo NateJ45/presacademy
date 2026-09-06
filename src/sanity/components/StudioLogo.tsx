@@ -27,7 +27,7 @@ export default function StudioLogo() {
         }}
       >
         <img
-          src={churchMark}
+          src={churchMark.src}
           alt=""
           aria-hidden="true"
           style={{ height: '22px', width: 'auto', display: 'block' }}
