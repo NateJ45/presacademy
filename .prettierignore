@@ -2,6 +2,24 @@ dist
 node_modules
 .astro
 .wrangler
-src/lib/sanity.types.ts
-package-lock.json
+.sanity
+.lighthouseci
+.playwright-mcp
+.impeccable
+tmp
+backups
 public
+playwright-report
+test-results
+tests/**/__screenshots__
+
+# Lockfiles and machine-written files.
+package-lock.json
+src/lib/sanity.types.ts
+schema.json
+scripts/.asset-map.json
+scripts/_stock*/
+
+# Rendered-HTML parity baselines (scripts/page-parity.mjs). They are byte
+# snapshots of built pages; prettier must never rewrite them.
+scripts/.parity
