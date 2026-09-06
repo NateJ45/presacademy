@@ -30,7 +30,7 @@ The `build` job:
 
 The `test` job installs Chromium + WebKit and runs **`npm test`** (Playwright: smoke, axe light + dark, reflow) against a fresh empty-env build, then **`npm run test:visual`** (the `/style-guide` screenshot diff against the committed Linux baselines). `playwright-report/` and any `test-results/` diffs upload as artifacts.
 
-**Lighthouse** is its own workflow (`.github/workflows/lighthouse.yml`): on pushes to `main`, PRs, and by hand. It builds the same empty-env site and runs `npx lhci autorun` with `lighthouserc.json`: accessibility is a hard gate (must hold 100), LCP (4.5s) and CLS (0.1) assert as errors, and performance / best-practices / SEO warn at 0.85 / 0.95 / 0.95. A staging push does not trigger it; dispatch it (`gh workflow run lighthouse.yml --ref staging`) before the merge.
+**Lighthouse** is its own workflow (`.github/workflows/lighthouse.yml`): on pushes to `main` / `staging`, PRs, and by hand. It builds the same empty-env site and runs `npx lhci autorun` with `lighthouserc.json`: accessibility is a hard gate (must hold 100), LCP (4.5s) and CLS (0.1) assert as errors, and performance / best-practices / SEO warn at 0.85 / 0.95 / 0.95. Work lands on `staging` first, so the budgets are proven there before the fast-forward to `main`.
 
 ## Staging preview deploy (`.github/workflows/deploy-staging.yml`)
 

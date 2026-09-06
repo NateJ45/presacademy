@@ -2,11 +2,12 @@ name: Lighthouse
 
 on:
   push:
-    branches: [main]
+    # staging is included (the family standard says main + PRs): work lands
+    # on staging first here and a workflow_dispatch-only trigger cannot be
+    # dispatched until the file exists on main, so the budgets would go
+    # unchecked exactly where they need checking before the fast-forward.
+    branches: [main, staging]
   pull_request:
-  # Manual runs: the family standard triggers this on main and PRs only, so
-  # a staging push needs a hand-dispatched run to prove the budgets hold
-  # before the merge (gh workflow run lighthouse.yml --ref staging).
   workflow_dispatch:
 
 # A newer push to the same branch obsoletes the in-flight run; cancel it
