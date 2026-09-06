@@ -114,16 +114,20 @@ const subheadClass = editorial
 <section class="bg-background" aria-labelledby={headingId}>
   <div class="mx-auto max-w-content px-m pt-section-lg pb-l">
     <div data-reveal>
-      {eyebrow && (
-        <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{eyebrow}</p>
-      )}
+      {
+        eyebrow && (
+          <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
+        )
+      }
       <h1 id={headingId} class={headlineClass}>{headline}</h1>
       {subhead && <p class={subheadClass}>{subhead}</p>}
       {intro && <p class="mt-m max-w-2xl text-foreground/75">{intro}</p>}
     </div>
-    {variant === 'rule' && <div class="mt-l h-px w-full bg-gold/50"></div>}
-    {variant === 'trustLine' && trustLine && (
-      <p class="mt-l border-t border-gold/50 pt-l text-base text-foreground/75">{trustLine}</p>
-    )}
+    {variant === 'rule' && <div class="mt-l h-px w-full bg-gold/50" />}
+    {
+      variant === 'trustLine' && trustLine && (
+        <p class="mt-l border-t border-gold/50 pt-l text-base text-foreground/75">{trustLine}</p>
+      )
+    }
   </div>
 </section>

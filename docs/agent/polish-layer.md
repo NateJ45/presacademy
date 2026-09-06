@@ -15,13 +15,13 @@ Custom CSS utilities and JS behaviors layered on top of Tailwind + shadcn. All d
 The starter's unifying section mark, and the device that REPLACES the retired arch. A short brand-green leading rule is drawn (via `::before`) before any uppercase eyebrow label that introduces a headline, so every section / hero eyebrow reads as one system across the site — the manuscript "rubric." Usage: add the `eyebrow` class to an uppercase `tracking-eyebrow` label that sits above a headline.
 
 ```html
-<p class="text-xs uppercase tracking-eyebrow text-foreground/80 eyebrow">Our courses</p>
+<p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">Our courses</p>
 ```
 
 On dark / green / photo-scrim surfaces, add `eyebrow-inverse` as well so the rule lifts to brass (`#C7A875`) and stays visible (the green rule would vanish on the green band):
 
 ```html
-<p class="... eyebrow eyebrow-inverse text-chapel-foreground/80">This term</p>
+<p class="eyebrow eyebrow-inverse text-chapel-foreground/80 ...">This term</p>
 ```
 
 Deliberately NOT applied to inline category tags, stat labels, footer/nav labels, or button text — those are a different element. `SectionHeading.astro` is the canonical place the rubric is wired.
@@ -43,7 +43,7 @@ If you add a new card-like component or section that should feel part of the bra
 All marketing cards share a soft resting shadow that deepens on hover via `.card-lift`:
 
 ```html
-<article class="card-lift ... shadow-[0_4px_18px_-14px_rgba(42,45,49,0.18)]">
+<article class="card-lift shadow-[0_4px_18px_-14px_rgba(42,45,49,0.18)] ..."></article>
 ```
 
 The `card-lift` utility class lives in `globals.css`. Defines `:hover { translateY(-2px); box-shadow: 0 16px 34px -18px ... }`. Always-on-card components opt in via the class.
@@ -140,7 +140,9 @@ All honor `prefers-reduced-motion` via a dedicated reset block in `globals.css`.
 Astro View Transitions are wired via `<ClientRouter />` in BaseLayout. Any client-side script that needs to re-run on every navigation must listen to `astro:page-load`:
 
 ```js
-function initThing() { /* ... */ }
+function initThing() {
+  /* ... */
+}
 initThing();
 document.addEventListener('astro:page-load', initThing);
 ```

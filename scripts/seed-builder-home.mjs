@@ -77,7 +77,11 @@ if (!doc) {
 // The page's inline fallbacks, character for character (HomeBody.astro).
 const FALLBACK_WAYFINDING = [
   { title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
-  { title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
+  {
+    title: 'Meet the teachers',
+    body: 'Ordained ministers and Reformed scholars.',
+    href: '/faculty',
+  },
   { title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
   { title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
 ];

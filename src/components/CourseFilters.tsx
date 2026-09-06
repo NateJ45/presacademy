@@ -77,7 +77,7 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
           <button
             type="button"
             onClick={reset}
-            className="text-xs uppercase tracking-[0.12em] text-link underline underline-offset-2 hover:text-primary-dark"
+            className="text-xs tracking-[0.12em] text-link uppercase underline underline-offset-2 hover:text-primary-dark"
           >
             Reset
           </button>
@@ -86,10 +86,13 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
 
       {topics.length > 0 && (
         <fieldset className="mt-6 border-0 p-0">
-          <legend className="text-xs uppercase tracking-eyebrow text-foreground/80">Topic</legend>
+          <legend className="text-xs tracking-eyebrow text-foreground/80 uppercase">Topic</legend>
           <div className="mt-3 flex flex-col gap-2">
             {topics.map((o) => (
-              <label key={o.slug} className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80">
+              <label
+                key={o.slug}
+                className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80"
+              >
                 <input
                   type="checkbox"
                   checked={activeTopics.has(o.slug)}
@@ -110,10 +113,13 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
 
       {teachers.length > 0 && (
         <fieldset className="mt-6 border-0 border-t border-border-soft p-0 pt-6">
-          <legend className="text-xs uppercase tracking-eyebrow text-foreground/80">Teacher</legend>
+          <legend className="text-xs tracking-eyebrow text-foreground/80 uppercase">Teacher</legend>
           <div className="mt-3 flex flex-col gap-2">
             {teachers.map((o) => (
-              <label key={o.slug} className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80">
+              <label
+                key={o.slug}
+                className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80"
+              >
                 <input
                   type="checkbox"
                   checked={activeTeachers.has(o.slug)}
@@ -134,7 +140,10 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
 
       {terms.length > 0 && (
         <div className="mt-6 border-t border-border-soft pt-6">
-          <label htmlFor="term-filter" className="text-xs uppercase tracking-eyebrow text-foreground/80">
+          <label
+            htmlFor="term-filter"
+            className="text-xs tracking-eyebrow text-foreground/80 uppercase"
+          >
             Term
           </label>
           <select

@@ -35,12 +35,14 @@ const [page, siteSettings] = await Promise.all([
 ]);
 const settings = resolveSiteSettings(siteSettings);
 
-const title       = page?.seoTitle       ?? `Accessibility · ${site.name}`;
-const description = page?.seoDescription ?? 'How we make this site usable for everyone, and how to tell us if something gets in your way.';
+const title = page?.seoTitle ?? `Accessibility · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'How we make this site usable for everyone, and how to tell us if something gets in your way.';
 
-const heroEyebrow  = page?.heroEyebrow  ?? 'Built for everyone.';
+const heroEyebrow = page?.heroEyebrow ?? 'Built for everyone.';
 const heroHeadline = page?.heroHeadline ?? 'Accessibility';
-const heroSubhead  = page?.heroSubhead  ?? '';
+const heroSubhead = page?.heroSubhead ?? '';
 
 const schemas = [
   breadcrumbSchema([
@@ -50,10 +52,19 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage pageType="accessibilityPage" {page} {settings}>
-    {/* Hero — photo variant, short height. Rendered here rather than inside
-        SingletonPage so its scoped style stays on the pages that use it. */}
+    {
+      /* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */
+    }
     <Hero
       slot="hero"
       eyebrow={heroEyebrow}

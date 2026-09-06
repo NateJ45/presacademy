@@ -34,12 +34,14 @@ const [page, siteSettings] = await Promise.all([
 ]);
 const settings = resolveSiteSettings(siteSettings);
 
-const title       = page?.seoTitle       ?? `Privacy Policy · ${site.name}`;
-const description = page?.seoDescription ?? 'How we handle the information you share when you reach out or subscribe.';
+const title = page?.seoTitle ?? `Privacy Policy · ${site.name}`;
+const description =
+  page?.seoDescription ??
+  'How we handle the information you share when you reach out or subscribe.';
 
-const heroEyebrow  = page?.heroEyebrow  ?? 'Transparency first.';
+const heroEyebrow = page?.heroEyebrow ?? 'Transparency first.';
 const heroHeadline = page?.heroHeadline ?? 'Privacy Policy';
-const heroSubhead  = page?.heroSubhead  ?? '';
+const heroSubhead = page?.heroSubhead ?? '';
 
 const schemas = [
   breadcrumbSchema([
@@ -49,10 +51,19 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage pageType="privacyPage" {page} {settings}>
-    {/* Hero — photo variant, short height. Rendered here rather than inside
-        SingletonPage so its scoped style stays on the pages that use it. */}
+    {
+      /* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */
+    }
     <Hero
       slot="hero"
       eyebrow={heroEyebrow}

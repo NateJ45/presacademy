@@ -114,7 +114,7 @@ if (unchanged) {
 } else {
   console.log(
     `contactPage: writing 2 sections (details + map, form section` +
-      `${doc.formRef ? ' with the page\'s form' : ' with no form: the email button renders'})` +
+      `${doc.formRef ? " with the page's form" : ' with no form: the email button renders'})` +
       `${doc.contactReasons?.length ? `, carrying ${doc.contactReasons.length} who-to-reach row(s)` : ', using the built-in who-to-reach rows'}` +
       `${rest.length ? `, keeping ${rest.length} existing section(s) after them` : ''}.`,
   );

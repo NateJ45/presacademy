@@ -31,16 +31,20 @@ const first = columns[0];
 ---
 
 {
-  columns.length > 0 && (
-    pair ? (
+  columns.length > 0 &&
+    (pair ? (
       <section class="bg-background">
         <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m py-section-md lg:grid-cols-2">
           {columns.slice(0, 2).map((col: any, i: number) => (
             <div class:list={['max-w-prose', i === 0 ? 'reveal-l' : 'reveal-r']} data-reveal>
               {col.eyebrow && (
-                <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{col.eyebrow}</p>
+                <p class="eyebrow text-xs tracking-eyebrow text-gold-ink uppercase">
+                  {col.eyebrow}
+                </p>
               )}
-              {col.heading && <h2 class="mt-2 font-display text-h3 text-foreground">{col.heading}</h2>}
+              {col.heading && (
+                <h2 class="mt-2 font-display text-h3 text-foreground">{col.heading}</h2>
+              )}
               {col.body && <p class="mt-m leading-relaxed text-foreground/80">{col.body}</p>}
             </div>
           ))}
@@ -49,13 +53,12 @@ const first = columns[0];
     ) : (
       <section class="bg-background">
         <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-md lg:grid-cols-[200px_1fr]">
-          <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{first?.eyebrow}</p>
+          <p class="eyebrow text-xs tracking-eyebrow text-gold-ink uppercase">{first?.eyebrow}</p>
           <div class="max-w-prose" data-reveal>
             <p class="font-display text-h3 leading-snug text-foreground">{first?.heading}</p>
             <p class="mt-m text-lg leading-relaxed text-foreground/80">{first?.body}</p>
           </div>
         </div>
       </section>
-    )
-  )
+    ))
 }

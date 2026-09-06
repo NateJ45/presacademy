@@ -45,7 +45,8 @@ function parseEnv(p) {
     const i = t.indexOf('=');
     if (i === -1) continue;
     let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
     out[t.slice(0, i).trim()] = v;
   }
   return out;
@@ -61,7 +62,8 @@ if (!projectId || !token) {
 const client = createClient({ projectId, dataset, token, apiVersion: '2024-08-01', useCdn: false });
 
 // Add a stable _key (+ _type) to each object in an array, as Sanity requires.
-const keyed = (type, items) => items.map((o, i) => ({ _type: type, _key: `${type}${i + 1}`, ...o }));
+const keyed = (type, items) =>
+  items.map((o, i) => ({ _type: type, _key: `${type}${i + 1}`, ...o }));
 
 const isEmpty = (v) =>
   v == null || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0);
@@ -111,7 +113,12 @@ function bullet(text) {
 // href. Shape: { _type:'ctaBlock', label, linkType:'external', externalUrl }.
 // (Not an array member, so no _key is needed.)
 // ───────────────────────────────────────────────────────────────────────────
-const cta = (label, externalUrl) => ({ _type: 'ctaBlock', label, linkType: 'external', externalUrl });
+const cta = (label, externalUrl) => ({
+  _type: 'ctaBlock',
+  label,
+  linkType: 'external',
+  externalUrl,
+});
 
 // ════════════════════════════════════════════════════════════════════════════
 // (A) EXISTING singletons — only-empty field fills, exact .astro fallback copy.
@@ -176,25 +183,34 @@ const RESOURCES = {
   finalCtaHeadline: 'Learn with the faculty',
   finalCtaSubhead: 'Every essay starts as something the faculty teach. Take the course.',
   finalCta: cta('Browse courses', '/courses'),
-  emptyStateBody: 'New essays are on the way. In the meantime, the best way to learn from our faculty is in a course.',
+  emptyStateBody:
+    'New essays are on the way. In the meantime, the best way to learn from our faculty is in a course.',
 };
 
 // getStartedPage: closing CTA (get-started.astro).
 const GET_STARTED = {
   finalCtaEyebrow: 'Prefer to browse first?',
   finalCtaHeadline: 'See what we teach',
-  finalCtaSubhead: 'The catalog is open. Find a course, meet the teacher, and start when you are ready.',
+  finalCtaSubhead:
+    'The catalog is open. Find a course, meet the teacher, and start when you are ready.',
   finalCta: cta('Browse courses', '/courses'),
 };
 
 // faqPage: hero subhead + closing CTA + the category order list (faq.astro).
 const FAQ_PAGE = {
-  heroSubhead: 'If your question is not here, just ask. We are happy to help you figure out whether the Academy is a fit.',
+  heroSubhead:
+    'If your question is not here, just ask. We are happy to help you figure out whether the Academy is a fit.',
   finalCtaEyebrow: 'Still wondering?',
   finalCtaHeadline: 'Ask us anything',
   finalCtaSubhead: 'If your question is not here, send it our way and we will answer plainly.',
   finalCta: cta('Get in touch', '/get-started'),
-  categoryOrder: ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'],
+  categoryOrder: [
+    'Courses & Format',
+    'Cost & Scholarships',
+    "Who It's For",
+    'Reformed Identity',
+    'Getting Started',
+  ],
 };
 
 // siteSettings: the editor-managed nav + footer menus and the footer credit, from
@@ -253,17 +269,59 @@ const SETTINGS = {
 // faculty / event DETAIL pages have no per-doc SEO fields, so they are not here.
 // ════════════════════════════════════════════════════════════════════════════
 const SEO_DOCS = {
-  coursesPage: { seoTitle: 'Courses · The Presbyterian Academy', seoDescription: 'Reformed formation taught in person, in cohorts. Browse the catalog by topic or teacher.' },
-  facultyPage: { seoTitle: 'Faculty · The Presbyterian Academy', seoDescription: 'Every course is led by an ordained minister or a credentialed Reformed scholar. Meet the faculty of The Presbyterian Academy.' },
-  forYouPage: { seoTitle: 'For You · The Presbyterian Academy', seoDescription: 'However you lead or learn, there is a starting point here for you.' },
-  pricingPage: { seoTitle: 'Pricing & Scholarships · The Presbyterian Academy', seoDescription: 'What a course costs, said plainly, and how we keep Reformed formation within reach.' },
-  resourcesPage: { seoTitle: 'Resources · The Presbyterian Academy', seoDescription: 'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.' },
-  getStartedPage: { seoTitle: 'Get Started · The Presbyterian Academy', seoDescription: 'Request information, book a free intro, or download a course syllabus. No application fee, no pressure.' },
-  faqPage: { seoTitle: 'Frequently Asked Questions · The Presbyterian Academy', seoDescription: 'Common questions about courses, format, cost, scholarships, who it is for, and our Reformed identity.' },
-  contactPage: { seoTitle: 'Contact · The Presbyterian Academy', seoDescription: 'Reach The Presbyterian Academy. Address, phone, email, office hours, and how to find the West Chester campus.' },
-  eventsPage: { seoTitle: 'Events · The Presbyterian Academy', seoDescription: 'Info sessions, open lectures, workshops, and term start dates at The Presbyterian Academy. See what is coming up.' },
-  privacyPage: { seoTitle: 'Privacy Policy · The Presbyterian Academy', seoDescription: 'How we handle the information you share when you reach out or subscribe.' },
-  accessibilityPage: { seoTitle: 'Accessibility · The Presbyterian Academy', seoDescription: 'How we make this site usable for everyone, and how to tell us if something gets in your way.' },
+  coursesPage: {
+    seoTitle: 'Courses · The Presbyterian Academy',
+    seoDescription:
+      'Reformed formation taught in person, in cohorts. Browse the catalog by topic or teacher.',
+  },
+  facultyPage: {
+    seoTitle: 'Faculty · The Presbyterian Academy',
+    seoDescription:
+      'Every course is led by an ordained minister or a credentialed Reformed scholar. Meet the faculty of The Presbyterian Academy.',
+  },
+  forYouPage: {
+    seoTitle: 'For You · The Presbyterian Academy',
+    seoDescription: 'However you lead or learn, there is a starting point here for you.',
+  },
+  pricingPage: {
+    seoTitle: 'Pricing & Scholarships · The Presbyterian Academy',
+    seoDescription:
+      'What a course costs, said plainly, and how we keep Reformed formation within reach.',
+  },
+  resourcesPage: {
+    seoTitle: 'Resources · The Presbyterian Academy',
+    seoDescription:
+      'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.',
+  },
+  getStartedPage: {
+    seoTitle: 'Get Started · The Presbyterian Academy',
+    seoDescription:
+      'Request information, book a free intro, or download a course syllabus. No application fee, no pressure.',
+  },
+  faqPage: {
+    seoTitle: 'Frequently Asked Questions · The Presbyterian Academy',
+    seoDescription:
+      'Common questions about courses, format, cost, scholarships, who it is for, and our Reformed identity.',
+  },
+  contactPage: {
+    seoTitle: 'Contact · The Presbyterian Academy',
+    seoDescription:
+      'Reach The Presbyterian Academy. Address, phone, email, office hours, and how to find the West Chester campus.',
+  },
+  eventsPage: {
+    seoTitle: 'Events · The Presbyterian Academy',
+    seoDescription:
+      'Info sessions, open lectures, workshops, and term start dates at The Presbyterian Academy. See what is coming up.',
+  },
+  privacyPage: {
+    seoTitle: 'Privacy Policy · The Presbyterian Academy',
+    seoDescription: 'How we handle the information you share when you reach out or subscribe.',
+  },
+  accessibilityPage: {
+    seoTitle: 'Accessibility · The Presbyterian Academy',
+    seoDescription:
+      'How we make this site usable for everyone, and how to tell us if something gets in your way.',
+  },
 };
 
 const EXISTING = [
@@ -291,7 +349,9 @@ async function seedDoc(type, fields) {
     if (isEmpty(existing[k])) toSet[k] = v;
   }
   const keys = Object.keys(toSet);
-  console.log(`  ${type} (${existing._id}): ${keys.length} empty field(s)${keys.length ? ` -> ${keys.join(', ')}` : ''}`);
+  console.log(
+    `  ${type} (${existing._id}): ${keys.length} empty field(s)${keys.length ? ` -> ${keys.join(', ')}` : ''}`,
+  );
   if (APPLY && keys.length) await client.patch(existing._id).set(toSet).commit();
   return keys.length;
 }
@@ -311,7 +371,8 @@ const CONTACT_DOC = {
   _id: 'contactPage',
   heroEyebrow: 'Contact',
   heroHeadline: 'Get in touch',
-  heroSubhead: 'Questions about a course, scholarships, or getting started? Here is how to reach us.',
+  heroSubhead:
+    'Questions about a course, scholarships, or getting started? Here is how to reach us.',
   whoToReachLabel: 'Who to reach',
   gettingHereLabel: 'Getting here',
   gettingHereBody:
@@ -354,8 +415,7 @@ const NOT_FOUND_DOC = {
   seoDescription: 'That page wandered off. Head back to the homepage or get in touch.',
   eyebrow: 'Error 404',
   headline: "This page isn't in the index.",
-  body:
-    'A link may be out of date, or the address mistyped. The catalog, the faculty, and a way to reach us are all a click away.',
+  body: 'A link may be out of date, or the address mistyped. The catalog, the faculty, and a way to reach us are all a click away.',
   primaryCtaLabel: 'Browse courses',
   primaryCtaHref: '/courses',
   secondaryCtaLabel: 'Meet the faculty',
@@ -380,19 +440,33 @@ function privacyDoc(email) {
     heroHeadline: 'Privacy Policy',
     lastUpdated: '2026-06-01',
     body: [
-      para(`This is the privacy policy for ${SITE_NAME}. The goal here is to be straightforward about what information we collect and why.`),
+      para(
+        `This is the privacy policy for ${SITE_NAME}. The goal here is to be straightforward about what information we collect and why.`,
+      ),
       heading('What gets collected'),
-      para('When you email us or send a message through this site, you share your name, email address, and whatever details you include. We use that information only to respond to you. Nothing else.'),
-      para('If you subscribe to our newsletter, your email address goes to our email provider so occasional news from the Academy can reach you. It is not shared with anyone else.'),
+      para(
+        'When you email us or send a message through this site, you share your name, email address, and whatever details you include. We use that information only to respond to you. Nothing else.',
+      ),
+      para(
+        'If you subscribe to our newsletter, your email address goes to our email provider so occasional news from the Academy can reach you. It is not shared with anyone else.',
+      ),
       heading("What doesn't happen"),
       bullet('Your information is never sold.'),
       bullet('There is no ad targeting or tracking pixels on this site.'),
-      bullet('Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.'),
+      bullet(
+        'Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.',
+      ),
       heading('Unsubscribing from the newsletter'),
-      para("Every email includes an unsubscribe link at the bottom. Click it and you're off the list right away. If you run into any trouble, email directly and it'll be handled promptly."),
+      para(
+        "Every email includes an unsubscribe link at the bottom. Click it and you're off the list right away. If you run into any trouble, email directly and it'll be handled promptly.",
+      ),
       heading('Questions or data requests'),
-      para(`If you have questions about how your information is handled, or want your data removed, reach out at ${email}. You'll hear back within a few business days.`),
-      para('This policy was last reviewed in June 2026 and will be updated if anything meaningful changes about how this site handles your data.'),
+      para(
+        `If you have questions about how your information is handled, or want your data removed, reach out at ${email}. You'll hear back within a few business days.`,
+      ),
+      para(
+        'This policy was last reviewed in June 2026 and will be updated if anything meaningful changes about how this site handles your data.',
+      ),
     ],
   };
 }
@@ -408,21 +482,39 @@ function accessibilityDoc(email) {
     heroHeadline: 'Accessibility',
     lastUpdated: '2026-06-01',
     body: [
-      para(`${SITE_NAME} wants this website to work for everyone, including people who use a screen reader, move through pages with a keyboard, or rely on other assistive technology. We treat accessibility as part of building and maintaining the site, not an afterthought.`),
+      para(
+        `${SITE_NAME} wants this website to work for everyone, including people who use a screen reader, move through pages with a keyboard, or rely on other assistive technology. We treat accessibility as part of building and maintaining the site, not an afterthought.`,
+      ),
       heading('The standard we hold ourselves to'),
-      para('We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1 at Level AA. That is the benchmark most widely used for the web, and we check our work against it as the site grows.'),
+      para(
+        'We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1 at Level AA. That is the benchmark most widely used for the web, and we check our work against it as the site grows.',
+      ),
       heading('What that looks like here'),
-      bullet('Clear, semantic headings and page landmarks, so assistive technology can move through each page in a logical order.'),
-      bullet('Full keyboard support, with a visible focus outline and a skip-to-content link at the top of every page.'),
-      bullet('Text and background colors chosen for sufficient contrast, checked in both light and dark modes.'),
-      bullet('Written descriptions for images that carry meaning, with decorative images hidden from screen readers.'),
+      bullet(
+        'Clear, semantic headings and page landmarks, so assistive technology can move through each page in a logical order.',
+      ),
+      bullet(
+        'Full keyboard support, with a visible focus outline and a skip-to-content link at the top of every page.',
+      ),
+      bullet(
+        'Text and background colors chosen for sufficient contrast, checked in both light and dark modes.',
+      ),
+      bullet(
+        'Written descriptions for images that carry meaning, with decorative images hidden from screen readers.',
+      ),
       bullet('Text that resizes cleanly and a layout that adapts down to small phone screens.'),
       heading('Where we are still working'),
-      para('A few parts of the site use tools from other companies, such as the scheduling widget and the embedded map. We choose accessible options where we can, but we do not control everything about how those tools behave. If one of them gets in your way, tell us and we will get you the same information another way.'),
+      para(
+        'A few parts of the site use tools from other companies, such as the scheduling widget and the embedded map. We choose accessible options where we can, but we do not control everything about how those tools behave. If one of them gets in your way, tell us and we will get you the same information another way.',
+      ),
       heading('Found a barrier? Tell us.'),
-      para('If anything on this site is hard to use, or you need a page in a different format, please reach out and we will make it right.'),
+      para(
+        'If anything on this site is hard to use, or you need a page in a different format, please reach out and we will make it right.',
+      ),
       para(`Email us at ${email}. Or send a note through our contact page.`),
-      para('Please include the address of the page and a short note about what went wrong. We read every message, reply within a few business days, and will get you the information you need.'),
+      para(
+        'Please include the address of the page and a short note about what went wrong. We read every message, reply within a few business days, and will get you the information you need.',
+      ),
       para('This statement was last reviewed in June 2026. We update it as the site changes.'),
     ],
   };
@@ -449,17 +541,71 @@ const FAQ_CATEGORY_DOCS = FAQ_CATEGORIES.map((c) => ({ _type: 'faqCategory', ...
 // a single normal-style Portable Text block. categoryRef points at the matching
 // faqCategory; displayOrder is sequential within each category.
 const FALLBACK_FAQS = [
-  { category: 'Courses & Format', question: 'How do courses work?', answer: 'Each course meets in person, in a cohort, over six to ten evenings. You read real texts, discuss them together, and leave able to teach what you have learned.' },
-  { category: 'Courses & Format', question: 'Do I need a degree or prior training?', answer: 'No. Our courses are built for adult lay leaders and curious believers. We meet you where you are.' },
-  { category: 'Courses & Format', question: 'Where do classes meet?', answer: 'On our West Chester campus, with free on-site parking. Most courses meet on weekday evenings.' },
-  { category: 'Cost & Scholarships', question: 'What does a course cost?', answer: 'Most courses are $195, or $95 to audit. A full certificate track is $1,400. See the Pricing page for the details.' },
-  { category: 'Cost & Scholarships', question: 'What if I cannot afford it?', answer: 'Need-based scholarships are available every term, funded by our supporters. No one is turned away for cost. Just tell us on the interest form.' },
-  { category: "Who It's For", question: 'Who takes courses here?', answer: 'Ruling and teaching elders, small-group and Sunday-school leaders, lifelong learners from PC(USA), ECO, and EPC churches, and anyone discerning a call.' },
-  { category: "Who It's For", question: 'Can I take a course if I am not Presbyterian?', answer: 'Yes. Reformed Christians of every stripe, and the simply curious, are welcome.' },
-  { category: 'Reformed Identity', question: 'What do you believe?', answer: 'We are a confessional Reformed school in the PC(USA), holding to the Westminster Standards and the Book of Confessions, taught for ordinary believers.' },
-  { category: 'Reformed Identity', question: 'Is this a seminary?', answer: 'No. We are a lay-formation school. The teaching is seminary-grade, but it is built for people who are not leaving their jobs and families for a degree.' },
-  { category: 'Getting Started', question: 'How do I try before I enroll?', answer: 'Sit in on the first session of any course, free, or book a free intro session. Request information and we will help you find a fit.' },
-  { category: 'Getting Started', question: 'When do courses start?', answer: 'We run cohorts each term. The next term and its dates are on the home page and the Events page.' },
+  {
+    category: 'Courses & Format',
+    question: 'How do courses work?',
+    answer:
+      'Each course meets in person, in a cohort, over six to ten evenings. You read real texts, discuss them together, and leave able to teach what you have learned.',
+  },
+  {
+    category: 'Courses & Format',
+    question: 'Do I need a degree or prior training?',
+    answer:
+      'No. Our courses are built for adult lay leaders and curious believers. We meet you where you are.',
+  },
+  {
+    category: 'Courses & Format',
+    question: 'Where do classes meet?',
+    answer:
+      'On our West Chester campus, with free on-site parking. Most courses meet on weekday evenings.',
+  },
+  {
+    category: 'Cost & Scholarships',
+    question: 'What does a course cost?',
+    answer:
+      'Most courses are $195, or $95 to audit. A full certificate track is $1,400. See the Pricing page for the details.',
+  },
+  {
+    category: 'Cost & Scholarships',
+    question: 'What if I cannot afford it?',
+    answer:
+      'Need-based scholarships are available every term, funded by our supporters. No one is turned away for cost. Just tell us on the interest form.',
+  },
+  {
+    category: "Who It's For",
+    question: 'Who takes courses here?',
+    answer:
+      'Ruling and teaching elders, small-group and Sunday-school leaders, lifelong learners from PC(USA), ECO, and EPC churches, and anyone discerning a call.',
+  },
+  {
+    category: "Who It's For",
+    question: 'Can I take a course if I am not Presbyterian?',
+    answer: 'Yes. Reformed Christians of every stripe, and the simply curious, are welcome.',
+  },
+  {
+    category: 'Reformed Identity',
+    question: 'What do you believe?',
+    answer:
+      'We are a confessional Reformed school in the PC(USA), holding to the Westminster Standards and the Book of Confessions, taught for ordinary believers.',
+  },
+  {
+    category: 'Reformed Identity',
+    question: 'Is this a seminary?',
+    answer:
+      'No. We are a lay-formation school. The teaching is seminary-grade, but it is built for people who are not leaving their jobs and families for a degree.',
+  },
+  {
+    category: 'Getting Started',
+    question: 'How do I try before I enroll?',
+    answer:
+      'Sit in on the first session of any course, free, or book a free intro session. Request information and we will help you find a fit.',
+  },
+  {
+    category: 'Getting Started',
+    question: 'When do courses start?',
+    answer:
+      'We run cohorts each term. The next term and its dates are on the home page and the Events page.',
+  },
 ];
 
 // Build faqItem docs with per-category sequential displayOrder.
@@ -479,9 +625,28 @@ const FAQ_ITEM_DOCS = FALLBACK_FAQS.map((f, i) => {
 // 3 recurring events, verbatim from events/index.astro `RECURRING_FALLBACK`.
 // category maps each to an event.ts category option value.
 const RECURRING_FALLBACK = [
-  { slug: 'monthly-info-session', title: 'Monthly info session', scheduleLabel: 'First Tuesday, 7pm', summary: 'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.', category: 'Info session' },
-  { slug: 'open-lecture-series', title: 'Open lecture series', scheduleLabel: 'Third Thursday, 7pm', summary: 'A single public lecture from one of our faculty, no registration required.', category: 'Open lecture' },
-  { slug: 'visit-a-class', title: 'Visit a class', scheduleLabel: 'During each term', summary: 'Sit in on the first session of any course, free, before you enroll.', category: 'Other' },
+  {
+    slug: 'monthly-info-session',
+    title: 'Monthly info session',
+    scheduleLabel: 'First Tuesday, 7pm',
+    summary:
+      'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.',
+    category: 'Info session',
+  },
+  {
+    slug: 'open-lecture-series',
+    title: 'Open lecture series',
+    scheduleLabel: 'Third Thursday, 7pm',
+    summary: 'A single public lecture from one of our faculty, no registration required.',
+    category: 'Open lecture',
+  },
+  {
+    slug: 'visit-a-class',
+    title: 'Visit a class',
+    scheduleLabel: 'During each term',
+    summary: 'Sit in on the first session of any course, free, before you enroll.',
+    category: 'Other',
+  },
 ];
 const RECURRING_EVENT_DOCS = RECURRING_FALLBACK.map((ev, i) => ({
   _type: 'event',
@@ -497,7 +662,10 @@ const RECURRING_EVENT_DOCS = RECURRING_FALLBACK.map((ev, i) => ({
 // One-line preview of a doc's headline value for the dry-run log.
 function previewOf(doc) {
   return (
-    doc.heroHeadline ?? doc.headline ?? doc.title ?? doc.question ??
+    doc.heroHeadline ??
+    doc.headline ??
+    doc.title ??
+    doc.question ??
     (Array.isArray(doc.body) ? doc.body[0]?.children?.[0]?.text : undefined) ??
     '(no headline)'
   );
@@ -527,7 +695,9 @@ async function seedCreate(label, docs) {
 // fallback. Only-empty per field.
 async function seedCourseSeo() {
   console.log('\n(D) Course SEO (only-empty):');
-  const courses = await client.fetch(`*[_type == "course"]{ _id, title, summary, seoTitle, seoDescription }`);
+  const courses = await client.fetch(
+    `*[_type == "course"]{ _id, title, summary, seoTitle, seoDescription }`,
+  );
   let n = 0;
   for (const c of courses) {
     const toSet = {};
@@ -550,12 +720,16 @@ async function seedCourseSeo() {
 // heroImage -- it is a valid field in their schema.
 const HERO_IMAGE_ORPHAN_TYPES = ['homePage', 'aboutPage'];
 async function cleanupOrphans() {
-  console.log('\n(E) Orphan cleanup (heroImage on re-schema\'d pages):');
+  console.log("\n(E) Orphan cleanup (heroImage on re-schema'd pages):");
   let n = 0;
   for (const type of HERO_IMAGE_ORPHAN_TYPES) {
-    const doc = await client.fetch(`*[_type == $type][0]{ _id, "has": defined(heroImage) }`, { type });
+    const doc = await client.fetch(`*[_type == $type][0]{ _id, "has": defined(heroImage) }`, {
+      type,
+    });
     if (doc?.has) {
-      console.log(`  ${APPLY ? 'unset' : 'would unset'}: ${doc._id}.heroImage (legacy orphan field)`);
+      console.log(
+        `  ${APPLY ? 'unset' : 'would unset'}: ${doc._id}.heroImage (legacy orphan field)`,
+      );
       if (APPLY) await client.patch(doc._id).unset(['heroImage']).commit();
       n += 1;
     } else {
@@ -577,7 +751,13 @@ async function main() {
   const email = (typeof ss?.email === 'string' ? ss.email.trim() : '') || '';
   console.log(`  (privacy/accessibility body email -> ${email || '(blank)'})`);
 
-  const MISSING = [CONTACT_DOC, EVENTS_DOC, NOT_FOUND_DOC, privacyDoc(email), accessibilityDoc(email)];
+  const MISSING = [
+    CONTACT_DOC,
+    EVENTS_DOC,
+    NOT_FOUND_DOC,
+    privacyDoc(email),
+    accessibilityDoc(email),
+  ];
 
   // (A) Existing singletons — only-empty patches.
   console.log('\n(A) Existing singletons (fill only empty fields):');
@@ -606,8 +786,14 @@ async function main() {
 
   const created = createdSingletons + createdCategories + createdFaqs + createdEvents;
   console.log(`\n${APPLY ? 'Done' : 'Dry run complete'}.`);
-  console.log(`  ${APPLY ? 'Patched' : 'Would patch'} ${patched} empty field(s) on existing singletons.`);
+  console.log(
+    `  ${APPLY ? 'Patched' : 'Would patch'} ${patched} empty field(s) on existing singletons.`,
+  );
   console.log(`  ${APPLY ? 'Created' : 'Would create'} ${created} new doc(s).`);
-  if (!APPLY) console.log('\n  Re-run with --apply to write. Then: npm run studio:deploy + rebuild.');
+  if (!APPLY)
+    console.log('\n  Re-run with --apply to write. Then: npm run studio:deploy + rebuild.');
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

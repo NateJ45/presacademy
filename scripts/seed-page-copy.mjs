@@ -38,7 +38,8 @@ function parseEnv(p) {
     const i = t.indexOf('=');
     if (i === -1) continue;
     let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
     out[t.slice(0, i).trim()] = v;
   }
   return out;
@@ -54,7 +55,8 @@ if (!projectId || !token) {
 const client = createClient({ projectId, dataset, token, apiVersion: '2024-08-01', useCdn: false });
 
 // Add a stable _key (+ _type) to each object in an array, as Sanity requires.
-const keyed = (type, items) => items.map((o, i) => ({ _type: type, _key: `${type}${i + 1}`, ...o }));
+const keyed = (type, items) =>
+  items.map((o, i) => ({ _type: type, _key: `${type}${i + 1}`, ...o }));
 
 // ---- The built-in copy, mirroring the fallbacks in index.astro / about.astro ----
 const HOME = {
@@ -67,7 +69,11 @@ const HOME = {
   nextCohortLabel: 'Next cohort begins',
   wayfinding: keyed('wayfindingStep', [
     { title: 'Take a course', body: 'Browse the catalog by topic or teacher.', href: '/courses' },
-    { title: 'Meet the teachers', body: 'Ordained ministers and Reformed scholars.', href: '/faculty' },
+    {
+      title: 'Meet the teachers',
+      body: 'Ordained ministers and Reformed scholars.',
+      href: '/faculty',
+    },
     { title: 'Find your path', body: 'A starting point for where you are now.', href: '/for-you' },
     { title: 'Start free', body: 'Sit in on a class, no commitment.', href: '/get-started' },
   ]),
@@ -80,9 +86,16 @@ const HOME = {
     { value: 'Reformed', label: 'Rooted in the Westminster Standards', count: false },
   ]),
   tickerTopics: [
-    'Old Testament', 'Systematic Theology', 'Church History', 'Reformed Worship',
-    'Biblical Greek', 'Christian Ethics', 'Apologetics', 'Pastoral Care',
-    'The Confessions', 'Spiritual Formation',
+    'Old Testament',
+    'Systematic Theology',
+    'Church History',
+    'Reformed Worship',
+    'Biblical Greek',
+    'Christian Ethics',
+    'Apologetics',
+    'Pastoral Care',
+    'The Confessions',
+    'Spiritual Formation',
   ],
   coursesEyebrow: 'Courses',
   coursesHeadline: 'Learn something worth knowing',
@@ -111,10 +124,22 @@ const ABOUT = {
   believeEyebrow: 'What we believe',
   believeHeadline: 'Confessional, and warm about it',
   beliefs: keyed('belief', [
-    { title: 'Scripture is our final authority', body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.' },
-    { title: 'Salvation is by grace alone', body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.' },
-    { title: 'The confessions guide us', body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.' },
-    { title: 'Formation is for everyone', body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.' },
+    {
+      title: 'Scripture is our final authority',
+      body: 'We read the Bible as the Word of God, trustworthy and sufficient, and we teach you to read it for yourself.',
+    },
+    {
+      title: 'Salvation is by grace alone',
+      body: 'We are saved by what God has done, not by what we achieve. That changes how we learn and how we lead.',
+    },
+    {
+      title: 'The confessions guide us',
+      body: 'We hold to the Westminster Confession and Catechisms and the PC(USA) confessional standards, taught for ordinary believers, not just scholars.',
+    },
+    {
+      title: 'Formation is for everyone',
+      body: 'The depth of the tradition belongs to the whole church, not only the ordained. That conviction is why we exist.',
+    },
   ]),
   believeFootnote:
     'Rooted in the Westminster Standards, taught for ordinary believers. Our full statement of faith is the PC(USA) Book of Confessions.',
@@ -127,7 +152,8 @@ const ABOUT = {
   whyBody:
     'The Presbyterian Academy is supported by the Presbytery of Cincinnati, bringing seminary-grade teaching to lay leaders who cannot leave their jobs and families for a degree. We teach the historic Reformed faith for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious, taught by ministers and scholars who believe ordinary believers deserve the real thing.',
   facultyBandEyebrow: 'The people who teach',
-  facultyBandHeadline: 'Every course is led by an ordained minister or a credentialed Reformed scholar.',
+  facultyBandHeadline:
+    'Every course is led by an ordained minister or a credentialed Reformed scholar.',
   facultyBandCtaLabel: 'Meet the faculty',
   finalCtaEyebrow: 'Ready to learn?',
   finalCtaHeadline: 'Find a course to begin',
@@ -162,7 +188,9 @@ async function seedDoc(type, fields) {
     if (isEmpty(existing[k])) toSet[k] = v;
   }
   const keys = Object.keys(toSet);
-  console.log(`  ${type} (${existing._id}): ${keys.length} empty field(s)${keys.length ? ` -> ${keys.join(', ')}` : ''}`);
+  console.log(
+    `  ${type} (${existing._id}): ${keys.length} empty field(s)${keys.length ? ` -> ${keys.join(', ')}` : ''}`,
+  );
   if (APPLY && keys.length) await client.patch(existing._id).set(toSet).commit();
   return keys.length;
 }
@@ -175,6 +203,11 @@ async function main() {
   n += await seedDoc('getStartedPage', GET_STARTED);
   n += await seedDoc('facultyPage', FACULTY);
   n += await seedDoc('siteSettings', SETTINGS);
-  console.log(`\n${APPLY ? 'Patched' : 'Would patch'} ${n} field(s) total.${APPLY ? '' : '  Re-run with --apply to write.'}`);
+  console.log(
+    `\n${APPLY ? 'Patched' : 'Would patch'} ${n} field(s) total.${APPLY ? '' : '  Re-run with --apply to write.'}`,
+  );
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

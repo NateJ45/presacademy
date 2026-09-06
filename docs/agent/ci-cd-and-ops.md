@@ -36,7 +36,7 @@ The `test` job installs Chromium + WebKit and runs **`npm test`** (Playwright: s
 
 On every push to `staging`, deploys to a SEPARATE Cloudflare Worker, `presacademy-staging`, at `https://presacademy-staging.<your-subdomain>.workers.dev`. Production (`presacademy`) is never touched: the same `wrangler.jsonc` is reused with only the Worker `name` overridden. This lets you verify the things localhost can't show: the `public/_headers` rules, the Sanity CDN image pipeline, redirects, and real edge Lighthouse.
 
-**To activate:** add repo secrets `CLOUDFLARE_API_TOKEN` (a token with the "Edit Workers" template) and `CLOUDFLARE_ACCOUNT_ID`. For real content in the preview, set the repo *variables* `PUBLIC_SANITY_PROJECT_ID` and `PUBLIC_SANITY_DATASET` to the same values your production deploy uses (add a read token if your dataset is private); otherwise the preview builds empty-state fallbacks, which still validates the edge behaviour.
+**To activate:** add repo secrets `CLOUDFLARE_API_TOKEN` (a token with the "Edit Workers" template) and `CLOUDFLARE_ACCOUNT_ID`. For real content in the preview, set the repo _variables_ `PUBLIC_SANITY_PROJECT_ID` and `PUBLIC_SANITY_DATASET` to the same values your production deploy uses (add a read token if your dataset is private); otherwise the preview builds empty-state fallbacks, which still validates the edge behaviour.
 
 ## Sanity backups (`.github/workflows/sanity-backup.yml`)
 
@@ -79,6 +79,7 @@ Hourly, confirms the live site's key pages return 200; a failed run notifies you
 `FormRenderer.tsx` renders an hCaptcha widget and requires + sends its token on the Web3Forms submit path. Web3Forms gates Cloudflare Turnstile behind a paid plan but verifies **hCaptcha for free** via its shared sitekey, so that is what we use. The widget defaults to Web3Forms' shared hCaptcha sitekey (`50b2fe65-b00b-4b9e-ad62-3ba471098be2`): zero-config, because Web3Forms verifies the token with its own secret server-side, so there is no hCaptcha account to create and no secret for us to store. Mailto / Formspree fallbacks skip the widget (only the Web3Forms path is gated).
 
 **To activate:**
+
 1. In the Web3Forms dashboard (app.web3forms.com), open the form for your access key and switch its spam protection to **hCaptcha**. This is the step that makes Web3Forms actually enforce the token. Without it the puzzle renders client-side, but a submission posted directly with a missing or bad token is still accepted.
 2. Nothing else is required: no env var, no Cloudflare build var, no secret. (To use your own hCaptcha account instead of the shared key, set `PUBLIC_HCAPTCHA_SITEKEY=<your sitekey>` in `.env` + the Cloudflare build env, and paste your hCaptcha **secret** into the Web3Forms dashboard.)
 3. Also worth doing once: a manual end-to-end submission test after launch (a synthetic test would send real submissions, so keep it manual or route it to a test inbox).
@@ -87,16 +88,16 @@ Note: hCaptcha's image puzzles are more intrusive than Turnstile's checkbox; we 
 
 ## Secrets & variables summary
 
-| Name | Kind | Used by | Needed for |
-|---|---|---|---|
-| `CLOUDFLARE_API_TOKEN` | secret | deploy-staging | staging preview deploys |
-| `CLOUDFLARE_ACCOUNT_ID` | secret | deploy-staging | staging preview deploys |
-| `SANITY_AUTH_TOKEN` | secret | sanity-backup | nightly dataset backups (read token) |
-| `BACKUP_PASSPHRASE` | secret | sanity-backup | encrypts the backup artifact (public repo — required, keep an off-GitHub copy) |
-| `PUBLIC_SANITY_PROJECT_ID` | variable | deploy-staging | real content in the preview (optional) |
-| `PUBLIC_SANITY_DATASET` | variable | deploy-staging | real content in the preview (optional) |
-| `SITE_URL` | variable | uptime | hourly uptime check |
-| `PUBLIC_HCAPTCHA_SITEKEY` | build env (`.env` + Cloudflare), OPTIONAL | the forms | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
+| Name                       | Kind                                      | Used by        | Needed for                                                                                  |
+| -------------------------- | ----------------------------------------- | -------------- | ------------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`     | secret                                    | deploy-staging | staging preview deploys                                                                     |
+| `CLOUDFLARE_ACCOUNT_ID`    | secret                                    | deploy-staging | staging preview deploys                                                                     |
+| `SANITY_AUTH_TOKEN`        | secret                                    | sanity-backup  | nightly dataset backups (read token)                                                        |
+| `BACKUP_PASSPHRASE`        | secret                                    | sanity-backup  | encrypts the backup artifact (public repo — required, keep an off-GitHub copy)              |
+| `PUBLIC_SANITY_PROJECT_ID` | variable                                  | deploy-staging | real content in the preview (optional)                                                      |
+| `PUBLIC_SANITY_DATASET`    | variable                                  | deploy-staging | real content in the preview (optional)                                                      |
+| `SITE_URL`                 | variable                                  | uptime         | hourly uptime check                                                                         |
+| `PUBLIC_HCAPTCHA_SITEKEY`  | build env (`.env` + Cloudflare), OPTIONAL | the forms      | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
 
 Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. The optional `PUBLIC_HCAPTCHA_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare). The default hCaptcha protection needs no var at all.
 

@@ -5,6 +5,7 @@ client. Every item checked or explicitly deferred with a reason before DNS
 cutover.
 
 ## Identity & code
+
 - [ ] `npm run typegen` after any schema change
 - [ ] Grep for leftover placeholders: `The Presbyterian Academy`, `West Chester Township`, `presbyterian-academy`, `555-0100` → zero hits outside docs examples
 - [ ] Palette tokens reskinned in `globals.css` + mirrored in `site.ts` (or the reference palette consciously kept)
@@ -14,6 +15,7 @@ cutover.
 - [ ] Wordmark lines read right in header, footer, mobile menu (`site.ts` → `wordmark`)
 
 ## Sanity
+
 - [ ] Project created; `.env` + `studio/.env` filled; tokens marked Secret in Cloudflare
 - [ ] `npm run seed -- --apply` imported the starter content
 - [ ] Site Settings fully populated (identity, socials, give/watch URLs, worship time, nav, footer)
@@ -25,6 +27,7 @@ cutover.
 - [ ] `node scripts/sanity-audit.mjs --fields` reviewed: no unexpected empty fields, zero stray drafts
 
 ## Cloudflare & launch
+
 - [ ] Repo on GitHub; Workers build from repo green
 - [ ] Env vars set in Cloudflare (build section)
 - [ ] Sanity publish → Cloudflare rebuild webhook wired AND tested (edit, publish, watch the deploy)
@@ -36,6 +39,7 @@ cutover.
 - [ ] Footer credit set in Site Settings (footerCredit + footerCreditUrl → your studio site)
 
 ## Aftercare
+
 - [ ] Editor knows: edit → Publish → live in ~2 min (and what to do if not: OPERATIONS gotchas)
 - [ ] `docs/agent/changelog.md` started for this client
 - [ ] Backup/export cadence decided (`sanity dataset export`)

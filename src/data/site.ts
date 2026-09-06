@@ -18,9 +18,9 @@ function slugifyName(s: string): string {
 
 // All derived fields (studio, url, storageKeyPrefix, themeStorageKey) are
 // computed from the two quoted values below at module load time.
-const _name   = "The Presbyterian Academy";
-const _domain = "presbyterianacademy.org";
-const _slug   = slugifyName(_name);
+const _name = 'The Presbyterian Academy';
+const _domain = 'presbyterianacademy.org';
+const _slug = slugifyName(_name);
 
 export const site = {
   name: _name,
@@ -41,14 +41,14 @@ export const site = {
 
   // BCP 47 language tag for the <html lang> attribute.
   // Change to match the site's primary language if not English.
-  lang: "en",
+  lang: 'en',
 
   // The text wordmark rendered in the header, footer, and mobile menu.
   // Two stacked lines (e.g. "The Presbyterian" / "Academy").
   // Set line2 to an empty string for a single-line wordmark.
   wordmark: {
-    line1: "The Presbyterian",
-    line2: "Academy",
+    line1: 'The Presbyterian',
+    line2: 'Academy',
   },
 
   // NOTE: contact details (email, pastoral email, phone, address, office hours)
@@ -61,29 +61,29 @@ export const site = {
   // Mirrored here for scripts that need them outside CSS (OG generator,
   // structured data). Keep the two in sync when you reskin.
   brandColors: {
-    primary: "#33503F",       // Geneva Green — primary anchor (Direction A)
-    primaryDark: "#2A4233",   // Green Deep
-    accent: "#1F1B18",        // Soft near-black ink
-    accentDark: "#1E1A17",    // Near-black deep — dark surfaces
-    secondary: "#B7A99B",     // Cloister Stone
-    tertiary: "#9C8E7E",      // Stone Deep
-    bg: "#FAF8F4",            // Near-white warm paper
-    bgSoft: "#FFFFFF",        // White (raised/alt surface)
-    border: "#E6E3DB",        // Warm border
-    chapel: "#2A4233",        // Forest Green — footer, closing-CTA band
-    chapelDeep: "#1F3227",    // Forest Green Deepest — band base
-    gold: "#A87C3E",          // Aged Brass accent
-    oxblood: "#7A2A2C",       // Oxblood — demoted, sparing accent
+    primary: '#33503F', // Geneva Green — primary anchor (Direction A)
+    primaryDark: '#2A4233', // Green Deep
+    accent: '#1F1B18', // Soft near-black ink
+    accentDark: '#1E1A17', // Near-black deep — dark surfaces
+    secondary: '#B7A99B', // Cloister Stone
+    tertiary: '#9C8E7E', // Stone Deep
+    bg: '#FAF8F4', // Near-white warm paper
+    bgSoft: '#FFFFFF', // White (raised/alt surface)
+    border: '#E6E3DB', // Warm border
+    chapel: '#2A4233', // Forest Green — footer, closing-CTA band
+    chapelDeep: '#1F3227', // Forest Green Deepest — band base
+    gold: '#A87C3E', // Aged Brass accent
+    oxblood: '#7A2A2C', // Oxblood — demoted, sparing accent
   },
 
   // Static asset paths under public/
   assets: {
-    ogDefault: "/og-default.png",
-    favicon: "/favicon.png",
+    ogDefault: '/og-default.png',
+    favicon: '/favicon.png',
   },
 
   // Public repo URL (used in footer credit if shown)
-  repo: "",
+  repo: '',
 } as const;
 
 export type Site = typeof site;

@@ -111,16 +111,30 @@ const showLink = variant === 'feature' && Boolean(block?.linkLabel && block?.lin
         <div class="mx-auto max-w-content px-m py-section-lg">
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div data-reveal>
-              <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block?.eyebrow}</p>
-              <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                {block?.eyebrow}
+              </p>
+              <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
+                {block?.heading}
+              </h2>
             </div>
             {showLink && (
-              <a href={block.linkHref} class="link-arrow inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.12em] text-link underline underline-offset-4 hover:text-primary-dark">{block.linkLabel}<span class="link-arrow__icon" aria-hidden="true">&rarr;</span></a>
+              <a
+                href={block.linkHref}
+                class="link-arrow inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
+              >
+                {block.linkLabel}
+                <span class="link-arrow__icon" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
             )}
           </div>
-          <div class="mt-l h-px w-full bg-gold/50"></div>
+          <div class="mt-l h-px w-full bg-gold/50" />
           <ul class={gridClass} data-stagger-grid>
-            {courses.map((c: any) => <CourseCard course={c} />)}
+            {courses.map((c: any) => (
+              <CourseCard course={c} />
+            ))}
           </ul>
         </div>
       </section>
@@ -129,11 +143,15 @@ const showLink = variant === 'feature' && Boolean(block?.linkLabel && block?.lin
       <section class="bg-card" aria-labelledby={headingId}>
         <div class="mx-auto max-w-content px-m py-section-md">
           <div data-reveal>
-            <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{block?.eyebrow}</p>
-            <h2 id={headingId} class="mt-2 font-display text-h3 text-foreground">{block?.heading}</h2>
+            <p class="eyebrow text-xs tracking-eyebrow text-gold-ink uppercase">{block?.eyebrow}</p>
+            <h2 id={headingId} class="mt-2 font-display text-h3 text-foreground">
+              {block?.heading}
+            </h2>
           </div>
           <ul class={gridClass} data-stagger-grid>
-            {courses.map((c: any) => <CourseCard course={c} />)}
+            {courses.map((c: any) => (
+              <CourseCard course={c} />
+            ))}
           </ul>
         </div>
       </section>

@@ -25,9 +25,22 @@ const { block } = Astro.props as Props;
 
 // Known recurring rhythms — used when no recurring events exist in Sanity yet.
 const RECURRING_FALLBACK = [
-  { title: 'Monthly info session', scheduleLabel: 'First Tuesday, 7pm', summary: 'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.' },
-  { title: 'Open lecture series', scheduleLabel: 'Third Thursday, 7pm', summary: 'A single public lecture from one of our faculty, no registration required.' },
-  { title: 'Visit a class', scheduleLabel: 'During each term', summary: 'Sit in on the first session of any course, free, before you enroll.' },
+  {
+    title: 'Monthly info session',
+    scheduleLabel: 'First Tuesday, 7pm',
+    summary:
+      'A relaxed evening to ask questions, meet a teacher, and see if the Academy is a fit. Free and open to all.',
+  },
+  {
+    title: 'Open lecture series',
+    scheduleLabel: 'Third Thursday, 7pm',
+    summary: 'A single public lecture from one of our faculty, no registration required.',
+  },
+  {
+    title: 'Visit a class',
+    scheduleLabel: 'During each term',
+    summary: 'Sit in on the first session of any course, free, before you enroll.',
+  },
 ];
 
 const recurring: any[] = (await getRecurringEvents().catch(() => [])) ?? [];
@@ -39,19 +52,24 @@ const headingId = block?.headingId || 'recurring-heading';
 <section class="surface-warm bg-muted" aria-labelledby={headingId}>
   <div class="mx-auto max-w-content px-m py-section-md">
     <div data-reveal>
-      <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block?.eyebrow}</p>
+      <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">{block?.eyebrow}</p>
       <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
     </div>
-    <ul class="mt-l max-w-3xl list-none p-0 divide-y divide-border-soft border-t border-b border-border-soft" data-stagger-grid>
-      {items.map((ev: any) => (
-        <li class="py-m">
-          <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-            <span class="font-display text-h4 text-foreground">{ev.title}</span>
-            <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
-          </div>
-          {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
-        </li>
-      ))}
+    <ul
+      class="mt-l max-w-3xl list-none divide-y divide-border-soft border-t border-b border-border-soft p-0"
+      data-stagger-grid
+    >
+      {
+        items.map((ev: any) => (
+          <li class="py-m">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <span class="font-display text-h4 text-foreground">{ev.title}</span>
+              <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
+            </div>
+            {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
+          </li>
+        ))
+      }
     </ul>
   </div>
 </section>

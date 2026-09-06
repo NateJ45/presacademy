@@ -30,7 +30,8 @@ function parseEnv(p) {
     const i = t.indexOf('=');
     if (i === -1) continue;
     let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
     out[t.slice(0, i).trim()] = v;
   }
   return out;
@@ -58,9 +59,33 @@ const CONTACT_FORM = {
   slug: { _type: 'slug', current: 'contact' },
   mode: 'native',
   fields: [
-    { _type: 'formField', _key: 'name', label: 'Name', name: 'name', type: 'text', required: true, width: 'full' },
-    { _type: 'formField', _key: 'email', label: 'Email', name: 'email', type: 'email', required: true, width: 'full' },
-    { _type: 'formField', _key: 'message', label: 'Message', name: 'message', type: 'textarea', required: true, width: 'full' },
+    {
+      _type: 'formField',
+      _key: 'name',
+      label: 'Name',
+      name: 'name',
+      type: 'text',
+      required: true,
+      width: 'full',
+    },
+    {
+      _type: 'formField',
+      _key: 'email',
+      label: 'Email',
+      name: 'email',
+      type: 'email',
+      required: true,
+      width: 'full',
+    },
+    {
+      _type: 'formField',
+      _key: 'message',
+      label: 'Message',
+      name: 'message',
+      type: 'textarea',
+      required: true,
+      width: 'full',
+    },
   ],
   submitLabel: 'Send message',
   successMessage: 'Thank you. We will be in touch soon.',
@@ -72,10 +97,16 @@ async function main() {
   console.log(`Wiring Web3Forms -> ${projectId}/${dataset}  (${APPLY ? 'APPLY' : 'DRY RUN'})\n`);
 
   // 1. Express-interest form: set the access key only if it is currently blank.
-  const ei = await client.fetch(`*[_id == "form.express-interest"][0]{ _id, "key": provider.accessKey }`);
+  const ei = await client.fetch(
+    `*[_id == "form.express-interest"][0]{ _id, "key": provider.accessKey }`,
+  );
   if (ei && !ei.key) {
     console.log('  set form.express-interest.provider.accessKey');
-    if (APPLY) await client.patch('form.express-interest').set({ 'provider.accessKey': WEB3FORMS_KEY }).commit();
+    if (APPLY)
+      await client
+        .patch('form.express-interest')
+        .set({ 'provider.accessKey': WEB3FORMS_KEY })
+        .commit();
   } else {
     console.log(`  form.express-interest: ${ei ? 'key already set' : 'form not found'} (skip)`);
   }
@@ -83,7 +114,9 @@ async function main() {
   // 2. Contact form: create if absent.
   const hasContactForm = await client.fetch(`defined(*[_id == "form.contact"][0]._id)`);
   if (!hasContactForm) {
-    console.log(`  ${APPLY ? 'create' : 'would create'} form.contact (name / email / message, keyed)`);
+    console.log(
+      `  ${APPLY ? 'create' : 'would create'} form.contact (name / email / message, keyed)`,
+    );
     if (APPLY) await client.createIfNotExists(CONTACT_FORM);
   } else {
     console.log('  form.contact: already exists (skip)');
@@ -93,11 +126,22 @@ async function main() {
   const cp = await client.fetch(`*[_type == "contactPage"][0]{ _id, "ref": contactForm._ref }`);
   if (cp && !cp.ref) {
     console.log('  link contactPage.contactForm -> form.contact');
-    if (APPLY) await client.patch(cp._id).set({ contactForm: { _type: 'reference', _ref: 'form.contact' } }).commit();
+    if (APPLY)
+      await client
+        .patch(cp._id)
+        .set({ contactForm: { _type: 'reference', _ref: 'form.contact' } })
+        .commit();
   } else {
-    console.log(`  contactPage.contactForm: ${cp ? 'already linked' : 'contactPage not found'} (skip)`);
+    console.log(
+      `  contactPage.contactForm: ${cp ? 'already linked' : 'contactPage not found'} (skip)`,
+    );
   }
 
-  console.log(`\n${APPLY ? 'Done.' : 'Dry run complete. Re-run with --apply to write, then rebuild.'}`);
+  console.log(
+    `\n${APPLY ? 'Done.' : 'Dry run complete. Re-run with --apply to write, then rebuild.'}`,
+  );
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

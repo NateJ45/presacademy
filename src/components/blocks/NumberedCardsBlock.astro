@@ -56,7 +56,7 @@ const hasHeader = Boolean(block?.eyebrow || heading || block?.intro);
 // Only label the landmark when there IS a heading to label it with: the pages
 // that carry a bare grid of cards render a plain <section>, and adding an
 // aria-labelledby pointing at nothing would be worse than nothing.
-const headingId = hasHeader && heading ? (block?.headingId || undefined) : undefined;
+const headingId = hasHeader && heading ? block?.headingId || undefined : undefined;
 
 // See the heading-levels note above.
 const CardHeading = heading ? 'h3' : 'h2';
@@ -74,17 +74,33 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
 {
-  cards.length > 0 && (
-    variant === 'wayfinding' ? (
+  cards.length > 0 &&
+    (variant === 'wayfinding' ? (
       /* Home: "where to begin". Four linked cells across a ruled band, each one
          a number over a title and a line of copy. The whole cell is the link,
          which is why the title's hover color is driven by the group. */
-      <section class="border-y border-border-soft bg-background" aria-label={block?.landmarkLabel || undefined}>
-        <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" data-stagger-grid>
+      <section
+        class="border-y border-border-soft bg-background"
+        aria-label={block?.landmarkLabel || undefined}
+      >
+        <div
+          class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+          data-stagger-grid
+        >
           {cards.map((c: any, i: number) => (
-            <a href={c.href} class:list={['group block px-m py-l no-underline', i < cards.length - 1 && 'lg:border-r border-border-soft']}>
-              <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{num(i)}</span>
-              <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">{c.title}</h2>
+            <a
+              href={c.href}
+              class:list={[
+                'group block px-m py-l no-underline',
+                i < cards.length - 1 && 'border-border-soft lg:border-r',
+              ]}
+            >
+              <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+                {num(i)}
+              </span>
+              <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">
+                {c.title}
+              </h2>
               <p class="mt-1 text-sm text-foreground/70">{c.body}</p>
             </a>
           ))}
@@ -97,17 +113,23 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <div class="mx-auto max-w-content px-m py-section-lg">
           <div data-reveal>
             {block.eyebrow && (
-              <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                {block.eyebrow}
+              </p>
             )}
             {heading && (
-              <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">{heading}</h2>
+              <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">
+                {heading}
+              </h2>
             )}
           </div>
           <div class="mt-l h-px w-full bg-gold/50" />
           <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
             {cards.map((c: any, i: number) => (
               <div class="border-t-2 border-gold pt-4">
-                <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{num(i)}</span>
+                <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+                  {num(i)}
+                </span>
                 <h3 class="mt-2 font-display text-h4 text-foreground">{c.title}</h3>
                 <p class="mt-2 leading-relaxed text-foreground/80">{c.body}</p>
               </div>
@@ -123,13 +145,15 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <div class="mx-auto max-w-content px-m py-section-md">
           <div data-reveal>
             {block.eyebrow && (
-              <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                {block.eyebrow}
+              </p>
             )}
           </div>
           <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
             {cards.map((c: any, i: number) => (
               <div class="border-t-2 border-gold pt-4">
-                <span class="font-display text-lg tabular-nums text-gold-ink">{num(i)}</span>
+                <span class="font-display text-lg text-gold-ink tabular-nums">{num(i)}</span>
                 <h3 class="mt-2 font-display text-h5 text-foreground">{c.title}</h3>
                 {c.body && <p class="mt-1 text-sm text-foreground/75">{c.body}</p>}
               </div>
@@ -144,10 +168,14 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
           {hasHeader && (
             <div class="mb-l" data-reveal>
               {block.eyebrow && (
-                <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+                <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                  {block.eyebrow}
+                </p>
               )}
               {heading && (
-                <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">{heading}</h2>
+                <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">
+                  {heading}
+                </h2>
               )}
               {block.intro && <p class="mt-m max-w-2xl text-foreground/80">{block.intro}</p>}
             </div>
@@ -155,12 +183,21 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
           <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
             {cards.map((c: any, i: number) => (
               <li class={cardClass}>
-                <span class="font-display text-sm tabular-nums tracking-[0.12em] text-gold-ink">{num(i)}</span>
-                <CardHeading class="mt-2 font-display text-h3 text-foreground">{c.title}</CardHeading>
+                <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+                  {num(i)}
+                </span>
+                <CardHeading class="mt-2 font-display text-h3 text-foreground">
+                  {c.title}
+                </CardHeading>
                 {c.body && <p class="mt-2 text-foreground/80">{c.body}</p>}
                 {c.cta && (
                   <div class="mt-m">
-                    <CtaLink cta={c.cta} variant="secondary" fallbackHref="/get-started" fallbackLabel="Learn more" />
+                    <CtaLink
+                      cta={c.cta}
+                      variant="secondary"
+                      fallbackHref="/get-started"
+                      fallbackLabel="Learn more"
+                    />
                   </div>
                 )}
               </li>
@@ -169,6 +206,5 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
           {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
         </div>
       </section>
-    )
-  )
+    ))
 }

@@ -51,15 +51,19 @@ const {
 
 // Split the headline around the script-accent word when provided.
 // When not found or not set, `found` is false and we render `headline` plain.
-const { found: scriptFound, before: scriptBefore, word: scriptWord, after: scriptAfter } =
-  splitScriptAccent(headline ?? '', scriptAccent);
+const {
+  found: scriptFound,
+  before: scriptBefore,
+  word: scriptWord,
+  after: scriptAfter,
+} = splitScriptAccent(headline ?? '', scriptAccent);
 
 const headingClass =
   level === 'h1'
     ? 'font-display text-h1 leading-headline-tight tracking-[-0.02em]'
     : level === 'h2'
-    ? 'font-display text-h2 leading-tight'
-    : 'font-display text-h3 leading-tight';
+      ? 'font-display text-h2 leading-tight'
+      : 'font-display text-h3 leading-tight';
 
 const wrapperAlign = align === 'center' ? 'text-center mx-auto' : 'text-left';
 const toneHeadline = tone === 'inverse' ? 'text-bg' : 'text-foreground';
@@ -74,31 +78,59 @@ const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-foreground/80';
 ---
 
 <div data-reveal class:list={[wrapperAlign, 'max-w-3xl', extraClass]}>
-  {eyebrow && (
-    <p class:list={['eyebrow', tone === 'inverse' && 'eyebrow-inverse', 'mb-m text-xs uppercase tracking-eyebrow', toneEyebrow]}>{eyebrow}</p>
-  )}
-  {headline && (
-    level === 'h1' ? (
-      <h1 id={headingId} class:list={[headingClass, toneHeadline]}>
-        {scriptFound
-          ? <>{scriptBefore}<span class="font-script">{scriptWord}</span>{scriptAfter}</>
-          : headline}
-      </h1>
-    ) : level === 'h2' ? (
-      <h2 id={headingId} class:list={[headingClass, toneHeadline]}>
-        {scriptFound
-          ? <>{scriptBefore}<span class="font-script">{scriptWord}</span>{scriptAfter}</>
-          : headline}
-      </h2>
-    ) : (
-      <h3 id={headingId} class:list={[headingClass, toneHeadline]}>
-        {scriptFound
-          ? <>{scriptBefore}<span class="font-script">{scriptWord}</span>{scriptAfter}</>
-          : headline}
-      </h3>
+  {
+    eyebrow && (
+      <p
+        class:list={[
+          'eyebrow',
+          tone === 'inverse' && 'eyebrow-inverse',
+          'mb-m text-xs tracking-eyebrow uppercase',
+          toneEyebrow,
+        ]}
+      >
+        {eyebrow}
+      </p>
     )
-  )}
-  {subhead && (
-    <p class:list={['mt-m text-lg text-pretty', toneSub]}>{subhead}</p>
-  )}
+  }
+  {
+    headline &&
+      (level === 'h1' ? (
+        <h1 id={headingId} class:list={[headingClass, toneHeadline]}>
+          {scriptFound ? (
+            <>
+              {scriptBefore}
+              <span class="font-script">{scriptWord}</span>
+              {scriptAfter}
+            </>
+          ) : (
+            headline
+          )}
+        </h1>
+      ) : level === 'h2' ? (
+        <h2 id={headingId} class:list={[headingClass, toneHeadline]}>
+          {scriptFound ? (
+            <>
+              {scriptBefore}
+              <span class="font-script">{scriptWord}</span>
+              {scriptAfter}
+            </>
+          ) : (
+            headline
+          )}
+        </h2>
+      ) : (
+        <h3 id={headingId} class:list={[headingClass, toneHeadline]}>
+          {scriptFound ? (
+            <>
+              {scriptBefore}
+              <span class="font-script">{scriptWord}</span>
+              {scriptAfter}
+            </>
+          ) : (
+            headline
+          )}
+        </h3>
+      ))
+  }
+  {subhead && <p class:list={['mt-m text-lg text-pretty', toneSub]}>{subhead}</p>}
 </div>

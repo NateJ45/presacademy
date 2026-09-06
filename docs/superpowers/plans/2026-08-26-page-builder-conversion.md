@@ -10,7 +10,7 @@ phase, is in `docs/PENDING.md`'s "Recently closed" entry.
 Convert the 13 bespoke singleton pages into a Sanity page-builder (the WCP
 shape: one renderer, sections arrays, brand-locked schemas) **without changing
 a single rendered pixel**. The constraint that shapes every decision below:
-this is a *conversion*, not a redesign. Markup is moved, never rewritten.
+this is a _conversion_, not a redesign. Markup is moved, never rewritten.
 
 Why: the Studio's Presentation preview can only be trustworthy when the page
 and the preview share one renderer (see how home earned full fidelity via the
@@ -35,8 +35,8 @@ wrapping ported markup in SectionShell means subtly different pixels.
 
 So the ported types render their own exact markup with their surfaces fixed
 in code, and expose **no background/tone field at all**. This is the WCP
-brand-lock philosophy taken one notch further: editors control *which
-sections in what order*, never how they look. The existing 19 tone-adaptive
+brand-lock philosophy taken one notch further: editors control _which
+sections in what order_, never how they look. The existing 19 tone-adaptive
 blocks remain available alongside them for free-form content.
 
 ### D2. Heroes and the final CTA stay PAGE-LEVEL fields — only the body converts
@@ -87,26 +87,27 @@ Grouped in a new fifth insert-menu band, **"Page sections (Rule & Ledger)"**
 that guard stays). Every enum that drives rendering joins `NON_STEGA_FIELDS`
 in `src/lib/cms-preview.ts` (the stega-on-enum trap).
 
-| Type | Replaces (page#section) | Notes |
-|---|---|---|
-| `sectionPageHeader` | about#1, courses#1, events#1, pricing#1, get-started#1, for-you#1, resources#1, faculty#1 | 8×. eyebrow + h1 + subhead + optional intro paragraph; variant `rule` \| `trustLine` \| `none`. *Rendered by the hero map (D2), not editor-placed — listed here because it's the shared component the map uses.* |
-| `sectionNumberedCards` | about#3 beliefs, get-started#3 steps, for-you#2 personas, home#2 wayfinding | 4×. Border variant `top2` \| `full` \| `ledger`; optional footnote; optional per-card CTA (`CtaLink`). |
-| `sectionCourseRail` | home#3, home#6, courses#2 | 3×. **Auto**: `source: startHere \| featured`; `dedupeAgainstStartHere` boolean re-derives home's rail dedup inside the block (it refetches start-here slugs); adaptive column count ported verbatim (3/2/1 by result length). |
-| `sectionLedgerStats` | home#4, pricing#4 | 2×. Ruled band; `count: true` items keep `data-countup`. |
-| `sectionEditorialColumns` | about#2 mission, about#4 teach/why | 2×. 1–2 columns; optional `[200px_1fr]` label layout; `reveal-l`/`reveal-r` preserved. |
-| `sectionLegalBody` | privacy#2, accessibility#2 | 2×. `lastUpdated` + PT body, `max-w-3xl`; keeps the empty-email link guard and the landmark `aria-label` distinct from the hero (both test-guarded). |
-| `sectionFacultyRail` | home#7 | Auto, `FacultyCard` grid. |
-| `sectionTestimonialRail` | home#8 | Auto, `getFeaturedTestimonials`. |
-| `sectionInlineBand` | about#5 faculty band | Bordered strip, copy left / pill CTA right. |
-| `sectionTicker` | home#5 | Decorative marquee, `aria-hidden`. |
-| `sectionEventGrid` | events#2 | Auto upcoming events; 1-vs-N column logic and `whenLabel()` formatter move in verbatim. |
-| `sectionRuledList` | events#3 recurring rhythms | Auto recurring events with the 3-item fallback. |
-| `sectionFaqGrouped` | faq#2 | Auto; `categoryOrder` grouping, PT-or-string answers. FAQPage JSON-LD stays page-level (frontmatter still fetches the faqs to build it). Distinct from the flat `sectionFaqList`. |
-| `sectionContactDetails` | contact#2 | Icon list from siteSettings + who-to-reach + getting-here + map iframe; keeps the empty-email guards. |
-| `sectionRequestPanel` | get-started#2 | Narrow bespoke type: form + Calendly aside 2-col, env-var fallback (`PUBLIC_CALENDLY_URL`), mailto fallback. |
-| `sectionScholarship` | pricing#3 | Or fold into `sectionEditorialColumns` with a `warm` surface variant if exact. |
+| Type                      | Replaces (page#section)                                                                   | Notes                                                                                                                                                                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sectionPageHeader`       | about#1, courses#1, events#1, pricing#1, get-started#1, for-you#1, resources#1, faculty#1 | 8×. eyebrow + h1 + subhead + optional intro paragraph; variant `rule` \| `trustLine` \| `none`. _Rendered by the hero map (D2), not editor-placed — listed here because it's the shared component the map uses._               |
+| `sectionNumberedCards`    | about#3 beliefs, get-started#3 steps, for-you#2 personas, home#2 wayfinding               | 4×. Border variant `top2` \| `full` \| `ledger`; optional footnote; optional per-card CTA (`CtaLink`).                                                                                                                         |
+| `sectionCourseRail`       | home#3, home#6, courses#2                                                                 | 3×. **Auto**: `source: startHere \| featured`; `dedupeAgainstStartHere` boolean re-derives home's rail dedup inside the block (it refetches start-here slugs); adaptive column count ported verbatim (3/2/1 by result length). |
+| `sectionLedgerStats`      | home#4, pricing#4                                                                         | 2×. Ruled band; `count: true` items keep `data-countup`.                                                                                                                                                                       |
+| `sectionEditorialColumns` | about#2 mission, about#4 teach/why                                                        | 2×. 1–2 columns; optional `[200px_1fr]` label layout; `reveal-l`/`reveal-r` preserved.                                                                                                                                         |
+| `sectionLegalBody`        | privacy#2, accessibility#2                                                                | 2×. `lastUpdated` + PT body, `max-w-3xl`; keeps the empty-email link guard and the landmark `aria-label` distinct from the hero (both test-guarded).                                                                           |
+| `sectionFacultyRail`      | home#7                                                                                    | Auto, `FacultyCard` grid.                                                                                                                                                                                                      |
+| `sectionTestimonialRail`  | home#8                                                                                    | Auto, `getFeaturedTestimonials`.                                                                                                                                                                                               |
+| `sectionInlineBand`       | about#5 faculty band                                                                      | Bordered strip, copy left / pill CTA right.                                                                                                                                                                                    |
+| `sectionTicker`           | home#5                                                                                    | Decorative marquee, `aria-hidden`.                                                                                                                                                                                             |
+| `sectionEventGrid`        | events#2                                                                                  | Auto upcoming events; 1-vs-N column logic and `whenLabel()` formatter move in verbatim.                                                                                                                                        |
+| `sectionRuledList`        | events#3 recurring rhythms                                                                | Auto recurring events with the 3-item fallback.                                                                                                                                                                                |
+| `sectionFaqGrouped`       | faq#2                                                                                     | Auto; `categoryOrder` grouping, PT-or-string answers. FAQPage JSON-LD stays page-level (frontmatter still fetches the faqs to build it). Distinct from the flat `sectionFaqList`.                                              |
+| `sectionContactDetails`   | contact#2                                                                                 | Icon list from siteSettings + who-to-reach + getting-here + map iframe; keeps the empty-email guards.                                                                                                                          |
+| `sectionRequestPanel`     | get-started#2                                                                             | Narrow bespoke type: form + Calendly aside 2-col, env-var fallback (`PUBLIC_CALENDLY_URL`), mailto fallback.                                                                                                                   |
+| `sectionScholarship`      | pricing#3                                                                                 | Or fold into `sectionEditorialColumns` with a `warm` surface variant if exact.                                                                                                                                                 |
 
 **Existing blocks patched, not duplicated** (the only two reuse wins):
+
 - `sectionForm` gains `eyebrow` + `headingId` → renders contact#3 exactly.
 - `sectionPricingTiers` gains `headingLevel` → renders pricing#2 exactly.
 
@@ -118,6 +119,7 @@ these code regions render between the sections array and FinalCta, pinned by
 the singleton renderer's per-page map — same doctrine mechanism as heroes.
 
 **Cross-cutting rules for every ported type** (all test-guarded today):
+
 - `headingId` field with a deterministic fallback, so `aria-labelledby`
   landmarks stay unique per page (today's ids ported into the seeds).
 - Heading levels: ported blocks render h2 (cards h3), matching today. The
@@ -197,8 +199,9 @@ commits, each deployed and parity-verified before the next.
 scholarship) → `about` (editorial columns, numbered cards, inline band) →
 `faq` (`sectionFaqGrouped`, JSON-LD stays frontmatter) → `events`
 (`sectionEventGrid` + `sectionRuledList`) → `contact` (patched `sectionForm`
-+ `sectionContactDetails`) → `get-started` (`sectionRequestPanel` +
-numbered steps).
+
+- `sectionContactDetails`) → `get-started` (`sectionRequestPanel` +
+  numbered steps).
 
 **Phase 3 — pages with pinned code regions** (one session)
 `courses` and `faculty`: hero + rails convert; catalog/roster stay pinned
@@ -229,16 +232,16 @@ user-visible way — unconverted pages keep their current files untouched.
 
 ## Risk register
 
-| Risk | Mitigation |
-|---|---|
-| Pixel drift during markup moves | Markup cut-and-paste only, never rewritten; parity harness diffs rendered HTML per page; screenshots before/after. |
-| Editor reorders sections into broken heading order / duplicate landmarks | `headingId` uniqueness + Checkup heading rule; guides explain the h2 convention; axe in CI catches regressions on the default arrangements. |
-| Stega breaks an enum branch in preview | Every new `variant`/`source`/`border` enum added to `NON_STEGA_FIELDS` at schema-authoring time (checklist item per type). |
-| Empty dataset (CI, or an editor deleting all sections) renders a broken page | D3 default-section arrays; empty-env Playwright run per phase. |
-| Seeds write wrong keys/shapes | `sanity-lib.mjs` typed factories + dry-run-by-default `--apply` gate; idempotent (stable `_key`s) so re-runs are safe. |
-| Auto-section preview shows published collection data | Accepted at conversion time (matches today); parameterize each block's queries with the fetcher as it converts. |
-| Losing the empty-email/link-name guards, the privacy landmark label, the TZ-safe date formatters | Each is named in the relevant type's spec above; the test suite guards all three. |
-| Rollback needed after a page ships | D4: revert the commit; old fields still populated until Phase 5. |
+| Risk                                                                                             | Mitigation                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pixel drift during markup moves                                                                  | Markup cut-and-paste only, never rewritten; parity harness diffs rendered HTML per page; screenshots before/after.                          |
+| Editor reorders sections into broken heading order / duplicate landmarks                         | `headingId` uniqueness + Checkup heading rule; guides explain the h2 convention; axe in CI catches regressions on the default arrangements. |
+| Stega breaks an enum branch in preview                                                           | Every new `variant`/`source`/`border` enum added to `NON_STEGA_FIELDS` at schema-authoring time (checklist item per type).                  |
+| Empty dataset (CI, or an editor deleting all sections) renders a broken page                     | D3 default-section arrays; empty-env Playwright run per phase.                                                                              |
+| Seeds write wrong keys/shapes                                                                    | `sanity-lib.mjs` typed factories + dry-run-by-default `--apply` gate; idempotent (stable `_key`s) so re-runs are safe.                      |
+| Auto-section preview shows published collection data                                             | Accepted at conversion time (matches today); parameterize each block's queries with the fetcher as it converts.                             |
+| Losing the empty-email/link-name guards, the privacy landmark label, the TZ-safe date formatters | Each is named in the relevant type's spec above; the test suite guards all three.                                                           |
+| Rollback needed after a page ships                                                               | D4: revert the commit; old fields still populated until Phase 5.                                                                            |
 
 ## Out of scope
 

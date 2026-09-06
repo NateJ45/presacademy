@@ -25,7 +25,10 @@ const env = Object.fromEntries(
   readFileSync(resolve(root, '.env'), 'utf-8')
     .split('\n')
     .filter((l) => l && !l.startsWith('#') && l.includes('='))
-    .map((l) => { const [k, ...v] = l.split('='); return [k.trim(), v.join('=').trim()]; }),
+    .map((l) => {
+      const [k, ...v] = l.split('=');
+      return [k.trim(), v.join('=').trim()];
+    }),
 );
 const projectId = env.PUBLIC_SANITY_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET ?? 'production';
@@ -38,15 +41,18 @@ if (!projectId || !token) {
 
 const docs = [
   {
-    _id: 'siteSettings', _type: 'siteSettings',
+    _id: 'siteSettings',
+    _type: 'siteSettings',
     title: 'The Presbyterian Academy',
     tagline: 'Reformed theological formation for everyday leaders.',
-    mission: 'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.',
+    mission:
+      'We make Reformed theological formation accessible to adult lay leaders across the Presbyterian and Reformed family.',
     email: 'info@presbyterianacademy.org',
     officeHours: 'Monday to Thursday, 9am to 4pm',
     addressLine: '9463 Cincinnati Columbus Rd',
     cityStateZip: 'West Chester Township, OH 45069',
-    denominationStatement: 'A PC(USA) school of theological formation, holding to the Westminster Standards and the Book of Confessions.',
+    denominationStatement:
+      'A PC(USA) school of theological formation, holding to the Westminster Standards and the Book of Confessions.',
     admissionsEmail: 'info@presbyterianacademy.org',
     newsletter: {
       enabled: true,
@@ -58,29 +64,43 @@ const docs = [
     },
   },
   {
-    _id: 'homePage', _type: 'homePage',
+    _id: 'homePage',
+    _type: 'homePage',
     heroEyebrow: 'The Presbyterian Academy',
     heroHeadline: 'Theological depth, taught for ordinary believers.',
-    heroSubhead: 'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.',
+    heroSubhead:
+      'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.',
     seoTitle: 'The Presbyterian Academy — Reformed lay formation',
-    seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. Courses taught in person, in cohorts, by ministers and scholars.',
+    seoDescription:
+      'A PC(USA) Reformed school of theological formation for adult lay leaders. Courses taught in person, in cohorts, by ministers and scholars.',
     finalCtaEyebrow: 'Begin your formation',
     finalCtaHeadline: 'Tell us what you want to learn',
-    finalCtaSubhead: 'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.',
+    finalCtaSubhead:
+      'We will help you find the right course, point you to a free intro, and answer any question. No application fee, no pressure.',
   },
   {
-    _id: 'aboutPage', _type: 'aboutPage',
+    _id: 'aboutPage',
+    _type: 'aboutPage',
     heroEyebrow: 'About the Academy',
     heroHeadline: 'Reformed formation, for the whole church',
-    heroSubhead: 'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.',
+    heroSubhead:
+      'The Presbyterian Academy teaches the depth of the Reformed tradition to the people who carry the church day to day: elders, teachers, leaders, and ordinary believers who want to know God better.',
     seoTitle: 'About — The Presbyterian Academy',
-    seoDescription: 'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.',
+    seoDescription:
+      'A PC(USA) Reformed school of theological formation for adult lay leaders. What we believe, how we teach, and why.',
   },
   {
-    _id: 'faqPage', _type: 'faqPage',
+    _id: 'faqPage',
+    _type: 'faqPage',
     heroEyebrow: 'Common questions',
     heroHeadline: 'Everything you want to know',
-    categoryOrder: ['Courses & Format', 'Cost & Scholarships', "Who It's For", 'Reformed Identity', 'Getting Started'],
+    categoryOrder: [
+      'Courses & Format',
+      'Cost & Scholarships',
+      "Who It's For",
+      'Reformed Identity',
+      'Getting Started',
+    ],
   },
 ];
 

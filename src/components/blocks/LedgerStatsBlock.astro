@@ -46,8 +46,8 @@ const landmarkLabel = block?.landmarkLabel || undefined;
 ---
 
 {
-  items.length > 0 && (
-    variant === 'quad' ? (
+  items.length > 0 &&
+    (variant === 'quad' ? (
       <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
         {/* The grid is written out twice, on purpose (2026-08-26, Phase 4).
             Astro serializes `data-countup-grid={true}` as `data-countup-grid="true"`,
@@ -56,20 +56,46 @@ const landmarkLabel = block?.landmarkLabel || undefined;
             conversion. A valueless attribute cannot be produced from an
             expression, so the presence of the attribute is a branch instead. */}
         {countupGrid ? (
-          <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid data-countup-grid>
+          <div
+            class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4"
+            data-stagger-grid
+            data-countup-grid
+          >
             {items.map((s: any, i: number) => (
-              <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
-                <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
-                <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+              <div
+                class:list={[
+                  'px-m py-l',
+                  i < items.length - 1 && 'border-border-soft lg:border-r',
+                  i < 2 && 'border-b border-border-soft lg:border-b-0',
+                ]}
+              >
+                <p
+                  class="font-display text-h2 text-chapel-ink tabular-nums"
+                  data-countup={s.count ? true : undefined}
+                >
+                  {s.value}
+                </p>
+                <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
               </div>
             ))}
           </div>
         ) : (
           <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid>
             {items.map((s: any, i: number) => (
-              <div class:list={['px-m py-l', i < items.length - 1 && 'lg:border-r border-border-soft', i < 2 && 'border-b lg:border-b-0 border-border-soft']}>
-                <p class="font-display text-h2 text-chapel-ink tabular-nums" data-countup={s.count ? true : undefined}>{s.value}</p>
-                <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+              <div
+                class:list={[
+                  'px-m py-l',
+                  i < items.length - 1 && 'border-border-soft lg:border-r',
+                  i < 2 && 'border-b border-border-soft lg:border-b-0',
+                ]}
+              >
+                <p
+                  class="font-display text-h2 text-chapel-ink tabular-nums"
+                  data-countup={s.count ? true : undefined}
+                >
+                  {s.value}
+                </p>
+                <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
               </div>
             ))}
           </div>
@@ -77,15 +103,28 @@ const landmarkLabel = block?.landmarkLabel || undefined;
       </section>
     ) : (
       <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
-        <div class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3" data-stagger-grid data-countup-grid={countupGrid}>
+        <div
+          class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3"
+          data-stagger-grid
+          data-countup-grid={countupGrid}
+        >
           {items.map((s: any, i: number) => (
-            <div class:list={['px-m py-l', i < items.length - 1 && 'sm:border-r border-border-soft border-b sm:border-b-0']}>
-              <p class="font-display text-h3 text-chapel-ink" data-countup={s.count ? true : undefined}>{s.value}</p>
-              <p class="mt-2 text-xs uppercase tracking-eyebrow text-foreground/80">{s.label}</p>
+            <div
+              class:list={[
+                'px-m py-l',
+                i < items.length - 1 && 'border-b border-border-soft sm:border-r sm:border-b-0',
+              ]}
+            >
+              <p
+                class="font-display text-h3 text-chapel-ink"
+                data-countup={s.count ? true : undefined}
+              >
+                {s.value}
+              </p>
+              <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
             </div>
           ))}
         </div>
       </section>
-    )
-  )
+    ))
 }

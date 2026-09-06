@@ -21,22 +21,22 @@ Faculty is promoted into the nav because, for a lay school, the teachers are bot
 
 **Full page list:**
 
-| Page | Purpose | Codebase action |
-|---|---|---|
-| `/` Home | One thesis line, identity, wayfinding, proof, conversion. | Rebuild `src/pages/index.astro` sections (see B). |
-| `/courses` | Browsable catalog + filters + "Start here" rail. | New page + `course` collection. |
-| `/courses/[slug]` | Fixed course-detail template. | New dynamic route (model on `events/[slug]`). |
-| `/faculty` | Filterable teacher roster. | Rebuild `pastor-staff.astro` -> `/faculty`. |
-| `/faculty/[slug]` | The credibility engine (degree+institution, ordination, courses taught). | New detail route; `facultyMember` schema. |
-| `/about` | Mission, Reformed identity, What We Believe, history, Statement of Faith, leadership. | Repurpose `about.astro`; fold in `what-we-believe`. |
-| `/events` + `/events/[slug]` | Cohort starts, info sessions, open lectures, intensives, deadlines. | Reuse Events module; trim liturgical fields. |
-| `/resources` (+ detail) | Teaching articles / formation essays (SEO + funnel). | Reuse the `/journal` route + `page`/blocks. |
-| `/pricing` Pricing & Scholarships | Plain price (or "free, and here's why") + scholarship posture. | New singleton + optional `pricingTier`. |
-| `/get-started` | Express-interest hub: request-info form + free-intro (Calendly) + free first lesson. | New page; reuse `form` + `CalendlyInline`. |
-| `/for-you` (optional) | Named lay personas, each resolving to one CTA. | New page (recommended, see G). |
-| `/faq` | Grouped Q&A (cost, format, who it's for, Reformed identity). | Reuse `faqItem`/`faqCategory`. |
-| `/contact` | Named humans, direct email, phone, map only if a physical site. | Repurpose `contact.astro`. |
-| `/privacy`, `/404`, sitemap | Standard. | Keep. |
+| Page                              | Purpose                                                                               | Codebase action                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `/` Home                          | One thesis line, identity, wayfinding, proof, conversion.                             | Rebuild `src/pages/index.astro` sections (see B).   |
+| `/courses`                        | Browsable catalog + filters + "Start here" rail.                                      | New page + `course` collection.                     |
+| `/courses/[slug]`                 | Fixed course-detail template.                                                         | New dynamic route (model on `events/[slug]`).       |
+| `/faculty`                        | Filterable teacher roster.                                                            | Rebuild `pastor-staff.astro` -> `/faculty`.         |
+| `/faculty/[slug]`                 | The credibility engine (degree+institution, ordination, courses taught).              | New detail route; `facultyMember` schema.           |
+| `/about`                          | Mission, Reformed identity, What We Believe, history, Statement of Faith, leadership. | Repurpose `about.astro`; fold in `what-we-believe`. |
+| `/events` + `/events/[slug]`      | Cohort starts, info sessions, open lectures, intensives, deadlines.                   | Reuse Events module; trim liturgical fields.        |
+| `/resources` (+ detail)           | Teaching articles / formation essays (SEO + funnel).                                  | Reuse the `/journal` route + `page`/blocks.         |
+| `/pricing` Pricing & Scholarships | Plain price (or "free, and here's why") + scholarship posture.                        | New singleton + optional `pricingTier`.             |
+| `/get-started`                    | Express-interest hub: request-info form + free-intro (Calendly) + free first lesson.  | New page; reuse `form` + `CalendlyInline`.          |
+| `/for-you` (optional)             | Named lay personas, each resolving to one CTA.                                        | New page (recommended, see G).                      |
+| `/faq`                            | Grouped Q&A (cost, format, who it's for, Reformed identity).                          | Reuse `faqItem`/`faqCategory`.                      |
+| `/contact`                        | Named humans, direct email, phone, map only if a physical site.                       | Repurpose `contact.astro`.                          |
+| `/privacy`, `/404`, sitemap       | Standard.                                                                             | Keep.                                               |
 
 **Church pages dropped (no school analog):** `/worship`, `/sermons` (+ the sermon module), `/give`, `/serve`, `/kids`, `/food`, `/music`, `/weddings`, `/use-our-space`, `/grow`. `/what-we-believe` is folded into About rather than kept as a standalone confession page.
 
@@ -62,6 +62,7 @@ This replaces the current home structure (split arched hero, oxblood service-tim
 ## C. Course catalog + course detail
 
 **Catalog filters (3 to 4 axes, lean, not a heavy faceted sidebar):**
+
 1. **Topic / subject** from ONE shared taxonomy reused on the faculty directory (~8-11 plain-English areas: Scripture, Reformed Theology, Prayer & Spiritual Life, Church History, Leading a Group, etc.).
 2. **Teacher**, with per-teacher counts ("Rev. Jane Doe (4)"), because the faculty are the draw.
 3. **Format** (only if more than one modality ships).
@@ -72,6 +73,7 @@ Pin one or two featured courses above a "Recommended starting course" rail.
 **Course-card fields (no price, no rating on the card):** cover artwork, title (human-readable, no course codes), instructor name at equal weight to the title, a time-commitment chip ("8 sessions, ~6 hrs"), optional badge ("Free" / "Start here" / "New cohort").
 
 **Course-detail anatomy (fixed across every course):**
+
 1. Title + instructor (instructor linked to bio).
 2. **At-a-glance facts strip** — format, length / session count, cost or "Free," next cohort start (the single most reusable detail-page component; model on the existing `events/[slug]` header).
 3. Plain-language overview / value prop.
@@ -90,19 +92,19 @@ This is where the build most decisively stops reading like a church staff page. 
 
 **`facultyMember` field set (single Sanity schema, fixed stack):**
 
-| Field | Credibility note |
-|---|---|
-| Honorific | Dr. / Rev. |
-| Full name | Heading. |
-| Role / title | Plain-English ("Teacher of Scripture"), not endowed-chair language. |
-| `degrees[]` | Each = degree + field + granting institution as SEPARATE subfields, so it always renders "MDiv, Pittsburgh Theological Seminary." Make degree-without-institution structurally impossible. |
-| Ordination status + denomination | The PC(USA)/Reformed differentiator a church staff page lacks. Surface prominently. |
-| Years serving / teaching | Scholar-practitioner signal. |
-| Teaching areas | From the ONE shared taxonomy (drives faculty filter + course filter). |
-| Narrative bio | Portable text, widened from the current bio block to allow headings/lists/links; warm and plainspoken. |
-| One warm human line | A disarming sentence so depth reads inviting, not ivory-tower. |
-| `publications[]` | title + publisher + year (structured); optional, so lay teachers without books still read serious. |
-| `coursesTaught[]` | References to `course` docs; renders as linked tiles, reciprocal with the course-detail instructor link. |
+| Field                            | Credibility note                                                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Honorific                        | Dr. / Rev.                                                                                                                                                                                 |
+| Full name                        | Heading.                                                                                                                                                                                   |
+| Role / title                     | Plain-English ("Teacher of Scripture"), not endowed-chair language.                                                                                                                        |
+| `degrees[]`                      | Each = degree + field + granting institution as SEPARATE subfields, so it always renders "MDiv, Pittsburgh Theological Seminary." Make degree-without-institution structurally impossible. |
+| Ordination status + denomination | The PC(USA)/Reformed differentiator a church staff page lacks. Surface prominently.                                                                                                        |
+| Years serving / teaching         | Scholar-practitioner signal.                                                                                                                                                               |
+| Teaching areas                   | From the ONE shared taxonomy (drives faculty filter + course filter).                                                                                                                      |
+| Narrative bio                    | Portable text, widened from the current bio block to allow headings/lists/links; warm and plainspoken.                                                                                     |
+| One warm human line              | A disarming sentence so depth reads inviting, not ivory-tower.                                                                                                                             |
+| `publications[]`                 | title + publisher + year (structured); optional, so lay teachers without books still read serious.                                                                                         |
+| `coursesTaught[]`                | References to `course` docs; renders as linked tiles, reciprocal with the course-detail instructor link.                                                                                   |
 
 **Two structural rules:** one shared teaching-area taxonomy filters both `/courses` and `/faculty`; bios cross-link reciprocally to courses. Consider an aggregate trust line ("Every teacher is an ordained PC(USA) minister or a credentialed Reformed scholar") if the numbers support it.
 
@@ -135,6 +137,7 @@ All capture is express-interest only (no payment/enrollment), plus a Calendly fr
 The church identity lives in five tight code locations (see the codebase orientation): the `--arch-radius` token + `.arch-top`/`.arch-top-sm` utilities, the `chapel` oxblood band tokens + `surface-chapel`, `ArchOrnament.astro`, the keyword-emphasis split (`splitHeadline` in `index.astro` + `keyword` in `Hero`/`FinalCta`), and the `SectionHeading` eyebrow -> gold-hairline -> serif rhythm. Reworking those is how the build sheds the "historic chapel" read while keeping the brand tokens.
 
 **DROP (church archetypes that betray the origin):**
+
 - The worship-service-time singleton (`siteSettings.worshipService`) and all `serviceTime.ts`-derived "Sundays at 10am" strings. A school has cohort start dates, not a service time.
 - The `/worship` plan-a-visit page, the sermon module, `/give`, and the church-life pages.
 - "Meet the team / our staff" as a ministry-bio grid.
@@ -142,6 +145,7 @@ The church identity lives in five tight code locations (see the codebase orienta
 - The arch-top image motif and `ArchOrnament` as the universal signature (the brief explicitly flags rethinking it). A school has no building to evoke.
 
 **REPLACE (same slot, school component):**
+
 - Staff grid -> faculty directory + structured bio (section D).
 - Sermon archive -> course catalog with time-commitment chips and free-first-lesson previews.
 - "Plan a visit" -> free-intro (Calendly) + free first lesson + `/for-you` personas.
@@ -150,6 +154,7 @@ The church identity lives in five tight code locations (see the codebase orienta
 - Events-as-church-calendar -> cohort starts, info sessions, intensives.
 
 **INTRODUCE (section archetypes a church site never has):**
+
 - At-a-glance facts strip on every course (format / length / sessions / cost / start date).
 - Numbered module/lesson list with per-item runtime and a free lesson 1.
 - "Who this is for" persona blocks + a `/for-you` lay front door.

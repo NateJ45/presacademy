@@ -8,19 +8,19 @@ The starter ships a green-anchored, near-white palette (Geneva Green / soft near
 
 Declared in the `@theme` block inside `src/styles/globals.css`. Reference via utility classes (`bg-primary`, `text-foreground`, `border-border`) rather than hardcoded hex anywhere in component code.
 
-| Role | Hex | Name | Notes |
-|---|---|---|---|
-| Primary (action) | `#33503F` | Geneva Green | Buttons, primary CTAs, links, nav underline, focus rings |
-| Primary deep / link text | `#2A4233` | Green Deep | Deeper anchor, link text |
-| Foreground / headings | `#1F1B18` | Soft near-black | Primary text and headings on light surfaces |
-| Background | `#FAF8F4` | Near-white warm paper | Primary page surface |
-| Raised surface | `#FFFFFF` | White | Cards, popovers |
-| Quiet alt band | `#F1F0EB` | Warm grey | `bg-muted` bands |
-| Structural band | `#2A4233` / `#1F3227` | Forest Green | `chapel` band token (footer, closing CTA) |
-| Secondary accent | `#7A2A2C` | Oxblood | Demoted from the lead color to a sparing accent (`--color-oxblood`) |
-| Hairline accent | `#A87C3E` | Aged Brass | Hairline rules, small accents, the inverse rubric |
-| Tint (light mode) | `168, 124, 62` | -- | `--tint-rgb` for polish overlays — the brass hue (see below) |
-| Tint (dark mode) | `198, 160, 106` | -- | `--tint-rgb` lifted for dark surfaces |
+| Role                     | Hex                   | Name                  | Notes                                                               |
+| ------------------------ | --------------------- | --------------------- | ------------------------------------------------------------------- |
+| Primary (action)         | `#33503F`             | Geneva Green          | Buttons, primary CTAs, links, nav underline, focus rings            |
+| Primary deep / link text | `#2A4233`             | Green Deep            | Deeper anchor, link text                                            |
+| Foreground / headings    | `#1F1B18`             | Soft near-black       | Primary text and headings on light surfaces                         |
+| Background               | `#FAF8F4`             | Near-white warm paper | Primary page surface                                                |
+| Raised surface           | `#FFFFFF`             | White                 | Cards, popovers                                                     |
+| Quiet alt band           | `#F1F0EB`             | Warm grey             | `bg-muted` bands                                                    |
+| Structural band          | `#2A4233` / `#1F3227` | Forest Green          | `chapel` band token (footer, closing CTA)                           |
+| Secondary accent         | `#7A2A2C`             | Oxblood               | Demoted from the lead color to a sparing accent (`--color-oxblood`) |
+| Hairline accent          | `#A87C3E`             | Aged Brass            | Hairline rules, small accents, the inverse rubric                   |
+| Tint (light mode)        | `168, 124, 62`        | --                    | `--tint-rgb` for polish overlays — the brass hue (see below)        |
+| Tint (dark mode)         | `198, 160, 106`       | --                    | `--tint-rgb` lifted for dark surfaces                               |
 
 Every token must clear WCAG AA against every surface it appears on. Body text needs 4.5:1, large text and UI components need 3:1. Run the math in both light and dark before introducing a new token. In dark mode the primary lifts to green `#74A98A` and link/keyword green to `#9CC6AC`; the warm near-black surfaces are unchanged.
 
@@ -30,10 +30,10 @@ The `--tint-rgb` CSS custom property holds the brand tint color as a bare RGB tr
 
 ```css
 :root {
-  --tint-rgb: 168, 124, 62;   /* Aged Brass */
+  --tint-rgb: 168, 124, 62; /* Aged Brass */
 }
 .dark {
-  --tint-rgb: 198, 160, 106;  /* lifted brass for dark surfaces */
+  --tint-rgb: 198, 160, 106; /* lifted brass for dark surfaces */
 }
 ```
 
@@ -72,6 +72,7 @@ The wiring, in order of execution:
 Astro's View Transitions runtime swaps the document `<head>` and `<body>` between navigations but **resets `<html>`'s className** to whatever the new page's source HTML had (empty -- `.dark` is applied at runtime). Without intervention, a user who set dark mode would see the next page render in light despite `localStorage` still holding `"dark"`. This was an actual bug that was fixed.
 
 The fix lives in the anti-FOUC script and has three triggers:
+
 - **Initial inline call** -- runs in `<head>` before body parses. Catches the first paint.
 - **`DOMContentLoaded` listener** -- re-runs after the body is in the DOM. Required so theme-aware imgs that appear below the first parsed scripts (notably the footer logo) get their `src` set. Bound with `{ once: true }`.
 - **`astro:after-swap` listener** -- re-runs after every View Transitions navigation. Re-applies the `.dark` class and re-sets the logo `src` because both get reset by the swap.
@@ -89,7 +90,8 @@ Header and Footer each render ONE `<img>` for the logo, with no `src` attribute 
 ```html
 <img
   alt="[Your Brand]"
-  width="100" height="106"
+  width="100"
+  height="106"
   class="h-[6.25rem] w-auto"
   loading="eager"
   data-theme-logo
@@ -97,10 +99,11 @@ Header and Footer each render ONE `<img>` for the logo, with no `src` attribute 
   data-logo-light-srcset="/_astro/logo-light.{1xhash}.webp 1x, /_astro/logo-light.{2xhash}.webp 2x"
   data-logo-dark-src="/_astro/logo-dark.{hash}.webp"
   data-logo-dark-srcset="/_astro/logo-dark.{1xhash}.webp 1x, /_astro/logo-dark.{2xhash}.webp 2x"
->
+/>
 ```
 
 The URLs come from `getImage()` calls at build time (Astro's image pipeline pre-renders the four variants). The src is set by:
+
 - An inline `<script is:inline>` immediately after the header img (runs synchronously, before browser begins fetching).
 - BaseLayout's anti-FOUC script for the footer img (runs on `DOMContentLoaded` since the footer doesn't exist when the head script first fires).
 
@@ -115,6 +118,7 @@ The site is designed and tested first in light mode. Don't optimize dark mode at
 Every new component renders correctly in BOTH modes. This is a foundation rule, not a "we'll get to it." The bug it prevents is real: using a static color (e.g. the soft near-black ink `#1F1B18`) for body copy without a dark-mode override produces ink-on-near-black at low contrast ratios. Lighthouse catches it; the rule below prevents it from recurring.
 
 **Dynamic tokens (flip with theme -- use these for text and surfaces):**
+
 - `bg-background`, `text-foreground` -- body text + page background
 - `bg-card`, `text-card-foreground` -- card surfaces
 - `bg-popover`, `text-popover-foreground` -- popovers and tooltips
@@ -127,6 +131,7 @@ Every new component renders correctly in BOTH modes. This is a foundation rule, 
 These are shadcn's semantic tokens, defined in `:root` for light and overridden in `.dark` for dark. Always use these for anything that should adapt to mode.
 
 **Static brand tokens (do NOT flip -- use only where the brand color must hold in both modes):**
+
 - `bg-primary`, `text-primary-foreground` -- CTA buttons (Geneva Green stays Geneva Green)
 - `bg-primary/90` (or a dedicated darker variant) -- CTA hover state
 - `bg-chapel`, `bg-chapel-deep`, `text-chapel-foreground` -- the forest-green structural bands (footer, closing CTA), static cream-on-green in both modes
@@ -134,6 +139,7 @@ These are shadcn's semantic tokens, defined in `:root` for light and overridden 
 **`text-accent` and `bg-accent` are theme-aware via shadcn's `--accent` token.** The `@theme inline` block remaps `--color-accent -> var(--accent)` so `bg-accent` works as a hover surface that flips with theme. **Don't use `text-accent` for body text** -- its color mirrors `--accent` which is meant for hover surfaces, not text. Always use `text-foreground` for headings and body copy.
 
 **Quick checklist before adding a color class:**
+
 1. Does this text or surface need to be readable in BOTH modes? -> semantic token (`text-foreground`, `bg-background`, `bg-muted`, etc.)
 2. Is this a brand-color CTA or surface that should hold its hue in both modes? -> brand token (`bg-primary`, etc.)
 3. Adding opacity? -> `text-foreground/80`, not `text-accent/80`
@@ -144,7 +150,7 @@ These are shadcn's semantic tokens, defined in `:root` for light and overridden 
 Muted colors at small sizes fail WCAG AA easily. The pattern for eyebrow labels that passes AA on both light and dark surfaces:
 
 ```html
-<p class="text-xs uppercase tracking-eyebrow text-foreground/80">Eyebrow text</p>
+<p class="text-xs tracking-eyebrow text-foreground/80 uppercase">Eyebrow text</p>
 ```
 
 `text-foreground/80` reaches ~5.4:1+ on the near-white background, passing AA. Do not use `text-muted-foreground` or a raw brand color for small uppercase labels -- verify the contrast ratio first.
@@ -159,6 +165,7 @@ Tailwind v4 generates utilities **alphabetically** in the stylesheet. Two utilit
 - `text-sm` (base) + `text-h3` (override) -> `text-sm` wins.
 
 Solutions:
+
 1. **Add a variant prop instead of overriding via className.** This is why some components accept an `onDark` prop and shadcn's `accordion.tsx` had its base font-size removed (so consumer `text-h3` actually wins).
 2. **Drop the conflicting base class.** If you control the base component, remove the class that's interfering.
 3. **Use `!important`** as last resort (`!text-bg`). Rare in this codebase.

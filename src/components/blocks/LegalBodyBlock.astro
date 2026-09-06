@@ -62,151 +62,191 @@ const linkClass = 'text-link underline underline-offset-2 hover:text-primary tra
 
 <section class="bg-background" aria-label={block?.landmarkLabel}>
   <div class="mx-auto max-w-3xl px-m py-section-lg">
-    {dateLine && (
-      <p class="text-xs uppercase tracking-eyebrow text-foreground/80 mb-l">{dateLine}</p>
-    )}
+    {
+      dateLine && (
+        <p class="mb-l text-xs tracking-eyebrow text-foreground/80 uppercase">{dateLine}</p>
+      )
+    }
 
     {hasBody && <PortableTextStatic value={block.body} className="prose-friendly" />}
 
-    {fallbackStatement === 'privacy' && (
-      <div class="space-y-l text-foreground leading-relaxed">
-        <p class="text-foreground/80">
-          This is the privacy policy for {site.name}. The goal here is to be
-          straightforward about what information we collect and why.
-        </p>
-
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">What gets collected</h2>
+    {
+      fallbackStatement === 'privacy' && (
+        <div class="space-y-l leading-relaxed text-foreground">
           <p class="text-foreground/80">
-            When you email us or send a message through this site, you share your name,
-            email address, and whatever details you include. We use that information only to
-            respond to you. Nothing else.
+            This is the privacy policy for {site.name}. The goal here is to be straightforward about
+            what information we collect and why.
           </p>
-          <p class="mt-s text-foreground/80">
-            If you subscribe to our newsletter, your email address goes to our email provider so
-            occasional news from the Academy can reach you. It is not shared with anyone else.
-          </p>
-        </div>
 
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">What doesn't happen</h2>
-          <ul class="list-disc pl-l space-y-1 text-foreground/80">
-            <li>Your information is never sold.</li>
-            <li>There is no ad targeting or tracking pixels on this site.</li>
-            <li>Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.</li>
-          </ul>
-        </div>
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">What gets collected</h2>
+            <p class="text-foreground/80">
+              When you email us or send a message through this site, you share your name, email
+              address, and whatever details you include. We use that information only to respond to
+              you. Nothing else.
+            </p>
+            <p class="mt-s text-foreground/80">
+              If you subscribe to our newsletter, your email address goes to our email provider so
+              occasional news from the Academy can reach you. It is not shared with anyone else.
+            </p>
+          </div>
 
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">Unsubscribing from the newsletter</h2>
-          <p class="text-foreground/80">
-            Every email includes an unsubscribe link at the bottom. Click it and you're off the
-            list right away. If you run into any trouble, email directly and it'll be handled
-            promptly.
-          </p>
-        </div>
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">What doesn't happen</h2>
+            <ul class="list-disc space-y-1 pl-l text-foreground/80">
+              <li>Your information is never sold.</li>
+              <li>There is no ad targeting or tracking pixels on this site.</li>
+              <li>
+                Traffic is measured with Cloudflare Web Analytics, which counts page visits without
+                setting cookies or identifying individual visitors.
+              </li>
+            </ul>
+          </div>
 
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">Questions or data requests</h2>
-          <p class="text-foreground/80">
-            If you have questions about how your information is handled, or want your data
-            removed, reach out at{' '}
-            {/* Guard: the email is '' until an editor sets it (the CI empty-env
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">
+              Unsubscribing from the newsletter
+            </h2>
+            <p class="text-foreground/80">
+              Every email includes an unsubscribe link at the bottom. Click it and you're off the
+              list right away. If you run into any trouble, email directly and it'll be handled
+              promptly.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">Questions or data requests</h2>
+            <p class="text-foreground/80">
+              If you have questions about how your information is handled, or want your data
+              removed, reach out at{' '}
+              {/* Guard: the email is '' until an editor sets it (the CI empty-env
                 build renders that state), and an <a> with empty text is an axe
                 link-name violation. */}
-            {
-              contactEmail ? (
+              {contactEmail ? (
                 <a
                   href={`mailto:${contactEmail}`}
-                  class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                  class="text-link underline underline-offset-2 transition-colors hover:text-primary"
                 >
                   {contactEmail}
                 </a>
               ) : (
                 <a
                   href="/contact"
-                  class="text-link underline underline-offset-2 hover:text-primary transition-colors"
+                  class="text-link underline underline-offset-2 transition-colors hover:text-primary"
                 >
                   the contact page
                 </a>
-              )
-            }.
-            You'll hear back within a few business days.
+              )}
+              . You'll hear back within a few business days.
+            </p>
+          </div>
+
+          <p class="border-t border-border-soft pt-l text-xs text-muted-foreground">
+            This policy was last reviewed in June 2026 and will be updated if anything meaningful
+            changes about how this site handles your data.
           </p>
         </div>
+      )
+    }
 
-        <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
-          This policy was last reviewed in June 2026 and will be updated if anything meaningful
-          changes about how this site handles your data.
-        </p>
-      </div>
-    )}
-
-    {fallbackStatement === 'accessibility' && (
-      <div class="space-y-l text-foreground leading-relaxed">
-        <p class="text-foreground/80">
-          {site.name} wants this website to work for everyone, including people who use a
-          screen reader, move through pages with a keyboard, or rely on other assistive
-          technology. We treat accessibility as part of building and maintaining the site,
-          not an afterthought.
-        </p>
-
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">The standard we hold ourselves to</h2>
+    {
+      fallbackStatement === 'accessibility' && (
+        <div class="space-y-l leading-relaxed text-foreground">
           <p class="text-foreground/80">
-            We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1
-            at Level AA. That is the benchmark most widely used for the web, and we check our
-            work against it as the site grows.
+            {site.name} wants this website to work for everyone, including people who use a screen
+            reader, move through pages with a keyboard, or rely on other assistive technology. We
+            treat accessibility as part of building and maintaining the site, not an afterthought.
+          </p>
+
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">
+              The standard we hold ourselves to
+            </h2>
+            <p class="text-foreground/80">
+              We aim to meet the Web Content Accessibility Guidelines, known as WCAG, version 2.1 at
+              Level AA. That is the benchmark most widely used for the web, and we check our work
+              against it as the site grows.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">What that looks like here</h2>
+            <ul class="list-disc space-y-1 pl-l text-foreground/80">
+              <li>
+                Clear, semantic headings and page landmarks, so assistive technology can move
+                through each page in a logical order.
+              </li>
+              <li>
+                Full keyboard support, with a visible focus outline and a skip-to-content link at
+                the top of every page.
+              </li>
+              <li>
+                Text and background colors chosen for sufficient contrast, checked in both light and
+                dark modes.
+              </li>
+              <li>
+                Written descriptions for images that carry meaning, with decorative images hidden
+                from screen readers.
+              </li>
+              <li>
+                Text that resizes cleanly and a layout that adapts down to small phone screens.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">Where we are still working</h2>
+            <p class="text-foreground/80">
+              A few parts of the site use tools from other companies, such as the scheduling widget
+              and the embedded map. We choose accessible options where we can, but we do not control
+              everything about how those tools behave. If one of them gets in your way, tell us and
+              we will get you the same information another way.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">Found a barrier? Tell us.</h2>
+            <p class="text-foreground/80">
+              If anything on this site is hard to use, or you need a page in a different format,
+              please reach out and we will make it right.
+            </p>
+            <p class="mt-s text-foreground/80">
+              {contactEmail && (
+                <>
+                  Email us at{' '}
+                  <a href={`mailto:${contactEmail}`} class={linkClass}>
+                    {contactEmail}
+                  </a>
+                  .{' '}
+                </>
+              )}
+              {contactPhone && (
+                <>
+                  You can also call{' '}
+                  <a href={telHref(contactPhone)} class={linkClass}>
+                    {contactPhone}
+                  </a>
+                  .{' '}
+                </>
+              )}
+              Or send a note through our{' '}
+              <a href="/contact" class={linkClass}>
+                contact page
+              </a>
+              .
+            </p>
+            <p class="mt-s text-foreground/80">
+              Please include the address of the page and a short note about what went wrong. We read
+              every message, reply within a few business days, and will get you the information you
+              need.
+            </p>
+          </div>
+
+          <p class="border-t border-border-soft pt-l text-xs text-muted-foreground">
+            This statement was last reviewed in June 2026. We update it as the site changes.
           </p>
         </div>
-
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">What that looks like here</h2>
-          <ul class="list-disc pl-l space-y-1 text-foreground/80">
-            <li>Clear, semantic headings and page landmarks, so assistive technology can move through each page in a logical order.</li>
-            <li>Full keyboard support, with a visible focus outline and a skip-to-content link at the top of every page.</li>
-            <li>Text and background colors chosen for sufficient contrast, checked in both light and dark modes.</li>
-            <li>Written descriptions for images that carry meaning, with decorative images hidden from screen readers.</li>
-            <li>Text that resizes cleanly and a layout that adapts down to small phone screens.</li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">Where we are still working</h2>
-          <p class="text-foreground/80">
-            A few parts of the site use tools from other companies, such as the scheduling
-            widget and the embedded map. We choose accessible options where we can, but we do
-            not control everything about how those tools behave. If one of them gets in your
-            way, tell us and we will get you the same information another way.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="font-display text-h3 text-foreground mb-s">Found a barrier? Tell us.</h2>
-          <p class="text-foreground/80">
-            If anything on this site is hard to use, or you need a page in a different format,
-            please reach out and we will make it right.
-          </p>
-          <p class="mt-s text-foreground/80">
-            {contactEmail && (
-              <>Email us at <a href={`mailto:${contactEmail}`} class={linkClass}>{contactEmail}</a>. </>
-            )}
-            {contactPhone && (
-              <>You can also call <a href={telHref(contactPhone)} class={linkClass}>{contactPhone}</a>. </>
-            )}
-            Or send a note through our <a href="/contact" class={linkClass}>contact page</a>.
-          </p>
-          <p class="mt-s text-foreground/80">
-            Please include the address of the page and a short note about what went wrong. We
-            read every message, reply within a few business days, and will get you the
-            information you need.
-          </p>
-        </div>
-
-        <p class="text-xs text-muted-foreground border-t border-border-soft pt-l">
-          This statement was last reviewed in June 2026. We update it as the site changes.
-        </p>
-      </div>
-    )}
+      )
+    }
   </div>
 </section>

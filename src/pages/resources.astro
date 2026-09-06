@@ -28,7 +28,8 @@ const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? `Resources · ${site.name}`;
 const description =
-  page?.seoDescription ?? 'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.';
+  page?.seoDescription ??
+  'Short reads on Scripture, theology, and formation, from the faculty of The Presbyterian Academy.';
 
 // The gentle empty state below is deliberately NOT a section type: it is the
 // page's zero-state, and it exists precisely for the moment when there are no
@@ -45,7 +46,13 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage
     pageType="resourcesPage"
     {page}
@@ -62,24 +69,32 @@ const schemas = [
       cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' },
     }}
   >
-    {/* Pinned code region. It renders only when the sections array is empty, so
+    {
+      /* Pinned code region. It renders only when the sections array is empty, so
         it is always adjacent to nothing — which is why sitting in the "pinned"
-        slot (after the sections) reproduces the pre-conversion HTML exactly. */}
+        slot (after the sections) reproduces the pre-conversion HTML exactly. */
+    }
     <Fragment slot="pinned">
-      {!hasSections && (
-        <section class="bg-background">
-          <div class="mx-auto max-w-content px-m pb-section-lg">
-            {page?.emptyStateBody ? (
-              <p class="max-w-2xl text-foreground/80 italic">{page.emptyStateBody}</p>
-            ) : (
-              <p class="max-w-2xl text-foreground/80 italic">
-                New essays are on the way. In the meantime, the best way to learn from our faculty is{' '}
-                <a href="/courses" class="text-link underline underline-offset-2">in a course</a>.
-              </p>
-            )}
-          </div>
-        </section>
-      )}
+      {
+        !hasSections && (
+          <section class="bg-background">
+            <div class="mx-auto max-w-content px-m pb-section-lg">
+              {page?.emptyStateBody ? (
+                <p class="max-w-2xl text-foreground/80 italic">{page.emptyStateBody}</p>
+              ) : (
+                <p class="max-w-2xl text-foreground/80 italic">
+                  New essays are on the way. In the meantime, the best way to learn from our faculty
+                  is{' '}
+                  <a href="/courses" class="text-link underline underline-offset-2">
+                    in a course
+                  </a>
+                  .
+                </p>
+              )}
+            </div>
+          </section>
+        )
+      }
     </Fragment>
   </SingletonPage>
 </BaseLayout>

@@ -48,9 +48,18 @@ if (!doc) {
 
 // The page's inline fallbacks, character for character.
 const FALLBACK_STEPS = [
-  { title: 'You tell us a little', body: 'A short form, just enough for us to point you in the right direction.' },
-  { title: 'We reply, person to person', body: 'A real teacher or staff member answers your questions within a few days.' },
-  { title: 'You try before you decide', body: 'Sit in on a class or book a free intro. Enroll only when you are ready.' },
+  {
+    title: 'You tell us a little',
+    body: 'A short form, just enough for us to point you in the right direction.',
+  },
+  {
+    title: 'We reply, person to person',
+    body: 'A real teacher or staff member answers your questions within a few days.',
+  },
+  {
+    title: 'You try before you decide',
+    body: 'Sit in on a class or book a free intro. Enroll only when you are ready.',
+  },
 ];
 
 const steps = doc.steps?.length ? doc.steps : FALLBACK_STEPS;

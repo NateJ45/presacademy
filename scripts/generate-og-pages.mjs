@@ -31,7 +31,9 @@ function loadEnv() {
       const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
       if (m && !env[m[1]]) env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '');
     }
-  } catch { /* .env optional */ }
+  } catch {
+    /* .env optional */
+  }
   return env;
 }
 
@@ -88,18 +90,22 @@ async function render(slug, tagline) {
 // These are the core routes every starter project ships with. Add rows for any
 // additional page singletons you define in your Sanity schema.
 const SINGLETONS = [
-  { type: 'homePage',       slug: 'home',        defaultTitle: 'Theological depth, taught for ordinary believers.' },
-  { type: 'coursesPage',    slug: 'courses',     defaultTitle: 'Courses' },
-  { type: 'facultyPage',    slug: 'faculty',     defaultTitle: 'Taught by ministers and scholars' },
-  { type: 'aboutPage',      slug: 'about',       defaultTitle: 'Reformed formation, for the whole church' },
-  { type: 'pricingPage',    slug: 'pricing',     defaultTitle: 'Pricing and scholarships' },
+  {
+    type: 'homePage',
+    slug: 'home',
+    defaultTitle: 'Theological depth, taught for ordinary believers.',
+  },
+  { type: 'coursesPage', slug: 'courses', defaultTitle: 'Courses' },
+  { type: 'facultyPage', slug: 'faculty', defaultTitle: 'Taught by ministers and scholars' },
+  { type: 'aboutPage', slug: 'about', defaultTitle: 'Reformed formation, for the whole church' },
+  { type: 'pricingPage', slug: 'pricing', defaultTitle: 'Pricing and scholarships' },
   { type: 'getStartedPage', slug: 'get-started', defaultTitle: 'Tell us what you want to learn' },
-  { type: 'forYouPage',     slug: 'for-you',     defaultTitle: 'Formation for where you are' },
-  { type: 'resourcesPage',  slug: 'resources',   defaultTitle: 'Teaching and formation essays' },
-  { type: 'eventsPage',     slug: 'events',      defaultTitle: 'Come and see what we do' },
-  { type: 'faqPage',        slug: 'faq',         defaultTitle: 'Questions, answered' },
-  { type: 'contactPage',    slug: 'contact',     defaultTitle: 'Get in touch' },
-  { type: 'privacyPage',    slug: 'privacy',     defaultTitle: 'Privacy policy' },
+  { type: 'forYouPage', slug: 'for-you', defaultTitle: 'Formation for where you are' },
+  { type: 'resourcesPage', slug: 'resources', defaultTitle: 'Teaching and formation essays' },
+  { type: 'eventsPage', slug: 'events', defaultTitle: 'Come and see what we do' },
+  { type: 'faqPage', slug: 'faq', defaultTitle: 'Questions, answered' },
+  { type: 'contactPage', slug: 'contact', defaultTitle: 'Get in touch' },
+  { type: 'privacyPage', slug: 'privacy', defaultTitle: 'Privacy policy' },
 ];
 
 for (const page of SINGLETONS) {

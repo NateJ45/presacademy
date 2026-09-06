@@ -58,7 +58,12 @@ function hasStarted(doc: Record<string, any>): boolean {
 const FeaturedBadge: DocumentBadgeComponent = (props) => {
   const doc = currentDoc(props);
   if (!doc.featured) return null;
-  return { label: 'Featured', title: 'Pinned to a featured spot', color: 'primary', icon: StarIcon };
+  return {
+    label: 'Featured',
+    title: 'Pinned to a featured spot',
+    color: 'primary',
+    icon: StarIcon,
+  };
 };
 
 const NeedsPhotoBadge: DocumentBadgeComponent = (props) => {
@@ -70,7 +75,12 @@ const NeedsPhotoBadge: DocumentBadgeComponent = (props) => {
   if (!doc.title && !doc.name) return null;
   const hasPhoto = Boolean(doc[field]?.asset?._ref);
   if (hasPhoto) return null;
-  return { label: 'Needs a photo', title: 'No cover image set yet', color: 'warning', icon: ImageIcon };
+  return {
+    label: 'Needs a photo',
+    title: 'No cover image set yet',
+    color: 'warning',
+    icon: ImageIcon,
+  };
 };
 
 const SeoBadge: DocumentBadgeComponent = (props) => {
@@ -80,7 +90,8 @@ const SeoBadge: DocumentBadgeComponent = (props) => {
   const hasTitle = Boolean(doc.seoTitle);
   const hasDescription = Boolean(doc.seoDescription);
   if (hasTitle && hasDescription) return null;
-  const missing = !hasTitle && !hasDescription ? 'title and description' : !hasTitle ? 'title' : 'description';
+  const missing =
+    !hasTitle && !hasDescription ? 'title and description' : !hasTitle ? 'title' : 'description';
   return { label: 'Add SEO', title: `Missing SEO ${missing}`, color: 'warning', icon: SearchIcon };
 };
 

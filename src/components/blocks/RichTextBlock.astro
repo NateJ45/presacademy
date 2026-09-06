@@ -15,7 +15,8 @@ const tone = block?.background?.tone ?? defaultTone;
 // Text body keeps its light-mode ink on a dark slab. "ink" joined the two
 // greens on 2026-08-28 (see src/lib/surfaces.ts, where themeStatic marks them).
 const DARK_SURFACES = new Set(['chapel', 'chapelDeep', 'ink']);
-const onDark = !!(block?.background?.image?.asset || block?.background?.videoUrl) || DARK_SURFACES.has(tone);
+const onDark =
+  !!(block?.background?.image?.asset || block?.background?.videoUrl) || DARK_SURFACES.has(tone);
 const ptDark = onDark
   ? '[&_p]:text-current [&_h2]:text-current [&_h3]:text-current [&_h4]:text-current [&_li]:text-current [&_a]:text-current [&_strong]:text-current [&_blockquote]:text-current [&_blockquote]:border-current/40'
   : '';
@@ -24,11 +25,17 @@ const ptDark = onDark
 {
   block && (
     <div class={`mx-auto max-w-3xl px-m ${centered ? 'text-center' : ''}`}>
-      {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
+      {block.eyebrow && (
+        <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
+      )}
       {block.heading && (
         <h2 class="mt-s font-display text-h2">
           {ha.found ? (
-            <Fragment>{ha.before}<span class="heading-accent">{ha.word}</span>{ha.after}</Fragment>
+            <Fragment>
+              {ha.before}
+              <span class="heading-accent">{ha.word}</span>
+              {ha.after}
+            </Fragment>
           ) : (
             block.heading
           )}

@@ -10,9 +10,9 @@ Highland Park Presbyterian (Dallas, hppres.org — the named gold standard), Fou
 
 ## What the strong sites consistently do
 
-**Information architecture (shallow, verb/audience-based).** Nav stays to ~5-7 items organized around what a visitor wants to *do*: Visit / I'm New, About, Worship (or Watch), Connect / Get Involved, Give, Events. Menlo: `Visit · About · Watch · Ministries · Give`. Peachtree: `About · Visit · Connect · Watch · Events · Give`.
+**Information architecture (shallow, verb/audience-based).** Nav stays to ~5-7 items organized around what a visitor wants to _do_: Visit / I'm New, About, Worship (or Watch), Connect / Get Involved, Give, Events. Menlo: `Visit · About · Watch · Ministries · Give`. Peachtree: `About · Visit · Connect · Watch · Events · Give`.
 
-**Homepage anatomy (repeatable modules).** A near-universal pattern: (1) photo hero with a one-line emotional welcome + service times + a single primary CTA; (2) a short mission/welcome line; (3) a 3-card "next step" row (typically Watch / Connect / Serve or Give); (4) latest sermon or "this Sunday"; (5) events; (6) newsletter/contact. Fourth, Village, and Menlo all open with a hero + an overlay info card naming *this week's* worship.
+**Homepage anatomy (repeatable modules).** A near-universal pattern: (1) photo hero with a one-line emotional welcome + service times + a single primary CTA; (2) a short mission/welcome line; (3) a 3-card "next step" row (typically Watch / Connect / Serve or Give); (4) latest sermon or "this Sunday"; (5) events; (6) newsletter/contact. Fourth, Village, and Menlo all open with a hero + an overlay info card naming _this week's_ worship.
 
 **Lead with belonging, not doctrine or heritage.** Every site opens with welcome ("Hope is for everyone," "All are invited. All are included. All are loved.," "Wherever you are in your journey of faith, we are here for you"). History and theology live deeper in the IA as credibility, not as the front door.
 
@@ -31,6 +31,7 @@ Highland Park Presbyterian (Dallas, hppres.org — the named gold standard), Fou
 ### Featured exemplar — Highland Park Presbyterian (hppres.org)
 
 The most polished site reviewed and the client's named gold standard. Specific techniques worth copying:
+
 - **Type pairing:** display serif (Abril Titling) + clean sans body (Proxima Nova) — the premium editorial norm. The hero emphasizes key words in a second color ("Find & Follow" set in sage against deep teal).
 - **Hero:** split layout — an oversized serif headline + two pills ("Sundays" in gold, "Find Your Place" outline) on the left, an **arched-top candid photo** (a congregant serving, not the building) on the right. The arch is a quiet architectural nod.
 - **Service band:** immediately under the hero, a table of every gathering by style / time / location (Classical, Contemporary, plus a "Family of Churches" with Chinese + All Nations services) — instant "when and where" clarity.
@@ -42,25 +43,25 @@ Our warm-editorial design sits in the same tier; the gaps Highland Park exposes 
 
 ## How our site compares
 
-| Dimension | Strong peers | Our site today | Verdict |
-|---|---|---|---|
-| Typography | Mixed; serif is valid (Village) | Fraunces serif display over a Source Sans 3 humanist sans body, editorial | **Ahead** — more distinctive than most |
-| Color / palette | Single brand color + white | Stone Cream / Walnut Ink / Geneva Oxblood, light+dark | **Ahead** — cohesive, on-theme |
-| Motion / polish | Restrained fades/carousels | Scroll reveals, Lenis, card-lift, view transitions | **Ahead** |
-| Buttons / components | Pills common | Pill CTAs, card system | **On par** |
-| Nav / IA | 5-7 verb/audience items | About Us / Get Involved / Events / Food / Space / Give | **On par** (slightly deep; "Space/Food" are unusual top-level) |
-| Homepage structure | Hero + welcome + next-step cards + this-Sunday + events | Hero + welcome + worship + get-involved + events teaser | **On par** |
-| **Photography** | Authentic people + interiors | One building exterior, text-forward elsewhere | **Behind** — biggest gap |
-| **Sermons / media** | Livestream + searchable archive | A "Watch Online" link only | **Behind** |
-| **"I'm New" experience** | Dedicated, concrete first-visit page | Worship page covers some | **Behind** |
-| **"This Sunday" specifics** | Date/preacher/series up front | Generic "Sundays at 11am" | **Behind** |
-| Inclusivity signal | Explicit + visual (Village) | In copy, not visually foregrounded | **Behind** (we're affirming PCUSA — a differentiator) |
-| Newsletter capture | Standard email signup | "The Record" mentioned, signup off | **Behind** |
-| Events | Calendar + detail | Full Events module | **Ahead** |
-| Giving | Persistent Give | Give in nav + page (Vanco) | **On par** |
-| Accessibility callouts | Stated (NPC, Memphis) | None yet | **Behind** |
+| Dimension                   | Strong peers                                            | Our site today                                                            | Verdict                                                        |
+| --------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Typography                  | Mixed; serif is valid (Village)                         | Fraunces serif display over a Source Sans 3 humanist sans body, editorial | **Ahead** — more distinctive than most                         |
+| Color / palette             | Single brand color + white                              | Stone Cream / Walnut Ink / Geneva Oxblood, light+dark                     | **Ahead** — cohesive, on-theme                                 |
+| Motion / polish             | Restrained fades/carousels                              | Scroll reveals, Lenis, card-lift, view transitions                        | **Ahead**                                                      |
+| Buttons / components        | Pills common                                            | Pill CTAs, card system                                                    | **On par**                                                     |
+| Nav / IA                    | 5-7 verb/audience items                                 | About Us / Get Involved / Events / Food / Space / Give                    | **On par** (slightly deep; "Space/Food" are unusual top-level) |
+| Homepage structure          | Hero + welcome + next-step cards + this-Sunday + events | Hero + welcome + worship + get-involved + events teaser                   | **On par**                                                     |
+| **Photography**             | Authentic people + interiors                            | One building exterior, text-forward elsewhere                             | **Behind** — biggest gap                                       |
+| **Sermons / media**         | Livestream + searchable archive                         | A "Watch Online" link only                                                | **Behind**                                                     |
+| **"I'm New" experience**    | Dedicated, concrete first-visit page                    | Worship page covers some                                                  | **Behind**                                                     |
+| **"This Sunday" specifics** | Date/preacher/series up front                           | Generic "Sundays at 11am"                                                 | **Behind**                                                     |
+| Inclusivity signal          | Explicit + visual (Village)                             | In copy, not visually foregrounded                                        | **Behind** (we're affirming PCUSA — a differentiator)          |
+| Newsletter capture          | Standard email signup                                   | "The Record" mentioned, signup off                                        | **Behind**                                                     |
+| Events                      | Calendar + detail                                       | Full Events module                                                        | **Ahead**                                                      |
+| Giving                      | Persistent Give                                         | Give in nav + page (Vanco)                                                | **On par**                                                     |
+| Accessibility callouts      | Stated (NPC, Memphis)                                   | None yet                                                                  | **Behind**                                                     |
 
-**Bottom line:** our *design system* (type, color, motion, components) already meets or beats the peer set and is more editorially distinctive. The gaps are **content and experience**, not aesthetics.
+**Bottom line:** our _design system_ (type, color, motion, components) already meets or beats the peer set and is more editorially distinctive. The gaps are **content and experience**, not aesthetics.
 
 ---
 
@@ -78,6 +79,7 @@ Our warm-editorial design sits in the same tier; the gaps Highland Park exposes 
 ## Template-reuse implications
 
 Build each of the above as **configurable, content-driven** pieces so the result is a reusable general church template, not a one-off:
+
 - Sermons as a module (`modules/sermons/`) mirroring the events module pattern.
 - "This Sunday" + the Visit page driven by Sanity singletons with inline fallbacks (the established pattern).
 - Photography wired through `SanityImage` with bundled fallbacks so a new church swaps images without code.

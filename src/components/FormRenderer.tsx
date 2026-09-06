@@ -31,7 +31,11 @@ export interface FormDoc {
   submitLabel?: string;
   successMessage?: string;
   consentNote?: string;
-  provider?: { service?: 'web3forms' | 'formspree' | 'email'; accessKey?: string; notifyEmail?: string };
+  provider?: {
+    service?: 'web3forms' | 'formspree' | 'email';
+    accessKey?: string;
+    notifyEmail?: string;
+  };
   embedUrl?: string | null;
   embedHtml?: string | null;
 }
@@ -57,7 +61,8 @@ const ENV_WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undef
 // the puzzle renders but is not enforced server-side.
 const WEB3FORMS_SHARED_HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2';
 const HCAPTCHA_SITEKEY =
-  (import.meta.env.PUBLIC_HCAPTCHA_SITEKEY as string | undefined) || WEB3FORMS_SHARED_HCAPTCHA_SITEKEY;
+  (import.meta.env.PUBLIC_HCAPTCHA_SITEKEY as string | undefined) ||
+  WEB3FORMS_SHARED_HCAPTCHA_SITEKEY;
 // Explicit render (render=explicit) so we control the theme and can re-render the
 // widget when the visitor toggles light/dark; the onload callback flips a ready flag.
 const HCAPTCHA_SCRIPT = 'https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHcaptchaLoad';
@@ -65,7 +70,10 @@ const HCAPTCHA_SCRIPT = 'https://js.hcaptcha.com/1/api.js?render=explicit&onload
 declare global {
   interface Window {
     hcaptcha?: {
-      render: (container: HTMLElement, params: { sitekey: string; theme?: 'light' | 'dark' }) => string;
+      render: (
+        container: HTMLElement,
+        params: { sitekey: string; theme?: 'light' | 'dark' },
+      ) => string;
       remove: (widgetId: string) => void;
       reset: (widgetId?: string) => void;
       getResponse: (widgetId?: string) => string | undefined;
@@ -87,7 +95,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
     return (
       <div>
         {form.heading && <h2 className="font-display text-h3 text-foreground">{form.heading}</h2>}
-        {form.intro && <p className="mt-s text-foreground/80 leading-relaxed">{form.intro}</p>}
+        {form.intro && <p className="mt-s leading-relaxed text-foreground/80">{form.intro}</p>}
         <div className="mt-m">
           <Embed
             mode={form.embedUrl ? 'url' : 'html'}
@@ -208,7 +216,9 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
     if (service === 'email' || (needsKey && !accessKey)) {
       const to = notifyEmail || '';
       const subject = encodeURIComponent(`${form.title || 'Website'} inquiry`);
-      const body = encodeURIComponent(fields.map((f) => `${f.label}: ${formatVal(values[f.name])}`).join('\n'));
+      const body = encodeURIComponent(
+        fields.map((f) => `${f.label}: ${formatVal(values[f.name])}`).join('\n'),
+      );
       window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
       setStatus('success');
       return;
@@ -255,7 +265,9 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
       if (ok) setStatus('success');
       else {
         setStatus('error');
-        setErrorMsg('Something went wrong sending your message. Please try again, or email us directly.');
+        setErrorMsg(
+          'Something went wrong sending your message. Please try again, or email us directly.',
+        );
         if (useHcaptcha) window.hcaptcha?.reset(widgetIdRef.current); // tokens are single-use
       }
     } catch {
@@ -267,7 +279,11 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
 
   if (status === 'success') {
     return (
-      <div role="status" aria-live="polite" className="rounded-md border border-primary bg-muted p-l">
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-md border border-primary bg-muted p-l"
+      >
         <p className="font-display text-h4 text-foreground">{successMessage}</p>
       </div>
     );
@@ -276,9 +292,15 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
   return (
     <div>
       {form.heading && <h2 className="font-display text-h3 text-foreground">{form.heading}</h2>}
-      {form.intro && <p className="mt-s text-foreground/80 leading-relaxed">{form.intro}</p>}
+      {form.intro && <p className="mt-s leading-relaxed text-foreground/80">{form.intro}</p>}
 
-      <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-m" aria-busy={status === 'submitting'}>
+      <form
+        ref={formRef}
+        onSubmit={onSubmit}
+        noValidate
+        className="mt-m"
+        aria-busy={status === 'submitting'}
+      >
         {/* honeypot */}
         <div
           aria-hidden="true"
@@ -307,7 +329,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-s">
+        <div className="grid grid-cols-1 gap-s sm:grid-cols-2">
           {fields.map((f) => {
             const id = `f-${f.name}`;
             const span = f.width === 'half' ? 'sm:col-span-1' : 'sm:col-span-2';
@@ -331,7 +353,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
             }
             return (
               <div key={f.name} className={span}>
-                <label htmlFor={id} className="block text-sm font-semibold text-foreground mb-1">
+                <label htmlFor={id} className="mb-1 block text-sm font-semibold text-foreground">
                   {f.label}
                   {f.required && ' *'}
                 </label>
@@ -384,18 +406,21 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="press-tactile mt-m inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="press-tactile mt-m inline-flex min-h-[44px] items-center justify-center rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === 'submitting' ? 'Sending…' : submitLabel}
         </button>
       </form>
 
       {consentNote && (
-        <p className="mt-s text-xs text-foreground/70 leading-relaxed">
+        <p className="mt-s text-xs leading-relaxed text-foreground/70">
           {consentNote.includes('privacy policy') ? (
             <>
               {consentNote.replace('privacy policy', '').trimEnd()}{' '}
-              <a href="/privacy" className="underline underline-offset-2 hover:text-link transition-colors">
+              <a
+                href="/privacy"
+                className="underline underline-offset-2 transition-colors hover:text-link"
+              >
                 privacy policy
               </a>
               .

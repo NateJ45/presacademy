@@ -14,12 +14,12 @@ import sharp from 'sharp';
 const DEFAULTS = {
   width: 1200,
   height: 630,
-  bg: '#FAF8F4',          // Near-white warm paper (Direction A)
-  primary: '#33503F',     // Geneva Green (accent rule)
+  bg: '#FAF8F4', // Near-white warm paper (Direction A)
+  primary: '#33503F', // Geneva Green (accent rule)
   primaryDark: '#1F1B18', // Soft near-black (wordmark)
-  accent: '#1F1B18',      // Soft near-black (tagline)
-  taupe: '#B7A99B',       // Cloister Stone (border)
-  muted: '#615D5A',       // "Academy" subline (foreground at ~70% over warm paper)
+  accent: '#1F1B18', // Soft near-black (tagline)
+  taupe: '#B7A99B', // Cloister Stone (border)
+  muted: '#615D5A', // "Academy" subline (foreground at ~70% over warm paper)
   fontDisplay: 'Fraunces, Georgia, Cambria, Times New Roman, serif',
 };
 
@@ -28,7 +28,9 @@ async function renderText(text, fontSize, color, font, weight = 'normal') {
   const markup = `<span foreground="${color}" font_desc="${font} ${weight} ${fontSize}px">${escaped}</span>`;
   const { data, info } = await sharp({
     text: { text: markup, rgba: true, dpi: 72 },
-  }).png().toBuffer({ resolveWithObject: true });
+  })
+    .png()
+    .toBuffer({ resolveWithObject: true });
   return { buffer: data, width: info.width, height: info.height };
 }
 
@@ -44,7 +46,9 @@ async function renderRich(innerMarkup, fontSize, font, weight = '500') {
   const markup = `<span font_desc="${font} ${weight} ${fontSize}px">${innerMarkup}</span>`;
   const { data, info } = await sharp({
     text: { text: markup, rgba: true, dpi: 72 },
-  }).png().toBuffer({ resolveWithObject: true });
+  })
+    .png()
+    .toBuffer({ resolveWithObject: true });
   return { buffer: data, width: info.width, height: info.height };
 }
 
@@ -85,9 +89,17 @@ export async function renderOg({ wordmark, tagline, outPath, theme = {} }) {
   // to a smaller, muted second line ("Academy"), and the last word of the first
   // line carries the green keyword emphasis ("Presbyterian"). Mirrors Header.astro.
   const words = String(wordmark).trim().split(/\s+/);
-  let lead = '', key = words.join(' '), sub = '';
-  if (words.length >= 3) { sub = words.pop(); key = words.pop(); lead = words.join(' '); }
-  else if (words.length === 2) { key = words.pop(); lead = words.join(' '); }
+  let lead = '',
+    key = words.join(' '),
+    sub = '';
+  if (words.length >= 3) {
+    sub = words.pop();
+    key = words.pop();
+    lead = words.join(' ');
+  } else if (words.length === 2) {
+    key = words.pop();
+    lead = words.join(' ');
+  }
 
   // Line 1: lead in ink + the keyword in green (the wordmark's signature device).
   const line1Markup =

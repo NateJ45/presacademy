@@ -45,7 +45,12 @@ interface Props {
   siteSettings?:
     | (RawSiteSettings & {
         funder?: string;
-        worshipService?: { time?: string; day?: string; startTime24?: string; endTime24?: string } | null;
+        worshipService?: {
+          time?: string;
+          day?: string;
+          startTime24?: string;
+          endTime24?: string;
+        } | null;
         giveUrl?: string;
         appUrl?: string;
         directoryUrl?: string;
@@ -121,49 +126,61 @@ const footerLink =
   <div class="h-1 bg-primary" aria-hidden="true"></div>
 
   {/* Newsletter signup — renders only when siteSettings.newsletter.enabled. */}
-  {siteSettings?.newsletter?.enabled && (
-    <div class="mx-auto max-w-content px-m pt-l">
-      <div class="max-w-md mx-auto">
-        <NewsletterSignup
-          client:visible
-          newsletter={siteSettings.newsletter}
-          source="footer"
-        />
+  {
+    siteSettings?.newsletter?.enabled && (
+      <div class="mx-auto max-w-content px-m pt-l">
+        <div class="mx-auto max-w-md">
+          <NewsletterSignup client:visible newsletter={siteSettings.newsletter} source="footer" />
+        </div>
       </div>
-    </div>
-  )}
+    )
+  }
 
   {/* ---- Masthead: the wordmark at editorial scale + a closing invitation. -- */}
   <div class="mx-auto max-w-content px-m pt-section-md pb-l" data-reveal>
     <div class="grid gap-l lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-section-md">
       <div>
-        <p class="flex items-center gap-2 text-xs uppercase tracking-eyebrow text-chapel-foreground/65">
+        <p
+          class="flex items-center gap-2 text-xs tracking-eyebrow text-chapel-foreground/65 uppercase"
+        >
           <span class="h-px w-6 bg-gold/70" aria-hidden="true"></span>
           {tagline}
         </p>
         <a
           href="/"
           aria-label={`${brandName} home`}
-          class="mt-s block leading-[0.9] tracking-[-0.02em] hover:opacity-90 transition-opacity"
+          class="mt-s block leading-[0.9] tracking-[-0.02em] transition-opacity hover:opacity-90"
         >
-          <span class="block font-display text-chapel-foreground" style="font-size: clamp(2.5rem, 7vw, 5.25rem)">{site.wordmark.line1}</span>
-          {site.wordmark.line2 && (
-            <span class="block font-display text-chapel-foreground/55" style="font-size: clamp(2.5rem, 7vw, 5.25rem)">{site.wordmark.line2}</span>
-          )}
+          <span
+            class="block font-display text-chapel-foreground"
+            style="font-size: clamp(2.5rem, 7vw, 5.25rem)">{site.wordmark.line1}</span
+          >
+          {
+            site.wordmark.line2 && (
+              <span
+                class="block font-display text-chapel-foreground/55"
+                style="font-size: clamp(2.5rem, 7vw, 5.25rem)"
+              >
+                {site.wordmark.line2}
+              </span>
+            )
+          }
         </a>
       </div>
       <div class="lg:pb-2">
-        <p class="font-display text-xl leading-snug text-chapel-foreground/85 max-w-[32rem]">{mission}</p>
+        <p class="max-w-[32rem] font-display text-xl leading-snug text-chapel-foreground/85">
+          {mission}
+        </p>
         <div class="mt-l flex flex-wrap gap-s">
           <a
             href="/get-started"
-            class="press-tactile inline-flex items-center rounded-full bg-chapel-foreground px-l py-2.5 text-xs uppercase tracking-eyebrow font-semibold text-chapel-deep hover:opacity-90 transition-opacity"
+            class="press-tactile inline-flex items-center rounded-full bg-chapel-foreground px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-deep uppercase transition-opacity hover:opacity-90"
           >
             Request information
           </a>
           <a
             href="/get-started"
-            class="press-tactile inline-flex items-center rounded-full border border-chapel-foreground/35 px-l py-2.5 text-xs uppercase tracking-eyebrow font-semibold text-chapel-foreground hover:bg-white/10 transition-colors"
+            class="press-tactile inline-flex items-center rounded-full border border-chapel-foreground/35 px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-foreground uppercase transition-colors hover:bg-white/10"
           >
             Book a free intro
           </a>
@@ -173,125 +190,184 @@ const footerLink =
   </div>
 
   {/* ---- Imprint: where we meet · the index · follow along. --------------- */}
-  <div class="mx-auto max-w-content px-m py-l grid gap-l sm:grid-cols-2 lg:grid-cols-12 border-t border-chapel-foreground/15" data-reveal>
+  <div
+    class="mx-auto grid max-w-content gap-l border-t border-chapel-foreground/15 px-m py-l sm:grid-cols-2 lg:grid-cols-12"
+    data-reveal
+  >
     {/* Where we meet + contact */}
     <div class="lg:col-span-4">
-      <p class="flex items-center gap-2 text-xs uppercase tracking-eyebrow text-chapel-foreground/65">
+      <p
+        class="flex items-center gap-2 text-xs tracking-eyebrow text-chapel-foreground/65 uppercase"
+      >
         <span class="h-px w-5 bg-gold/70" aria-hidden="true"></span>
         Where we meet
       </p>
-      <address class="mt-m not-italic text-sm leading-relaxed space-y-2 text-chapel-foreground/85">
+      <address class="mt-m space-y-2 text-sm leading-relaxed text-chapel-foreground/85 not-italic">
         <p class="flex items-start gap-2">
           <MapPin size={15} className="mt-0.5 shrink-0 text-gold" aria-hidden="true" />
           <span>{addressLine}<br />{cityStateZip}</span>
         </p>
-        {email && (
-          <p>
-            <a href={`mailto:${email}`} class="link-underline inline-flex items-center gap-2 hover:text-white transition-colors">
-              <Mail size={14} aria-hidden="true" />{email}
-            </a>
-          </p>
-        )}
-        {phone && (
-          <p>
-            <a href={telHref(phone)} class="link-underline inline-flex items-center gap-2 hover:text-white transition-colors">
-              <Phone size={14} aria-hidden="true" />{phone}
-            </a>
-          </p>
-        )}
+        {
+          email && (
+            <p>
+              <a
+                href={`mailto:${email}`}
+                class="link-underline inline-flex items-center gap-2 transition-colors hover:text-white"
+              >
+                <Mail size={14} aria-hidden="true" />
+                {email}
+              </a>
+            </p>
+          )
+        }
+        {
+          phone && (
+            <p>
+              <a
+                href={telHref(phone)}
+                class="link-underline inline-flex items-center gap-2 transition-colors hover:text-white"
+              >
+                <Phone size={14} aria-hidden="true" />
+                {phone}
+              </a>
+            </p>
+          )
+        }
         {officeHours && <p class="text-chapel-foreground/55">Office hours: {officeHours}</p>}
       </address>
       <a
         href={mapHref}
         target="_blank"
         rel="noopener noreferrer"
-        class="link-underline mt-s inline-block text-sm font-semibold text-chapel-foreground hover:text-white transition-colors"
+        class="link-underline mt-s inline-block text-sm font-semibold text-chapel-foreground transition-colors hover:text-white"
       >
         Get directions
       </a>
     </div>
 
     {/* The index — editor-managed nav columns. */}
-    <div class="lg:col-span-5 grid grid-cols-2 sm:grid-cols-3 gap-l">
-      {FOOTER_COLUMNS.map((col, i) => (
-        <nav aria-labelledby={`footer-col-${i}`}>
-          <p id={`footer-col-${i}`} class="flex items-center gap-2 text-xs uppercase tracking-eyebrow text-chapel-foreground/65">
-            <span class="h-px w-5 bg-gold/70" aria-hidden="true"></span>
-            {col.title}
-          </p>
-          <ul class="mt-m text-sm space-y-2.5 list-none p-0">
-            {col.links.map((l) => (
-              <li>
-                <a
-                  href={l.href}
-                  class={footerLink}
-                  {...((l.external || /^https?:\/\//.test(l.href)) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      ))}
+    <div class="grid grid-cols-2 gap-l sm:grid-cols-3 lg:col-span-5">
+      {
+        FOOTER_COLUMNS.map((col, i) => (
+          <nav aria-labelledby={`footer-col-${i}`}>
+            <p
+              id={`footer-col-${i}`}
+              class="flex items-center gap-2 text-xs tracking-eyebrow text-chapel-foreground/65 uppercase"
+            >
+              <span class="h-px w-5 bg-gold/70" aria-hidden="true" />
+              {col.title}
+            </p>
+            <ul class="mt-m list-none space-y-2.5 p-0 text-sm">
+              {col.links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    class={footerLink}
+                    {...(l.external || /^https?:\/\//.test(l.href)
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
     </div>
 
     {/* Follow along — social, or a contact nudge when none are set. */}
     <div class="lg:col-span-3">
-      <p class="flex items-center gap-2 text-xs uppercase tracking-eyebrow text-chapel-foreground/65">
+      <p
+        class="flex items-center gap-2 text-xs tracking-eyebrow text-chapel-foreground/65 uppercase"
+      >
         <span class="h-px w-5 bg-gold/70" aria-hidden="true"></span>
         Follow along
       </p>
-      {(ig || fb || yt) ? (
-        <ul class="mt-m flex gap-s list-none p-0">
-          {ig && (
-            <li>
-              <a href={ig} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground hover:bg-white/10 hover:border-white/40 hover:text-white transition-colors">
-                <IconBrandInstagram size={20} stroke={1.5} />
-              </a>
-            </li>
-          )}
-          {fb && (
-            <li>
-              <a href={fb} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground hover:bg-white/10 hover:border-white/40 hover:text-white transition-colors">
-                <IconBrandFacebook size={20} stroke={1.5} />
-              </a>
-            </li>
-          )}
-          {yt && (
-            <li>
-              <a href={yt} target="_blank" rel="noopener noreferrer" aria-label="YouTube"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground hover:bg-white/10 hover:border-white/40 hover:text-white transition-colors">
-                <IconBrandYoutube size={20} stroke={1.5} />
-              </a>
-            </li>
-          )}
-        </ul>
-      ) : (
-        <a href="/contact" class="link-underline mt-m inline-block text-sm text-chapel-foreground/80 hover:text-white transition-colors">Get in touch</a>
-      )}
+      {
+        ig || fb || yt ? (
+          <ul class="mt-m flex list-none gap-s p-0">
+            {ig && (
+              <li>
+                <a
+                  href={ig}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                >
+                  <IconBrandInstagram size={20} stroke={1.5} />
+                </a>
+              </li>
+            )}
+            {fb && (
+              <li>
+                <a
+                  href={fb}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                >
+                  <IconBrandFacebook size={20} stroke={1.5} />
+                </a>
+              </li>
+            )}
+            {yt && (
+              <li>
+                <a
+                  href={yt}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                >
+                  <IconBrandYoutube size={20} stroke={1.5} />
+                </a>
+              </li>
+            )}
+          </ul>
+        ) : (
+          <a
+            href="/contact"
+            class="link-underline mt-m inline-block text-sm text-chapel-foreground/80 transition-colors hover:text-white"
+          >
+            Get in touch
+          </a>
+        )
+      }
     </div>
   </div>
 
   {/* ---- Funding acknowledgment — the school's current-year underwriter. ---- */}
-  {funder && (
-    <div class="mx-auto max-w-content px-m pb-l flex items-center justify-center gap-3 text-center">
-      <span class="h-px w-8 bg-gold/45" aria-hidden="true"></span>
-      <p class="text-xs uppercase tracking-[0.14em] text-chapel-foreground/60">Made possible by the {funder}</p>
-      <span class="h-px w-8 bg-gold/45" aria-hidden="true"></span>
-    </div>
-  )}
+  {
+    funder && (
+      <div class="mx-auto flex max-w-content items-center justify-center gap-3 px-m pb-l text-center">
+        <span class="h-px w-8 bg-gold/45" aria-hidden="true" />
+        <p class="text-xs tracking-[0.14em] text-chapel-foreground/60 uppercase">
+          Made possible by the {funder}
+        </p>
+        <span class="h-px w-8 bg-gold/45" aria-hidden="true" />
+      </div>
+    )
+  }
 
-  {/* ---- Colophon — the printed-imprint bottom bar: a monogram seal, the
+  {
+    /* ---- Colophon — the printed-imprint bottom bar: a monogram seal, the
        imprint line, the typeface credit, legal links, and the designer credit
-       (always shown, editable via Sanity). -------------------------------- */}
+       (always shown, editable via Sanity). -------------------------------- */
+  }
   <div class="border-t border-chapel-foreground/15">
-    <div class="mx-auto max-w-content px-m py-l flex flex-col gap-m lg:flex-row lg:items-center lg:justify-between">
+    <div
+      class="mx-auto flex max-w-content flex-col gap-m px-m py-l lg:flex-row lg:items-center lg:justify-between"
+    >
       {/* Monogram seal + imprint line */}
       <div class="flex items-center gap-3">
-        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] border border-chapel-foreground/30 font-display text-base leading-none text-chapel-foreground/90" aria-hidden="true">PA</span>
+        <span
+          class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] border border-chapel-foreground/30 font-display text-base leading-none text-chapel-foreground/90"
+          aria-hidden="true">PA</span
+        >
         <p class="text-xs leading-relaxed text-chapel-foreground/65">
           <span class="font-medium text-chapel-foreground/90">{brandName}</span><br />
           {[locality, 'PC(USA)'].filter(Boolean).join('  ·  ')}
@@ -302,14 +378,27 @@ const footerLink =
       <div class="flex flex-col gap-2 lg:items-end">
         <div class="flex flex-wrap items-center gap-x-m gap-y-1 text-xs text-chapel-foreground/65">
           <span>© {currentYear} {brandName}</span>
-          {LEGAL_LINKS.map((l) => (
-            <a href={l.href} class="link-underline hover:text-white transition-colors">{l.label}</a>
-          ))}
-          {creditUrl ? (
-            <a href={creditUrl} target="_blank" rel="noopener noreferrer" class="link-underline text-chapel-foreground/80 hover:text-white transition-colors">{creditLabel}</a>
-          ) : (
-            <span class="text-chapel-foreground/80">{creditLabel}</span>
-          )}
+          {
+            LEGAL_LINKS.map((l) => (
+              <a href={l.href} class="link-underline transition-colors hover:text-white">
+                {l.label}
+              </a>
+            ))
+          }
+          {
+            creditUrl ? (
+              <a
+                href={creditUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-underline text-chapel-foreground/80 transition-colors hover:text-white"
+              >
+                {creditLabel}
+              </a>
+            ) : (
+              <span class="text-chapel-foreground/80">{creditLabel}</span>
+            )
+          }
         </div>
       </div>
     </div>

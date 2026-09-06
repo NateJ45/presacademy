@@ -52,9 +52,9 @@ Served from `public/` so they can be referenced directly (e.g. a `<video>` hero
 background). Nothing references them yet. The two church-themed clips were removed
 2026-08-25.
 
-| File | Size | Creator | Source |
-|---|---|---|---|
-| `teach-study-classmates.mp4` | 11 MB | Andy Barbour | https://www.pexels.com/video/classmates-studying-together-6672525/ |
+| File                         | Size  | Creator             | Source                                                                      |
+| ---------------------------- | ----- | ------------------- | --------------------------------------------------------------------------- |
+| `teach-study-classmates.mp4` | 11 MB | Andy Barbour        | https://www.pexels.com/video/classmates-studying-together-6672525/          |
 | `study-group-discussion.mp4` | 24 MB | Monstera Production | https://www.pexels.com/video/group-of-students-having-a-discussion-6219675/ |
 
 **Before shipping either as a hero background:** compress further. Even at these sizes

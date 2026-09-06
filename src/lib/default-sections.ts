@@ -216,8 +216,7 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
       _key: 'aboutFacultyBand',
       _type: 'sectionInlineBand',
       eyebrow: 'The people who teach',
-      headline:
-        'Every course is led by an ordained minister or a credentialed Reformed scholar.',
+      headline: 'Every course is led by an ordained minister or a credentialed Reformed scholar.',
       ctaLabel: 'Meet the faculty',
       ctaUrl: '/faculty',
     },

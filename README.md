@@ -45,14 +45,14 @@ themes, reflow), `npm run test:visual` (style guide screenshots, CI baselines),
 
 ## The files that orient you
 
-| File | What it is |
-|---|---|
-| `CLAUDE.md` | The constitution: stack, conventions, landmines, content model |
-| `design.md` | The one-file design brief (palette, type, motion, signature moves) |
-| `OPERATIONS.md` | The tactical runbook (deploy, audit content, patch data, gotchas) |
+| File              | What it is                                                           |
+| ----------------- | -------------------------------------------------------------------- |
+| `CLAUDE.md`       | The constitution: stack, conventions, landmines, content model       |
+| `design.md`       | The one-file design brief (palette, type, motion, signature moves)   |
+| `OPERATIONS.md`   | The tactical runbook (deploy, audit content, patch data, gotchas)    |
 | `docs/PENDING.md` | The live registry of open loops: queued work, waiting-on-human items |
-| `docs/TESTING.md` | Which test suite covers what |
-| `docs/agent/` | Deep-dives per area (theme, components, Sanity, deployment, ...) |
+| `docs/TESTING.md` | Which test suite covers what                                         |
+| `docs/agent/`     | Deep-dives per area (theme, components, Sanity, deployment, ...)     |
 
 AI-assisted workflow: project slash commands ship in `.claude/commands/`
 (`/sanity-audit`, `/rebuild`, `/visual-verify`), and `design.md` plus

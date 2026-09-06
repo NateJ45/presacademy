@@ -11,6 +11,7 @@
 **Source spec:** `docs/superpowers/specs/2026-06-13-brand-identity-design.md`
 
 **Approved values:**
+
 - Palette: Stone Cream `#F4EEE6`, Chalk `#FCF9F4`, Walnut Ink `#2A2521`, Walnut Deep `#1E1A17`, Geneva Oxblood `#7A2A2C`, Oxblood Deep `#5E2122`, Oxblood Deepest `#4A1B1C`, Cloister Stone `#B7A99B`, Stone Deep `#9C8E7E`, Aged Brass `#A87C3E`, Warm Cream `#F1EAD9`.
 - Type: Fraunces (display) + Source Sans 3 (body).
 - Logo: plainspoken wordmark, "The Presbyterian" (final word in oxblood) / "Academy"; favicon = PA monogram, cream on oxblood.
@@ -20,20 +21,20 @@
 
 ## Rebrand config facts (for Task 3)
 
-| Field | Value |
-|---|---|
-| churchName | The Presbyterian Academy |
-| shortName | The Presbyterian Academy |
-| wordmarkLine2 | Academy |
-| domain | presbyterianacademy.org |
-| workerName | presacademy |
-| studioHost | presbyterian-academy |
-| city | West Chester Township |
-| addressLine | 9463 Cincinnati Columbus Rd |
-| cityStateZip | West Chester Township, OH 45069 |
-| email | info@presbyterianacademy.org |
-| pastorEmail | pastor@example.org |
-| phone | (513) 555-0100 |
+| Field         | Value                           |
+| ------------- | ------------------------------- |
+| churchName    | The Presbyterian Academy        |
+| shortName     | The Presbyterian Academy        |
+| wordmarkLine2 | Academy                         |
+| domain        | presbyterianacademy.org         |
+| workerName    | presacademy                     |
+| studioHost    | presbyterian-academy            |
+| city          | West Chester Township           |
+| addressLine   | 9463 Cincinnati Columbus Rd     |
+| cityStateZip  | West Chester Township, OH 45069 |
+| email         | info@presbyterianacademy.org    |
+| pastorEmail   | pastor@example.org              |
+| phone         | (513) 555-0100                  |
 
 The phone is a reserved fictional placeholder (the `555-01xx` range never dials a real line). Live phone stays empty in Sanity until a real one exists; that is handled at content-seed time, out of scope for this plan.
 
@@ -49,6 +50,7 @@ The phone is a reserved fictional placeholder (the `555-01xx` range never dials 
 git checkout -b rebrand/presbyterian-academy
 git status -sb
 ```
+
 Expected: `## rebrand/presbyterian-academy`, clean tree.
 
 ---
@@ -56,6 +58,7 @@ Expected: `## rebrand/presbyterian-academy`, clean tree.
 ### Task 2: Swap the fonts
 
 **Files:**
+
 - Modify: `package.json` (dependencies)
 - Modify: `src/styles/globals.css:9-12` (font `@import`s) and `:54-55` (font tokens)
 
@@ -66,6 +69,7 @@ Per CLAUDE.md, pause for confirmation before installing dependencies. Once confi
 ```bash
 npm install @fontsource-variable/fraunces @fontsource-variable/source-sans-3
 ```
+
 Expected: both packages added under `node_modules/@fontsource-variable/`.
 
 - [ ] **Step 2: Replace the font `@import` lines in `src/styles/globals.css`**
@@ -73,16 +77,16 @@ Expected: both packages added under `node_modules/@fontsource-variable/`.
 Replace lines 9-12 (the instrument-serif + newsreader imports) with:
 
 ```css
-@import "@fontsource-variable/fraunces";
-@import "@fontsource-variable/fraunces/standard-italic.css";
-@import "@fontsource-variable/source-sans-3";
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/fraunces/standard-italic.css';
+@import '@fontsource-variable/source-sans-3';
 ```
 
 - [ ] **Step 3: Update the font tokens in the `@theme` block (lines 54-55)**
 
 ```css
-  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-body:    "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+--font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+--font-body: 'Source Sans 3 Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 ```
 
 - [ ] **Step 4: Remove the now-unused font dependencies (only if nothing imports them)**
@@ -90,6 +94,7 @@ Replace lines 9-12 (the instrument-serif + newsreader imports) with:
 ```bash
 git grep -n "instrument-serif\|newsreader\|libre-baskerville\|fontsource-variable/inter"
 ```
+
 For each package with no remaining `@import`, remove it from `package.json` dependencies: `@fontsource/instrument-serif`, `@fontsource-variable/newsreader`, `@fontsource/libre-baskerville`, `@fontsource-variable/inter`. Keep any that still have a hit. Then `npm install` to refresh the lockfile.
 
 - [ ] **Step 5: Verify the build and the rendered fonts**
@@ -97,6 +102,7 @@ For each package with no remaining `@import`, remove it from `package.json` depe
 ```bash
 npm run build
 ```
+
 Expected: build succeeds. Then `npm run dev`, open `http://localhost:4321` with the Playwright MCP, and confirm headings render in Fraunces and body in Source Sans 3 (no serif body, no FOUT crash). No console errors.
 
 - [ ] **Step 6: Commit**
@@ -111,6 +117,7 @@ git commit -m "feat(brand): swap type to Fraunces + Source Sans 3"
 ### Task 3: Stamp the identity
 
 **Files:**
+
 - Create: `bootstrap.config.json`
 - Modify (via script): many files across `src/`, `studio/`, `docs/`, `scripts/`
 - Modify (manual fix): `src/data/site.ts` wordmark
@@ -139,6 +146,7 @@ git commit -m "feat(brand): swap type to Fraunces + Source Sans 3"
 ```bash
 npm run rebrand
 ```
+
 Expected: ends with `✓ All placeholder patterns found.` and a non-zero replacement count. If any pattern is reported missing, stop and investigate before applying.
 
 - [ ] **Step 3: Apply the rebrand**
@@ -146,6 +154,7 @@ Expected: ends with `✓ All placeholder patterns found.` and a non-zero replace
 ```bash
 npm run rebrand -- --apply
 ```
+
 Expected: `Done: N replacements across M files.`
 
 - [ ] **Step 4: Regenerate Sanity types (placeholders may appear in schema strings)**
@@ -153,6 +162,7 @@ Expected: `Done: N replacements across M files.`
 ```bash
 npm run typegen
 ```
+
 Expected: `src/lib/sanity.types.ts` regenerates with no errors.
 
 - [ ] **Step 5: Fix the header wordmark line 1 in `src/data/site.ts`**
@@ -173,11 +183,13 @@ git diff --stat
 git diff src/data/site.ts astro.config.mjs wrangler.jsonc
 npm run build
 ```
+
 Expected: identity strings replaced everywhere (no "Springfield", "example-church", "First Church" left except inside `node_modules`); `wrangler.jsonc` name remains `presacademy`; build succeeds.
 
 ```bash
 git grep -n "Springfield\|example-church\|First Church" -- ':!docs/superpowers'
 ```
+
 Expected: no matches outside the spec/plan docs.
 
 - [ ] **Step 7: Commit**
@@ -192,122 +204,123 @@ git commit -m "feat(brand): stamp The Presbyterian Academy identity (rebrand)"
 ### Task 4: Apply the Oxblood & Stone palette
 
 **Files:**
+
 - Modify: `src/styles/globals.css` `@theme` palette (lines ~22-46), `:root` (lines ~236-289), `.dark` (lines ~296-345)
 - Modify: `src/data/site.ts` `brandColors`
 
 - [ ] **Step 1: Update the `@theme` brand tokens (lines 22-46)**
 
 ```css
-  --color-primary:      #7A2A2C; /* Geneva Oxblood — interactive accent */
-  --color-primary-dark: #5E2122; /* Oxblood Deep — hover / anchor text */
-  --color-accent:       #2A2521; /* Walnut Ink — headings + body */
-  --color-accent-dark:  #1E1A17; /* Walnut Deep — dark surfaces */
-  --color-secondary:    #B7A99B; /* Cloister Stone — borders, eyebrows */
-  --color-tertiary:     #9C8E7E; /* Stone Deep — sparingly */
-  --color-bg:           #F4EEE6; /* Stone Cream — warm page surface */
-  --color-bg-soft:      #FCF9F4; /* Chalk — alternating surface */
-  --color-white-pure:   #FFFFFF;
+--color-primary: #7a2a2c; /* Geneva Oxblood — interactive accent */
+--color-primary-dark: #5e2122; /* Oxblood Deep — hover / anchor text */
+--color-accent: #2a2521; /* Walnut Ink — headings + body */
+--color-accent-dark: #1e1a17; /* Walnut Deep — dark surfaces */
+--color-secondary: #b7a99b; /* Cloister Stone — borders, eyebrows */
+--color-tertiary: #9c8e7e; /* Stone Deep — sparingly */
+--color-bg: #f4eee6; /* Stone Cream — warm page surface */
+--color-bg-soft: #fcf9f4; /* Chalk — alternating surface */
+--color-white-pure: #ffffff;
 ```
 
 And the band tokens (these keep the `chapel` names for now; values become deep oxblood — the structural-band color):
 
 ```css
-  --color-chapel:            #5E2122; /* Oxblood Deep — utility bar, footer, CTA band */
-  --color-chapel-deep:       #4A1B1C; /* Oxblood Deepest — deepest band base */
-  --color-chapel-foreground: #F1EAD9; /* warm cream text on band surfaces */
-  --color-gold:              #A87C3E; /* Aged Brass — hairline rules, small accents */
+--color-chapel: #5e2122; /* Oxblood Deep — utility bar, footer, CTA band */
+--color-chapel-deep: #4a1b1c; /* Oxblood Deepest — deepest band base */
+--color-chapel-foreground: #f1ead9; /* warm cream text on band surfaces */
+--color-gold: #a87c3e; /* Aged Brass — hairline rules, small accents */
 ```
 
 - [ ] **Step 2: Update the light-mode `:root` block (lines 236-289)**
 
 ```css
-    --background: #F4EEE6;
-    --foreground: #2A2521;
-    --card: #FCF9F4;
-    --card-foreground: #2A2521;
-    --popover: #FCF9F4;
-    --popover-foreground: #2A2521;
+--background: #f4eee6;
+--foreground: #2a2521;
+--card: #fcf9f4;
+--card-foreground: #2a2521;
+--popover: #fcf9f4;
+--popover-foreground: #2a2521;
 
-    --primary: #7A2A2C;
-    --primary-foreground: #FFFFFF;
-    --secondary: #B7A99B;
-    --secondary-foreground: #2A2521;
+--primary: #7a2a2c;
+--primary-foreground: #ffffff;
+--secondary: #b7a99b;
+--secondary-foreground: #2a2521;
 
-    --muted: #EDE5D9;
-    --muted-foreground: #5C5046;
+--muted: #ede5d9;
+--muted-foreground: #5c5046;
 
-    --accent: #E7DDCF;
-    --accent-foreground: #2A2521;
+--accent: #e7ddcf;
+--accent-foreground: #2a2521;
 
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #E0D6C7;
-    --input: #E0D6C7;
-    --ring: #7A2A2C;
-    --link: #5E2122;
-    --chapel-ink: #7A2A2C;
-    --gold-ink: #6E5128;
-    --border-soft: #E0D6C7;
+--destructive: oklch(0.577 0.245 27.325);
+--border: #e0d6c7;
+--input: #e0d6c7;
+--ring: #7a2a2c;
+--link: #5e2122;
+--chapel-ink: #7a2a2c;
+--gold-ink: #6e5128;
+--border-soft: #e0d6c7;
 ```
 
 Also update the sidebar tokens in the same block for consistency:
 
 ```css
-    --sidebar: #F4EEE6;
-    --sidebar-foreground: #2A2521;
-    --sidebar-primary: #7A2A2C;
-    --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #EDE5D9;
-    --sidebar-accent-foreground: #2A2521;
-    --sidebar-border: #E0D6C7;
-    --sidebar-ring: #7A2A2C;
+--sidebar: #f4eee6;
+--sidebar-foreground: #2a2521;
+--sidebar-primary: #7a2a2c;
+--sidebar-primary-foreground: #ffffff;
+--sidebar-accent: #ede5d9;
+--sidebar-accent-foreground: #2a2521;
+--sidebar-border: #e0d6c7;
+--sidebar-ring: #7a2a2c;
 
-    --tint-rgb: 168, 124, 62;
+--tint-rgb: 168, 124, 62;
 ```
 
 - [ ] **Step 3: Update the dark-mode `.dark` block (lines 296-345)**
 
 ```css
-    --background: #1E1A17;
-    --foreground: #F1EAD9;
-    --card: #2A2420;
-    --card-foreground: #F1EAD9;
-    --popover: #2A2420;
-    --popover-foreground: #F1EAD9;
+--background: #1e1a17;
+--foreground: #f1ead9;
+--card: #2a2420;
+--card-foreground: #f1ead9;
+--popover: #2a2420;
+--popover-foreground: #f1ead9;
 
-    --primary: #C16A5A;
-    --primary-foreground: #FFFFFF;
-    --secondary: #8C7E70;
-    --secondary-foreground: #F1EAD9;
+--primary: #c16a5a;
+--primary-foreground: #ffffff;
+--secondary: #8c7e70;
+--secondary-foreground: #f1ead9;
 
-    --muted: #262019;
-    --muted-foreground: #B7AC9A;
+--muted: #262019;
+--muted-foreground: #b7ac9a;
 
-    --accent: #2E2820;
-    --accent-foreground: #F1EAD9;
+--accent: #2e2820;
+--accent-foreground: #f1ead9;
 
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: #C16A5A;
-    --link: #E0998C;
-    --chapel-ink: #E0998C;
-    --gold-ink: #C9A06A;
-    --border-soft: oklch(1 0 0 / 14%);
+--destructive: oklch(0.704 0.191 22.216);
+--border: oklch(1 0 0 / 12%);
+--input: oklch(1 0 0 / 15%);
+--ring: #c16a5a;
+--link: #e0998c;
+--chapel-ink: #e0998c;
+--gold-ink: #c9a06a;
+--border-soft: oklch(1 0 0 / 14%);
 ```
 
 And the dark sidebar + tint:
 
 ```css
-    --sidebar: #2A2420;
-    --sidebar-foreground: #F1EAD9;
-    --sidebar-primary: #C16A5A;
-    --sidebar-primary-foreground: #1E1A17;
-    --sidebar-accent: #2E2820;
-    --sidebar-accent-foreground: #F1EAD9;
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: #C16A5A;
+--sidebar: #2a2420;
+--sidebar-foreground: #f1ead9;
+--sidebar-primary: #c16a5a;
+--sidebar-primary-foreground: #1e1a17;
+--sidebar-accent: #2e2820;
+--sidebar-accent-foreground: #f1ead9;
+--sidebar-border: oklch(1 0 0 / 12%);
+--sidebar-ring: #c16a5a;
 
-    --tint-rgb: 198, 160, 106;
+--tint-rgb: 198, 160, 106;
 ```
 
 - [ ] **Step 4: Update `brandColors` in `src/data/site.ts`**
@@ -334,6 +347,7 @@ And the dark sidebar + tint:
 ```bash
 npm run build
 ```
+
 Expected: success. Then `npm run dev` and, with the Playwright MCP, screenshot the home page and one content page at 375px and 1280px in BOTH light and dark. Confirm: cream page, oxblood CTAs, deep-oxblood utility bar and footer, brass hairlines, readable ink. No oxblood-on-oxblood or invisible text.
 
 - [ ] **Step 6: Commit**
@@ -348,6 +362,7 @@ git commit -m "feat(brand): apply Oxblood & Stone palette tokens"
 ### Task 5: Wordmark keyword emphasis
 
 **Files:**
+
 - Modify: `src/components/Header.astro` (frontmatter + the wordmark `<a>` near line 273-282)
 
 The footer wordmark sits on the dark oxblood band and stays all-cream (no change). Only the header (on the cream page) gets the oxblood emphasis on the final word of line 1.
@@ -367,9 +382,9 @@ const line1Lead = line1Words.join(' ');
 - [ ] **Step 2: Replace the line-1 `<span>` (currently line 278)**
 
 ```astro
-      <span class="font-display text-xl sm:text-2xl text-foreground leading-none">
-        {line1Lead && <>{line1Lead}{' '}</>}<span class="text-chapel-ink">{line1Key}</span>
-      </span>
+<span class="font-display text-xl leading-none text-foreground sm:text-2xl">
+  {line1Lead && <>{line1Lead} </>}<span class="text-chapel-ink">{line1Key}</span>
+</span>
 ```
 
 - [ ] **Step 3: Build and verify**
@@ -377,6 +392,7 @@ const line1Lead = line1Words.join(' ');
 ```bash
 npm run build
 ```
+
 Expected: success. With the dev server, confirm the header reads "The" in ink and "Presbyterian" in oxblood (light) / lifted oxblood (dark), with "Academy" below. Footer wordmark is all cream on the band.
 
 - [ ] **Step 4: Commit**
@@ -391,6 +407,7 @@ git commit -m "feat(brand): oxblood keyword emphasis on the header wordmark"
 ### Task 6: Sanity Studio theme
 
 **Files:**
+
 - Modify: `studio/sanity.config.ts` (`studioThemeProps`, `DISPLAY_STACK`, `BODY_STACK`)
 - Modify: `studio/components/StudioLayout.tsx` (the Google Fonts `<link>`)
 
@@ -447,6 +464,7 @@ https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,
 ```bash
 npm run studio:dev
 ```
+
 Expected: Studio loads at its local URL with the oxblood accent, deep-oxblood top bar, and Fraunces/Source Sans 3 fonts. No console errors.
 
 - [ ] **Step 5: Commit**
@@ -461,6 +479,7 @@ git commit -m "feat(brand): match Sanity Studio theme to Oxblood & Stone"
 ### Task 7: Favicon (PA monogram) and OG image
 
 **Files:**
+
 - Create: `scripts/generate-favicon.mjs`
 - Modify: `public/favicon.png`, `public/apple-touch-icon.png` (generated)
 - Modify: `scripts/generate-og-default.mjs` (wordmark + tagline), then regenerate `public/og-default.png`
@@ -500,6 +519,7 @@ Note: Fraunces is not installed as a system font for `sharp`/librsvg, so the SVG
 ```bash
 node scripts/generate-favicon.mjs
 ```
+
 Expected: both PNGs written. Open them and confirm a cream "PA" on an oxblood rounded square.
 
 - [ ] **Step 3: Update the OG default inputs in `scripts/generate-og-default.mjs`**
@@ -521,6 +541,7 @@ Then read `scripts/lib/render-og.mjs` and confirm it picks up brand colors from 
 ```bash
 npm run og
 ```
+
 Expected: `public/og-default.png` rewritten on the oxblood palette. Open and confirm.
 
 - [ ] **Step 5: Commit**
@@ -541,6 +562,7 @@ git commit -m "feat(brand): PA-monogram favicon and rebranded OG image"
 ```bash
 npm run build
 ```
+
 Expected: success, no warnings about missing Sanity (the env is configured), no font import errors.
 
 - [ ] **Step 2: Visual pass with the Playwright MCP**
@@ -567,6 +589,7 @@ Run a Lighthouse audit (chrome-devtools MCP) on the home page, desktop. Acceptan
 git push -u origin rebrand/presbyterian-academy
 gh pr create --title "Rebrand to The Presbyterian Academy" --body "Applies the approved Oxblood & Stone brand: identity stamp, palette + type tokens, plainspoken wordmark, PA-monogram favicon, OG image, and Studio theme. Spec: docs/superpowers/specs/2026-06-13-brand-identity-design.md"
 ```
+
 (Confirm with the user before pushing, per the push guardrail. Merging to `main` triggers the Cloudflare production build.)
 
 - [ ] **Step 2: After merge, deploy the Studio**
@@ -576,6 +599,7 @@ Because `studio/sanity.config.ts` (schema/theme) changed, deploy the hosted Stud
 ```bash
 npm run studio:deploy
 ```
+
 Pick the host `presbyterian-academy` when prompted (fallback `presacademy-studio` if taken); pin the printed appId in `studio/sanity.cli.ts` and commit it.
 
 - [ ] **Step 3: Confirm production**

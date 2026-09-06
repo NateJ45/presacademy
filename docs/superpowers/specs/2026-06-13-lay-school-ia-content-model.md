@@ -21,22 +21,22 @@
 **Header CTA pair (persistent):** "Request info" (-> `/get-started`) and "Book a free intro" (-> `/get-started#intro` Calendly).
 **Footer:** PC(USA) identity statement, contact (named humans + email + phone + address), socials, secondary links (Pricing, FAQ, For You, Privacy).
 
-| Route | Type | Purpose |
-|---|---|---|
-| `/` | `homePage` singleton (rebuilt) | Thesis hero, identity, wayfinding, start-here rail, proof, catalog + faculty preview, conversion. |
-| `/courses` | `coursesPage` singleton + `course` collection | Catalog with topic/teacher/term filters + "Start here" rail. |
-| `/courses/[slug]` | `course` | Fixed detail: facts strip (next term, start, schedule, venue, price), overview, who-it's-for, session arc, instructor, dual CTA. |
-| `/faculty` | `facultyPage` singleton + `facultyMember` collection | Filterable teacher roster; degree-line under each name. |
-| `/faculty/[slug]` | `facultyMember` | Structured CV bio (degrees, ordination, publications, derived courses taught). |
-| `/about` | `aboutPage` singleton (repurposed) | Mission, Reformed/PC(USA) identity, What We Believe (folded in), how we define formation, history (founder + year), Statement of Faith, leadership. |
-| `/events` + `/events/[slug]` | `eventsPage` + `event` (repurposed) | Info sessions, open lectures, workshops, webinars, term starts, application deadlines. |
-| `/resources` + `/resources/[slug]` | `resourcesPage` + `resource`/`page` | Teaching articles / formation essays (SEO + funnel). Reuses the existing journal route + blocks. |
-| `/pricing` | `pricingPage` singleton + `pricingTier` | Plain prices + bundle math + scholarship posture. |
-| `/get-started` | `getStartedPage` singleton + `form` ref | Express-interest form + Calendly intro + "visit a class" + syllabus download. |
-| `/for-you` | `forYouPage` singleton | Named lay personas, each resolving to one CTA. |
-| `/faq` | `faqPage` + `faqItem`/`faqCategory` | Grouped Q&A (cost, format, who it's for, Reformed identity). |
-| `/contact` | `contactPage` (repurposed) | Named contacts, email, phone, address, map. |
-| `/privacy`, `/404`, `/sitemap-index.xml` | as-is | Standard. |
+| Route                                    | Type                                                 | Purpose                                                                                                                                             |
+| ---------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                      | `homePage` singleton (rebuilt)                       | Thesis hero, identity, wayfinding, start-here rail, proof, catalog + faculty preview, conversion.                                                   |
+| `/courses`                               | `coursesPage` singleton + `course` collection        | Catalog with topic/teacher/term filters + "Start here" rail.                                                                                        |
+| `/courses/[slug]`                        | `course`                                             | Fixed detail: facts strip (next term, start, schedule, venue, price), overview, who-it's-for, session arc, instructor, dual CTA.                    |
+| `/faculty`                               | `facultyPage` singleton + `facultyMember` collection | Filterable teacher roster; degree-line under each name.                                                                                             |
+| `/faculty/[slug]`                        | `facultyMember`                                      | Structured CV bio (degrees, ordination, publications, derived courses taught).                                                                      |
+| `/about`                                 | `aboutPage` singleton (repurposed)                   | Mission, Reformed/PC(USA) identity, What We Believe (folded in), how we define formation, history (founder + year), Statement of Faith, leadership. |
+| `/events` + `/events/[slug]`             | `eventsPage` + `event` (repurposed)                  | Info sessions, open lectures, workshops, webinars, term starts, application deadlines.                                                              |
+| `/resources` + `/resources/[slug]`       | `resourcesPage` + `resource`/`page`                  | Teaching articles / formation essays (SEO + funnel). Reuses the existing journal route + blocks.                                                    |
+| `/pricing`                               | `pricingPage` singleton + `pricingTier`              | Plain prices + bundle math + scholarship posture.                                                                                                   |
+| `/get-started`                           | `getStartedPage` singleton + `form` ref              | Express-interest form + Calendly intro + "visit a class" + syllabus download.                                                                       |
+| `/for-you`                               | `forYouPage` singleton                               | Named lay personas, each resolving to one CTA.                                                                                                      |
+| `/faq`                                   | `faqPage` + `faqItem`/`faqCategory`                  | Grouped Q&A (cost, format, who it's for, Reformed identity).                                                                                        |
+| `/contact`                               | `contactPage` (repurposed)                           | Named contacts, email, phone, address, map.                                                                                                         |
+| `/privacy`, `/404`, `/sitemap-index.xml` | as-is                                                | Standard.                                                                                                                                           |
 
 **Retired routes (and their content types):** `/worship` (`worshipPage`), `/sermons` + `/sermons/[slug]` (`sermon`, `sermonsPage`), `/give` (`givePage`), `/serve` (`servePage`), `/grow` (`growPage`), `/kids` (`kidsPage`), `/food` (`foodPage`), `/music` (`musicPage`), `/weddings` (`weddingsPage`), `/use-our-space` (`useOurSpacePage`), `/what-we-believe` (`beliefsPage`, content folded into About), `/pastor-staff` (`staffPage`, replaced by `/faculty`). Plus the `worshipResource` collection and (proposed) the `ministry` collection.
 
@@ -75,13 +75,16 @@
 Conventions reused from the existing model: the SEO triad (`seoTitle`/`seoDescription`/`seoImage`+alt), the hero set (`heroEyebrow`/`heroHeadline`/`heroSubhead`/`heroImage`/`heroKeyword`), `ctaBlock` for buttons, and `flexibleSections` (the page builder) on singletons. New collection/object types:
 
 ### `teachingArea` (collection — the shared taxonomy)
+
 The structural keystone: referenced by BOTH `course` and `facultyMember` so Courses and Faculty filter on one vocabulary.
+
 - `title` (string, required) — e.g. "Reformed Theology", "Scripture", "Prayer & Spiritual Life"
 - `slug` (slug, from title, required)
 - `description` (text, optional) — one line for catalog headers
 - `displayOrder` (number)
 
 ### `term` (collection — the cohort calendar; SINGLE SOURCE OF TRUTH for dates)
+
 - `title` (string, required) — e.g. "Fall 2026"
 - `slug` (slug, required)
 - `startDate` (date, required), `endDate` (date)
@@ -92,6 +95,7 @@ The structural keystone: referenced by BOTH `course` and `facultyMember` so Cour
 The global "next cohort starts" cue is DERIVED by query (`*[_type=="term" && startDate > now()] | order(startDate) [0]`), not stored on `siteSettings`.
 
 ### `course` (collection)
+
 - `title` (string, required) — human-readable, no course codes
 - `slug` (slug, required)
 - `summary` (text, max 240, required) — catalog card + meta description
@@ -112,6 +116,7 @@ The global "next cohort starts" cue is DERIVED by query (`*[_type=="term" && sta
 Note: "Courses taught" on a faculty bio is derived from `course.instructors` via GROQ (`*[_type=="course" && references(^._id)]`); there is intentionally NO `facultyMember.coursesTaught` field, to avoid two-way-reference desync.
 
 ### `facultyMember` (collection — replaces `staffMember`)
+
 - `name` (string, required), `honorific` (string: Dr. / Rev. / Dr. Rev.)
 - `slug` (slug, required)
 - `title` (string, required) — plain-English teaching role
@@ -128,6 +133,7 @@ Note: "Courses taught" on a faculty bio is derived from `course.instructors` via
 - `email` (string, optional), `displayOrder` (number)
 
 ### `testimonial` (collection — a re-add; an interior-designer `testimonial` type existed and was removed in the church remodel, so confirm no leftover `Testimonial` in `src/lib/sanity.types.ts` before adding)
+
 - `quote` (text, required), `name` (string, required)
 - `role` (string) — occupation ("Ruling elder", "Sunday-school teacher")
 - `city` (string)
@@ -136,6 +142,7 @@ Note: "Courses taught" on a faculty bio is derived from `course.instructors` via
 - `featured` (bool), `displayOrder` (number)
 
 ### `pricingTier` (collection)
+
 - `name` (string, required) — "Per course", "Audit", "Full Certificate Track"
 - `slug` (slug)
 - `amount` (number), `unit` (string: per course / per track / per term)
@@ -143,6 +150,7 @@ Note: "Courses taught" on a faculty bio is derived from `course.instructors` via
 - `isAudit` (bool), `featured` (bool), `displayOrder` (number)
 
 ### New page singletons (all via the `definePageSingleton` factory in `churchPages.ts`, which gives each a hero set + SEO + `flexibleSections` + `finalCta`; per-page `extra.fields` enumerated below)
+
 - **`coursesPage`** — `catalogIntro` (text), `filterLabel` fields, `startHereEyebrow`/`startHereHeadline`, `emptyState` (string).
 - **`facultyPage`** — `directoryIntro` (text), `aggregateTrustLine` (string, e.g. "Every teacher is an ordained PC(USA) minister or a credentialed Reformed scholar"), `filterLabel`.
 - **`pricingPage`** — `pricingIntro` (text), `scholarshipEyebrow`/`scholarshipHeadline`/`scholarshipBody` (Portable Text), `footnote` (string).
@@ -157,29 +165,36 @@ The express-interest form itself is configured on the referenced `form` document
 ## 4. Content model — modified existing types
 
 ### `event` (repurpose, keep collection)
+
 - Change `category` options to: Info Session, Open Lecture, Workshop, Webinar / Online, Term Start, Application Deadline, Community, Other. (Webinar/Online covers the brief's "webinars" without a full online-course modality.)
 - Remove `liturgicalSeason` and `specialService` (church-only), via schema removal + reseed on placeholder data; never the Studio "Remove field" button on a live dataset.
 - Keep `eventType` (recurring/oneTime), `start`/`end`, `location`, `registrationUrl`/`registrationLabel`, `cost`, `image`, `featured`.
 - Reseed AFTER the schema change so no event keeps an orphaned `category: "Worship"`.
 
 ### `siteSettings` (trim church plumbing, add school identity)
+
 - Remove/retire: `worshipService` (and the `serviceTime.ts` chain it feeds — see §6), `watchUrl`, `giveUrl`, `appUrl`, `directoryUrl`, `prayerUrl`, `pastorEmail`.
 - Keep: `title`, `tagline`, `mission`, `email`, `phone`, `officeHours`, `favicon`, `addressLine`, `cityStateZip`, geo, `navItems`, `footerColumns`, socials, `seoImage`, `newsletter`, footer credit.
 - Add: `denominationStatement` (text — the PC(USA)/Reformed footer line), `admissionsEmail` (string), `mapEmbedUrl` (url, contact page). The "next cohort starts" cue is derived from `term` by query, NOT stored here.
 
 ### `aboutPage` (absorb the beliefs content)
+
 Add the What We Believe fields previously on `beliefsPage` (scripture quote, distinctives cards, statement-of-faith body) so About becomes the single identity page.
 
 ### `faqPage.categoryOrder` defaults
+
 Reseed categories to: Courses & Format, Cost & Scholarships, Who It's For, Reformed Identity, Getting Started.
 
 ### `homePage`
+
 Retire the church-specific field groups (`thisSunday`, `seasonalHero` Advent framing, `serviceBand`, `weeklyRhythms`, the inclusive-welcome band) and add the school home fields (wayfinding tiles, start-here rail selection, stat/heritage band items, faculty-strip selection). Detailed field diff in the build plan.
 
 ### `blocks.ts` -> `sectionDynamicList.source` (update the enum NOW, with the schema work)
+
 Replace the church source options (`latestSermons`, `ministries`, `staff`, `worshipResources`) with school sources (`featuredCourses`, `upcomingEvents`, `faculty`, `latestResources`). The matching switch in `src/components/blocks/DynamicListBlock.astro` and the helper functions in `src/lib/queries.ts` must change in the same pass (see §6).
 
 ### `staffMember` -> retired
+
 Introduce `facultyMember` as a NEW type rather than mutating `staffMember` in place (avoids the destructive "Remove field" path and keeps the diff clean). Remove `staffMember` from registration + desk after faculty is seeded; delete its placeholder docs in the reseed; remove the `staff` source from `sectionDynamicList` and the `staffMember` case from `urlForDoc` in the same schema pass so nothing dangles.
 
 ---
@@ -204,6 +219,7 @@ After all schema changes: `npm run typegen` then `npm run studio:deploy`, then c
 ## 6. Code-integration landmines (must-fix during build; expanded post-review)
 
 **CRITICAL**
+
 - **`churchPages.ts` factory file** (see §5.1) defines all church page singletons and exports `CHURCH_PAGE_TYPES`. Retirement happens here, not by deleting 11 separate files.
 - **`serviceTime.ts` full consumer chain** — removing `src/lib/serviceTime.ts` requires touching every importer: `src/components/Header.astro` (`:23,75`, utility-bar time), `src/components/Footer.astro`, `src/pages/index.astro` (`:26,157`), `src/pages/worship.astro` (retired anyway), `src/lib/schemas.ts` (`:11,40`, JSON-LD opening hours), `src/lib/siteSettings.ts` (`worshipService` flows through `resolveSiteSettings`, ~`:52,107,185`), and the `worshipService` projection in `src/lib/queries.ts`. Pull `worshipService` from the schema AND from `siteSettings.ts` + `queries.ts`, or types break.
 - **JSON-LD `churchSchema()`** in `src/lib/schemas.ts:35-90` emits `'@type': 'Church'` (`:54`), `'@id': '.../#church'` (`:55`), and an `openingHoursSpecification` (`:75-80`) from `serviceTime`. It is injected on every page by `src/layouts/BaseLayout.astro:104,169`. Rename to an `EducationalOrganization` schema, drop the opening-hours block, fix the `@id` anchor, and update the BaseLayout call site. Orphaned `serviceListSchema`/`projectSchema` exports (point at `/services`, `/portfolio`) can be deleted.
@@ -211,6 +227,7 @@ After all schema changes: `npm run typegen` then `npm run studio:deploy`, then c
 - **`scripts/generate-og-pages.mjs`** has a hardcoded `SINGLETONS` array (`:84-103`) of church pages with church default titles, and a church `WORDMARK` default. Rewrite to the school singletons or new routes get no per-page OG card (silent fallback to `og-default.png`).
 
 **SHOULD-FIX**
+
 - **`src/components/CtaLink.astro` route table** (`TYPE_TO_PATH`, `:61-82`) hardcodes church singleton -> path; fallback is `/contact` (`:49`), so a missed/renamed type silently lands on Contact. Replace with the new singleton routes.
 - **`studio/schemaTypes/ctaBlock.ts` `internalLink.to[]`** (`:49-59`) lists the 11 church singletons; both files carry "keep these two in sync" comments. Every type in `ctaBlock.ts` `to[]` needs a matching `TYPE_TO_PATH` entry in `CtaLink.astro`.
 - **`src/components/Header.astro` has THREE church couplings:** `FALLBACK_NAV_ITEMS` (`:130-151`, the default nav), the utility bar rendering `serviceTimes` + Watch Live + Give (`:204-233`, via `watchHref`/`giveHref` from `siteSettings.ts:186-187`), and a hardcoded "Plan a Visit" CTA -> `/worship` (`:371-380`). All three must be reworked to school equivalents.
@@ -218,6 +235,7 @@ After all schema changes: `npm run typegen` then `npm run studio:deploy`, then c
 - **`urlForDoc()` collection cases** in `sanity.config.ts` (`sermon` `:122`, `staffMember` `:123`) need removal alongside the singleton cases.
 
 **NICE-TO-HAVE / NOTE**
+
 - **`@astrojs/sitemap`** (`astro.config.mjs:21`) auto-generates the sitemap from built pages (only `/404` filtered), so retired routes drop and new ones appear with no manual edit. There is NO `public/robots.txt` source file in the repo (CLAUDE.md lists one as foundation; confirm the actual generation path before assuming an edit target).
 - **Arch motif as church iconography** — `ArchOrnament.astro` / `ArchMedia.astro` / `.arch-top` describe themselves as "the sanctuary's Romanesque arched windows / the nave elevation." This is a Phase-3 design-language decision (brief: rethink or drop the arch), flagged here so it does not silently survive.
 
@@ -232,6 +250,7 @@ Schemas + `sectionDynamicList`/`ctaBlock`/`urlForDoc` updates + `typegen` + `stu
 ## 8. Seed-phase voice guardrail (applies to all placeholder copy in Phase 4)
 
 Every seeded Sanity string is live site copy and MUST follow `docs/brand/voice.md` and the CLAUDE.md rules:
+
 - **No em-dashes** in any visitor-facing copy (course summaries, faculty bios, testimonials, page copy). Use commas, colons, or split sentences.
 - **Banned vocabulary** includes the generic AI-tells (delve, leverage, robust, seamless, elevate, transformative, curated experience, tailored solutions, etc.) and the church-copy bans (worship experience, life-changing, do life together, on fire for, authentic community). Watch that testimonials read transformation-focused WITHOUT the banned "life-changing"/"transformative."
 - **Faculty bios** carry the research §G guardrails: credentials present but lightweight, always wrapped in one warm human line. No endowed-chair titles, rank ladders, exhaustive degree stacks, output-bragging, or CV downloads.

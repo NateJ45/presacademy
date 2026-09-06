@@ -16,11 +16,11 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: "07:00"
+      time: '07:00'
       timezone: America/New_York
     groups:
       minor-and-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
     open-pull-requests-limit: 5
     # The Sanity stack (sanity, @sanity/*, react, react-dom) is pinned to exact
     # versions on purpose: 15cc9d1 pinned it to the versions proven in WCP, and
@@ -30,22 +30,22 @@ updates:
     # whole minor-and-patch group down with it on 2026-09-04. That stack moves
     # by hand, together, when WCP has proven the next set.
     ignore:
-      - dependency-name: "sanity"
-      - dependency-name: "@sanity/*"
-      - dependency-name: "react"
-      - dependency-name: "react-dom"
+      - dependency-name: 'sanity'
+      - dependency-name: '@sanity/*'
+      - dependency-name: 'react'
+      - dependency-name: 'react-dom'
       # The sanity-plugin-* set is pinned for the same reason: 2026-09-04 the
       # regenerated group bumped asset-source-unsplash and documents-pane, which
       # import @sanity/ui/tooltip that the pinned @sanity/ui 3.3.5 does not export.
-      - dependency-name: "sanity-plugin-*"
+      - dependency-name: 'sanity-plugin-*'
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
       day: monday
-      time: "07:00"
+      time: '07:00'
       timezone: America/New_York
     groups:
       actions:
-        update-types: ["major", "minor", "patch"]
+        update-types: ['major', 'minor', 'patch']

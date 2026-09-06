@@ -83,7 +83,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage
     pageType="faqPage"
     {page}
@@ -96,8 +103,10 @@ const schemas = [
       cta: { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started' },
     }}
   >
-    {/* Hero — photo variant, short height. Rendered here rather than inside
-        SingletonPage so its scoped style stays on the pages that use it. */}
+    {
+      /* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */
+    }
     <Hero
       slot="hero"
       eyebrow={heroEyebrow}

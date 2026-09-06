@@ -30,12 +30,14 @@ The primary CTA button extends `src/components/ui/button.tsx` with `variant="bra
 The core component set, by role. All in `src/components/` unless noted.
 
 **Page chrome:**
+
 - `Header.astro` -- two-row desktop (utility bar + main nav), single-row mobile. Sticky-with-hide-on-scroll-down behavior wired via `.site-header`. The utility bar carries **live enrollment status** -- it queries the soonest upcoming term via `getNextTerm()` and shows "Now enrolling · {term} begins {date}" with a pulsing `.enroll-dot` (links to `/courses`), falling back to `settings.tagline` when no term is scheduled -- plus tap-to-call, a "Request info" link, and the theme toggle. On mobile the enrollment line collapses to a short form (just the term title) and the phone number / city hide. The bar runs on all viewports (cream on deep green).
 - `Footer.astro` -- a printed-book **colophon** (the bookish brand idiom): an oversized Fraunces wordmark masthead + mission + two CTAs; an editorial imprint row (where-we-meet/contact, the editor-managed nav index, follow-along, each column under a brass eyebrow rule); a funding-acknowledgment line ("Made possible by the {funder}", driven by `siteSettings.funder`); and a colophon bar (a "PA" monogram seal, locality + denomination, auto-year copyright, legal links, and the always-shown designer credit). The "Set in Fraunces & Source Sans 3" typeface credit was removed (a printed-book touch that read as out of place). Faint graph-paper dot texture sits on the green band. Optional newsletter signup mounts above the masthead when `siteSettings.newsletter.enabled`.
 - `MobileNav.tsx` -- shadcn Sheet drawer (`client:only="react"` -- Radix portal can't SSR). Primary CTA, tagline, nav links, email + phone + socials + theme toggle, logo at bottom.
 - `BaseLayout.astro` -- anti-FOUC theme bootstrap, View Transitions, Lenis init, scroll-reveal observer, sticky-header scroll listener.
 
 **Hero + page-top:**
+
 - `Hero.astro` -- image variant (full-bleed photo + gradient overlay) OR text variant (delegates to SectionHeading). Accepts `backgroundImage` for a single Sanity image or `backgroundImages` array for a cross-fading slideshow (falls back to single image for non-home pages). Image variant passes `onDark` to CTAs automatically. On the home page (`size="tall"`) it fills the viewport below the sticky header and shows a soft pulsing scroll cue.
 - `HeroBackground.astro` -- the FULL-BLEED hero background layer. Renders a single static `SanityImage` for 0-1 images, or a JS-driven cross-fading Ken Burns slideshow for 2+. Used only by `Hero.astro` (interior-page heroes).
 - `HeroSlideshow.astro` -- the HOME split-hero's framed image slideshow (the `aspect-[3/2] lg:aspect-[4/5]` box beside the headline, in `index.astro`). CSS-ONLY Ken Burns cross-fade + slow pan-zoom, with the `@keyframes` stops and each slide's `animation-delay` GENERATED from the image count (no interval timer). Reads `homePage.heroImages`: 0 -> empty well, 1 -> static, 2+ -> slideshow. First slide eager/LCP, the rest lazy + decorative; reduced-motion shows a still first frame. Serves 4:5-CROPPED variants (`height=width*1.25`) so the tall portrait crop stays crisp, which means **hero source images must be high-res** (~2000px+; low-res sources pixelate in the crop). Distinct from `HeroBackground.astro` (full-bleed, JS-driven). Added 2026-06-14 (4:5 crop-serve + high-res sourcing added the same day).
@@ -45,6 +47,7 @@ The core component set, by role. All in `src/components/` unless noted.
 - `ReadingProgress.astro` -- fixed 3px accent track at the top of `<article>`-wrapped pages. Used on journal posts.
 
 **Marketing cards (all share the brand-stripe + resting-shadow rhythm):**
+
 - `CourseCard.astro` -- catalog + home-strip course card. **Responsive shape:** on mobile it is a compact row -- a square cover thumbnail beside the text (`grid grid-cols-[7rem_1fr] items-start gap-4`, cover `aspect-square`, smaller `text-h5` title) so the catalog and the home course strips stay quick to scroll; from `sm` up it switches to `sm:block` and becomes the full Rule & Ledger card with the `aspect-[3/2]` cover banner on top and the `text-h4` title. Cover uses the `.img-zoom` + `.img-tint-evergreen` green-duotone hover. The `sizes` attr tracks both shapes (`7rem` on mobile, up to `360px` on desktop). Carries the brass `bg-gold` top stripe (hover -> `bg-primary`), the teaching-area eyebrow, and a status pill.
 - `FacultyCard.astro` -- faculty index card; a compact 96px-thumbnail row (already compact, not changed in the mobile audit).
 - `ServiceCard.astro` -- service tier (price + features + best-for + CTA).
@@ -70,12 +73,12 @@ The home and about pages' built-in sections are now **editor-driven**: their sch
 2. **Cover image** -- `max-w-4xl mx-auto px-m` (~896 px), `<SanityImage width={1800} loading="eager" sizes="(min-width: 920px) 896px, 100vw">`. Reads as an editorial feature, not a billboard.
 3. **Body grid with optional TOC** -- extract h2/h3/h4 headings via `extractHeadings(body)`, set `hasToc = headings.length > 0`, then use this grid template:
    ```astro
-   <div class:list={[
-     'mx-auto max-w-content px-m py-section-lg grid grid-cols-1 gap-section-md lg:justify-center',
-     hasToc
-       ? 'lg:grid-cols-[260px_minmax(0,48rem)]'
-       : 'lg:grid-cols-[minmax(0,48rem)]',
-   ]}>
+   <div
+     class:list={[
+       'mx-auto grid max-w-content grid-cols-1 gap-section-md px-m py-section-lg lg:justify-center',
+       hasToc ? 'lg:grid-cols-[260px_minmax(0,48rem)]' : 'lg:grid-cols-[minmax(0,48rem)]',
+     ]}
+   >
      {hasToc && <CaseStudyTOC client:idle headings={headings} />}
      <article>...</article>
    </div>
@@ -90,11 +93,13 @@ The Portable Text renderer (`JournalPortableText.tsx`) detects image orientation
 **Module-specific detail layouts** (portfolio/case study, before/after, shop, etc.) live under `modules/` and are documented in `docs/modules/`. The long-read grid pattern above is shared between the journal and any module that adds a long-form detail page.
 
 **Contact page pieces:**
+
 - `ContactForm.tsx` -- Name / Email / Phone / Message, plus any project-specific fields. See form section in `docs/agent/sanity.md`.
 - `CopyEmailButton.tsx` -- mailto link + clipboard fallback.
 - `CalendlyInline.tsx` -- click-to-load Calendly iframe placeholder. Heavy widget stays off the budget until the visitor opts in.
 
 **Site-wide affordances:**
+
 - `StickyCTAChip.tsx` -- bottom-floating brand pill that appears past 50% scroll on long pages. Simple threshold-based visibility with a 2% hysteresis band. Positioning: always `bottom-[5.5rem]` (above the BackToTop button at `bottom-6`). Labels are Sanity-editable via the page singleton's `stickyCtaLabel` field; empty string hides the chip.
 - `SectionDivider.astro` -- brand ornament between sections that share a background color (variants: `ornament` (default) / `line` / `dots`).
 - `JournalPortableText.tsx` -- journal body renderer with custom block types (pullQuote, beforeAfter, sourceCard, tipCallout, imageGallery, divider, videoEmbed) + a `sourcedFrom` annotation mark for inline vendor mentions. Adds the `.prose-drop-cap` float cap to the first paragraph and renders blockquotes as `.prose-blockquote`.
@@ -102,6 +107,7 @@ The Portable Text renderer (`JournalPortableText.tsx`) detects image orientation
 - `ThemeToggle.tsx`, `BackToTop.tsx`, `SanityImage.astro`, `CtaLink.astro`.
 
 **Sanity Studio components (in `studio/components/`):**
+
 - `GuideView.tsx` -- renders one "How This Works" help guide as a read-only desk pane. Content is repo-based data in `studio/guides/content.tsx` (12 plain-English guides for church staff); the guide to show is chosen per desk item via `.options({ guideSlug })`. Replaces the interior-designer "Start Here" handbook (the old `StudioGuide` / `BusinessOverview` / `BrandKit` / `StudioPlaybook` panels and their `studioGuide` / `studioNotes` / `studioPlaybook` singletons were removed in the remodel).
 - `StudioLogo.tsx` -- the Studio header logo: the church building mark (same image as the favicon, `church-mark.png`) on a paper chip next to the church wordmark in the display serif, wired via `studio.components.logo`.
 - `StudioLayout.tsx` -- wraps the Studio (`studio.components.layout`) to inject the brand web fonts so the themed serif families resolve.
@@ -117,6 +123,7 @@ The desktop nav dropdowns live directly in `Header.astro` as SSR'd `<details>` (
 ### CtaLink `onDark` prop
 
 `src/components/CtaLink.astro` accepts an `onDark?: boolean` prop. When true:
+
 - **Secondary variant** swaps from `border-primary text-link` (brand accent on light) to `border-white/70 text-white hover:bg-white/10` (cream on dark).
 - **Focus ring** offsets against `transparent` instead of `--background` so the ring still reads on photographic surfaces.
 

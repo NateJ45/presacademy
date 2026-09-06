@@ -33,9 +33,14 @@ interface Props {
         siteName?: string;
         // Church utility-bar content. All optional with real fallbacks below, so
         // the bar is never empty before Sanity is wired.
-        worshipService?: { time?: string; day?: string; startTime24?: string; endTime24?: string } | null; // single source for the service time
-        giveUrl?: string;        // giving portal; falls back to the /give page
-        watchUrl?: string;       // livestream; falls back to the /sermons page
+        worshipService?: {
+          time?: string;
+          day?: string;
+          startTime24?: string;
+          endTime24?: string;
+        } | null; // single source for the service time
+        giveUrl?: string; // giving portal; falls back to the /give page
+        watchUrl?: string; // livestream; falls back to the /sermons page
       })
     | null;
 }
@@ -140,211 +145,256 @@ function isGroupActive(items: { href: string }[]) {
 ---
 
 <header class="site-header bg-background">
-  {/* Brand accent stripe — same visual signature used at the top of the
-      mobile menu drawer. Visible on every viewport. */}
+  {
+    /* Brand accent stripe — same visual signature used at the top of the
+      mobile menu drawer. Visible on every viewport. */
+  }
   <div class="h-1 bg-primary" aria-hidden="true"></div>
 
-  {/* Utility bar (all viewports). It earns its keep by carrying the one timely,
+  {
+    /* Utility bar (all viewports). It earns its keep by carrying the one timely,
       decision-relevant thing a prospective student wants on every page — the
       live enrollment status / next cohort — plus tap-to-call, the Request-info
       action, and the theme toggle. Falls back to the identity line when no term
-      is scheduled. Cream on deep green (~9:1 contrast). */}
+      is scheduled. Cream on deep green (~9:1 contrast). */
+  }
   <div class="bg-chapel text-chapel-foreground">
-    <div class="mx-auto flex max-w-content items-center justify-between gap-m px-m sm:px-l py-1.5 text-[0.7rem] sm:text-xs">
-      {nextTerm ? (
-        <a
-          href="/courses"
-          class="flex min-w-0 items-center gap-2 hover:text-white transition-colors"
-          aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
-        >
-          <span class="enroll-dot" aria-hidden="true"></span>
-          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">Now enrolling</span>
-          <span class="hidden sm:inline text-chapel-foreground/40" aria-hidden="true">·</span>
-          <span class="hidden sm:inline truncate text-chapel-foreground/85">{nextTerm.title} begins {fmtTermDate(nextTerm.startDate)}</span>
-          <span class="sm:hidden truncate text-chapel-foreground/85">{nextTerm.title}</span>
-        </a>
-      ) : (
-        <p class="flex min-w-0 items-center gap-2">
-          <span class="font-semibold uppercase tracking-eyebrow whitespace-nowrap">{settings.tagline ?? 'Reformed lay formation'}</span>
-          {cityLine && (
-            <>
-              <span class="hidden sm:inline text-chapel-foreground/40" aria-hidden="true">·</span>
-              <span class="hidden sm:inline truncate text-chapel-foreground/80">{cityLine}</span>
-            </>
-          )}
-        </p>
-      )}
+    <div
+      class="mx-auto flex max-w-content items-center justify-between gap-m px-m py-1.5 text-[0.7rem] sm:px-l sm:text-xs"
+    >
+      {
+        nextTerm ? (
+          <a
+            href="/courses"
+            class="flex min-w-0 items-center gap-2 transition-colors hover:text-white"
+            aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
+          >
+            <span class="enroll-dot" aria-hidden="true" />
+            <span class="font-semibold tracking-eyebrow whitespace-nowrap uppercase">
+              Now enrolling
+            </span>
+            <span class="hidden text-chapel-foreground/40 sm:inline" aria-hidden="true">
+              ·
+            </span>
+            <span class="hidden truncate text-chapel-foreground/85 sm:inline">
+              {nextTerm.title} begins {fmtTermDate(nextTerm.startDate)}
+            </span>
+            <span class="truncate text-chapel-foreground/85 sm:hidden">{nextTerm.title}</span>
+          </a>
+        ) : (
+          <p class="flex min-w-0 items-center gap-2">
+            <span class="font-semibold tracking-eyebrow whitespace-nowrap uppercase">
+              {settings.tagline ?? 'Reformed lay formation'}
+            </span>
+            {cityLine && (
+              <>
+                <span class="hidden text-chapel-foreground/40 sm:inline" aria-hidden="true">
+                  ·
+                </span>
+                <span class="hidden truncate text-chapel-foreground/80 sm:inline">{cityLine}</span>
+              </>
+            )}
+          </p>
+        )
+      }
 
       <div class="flex shrink-0 items-center gap-3 sm:gap-m">
-        {phone && (
-          <a
-            href={telHref(phone)}
-            class="inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 hover:text-white transition-colors"
-            aria-label={`Call ${phone}`}
-          >
-            <Phone size={13} strokeWidth={1.75} aria-hidden="true" />
-            <span class="hidden sm:inline tabular-nums">{phone}</span>
-          </a>
-        )}
-        {/* Hidden on desktop (lg+): the primary CTA pill lives in the nav row
-            there, so this utility-bar link is the mobile/tablet CTA only. That
-            stops the same ask from appearing twice in the desktop header. */}
-        {headerCta.show && (
-          <>
-            <span class="hidden sm:inline lg:hidden h-3.5 w-px bg-chapel-foreground/25" aria-hidden="true"></span>
+        {
+          phone && (
             <a
-              href={headerCta.href}
-              class="lg:hidden uppercase tracking-eyebrow font-semibold text-chapel-foreground/90 hover:text-white transition-colors"
+              href={telHref(phone)}
+              class="inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 transition-colors hover:text-white"
+              aria-label={`Call ${phone}`}
             >
-              {headerCta.label}
+              <Phone size={13} strokeWidth={1.75} aria-hidden="true" />
+              <span class="hidden tabular-nums sm:inline">{phone}</span>
             </a>
-          </>
-        )}
-        {/* Theme toggle. Force cream + a soft-white hover so the button reads on
-            the green bar (its default dark ink would vanish). Hydrate on idle. */}
-        <div class="[&_button]:!text-chapel-foreground [&_button:hover]:!bg-white/10 [&_button:hover]:!text-white">
+          )
+        }
+        {
+          /* Hidden on desktop (lg+): the primary CTA pill lives in the nav row
+            there, so this utility-bar link is the mobile/tablet CTA only. That
+            stops the same ask from appearing twice in the desktop header. */
+        }
+        {
+          headerCta.show && (
+            <>
+              <span
+                class="hidden h-3.5 w-px bg-chapel-foreground/25 sm:inline lg:hidden"
+                aria-hidden="true"
+              />
+              <a
+                href={headerCta.href}
+                class="font-semibold tracking-eyebrow text-chapel-foreground/90 uppercase transition-colors hover:text-white lg:hidden"
+              >
+                {headerCta.label}
+              </a>
+            </>
+          )
+        }
+        {
+          /* Theme toggle. Force cream + a soft-white hover so the button reads on
+            the green bar (its default dark ink would vanish). Hydrate on idle. */
+        }
+        <div
+          class="[&_button]:!text-chapel-foreground [&_button:hover]:!bg-white/10 [&_button:hover]:!text-white"
+        >
           <ThemeToggle client:idle />
         </div>
       </div>
     </div>
   </div>
 
-  {/* Main nav row. Mobile (and tablet) center the logo; desktop ≥1024 px
+  {
+    /* Main nav row. Mobile (and tablet) center the logo; desktop ≥1024 px
       justifies logo left, nav+CTA grouped right. Breakpoint matches the
       eyebrow strip above — at viewports between md and lg the desktop
-      layout would squish, so mobile-style header stays in use. */}
-  <div class="relative mx-auto flex max-w-content items-center justify-center lg:justify-between px-l py-m border-b border-border">
-    {/* Text wordmark in the display serif. The brand is typographic by
+      layout would squish, so mobile-style header stays in use. */
+  }
+  <div
+    class="relative mx-auto flex max-w-content items-center justify-center border-b border-border px-l py-m lg:justify-between"
+  >
+    {
+      /* Text wordmark in the display serif. The brand is typographic by
         default, so it renders crisp at any density and needs no theme-swap
         machinery (it inherits the theme-aware foreground color). An uploaded
         Site Settings logo takes its place, capped to the header's height so a
-        large upload can't stretch the row. */}
+        large upload can't stretch the row. */
+    }
     <a
       href="/"
-      class="inline-flex flex-col leading-none hover:opacity-80 transition-opacity"
+      class="inline-flex flex-col leading-none transition-opacity hover:opacity-80"
       aria-label={`${brandName} home`}
     >
-      {logo ? (
-        <SanityImage
-          source={logo}
-          width={480}
-          alt={logo.alt || brandName}
-          loading="eager"
-          class="h-10 sm:h-12 w-auto object-contain"
-        />
-      ) : (
-        <>
-          <span class="font-display text-xl sm:text-2xl leading-none">
-            {line1Lead && <span class="text-foreground">{line1Lead}{' '}</span>}<span class="text-chapel-ink">{line1Key}</span>
-          </span>
-          {site.wordmark.line2 && (
-            <span class="font-display text-base sm:text-lg text-foreground/70 leading-tight mt-0.5">{site.wordmark.line2}</span>
-          )}
-        </>
-      )}
+      {
+        logo ? (
+          <SanityImage
+            source={logo}
+            width={480}
+            alt={logo.alt || brandName}
+            loading="eager"
+            class="h-10 w-auto object-contain sm:h-12"
+          />
+        ) : (
+          <>
+            <span class="font-display text-xl leading-none sm:text-2xl">
+              {line1Lead && <span class="text-foreground">{line1Lead} </span>}
+              <span class="text-chapel-ink">{line1Key}</span>
+            </span>
+            {site.wordmark.line2 && (
+              <span class="mt-0.5 font-display text-base leading-tight text-foreground/70 sm:text-lg">
+                {site.wordmark.line2}
+              </span>
+            )}
+          </>
+        )
+      }
     </a>
 
-    {/* Nav + CTA grouped on the right (lg+ only).
+    {
+      /* Nav + CTA grouped on the right (lg+ only).
 
         The desktop nav is server-rendered as real <a> tags (flat links) plus
         native <details> disclosure groups (the two dropdowns). Everything is in
         the HTML at build time — crawlable, keyboard-usable, and present before
         any JS runs (no flash, no CLS). The progressive-enhancement script at the
         bottom of this file layers on hover-to-open + outside-click/Escape/
-        navigation close; the nav is fully functional without it. */}
-    <div class="hidden lg:flex items-center gap-l">
+        navigation close; the nav is fully functional without it. */
+    }
+    <div class="hidden items-center gap-l lg:flex">
       <nav class="site-nav flex items-center gap-l" aria-label="Primary">
-        {NAV_ITEMS.map((item) =>
-          item.kind === 'flat' ? (
-            <a
-              href={item.href}
-              class:list={[
-                'nav-underline text-sm tracking-wide transition-colors',
-                isActive(item.href)
-                  ? 'text-link font-semibold'
-                  : 'text-foreground hover:text-link',
-              ]}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
-          ) : (
-            <details class="site-nav__group relative">
-              {/* <summary> is the disclosure toggle. It carries .nav-underline
+        {
+          NAV_ITEMS.map((item) =>
+            item.kind === 'flat' ? (
+              <a
+                href={item.href}
+                class:list={[
+                  'nav-underline text-sm tracking-wide transition-colors',
+                  isActive(item.href)
+                    ? 'font-semibold text-link'
+                    : 'text-foreground hover:text-link',
+                ]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <details class="site-nav__group relative">
+                {/* <summary> is the disclosure toggle. It carries .nav-underline
                   so it gets the same bronze underline as flat links, and
                   aria-current="page" (which locks the underline wide) when one
                   of its children is the active route. role/aria-expanded are
                   managed natively by <details>. */}
-              <summary
-                class:list={[
-                  'nav-underline text-sm tracking-wide transition-colors',
-                  'inline-flex items-center gap-0.5 cursor-pointer select-none list-none',
-                  'outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm',
-                  isGroupActive(item.items)
-                    ? 'text-link font-semibold'
-                    : 'text-foreground hover:text-link',
-                ]}
-                aria-current={isGroupActive(item.items) ? 'page' : undefined}
-              >
-                {item.label}
-                <ChevronDown
-                  size={14}
-                  className="site-nav__chevron mt-px transition-transform duration-150"
-                  aria-hidden="true"
-                />
-              </summary>
+                <summary
+                  class:list={[
+                    'nav-underline text-sm tracking-wide transition-colors',
+                    'inline-flex cursor-pointer list-none items-center gap-0.5 select-none',
+                    'rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    isGroupActive(item.items)
+                      ? 'font-semibold text-link'
+                      : 'text-foreground hover:text-link',
+                  ]}
+                  aria-current={isGroupActive(item.items) ? 'page' : undefined}
+                >
+                  {item.label}
+                  <ChevronDown
+                    size={14}
+                    className="site-nav__chevron mt-px transition-transform duration-150"
+                    aria-hidden="true"
+                  />
+                </summary>
 
-              {/* Menu panel. Absolutely positioned under the summary so it
+                {/* Menu panel. Absolutely positioned under the summary so it
                   doesn't shift layout. Uses popover tokens to match the mobile
                   drawer + shadcn dropdowns, and the bronze ring + shadow of the
                   card rhythm. */}
-              <div
-                class="site-nav__menu absolute left-0 top-full mt-2 min-w-[200px] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 z-50"
-              >
-                {item.items.map((sub) => (
-                  <a
-                    href={sub.href}
-                    class:list={[
-                      'block rounded-md px-2.5 py-1.5 text-sm transition-colors',
-                      'hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground outline-none',
-                      isActive(sub.href) ? 'font-semibold text-link' : 'text-foreground',
-                    ]}
-                    aria-current={isActive(sub.href) ? 'page' : undefined}
-                  >
-                    {sub.label}
-                  </a>
-                ))}
-              </div>
-            </details>
+                <div class="site-nav__menu absolute top-full left-0 z-50 mt-2 min-w-[200px] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10">
+                  {item.items.map((sub) => (
+                    <a
+                      href={sub.href}
+                      class:list={[
+                        'block rounded-md px-2.5 py-1.5 text-sm transition-colors',
+                        'outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground',
+                        isActive(sub.href) ? 'font-semibold text-link' : 'text-foreground',
+                      ]}
+                      aria-current={isActive(sub.href) ? 'page' : undefined}
+                    >
+                      {sub.label}
+                    </a>
+                  ))}
+                </div>
+              </details>
+            ),
           )
-        )}
+        }
       </nav>
-      {/* One primary CTA in the desktop header. The "free intro" path is still
+      {
+        /* One primary CTA in the desktop header. The "free intro" path is still
           surfaced just below in the hero and in the footer, so the header stays
           a single, unambiguous ask rather than two same-destination pills. Its
-          text and target are editable in Site Settings -> Header button. */}
-      {headerCta.show && (
-        <>
-          <span class="h-6 w-px bg-border-soft" aria-hidden="true"></span>
-          <a
-            href={headerCta.href}
-            class="press-tactile inline-flex items-center px-m py-2 rounded-full text-xs uppercase tracking-eyebrow font-semibold bg-primary text-primary-foreground hover:bg-primary-dark"
-          >
-            {headerCta.label}
-          </a>
-        </>
-      )}
+          text and target are editable in Site Settings -> Header button. */
+      }
+      {
+        headerCta.show && (
+          <>
+            <span class="h-6 w-px bg-border-soft" aria-hidden="true" />
+            <a
+              href={headerCta.href}
+              class="press-tactile inline-flex items-center rounded-full bg-primary px-m py-2 text-xs font-semibold tracking-eyebrow text-primary-foreground uppercase hover:bg-primary-dark"
+            >
+              {headerCta.label}
+            </a>
+          </>
+        )
+      }
     </div>
 
-    {/* client:idle, not client:only: the component server-renders its trigger
+    {
+      /* client:idle, not client:only: the component server-renders its trigger
         button and mounts the Radix Sheet after hydration, so React stays off
-        the LCP path (2026-09-04 Lighthouse pass). */}
-    <MobileNav
-      client:idle
-      links={NAV_LINKS}
-      siteSettings={mobileNavSettings}
-      {...mobileCtaProps}
-    />
+        the LCP path (2026-09-04 Lighthouse pass). */
+    }
+    <MobileNav client:idle links={NAV_LINKS} siteSettings={mobileNavSettings} {...mobileCtaProps} />
   </div>
 </header>
 
@@ -352,17 +402,30 @@ function isGroupActive(items: { href: string }[]) {
   /* Utility-bar "now enrolling" status dot — a soft lifted-green pulse so the
      timely enrollment line catches the eye without shouting. Reduced-motion safe. */
   .enroll-dot {
-    display: inline-block; flex: none;
-    width: 7px; height: 7px; border-radius: 9999px;
-    background: #9CC6AC;
+    display: inline-block;
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background: #9cc6ac;
     animation: enroll-pulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   @keyframes enroll-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(156, 198, 172, 0.55); }
-    70%  { box-shadow: 0 0 0 6px rgba(156, 198, 172, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(156, 198, 172, 0); }
+    0% {
+      box-shadow: 0 0 0 0 rgba(156, 198, 172, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(156, 198, 172, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(156, 198, 172, 0);
+    }
   }
-  @media (prefers-reduced-motion: reduce) { .enroll-dot { animation: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .enroll-dot {
+      animation: none;
+    }
+  }
 
   /* Desktop dropdown groups (native <details>). The links are server-rendered
      and fully usable with no JS; these styles + the script below add the
@@ -375,7 +438,7 @@ function isGroupActive(items: { href: string }[]) {
   .site-nav__group > summary::-webkit-details-marker,
   .site-nav__group > summary::marker {
     display: none;
-    content: "";
+    content: '';
   }
 
   /* Rotate the chevron when the group is open. */
@@ -394,18 +457,18 @@ function isGroupActive(items: { href: string }[]) {
   }
 </style>
 
-{/* Progressive enhancement for the desktop dropdown nav. Everything still
+{
+  /* Progressive enhancement for the desktop dropdown nav. Everything still
     works without this (native <details> toggles on click/Enter/Space, links
     are real <a> tags). This adds: open-on-hover with a small close delay,
     close-on-outside-click, close-on-Escape, and close-when-a-link-is-followed.
-    Re-binds on astro:page-load so it survives View Transitions navigations. */}
+    Re-binds on astro:page-load so it survives View Transitions navigations. */
+}
 <script>
   // Query groups fresh each call — the nav DOM is replaced on every View
   // Transitions navigation, so a captured list would go stale.
   function currentGroups() {
-    return Array.from(
-      document.querySelectorAll<HTMLDetailsElement>('.site-nav__group'),
-    );
+    return Array.from(document.querySelectorAll<HTMLDetailsElement>('.site-nav__group'));
   }
 
   function closeAllGroups(except?: HTMLDetailsElement) {

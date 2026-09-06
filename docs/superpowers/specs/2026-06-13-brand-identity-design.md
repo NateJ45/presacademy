@@ -15,6 +15,7 @@ The four brand-tone targets the visual system must hit at once: warm + plainspok
 Ten Reformed-tradition institutions were studied (Princeton Theological Seminary, Reformed Theological Seminary, Westminster Seminary California, Calvin Theological Seminary, Union Presbyterian Seminary Leadership Institute, Austin Presbyterian Seminary, Davenant Hall, Ligonier Connect, BibleProject, ECO). Full captures live in the research workflow output.
 
 Key findings:
+
 - The genre formula is consistent: one deep, characterful color (navy or oxblood) on a warm cream/parchment ground, with a serif display over a humanist/geometric sans body.
 - The warm-neutral base is what keeps the formula from reading cold (RTS's warm taupe over parchment, Westminster's cream panels).
 - Logos split into defensive heraldry (RTS shield, Princeton crest) that reads "gated old institution," versus single warm symbols that double as meaning (Calvin's hand-and-heart, Union's flame, Ligonier's tree).
@@ -26,26 +27,26 @@ Key findings:
 
 A warm-stone/cream foundation anchored by a deep confessional oxblood, with an aged-brass detail accent. The most historically Reformed of the directions considered, kept warm through stone-over-cream rather than authority-and-crest.
 
-| Role | Name | Hex | Maps to `@theme` token |
-|---|---|---|---|
-| Primary accent / CTA / links | Geneva Oxblood | `#7A2A2C` | `--color-primary` |
-| Link text / hover / deep accent | Oxblood Deep | `#5E2122` | `--color-primary-dark` |
-| Body + heading ink | Walnut Ink | `#2A2521` | `--color-accent` |
-| Dark surface ink | Walnut Deep | `#1E1A17` | `--color-accent-dark` |
-| Borders, eyebrows | Cloister Stone | `#B7A99B` | `--color-secondary` |
-| Warm neutral (sparingly) | Stone Deep | `#9C8E7E` | `--color-tertiary` |
-| Page background | Stone Cream | `#F4EEE6` | `--color-bg` |
-| Raised surface / alt section | Chalk | `#FCF9F4` | `--color-bg-soft` |
-| Detail / hairline rules / small accents | Aged Brass | `#A87C3E` | `--color-gold` |
-| Text on dark bands | Warm Cream | `#F1EAD9` | `--color-chapel-foreground` (kept) |
-| Pure white | White | `#FFFFFF` | `--color-white-pure` (kept) |
+| Role                                    | Name           | Hex       | Maps to `@theme` token             |
+| --------------------------------------- | -------------- | --------- | ---------------------------------- |
+| Primary accent / CTA / links            | Geneva Oxblood | `#7A2A2C` | `--color-primary`                  |
+| Link text / hover / deep accent         | Oxblood Deep   | `#5E2122` | `--color-primary-dark`             |
+| Body + heading ink                      | Walnut Ink     | `#2A2521` | `--color-accent`                   |
+| Dark surface ink                        | Walnut Deep    | `#1E1A17` | `--color-accent-dark`              |
+| Borders, eyebrows                       | Cloister Stone | `#B7A99B` | `--color-secondary`                |
+| Warm neutral (sparingly)                | Stone Deep     | `#9C8E7E` | `--color-tertiary`                 |
+| Page background                         | Stone Cream    | `#F4EEE6` | `--color-bg`                       |
+| Raised surface / alt section            | Chalk          | `#FCF9F4` | `--color-bg-soft`                  |
+| Detail / hairline rules / small accents | Aged Brass     | `#A87C3E` | `--color-gold`                     |
+| Text on dark bands                      | Warm Cream     | `#F1EAD9` | `--color-chapel-foreground` (kept) |
+| Pure white                              | White          | `#FFFFFF` | `--color-white-pure` (kept)        |
 
 Structural band color (the deep tone used for the utility bar, footer, and closing CTA, currently `--color-chapel` green): recommendation is to use a deep oxblood so the brand's signature color carries the big structural moments, the way RTS and Calvin do.
 
-| Role | Name | Hex | Maps to token |
-|---|---|---|---|
-| Structural band (utility bar, footer, CTA) | Oxblood Deep | `#5E2122` | `--color-chapel` |
-| Band base (deepest) | Oxblood Deepest | `#4A1B1C` | `--color-chapel-deep` |
+| Role                                       | Name            | Hex       | Maps to token         |
+| ------------------------------------------ | --------------- | --------- | --------------------- |
+| Structural band (utility bar, footer, CTA) | Oxblood Deep    | `#5E2122` | `--color-chapel`      |
+| Band base (deepest)                        | Oxblood Deepest | `#4A1B1C` | `--color-chapel-deep` |
 
 The `--color-chapel*` token names are kept as-is (internal, referenced across components as `bg-chapel` etc.); only their values change. Optional rename to `--color-band*` is deferred to the implementation plan and is not required.
 
@@ -59,6 +60,7 @@ Serif display over a humanist sans body: the genre's proven "serious but readabl
 - Body: Source Sans 3 via `@fontsource-variable/source-sans-3`
 
 Token changes in `src/styles/globals.css`:
+
 - `--font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;`
 - `--font-body: "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", sans-serif;` (note the fallback stack changes from serif to sans, since body is now a sans face)
 - `@fontsource` `@import` lines at the top of the file swap from instrument-serif + newsreader to the two packages above.
@@ -105,6 +107,7 @@ No em-dashes in any public-facing site copy produced under this brand (CLAUDE.md
 ## 7. Out of scope here (collected at planning)
 
 The rebrand identity stamp needs these facts before `npm run rebrand` can run. They are not brand-design decisions and will be gathered when we build the implementation plan:
+
 - Full name (The Presbyterian Academy), short name, wordmark line break
 - Domain
 - City / mailing address

@@ -40,10 +40,26 @@ const CARD_KEY = (i) => `persona${i + 1}`;
 // The page's built-in personas, used only when Sanity has none. Kept in step
 // with DEFAULT_SECTIONS.forYouPage.
 const BUILT_IN = [
-  { label: 'The small-group leader', promise: 'Lead a study with more depth and less guesswork.', cta: { label: 'Courses for leaders', linkType: 'external', externalUrl: '/courses' } },
-  { label: 'The lifelong learner', promise: 'Finally read the whole Bible as one story.', cta: { label: 'Start with Scripture', linkType: 'external', externalUrl: '/courses' } },
-  { label: 'New to Reformed thought', promise: 'Understand what we believe, in plain words.', cta: { label: 'Explore the confessions', linkType: 'external', externalUrl: '/courses' } },
-  { label: 'Discerning a call', promise: 'Test the waters before seminary, in good company.', cta: { label: 'Book a free intro', linkType: 'external', externalUrl: '/get-started' } },
+  {
+    label: 'The small-group leader',
+    promise: 'Lead a study with more depth and less guesswork.',
+    cta: { label: 'Courses for leaders', linkType: 'external', externalUrl: '/courses' },
+  },
+  {
+    label: 'The lifelong learner',
+    promise: 'Finally read the whole Bible as one story.',
+    cta: { label: 'Start with Scripture', linkType: 'external', externalUrl: '/courses' },
+  },
+  {
+    label: 'New to Reformed thought',
+    promise: 'Understand what we believe, in plain words.',
+    cta: { label: 'Explore the confessions', linkType: 'external', externalUrl: '/courses' },
+  },
+  {
+    label: 'Discerning a call',
+    promise: 'Test the waters before seminary, in good company.',
+    cta: { label: 'Book a free intro', linkType: 'external', externalUrl: '/get-started' },
+  },
 ];
 
 const doc = await client.fetch(`*[_type == "forYouPage"][0]{ _id, personas, flexibleSections }`);

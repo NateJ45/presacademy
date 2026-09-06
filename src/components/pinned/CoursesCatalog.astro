@@ -51,7 +51,8 @@ const topicOptions = (areas ?? [])
   .map((a: any) => ({
     slug: a.slug,
     label: a.title,
-    count: courses.filter((c: any) => (c.teachingAreas ?? []).some((t: any) => t.slug === a.slug)).length,
+    count: courses.filter((c: any) => (c.teachingAreas ?? []).some((t: any) => t.slug === a.slug))
+      .length,
   }))
   .filter((o: any) => o.count > 0);
 
@@ -59,7 +60,8 @@ const teacherOptions = (faculty ?? [])
   .map((f: any) => ({
     slug: f.slug,
     label: `${f.honorific ? f.honorific + ' ' : ''}${f.name}`,
-    count: courses.filter((c: any) => (c.instructors ?? []).some((i: any) => i.slug === f.slug)).length,
+    count: courses.filter((c: any) => (c.instructors ?? []).some((i: any) => i.slug === f.slug))
+      .length,
   }))
   .filter((o: any) => o.count > 0);
 
@@ -74,22 +76,36 @@ const termOptions = (terms ?? [])
   <div class="mx-auto max-w-content px-m py-section-lg">
     <h2 id="catalog" class="sr-only">All courses</h2>
     <div class="grid grid-cols-1 gap-l lg:grid-cols-[230px_1fr] lg:gap-x-12">
-      <CourseFilters client:idle topics={topicOptions} teachers={teacherOptions} terms={termOptions} />
+      <CourseFilters
+        client:idle
+        topics={topicOptions}
+        teachers={teacherOptions}
+        terms={termOptions}
+      />
 
       <div>
-        {courses.length > 0 ? (
-          <ul class="grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
-            {courses.map((c: any) => <CourseCard course={c} />)}
-          </ul>
-        ) : (
-          <p class="text-foreground/80 italic">
-            The catalog is being prepared. In the meantime,{' '}
-            <a href="/get-started" class="text-link underline underline-offset-2">request information</a> and we will be in touch.
-          </p>
-        )}
+        {
+          courses.length > 0 ? (
+            <ul class="grid grid-cols-1 gap-l sm:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
+              {courses.map((c: any) => (
+                <CourseCard course={c} />
+              ))}
+            </ul>
+          ) : (
+            <p class="text-foreground/80 italic">
+              The catalog is being prepared. In the meantime,{' '}
+              <a href="/get-started" class="text-link underline underline-offset-2">
+                request information
+              </a>{' '}
+              and we will be in touch.
+            </p>
+          )
+        }
         <p data-course-empty hidden class="mt-l text-foreground/80 italic">
           {emptyState ?? 'No courses match those filters yet. Try clearing one, or'}{' '}
-          <a href="/get-started" class="text-link underline underline-offset-2">ask us what is coming next</a>.
+          <a href="/get-started" class="text-link underline underline-offset-2"
+            >ask us what is coming next</a
+          >.
         </p>
       </div>
     </div>

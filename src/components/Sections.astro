@@ -128,10 +128,23 @@ const MAP: Record<string, any> = {
 
 // Blocks that render inner content only and take their background from SectionShell.
 const SHELL_AWARE = new Set([
-  'sectionRichText', 'sectionImageText', 'sectionCardGrid', 'sectionQuote', 'sectionCtaBand',
-  'sectionFeatureCards', 'sectionStats', 'sectionAccordion', 'sectionGallery',
-  'sectionSteps', 'sectionLogos', 'sectionMediaFeature', 'sectionDynamicList',
-  'sectionMediaShowcase', 'sectionFaqList', 'sectionResources', 'sectionKeyDates',
+  'sectionRichText',
+  'sectionImageText',
+  'sectionCardGrid',
+  'sectionQuote',
+  'sectionCtaBand',
+  'sectionFeatureCards',
+  'sectionStats',
+  'sectionAccordion',
+  'sectionGallery',
+  'sectionSteps',
+  'sectionLogos',
+  'sectionMediaFeature',
+  'sectionDynamicList',
+  'sectionMediaShowcase',
+  'sectionFaqList',
+  'sectionResources',
+  'sectionKeyDates',
   'sectionPricingTiers',
 ]);
 
@@ -162,14 +175,19 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
     const rendered = coach ? (
       <SectionCoach name={coach.name} hint={coach.hint} />
     ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
-        <SectionShell background={block.background} defaultTone={dt}>
-          <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
-        </SectionShell>
-      ) : (
-        // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
-        // above are all editor-authored content, with nothing to fetch.
-        <Cmp block={block} fallbackEmail={fallbackEmail} fallbackPhone={fallbackPhone} fetcher={fetcher} />
-      );
+      <SectionShell background={block.background} defaultTone={dt}>
+        <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
+      </SectionShell>
+    ) : (
+      // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
+      // above are all editor-authored content, with nothing to fetch.
+      <Cmp
+        block={block}
+        fallbackEmail={fallbackEmail}
+        fallbackPhone={fallbackPhone}
+        fetcher={fetcher}
+      />
+    );
     // Preview only (2026-08-27): the section-level edit target. The wrapper is a
     // plain unstyled div on purpose. It must be a REAL block box, because the
     // overlay outlines the element's rect, and a `display: contents` element has

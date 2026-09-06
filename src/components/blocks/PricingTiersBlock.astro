@@ -41,14 +41,17 @@ const hasHeader = Boolean(block?.eyebrow || block?.heading || block?.intro);
 ---
 
 {
-  block && tiers.length > 0 && (
-    ledger ? (
+  block &&
+    tiers.length > 0 &&
+    (ledger ? (
       <section class="bg-background">
         <div class="mx-auto max-w-content px-m pb-section-md">
           {hasHeader && (
             <div class="mb-l" data-reveal>
               {block.eyebrow && (
-                <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+                <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                  {block.eyebrow}
+                </p>
               )}
               {block.heading && (
                 <h2 class="mt-2 max-w-3xl font-display text-h2 text-foreground">{block.heading}</h2>
@@ -56,20 +59,31 @@ const hasHeader = Boolean(block?.eyebrow || block?.heading || block?.intro);
               {block.intro && <p class="mt-m max-w-2xl text-foreground/80">{block.intro}</p>}
             </div>
           )}
-          <PricingTierCards tiers={tiers} ctaLabel={ctaLabel} ctaUrl={ctaUrl} headingTag={headingTag} />
+          <PricingTierCards
+            tiers={tiers}
+            ctaLabel={ctaLabel}
+            ctaUrl={ctaUrl}
+            headingTag={headingTag}
+          />
         </div>
       </section>
     ) : (
       <div class="mx-auto max-w-content px-m">
         {hasHeader && (
-          <div class="max-w-2xl mb-l">
-            {block.eyebrow && <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>}
+          <div class="mb-l max-w-2xl">
+            {block.eyebrow && (
+              <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
+            )}
             {block.heading && <h2 class="mt-s font-display text-h2">{block.heading}</h2>}
-            {block.intro && <p class="mt-s opacity-80 leading-relaxed">{block.intro}</p>}
+            {block.intro && <p class="mt-s leading-relaxed opacity-80">{block.intro}</p>}
           </div>
         )}
-        <PricingTierCards tiers={tiers} ctaLabel={ctaLabel} ctaUrl={ctaUrl} headingTag={headingTag} />
+        <PricingTierCards
+          tiers={tiers}
+          ctaLabel={ctaLabel}
+          ctaUrl={ctaUrl}
+          headingTag={headingTag}
+        />
       </div>
-    )
-  )
+    ))
 }

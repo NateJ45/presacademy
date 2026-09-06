@@ -25,7 +25,10 @@ const env = Object.fromEntries(
   readFileSync(resolve(root, '.env'), 'utf-8')
     .split('\n')
     .filter((l) => l && !l.startsWith('#') && l.includes('='))
-    .map((l) => { const [k, ...v] = l.split('='); return [k.trim(), v.join('=').trim()]; }),
+    .map((l) => {
+      const [k, ...v] = l.split('=');
+      return [k.trim(), v.join('=').trim()];
+    }),
 );
 
 const PROJECT = env.PUBLIC_SANITY_PROJECT_ID;
@@ -40,18 +43,47 @@ if (!PROJECT || !TOKEN) {
 // Expected document types. Keep in sync with SINGLETON_TYPES in
 // sanity.config.ts (repo root) and the collection schemas in src/sanity/schemaTypes/.
 const EXPECTED_SINGLETONS = [
-  'siteSettings', 'homePage', 'aboutPage', 'faqPage', 'contactPage', 'notFoundPage', 'privacyPage',
-  'eventsPage', 'sermonsPage', 'worshipPage', 'beliefsPage', 'musicPage', 'staffPage',
-  'growPage', 'servePage', 'kidsPage', 'foodPage', 'useOurSpacePage', 'weddingsPage', 'givePage',
+  'siteSettings',
+  'homePage',
+  'aboutPage',
+  'faqPage',
+  'contactPage',
+  'notFoundPage',
+  'privacyPage',
+  'eventsPage',
+  'sermonsPage',
+  'worshipPage',
+  'beliefsPage',
+  'musicPage',
+  'staffPage',
+  'growPage',
+  'servePage',
+  'kidsPage',
+  'foodPage',
+  'useOurSpacePage',
+  'weddingsPage',
+  'givePage',
 ];
-const EXPECTED_COLLECTIONS = ['staffMember', 'ministry', 'event', 'sermon', 'faqItem', 'worshipResource', 'announcement', 'form'];
+const EXPECTED_COLLECTIONS = [
+  'staffMember',
+  'ministry',
+  'event',
+  'sermon',
+  'faqItem',
+  'worshipResource',
+  'announcement',
+  'form',
+];
 
 const SYS = new Set(['_id', '_type', '_rev', '_createdAt', '_updatedAt', '_key', '_originalId']);
 
 async function groq(query) {
   const url = `https://${PROJECT}.api.sanity.io/v${API}/data/query/${DATASET}?query=${encodeURIComponent(query)}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
-  if (!res.ok) { console.error('Query failed', res.status, await res.text()); process.exit(1); }
+  if (!res.ok) {
+    console.error('Query failed', res.status, await res.text());
+    process.exit(1);
+  }
   return (await res.json()).result;
 }
 
@@ -96,14 +128,23 @@ const present = new Set(Object.keys(byType));
 const missingS = EXPECTED_SINGLETONS.filter((t) => !present.has(t));
 const missingC = EXPECTED_COLLECTIONS.filter((t) => !present.has(t));
 console.log('\n== Missing expected types ==');
-console.log(missingS.length ? `  Singletons with no published doc: ${missingS.join(', ')}` : '  Singletons: all present');
-console.log(missingC.length ? `  Collections with zero docs:      ${missingC.join(', ')}` : '  Collections: all have docs');
+console.log(
+  missingS.length
+    ? `  Singletons with no published doc: ${missingS.join(', ')}`
+    : '  Singletons: all present',
+);
+console.log(
+  missingC.length
+    ? `  Collections with zero docs:      ${missingC.join(', ')}`
+    : '  Collections: all have docs',
+);
 
 // ---- 4: drafts (unpublished edits overlay the published docs in Studio) ---
 const drafts = await groq(`*[_id in path("drafts.**")]{ _id, _type, _updatedAt }`);
 console.log(`\n== Unpublished drafts: ${drafts.length} ==`);
 for (const d of drafts) console.log(`  ${d._type}  ${d._id}  (updated ${d._updatedAt})`);
-if (drafts.length) console.log('  NOTE: Studio shows the draft; the live build uses the published version.');
+if (drafts.length)
+  console.log('  NOTE: Studio shows the draft; the live build uses the published version.');
 
 // ---- 3: per-document field diff (only with --fields; it is verbose) -------
 if (FIELDS_MODE) {
@@ -120,7 +161,9 @@ if (FIELDS_MODE) {
       fieldsByType[t.name] = Object.keys(t.attributes ?? {}).filter((k) => !SYS.has(k));
     }
   } else {
-    console.log('\n(studio/schema.json not found — run `npm run typegen` for the full absent-field diff)');
+    console.log(
+      '\n(studio/schema.json not found — run `npm run typegen` for the full absent-field diff)',
+    );
   }
 
   console.log('\n== Field-level audit ==');

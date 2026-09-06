@@ -45,7 +45,8 @@ function parseEnv(p) {
     const i = t.indexOf('=');
     if (i === -1) continue;
     let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
     out[t.slice(0, i).trim()] = v;
   }
   return out;
@@ -54,38 +55,87 @@ const env = { ...parseEnv(resolve(root, '.env')), ...process.env };
 const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;
-if (!projectId || !token) { console.error('Missing PUBLIC_SANITY_PROJECT_ID or SANITY_API_WRITE_TOKEN in .env'); process.exit(1); }
+if (!projectId || !token) {
+  console.error('Missing PUBLIC_SANITY_PROJECT_ID or SANITY_API_WRITE_TOKEN in .env');
+  process.exit(1);
+}
 const client = createClient({ projectId, dataset, token, apiVersion: '2024-08-01', useCdn: false });
 
 const DIR = resolve(root, 'src/assets/placeholders');
 
 // name -> { alt, from } where `from` is the scratch source used for first-run bundling.
 const IMAGES = {
-  'acad-friends-talking':   { alt: 'Three students talking together',              from: '_stock3/img_12.jpg' },
-  'acad-campus-walk':       { alt: 'Students walking across a university campus',   from: '_stock3/img_16.jpg' },
-  'acad-study-overhead':    { alt: 'Students working together over books and notes', from: '_stock/img_0.jpg' },
-  'acad-library-room':      { alt: 'A university library reading room',             from: '_stock/img_17.jpg' },
-  'acad-table-group':       { alt: 'A small group studying around a table',         from: '_stock3/img_2.jpg' },
-  'acad-writing-notes':     { alt: 'Taking notes by hand during study',             from: '_stock3/img_19.jpg' },
+  'acad-friends-talking': { alt: 'Three students talking together', from: '_stock3/img_12.jpg' },
+  'acad-campus-walk': {
+    alt: 'Students walking across a university campus',
+    from: '_stock3/img_16.jpg',
+  },
+  'acad-study-overhead': {
+    alt: 'Students working together over books and notes',
+    from: '_stock/img_0.jpg',
+  },
+  'acad-library-room': { alt: 'A university library reading room', from: '_stock/img_17.jpg' },
+  'acad-table-group': { alt: 'A small group studying around a table', from: '_stock3/img_2.jpg' },
+  'acad-writing-notes': { alt: 'Taking notes by hand during study', from: '_stock3/img_19.jpg' },
   // High-resolution hero image (full-res; the rawpixel/stocksnap people shots
   // above are only ~960px and pixelate in the large 4:5 hero crop).
-  'acad-students-canal':    { alt: 'Students walking across a university campus',     from: '_hires/img_10.jpg' },
-  'acad-lecture-hall':      { alt: 'Students in a lecture hall',                     from: '_stock/img_2.jpg' },
-  'acad-markers-notebooks': { alt: 'Notebooks and markers laid out for study',      from: '_stock/img_7.jpg' },
-  'acad-campus-quad':       { alt: 'A green campus quad',                            from: '_stock/img_22.jpg' },
-  'acad-campus-building':   { alt: 'A university building',                          from: '_stock/img_26.jpg' },
-  'acad-reading-together':  { alt: 'Reading together at a table',                    from: '_stock3/img_14.jpg' },
-  'acad-woman-reading':     { alt: 'A student reading',                             from: '_stock3/img_20.jpg' },
-  'acad-write-desk':        { alt: 'A desk set up for writing and study',           from: '_stock3/img_27.jpg' },
+  'acad-students-canal': {
+    alt: 'Students walking across a university campus',
+    from: '_hires/img_10.jpg',
+  },
+  'acad-lecture-hall': { alt: 'Students in a lecture hall', from: '_stock/img_2.jpg' },
+  'acad-markers-notebooks': {
+    alt: 'Notebooks and markers laid out for study',
+    from: '_stock/img_7.jpg',
+  },
+  'acad-campus-quad': { alt: 'A green campus quad', from: '_stock/img_22.jpg' },
+  'acad-campus-building': { alt: 'A university building', from: '_stock/img_26.jpg' },
+  'acad-reading-together': { alt: 'Reading together at a table', from: '_stock3/img_14.jpg' },
+  'acad-woman-reading': { alt: 'A student reading', from: '_stock3/img_20.jpg' },
+  'acad-write-desk': { alt: 'A desk set up for writing and study', from: '_stock3/img_27.jpg' },
 };
 
 // The home hero slideshow, in fade order. All six are high-resolution so the
 // large 4:5 desktop crop stays crisp on retina.
-const HERO = ['acad-campus-quad', 'acad-library-room', 'acad-campus-walk', 'acad-writing-notes', 'acad-campus-building', 'acad-students-canal'];
+const HERO = [
+  'acad-campus-quad',
+  'acad-library-room',
+  'acad-campus-walk',
+  'acad-writing-notes',
+  'acad-campus-building',
+  'acad-students-canal',
+];
 // Pool used to fill empty covers / page heroes / event images (varied subjects).
-const POOL = ['acad-table-group', 'acad-study-overhead', 'acad-lecture-hall', 'acad-markers-notebooks', 'acad-library-room', 'acad-campus-quad', 'acad-campus-building', 'acad-reading-together', 'acad-woman-reading', 'acad-write-desk', 'acad-campus-walk', 'acad-writing-notes', 'acad-friends-talking'];
+const POOL = [
+  'acad-table-group',
+  'acad-study-overhead',
+  'acad-lecture-hall',
+  'acad-markers-notebooks',
+  'acad-library-room',
+  'acad-campus-quad',
+  'acad-campus-building',
+  'acad-reading-together',
+  'acad-woman-reading',
+  'acad-write-desk',
+  'acad-campus-walk',
+  'acad-writing-notes',
+  'acad-friends-talking',
+];
 const PORTRAITS = [3, 5, 8, 11, 12, 14, 15, 25, 32, 33, 40, 47, 52, 60, 68]; // pravatar.cc ids
-const PAGE_IDS = ['aboutPage', 'coursesPage', 'facultyPage', 'pricingPage', 'getStartedPage', 'forYouPage', 'resourcesPage', 'eventsPage', 'faqPage', 'contactPage', 'privacyPage', 'accessibilityPage'];
+const PAGE_IDS = [
+  'aboutPage',
+  'coursesPage',
+  'facultyPage',
+  'pricingPage',
+  'getStartedPage',
+  'forYouPage',
+  'resourcesPage',
+  'eventsPage',
+  'faqPage',
+  'contactPage',
+  'privacyPage',
+  'accessibilityPage',
+];
 
 // Ensure the bundled file exists (copy from scratch on first run), return its path.
 function bundledPath(name) {
@@ -101,8 +151,13 @@ const cache = new Map();
 async function uploadLocal(name) {
   if (cache.has(name)) return cache.get(name);
   const path = bundledPath(name);
-  if (!existsSync(path)) { console.warn('  (missing image: ' + name + ' — run the collector first)'); return null; }
-  const asset = await client.assets.upload('image', readFileSync(path), { filename: name + '.jpg' });
+  if (!existsSync(path)) {
+    console.warn('  (missing image: ' + name + ' — run the collector first)');
+    return null;
+  }
+  const asset = await client.assets.upload('image', readFileSync(path), {
+    filename: name + '.jpg',
+  });
   cache.set(name, asset._id);
   return asset._id;
 }
@@ -110,15 +165,26 @@ async function uploadPortrait(id) {
   const key = 'p:' + id;
   if (cache.has(key)) return cache.get(key);
   const res = await fetch('https://i.pravatar.cc/600?img=' + id);
-  if (!res.ok) { console.warn('  (portrait fetch failed: ' + id + ')'); return null; }
-  const asset = await client.assets.upload('image', Buffer.from(await res.arrayBuffer()), { filename: 'faculty-portrait-' + id + '.jpg' });
+  if (!res.ok) {
+    console.warn('  (portrait fetch failed: ' + id + ')');
+    return null;
+  }
+  const asset = await client.assets.upload('image', Buffer.from(await res.arrayBuffer()), {
+    filename: 'faculty-portrait-' + id + '.jpg',
+  });
   cache.set(key, asset._id);
   return asset._id;
 }
-const imgField = (assetId, alt) => ({ _type: 'image', asset: { _type: 'reference', _ref: assetId }, alt });
+const imgField = (assetId, alt) => ({
+  _type: 'image',
+  asset: { _type: 'reference', _ref: assetId },
+  alt,
+});
 
 async function main() {
-  console.log(`Seeding academic images -> ${projectId}/${dataset}  (${APPLY ? 'APPLY' : 'dry run'})\n`);
+  console.log(
+    `Seeding academic images -> ${projectId}/${dataset}  (${APPLY ? 'APPLY' : 'dry run'})\n`,
+  );
   // An image slot is replaceable if it is empty OR still holds a church-era
   // placeholder (those carry recognizable filename prefixes). Real editor photos
   // and already-seeded academic photos (acad-*) are left alone.
@@ -135,13 +201,20 @@ async function main() {
   const courses = allCourses.filter((c) => replaceable(c.f));
   const pages = allPages.filter((p) => replaceable(p.f));
   const homeNeedsHero = FORCE_HERO || !home || !home.n;
-  console.log(`  home hero slideshow needed    : ${homeNeedsHero ? 'YES (6 images)' : 'no (already set)'}`);
+  console.log(
+    `  home hero slideshow needed    : ${homeNeedsHero ? 'YES (6 images)' : 'no (already set)'}`,
+  );
   console.log(`  course covers to replace      : ${courses.length} of ${allCourses.length}`);
   console.log(`  faculty needing a portrait    : ${faculty.length}`);
   console.log(`  events needing an image       : ${events.length}`);
-  console.log(`  page heroes to replace        : ${pages.length}  [${pages.map((p) => p._id).join(', ')}]`);
+  console.log(
+    `  page heroes to replace        : ${pages.length}  [${pages.map((p) => p._id).join(', ')}]`,
+  );
 
-  if (!APPLY) { console.log('\nDry run only. Re-run with --apply to bundle, upload, and patch.'); return; }
+  if (!APPLY) {
+    console.log('\nDry run only. Re-run with --apply to bundle, upload, and patch.');
+    return;
+  }
 
   const tx = client.transaction();
   let n = 0;
@@ -151,26 +224,50 @@ async function main() {
       const id = await uploadLocal(name);
       if (id) arr.push({ ...imgField(id, IMAGES[name].alt), _key: name });
     }
-    if (arr.length) { tx.patch('homePage', (p) => p.set({ heroImages: arr })); n++; }
+    if (arr.length) {
+      tx.patch('homePage', (p) => p.set({ heroImages: arr }));
+      n++;
+    }
   }
   for (let i = 0; i < courses.length; i++) {
     const id = await uploadLocal(POOL[i % POOL.length]);
-    if (id) { tx.patch(courses[i]._id, (p) => p.set({ coverImage: imgField(id, courses[i].title || 'Course') })); n++; }
+    if (id) {
+      tx.patch(courses[i]._id, (p) =>
+        p.set({ coverImage: imgField(id, courses[i].title || 'Course') }),
+      );
+      n++;
+    }
   }
   for (let i = 0; i < faculty.length; i++) {
     const id = await uploadPortrait(PORTRAITS[i % PORTRAITS.length]);
-    if (id) { tx.patch(faculty[i]._id, (p) => p.set({ photo: imgField(id, faculty[i].name || 'Faculty portrait') })); n++; }
+    if (id) {
+      tx.patch(faculty[i]._id, (p) =>
+        p.set({ photo: imgField(id, faculty[i].name || 'Faculty portrait') }),
+      );
+      n++;
+    }
   }
   for (let i = 0; i < events.length; i++) {
     const id = await uploadLocal(POOL[(i + 2) % POOL.length]);
-    if (id) { tx.patch(events[i]._id, (p) => p.set({ image: imgField(id, events[i].title || 'Event') })); n++; }
+    if (id) {
+      tx.patch(events[i]._id, (p) => p.set({ image: imgField(id, events[i].title || 'Event') }));
+      n++;
+    }
   }
   for (let i = 0; i < pages.length; i++) {
     const id = await uploadLocal(POOL[(i + 5) % POOL.length]);
-    if (id) { tx.patch(pages[i]._id, (p) => p.set({ heroImage: imgField(id, 'The Presbyterian Academy') })); n++; }
+    if (id) {
+      tx.patch(pages[i]._id, (p) => p.set({ heroImage: imgField(id, 'The Presbyterian Academy') }));
+      n++;
+    }
   }
 
   const res = await tx.commit();
-  console.log(`\nDone. Patched ${res.results?.length ?? n} documents. Rebuild (or the publish webhook) makes them live.`);
+  console.log(
+    `\nDone. Patched ${res.results?.length ?? n} documents. Rebuild (or the publish webhook) makes them live.`,
+  );
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

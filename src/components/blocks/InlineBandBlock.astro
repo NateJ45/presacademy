@@ -25,11 +25,18 @@ const href = block?.ctaUrl || '/faculty';
       <div class="mx-auto flex max-w-content flex-wrap items-center justify-between gap-m px-m py-l">
         <div>
           {block.eyebrow && (
-            <p class="eyebrow text-xs uppercase tracking-eyebrow text-foreground/80">{block.eyebrow}</p>
+            <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+              {block.eyebrow}
+            </p>
           )}
           <p class="mt-2 max-w-xl font-display text-h4 text-foreground">{block.headline}</p>
         </div>
-        <a href={href} class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary-dark">{block.ctaLabel}</a>
+        <a
+          href={href}
+          class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase hover:bg-primary-dark"
+        >
+          {block.ctaLabel}
+        </a>
       </div>
     </section>
   )

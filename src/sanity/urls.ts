@@ -41,29 +41,49 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
   const slug = doc?.slug?.current;
   switch (schemaType) {
     // Core pages
-    case 'homePage':      return '/';
-    case 'aboutPage':     return '/about';
-    case 'faqPage':       return '/faq';
-    case 'contactPage':   return '/contact';
-    case 'notFoundPage':  return '/404';
-    case 'privacyPage':   return '/privacy';
-    case 'accessibilityPage': return '/accessibility';
+    case 'homePage':
+      return '/';
+    case 'aboutPage':
+      return '/about';
+    case 'faqPage':
+      return '/faq';
+    case 'contactPage':
+      return '/contact';
+    case 'notFoundPage':
+      return '/404';
+    case 'privacyPage':
+      return '/privacy';
+    case 'accessibilityPage':
+      return '/accessibility';
     // School index pages + page singletons
-    case 'eventsPage':       return '/events';
-    case 'coursesPage':      return '/courses';
-    case 'facultyPage':      return '/faculty';
-    case 'pricingPage':      return '/pricing';
-    case 'getStartedPage':   return '/get-started';
-    case 'forYouPage':       return '/for-you';
-    case 'resourcesPage':    return '/resources';
+    case 'eventsPage':
+      return '/events';
+    case 'coursesPage':
+      return '/courses';
+    case 'facultyPage':
+      return '/faculty';
+    case 'pricingPage':
+      return '/pricing';
+    case 'getStartedPage':
+      return '/get-started';
+    case 'forYouPage':
+      return '/for-you';
+    case 'resourcesPage':
+      return '/resources';
     // Collections: dated detail pages by slug; course + faculty detail; FAQ list.
-    case 'event':         return slug ? `/events/${slug}` : '/events';
-    case 'course':        return slug ? `/courses/${slug}` : '/courses';
-    case 'facultyMember': return slug ? `/faculty/${slug}` : '/faculty';
-    case 'faqItem':       return '/faq';
+    case 'event':
+      return slug ? `/events/${slug}` : '/events';
+    case 'course':
+      return slug ? `/courses/${slug}` : '/courses';
+    case 'facultyMember':
+      return slug ? `/faculty/${slug}` : '/faculty';
+    case 'faqItem':
+      return '/faq';
     // Generic custom pages live at /<slug>.
-    case 'page':          return slug ? `/${slug}` : null;
-    default:              return null;
+    case 'page':
+      return slug ? `/${slug}` : null;
+    default:
+      return null;
   }
 }
 

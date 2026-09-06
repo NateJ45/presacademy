@@ -66,7 +66,11 @@ function ogPathForRoute(pathname: string): string {
 // to the next source) or if the URL builder throws on a malformed object.
 function ogUrlFromImage(img: any): string | null {
   if (!img?.asset) return null;
-  try { return urlFor(img).width(1200).height(630).fit('crop').auto('format').url(); } catch { return null; }
+  try {
+    return urlFor(img).width(1200).height(630).fit('crop').auto('format').url();
+  } catch {
+    return null;
+  }
 }
 
 // OG image priority: explicit ogImage prop (a real photo passed by detail
@@ -83,11 +87,19 @@ const absOg = resolvedOg.startsWith('http') ? resolvedOg : new URL(resolvedOg, s
 // Apple touch icon is cropped square (respecting any hotspot).
 function faviconTab(img: any): string | null {
   if (!img?.asset) return null;
-  try { return urlFor(img).width(128).format('png').url(); } catch { return null; }
+  try {
+    return urlFor(img).width(128).format('png').url();
+  } catch {
+    return null;
+  }
 }
 function faviconSquare(img: any): string | null {
   if (!img?.asset) return null;
-  try { return urlFor(img).width(180).height(180).fit('crop').format('png').url(); } catch { return null; }
+  try {
+    return urlFor(img).width(180).height(180).fit('crop').format('png').url();
+  } catch {
+    return null;
+  }
 }
 const faviconHref = faviconTab(siteSettings?.favicon) ?? '/favicon.png';
 const appleTouchHref = faviconSquare(siteSettings?.favicon) ?? '/apple-touch-icon.png';
@@ -97,13 +109,10 @@ const appleTouchHref = faviconSquare(siteSettings?.favicon) ?? '/apple-touch-ico
 // so the tab + search-result line carries the brand. Strips a trailing suffix
 // once before evaluating so any legacy pre-baked suffix is handled.
 const brandSuffix = ` — ${site.name}`;
-const cleanTitle = title.endsWith(brandSuffix)
-  ? title.slice(0, -brandSuffix.length)
-  : title;
+const cleanTitle = title.endsWith(brandSuffix) ? title.slice(0, -brandSuffix.length) : title;
 const hasBrandInline = cleanTitle.toLowerCase().includes(site.name.toLowerCase());
-const fullTitle = cleanTitle === site.name || hasBrandInline
-  ? cleanTitle
-  : `${cleanTitle} — ${site.name}`;
+const fullTitle =
+  cleanTitle === site.name || hasBrandInline ? cleanTitle : `${cleanTitle} — ${site.name}`;
 
 // Auto-inject the EducationalOrganization schema on every page (uses site
 // constants as fallbacks, so it renders even before Sanity siteSettings is wired).
@@ -127,38 +136,48 @@ const announcement = await getActiveAnnouncement().catch(() => null);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* Every hero photo comes from Sanity's CDN, and the home hero image is the
+    {
+      /* Every hero photo comes from Sanity's CDN, and the home hero image is the
         LCP. Without this hint the browser only opens that connection once the
         parser reaches the <img>, so DNS + TCP + TLS (three round trips) sit on
         the LCP path. Measured 2026-09-04: ~2.9s of simulated "load delay" on
-        the mobile Lighthouse run. */}
+        the mobile Lighthouse run. */
+    }
     <link rel="preconnect" href="https://cdn.sanity.io" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {/* An editor's "Hide this page from search engines" wins over the built-in
+    {
+      /* An editor's "Hide this page from search engines" wins over the built-in
         noindex: it is the stronger of the two (nofollow as well), and only one
         robots line may be emitted. Neither renders on an ordinary page, so the
-        markup is unchanged everywhere the switch is off. */}
-    {hideFromSearch ? (
-      <meta name="robots" content="noindex, nofollow" />
-    ) : (
-      noindex && <meta name="robots" content="noindex, follow" />
-    )}
+        markup is unchanged everywhere the switch is off. */
+    }
+    {
+      hideFromSearch ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        noindex && <meta name="robots" content="noindex, follow" />
+      )
+    }
 
-    {/* Mobile browser UI chrome color. Light by default (matching the default
+    {
+      /* Mobile browser UI chrome color. Light by default (matching the default
         theme); the bootstrap below flips it to the dark value when the visitor
-        has chosen dark, so the browser bar follows the APP theme, not the OS. */}
+        has chosen dark, so the browser bar follows the APP theme, not the OS. */
+    }
     <meta name="theme-color" content="#ECE4DA" id="theme-color-meta" />
 
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={appleTouchHref} />
-    {/* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
+    {
+      /* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
         Vite hashes the woff2 filename at build time so a static preload here
         would 404. If hero h1 LCP needs faster fonts, switch to font-display: optional
-        or generate the preload tag from the built CSS manifest. */}
+        or generate the preload tag from the built CSS manifest. */
+    }
 
     {/* Open Graph */}
     <meta property="og:type" content="website" />
@@ -179,17 +198,17 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     <meta name="twitter:image" content={absOg} />
 
     {/* JSON-LD (LocalBusiness auto-injected from siteSettings + per-page schemas) */}
-    {allSchemas.map((json) => (
-      <script type="application/ld+json" set:html={json} />
-    ))}
+    {allSchemas.map((json) => <script type="application/ld+json" set:html={json} />)}
 
-    {/* Anti-FOUC theme bootstrap — must run inline before first paint.
+    {
+      /* Anti-FOUC theme bootstrap — must run inline before first paint.
         Also re-applies the theme + theme-aware images (header logo) after
         every Astro View Transitions navigation: the transition swap
         replaces <html>'s className with the new page's (empty), so without
         this listener a user who set dark mode would see the next page
         render in light. The listener registers exactly once via the
-        __themeBootstrapBound flag. */}
+        __themeBootstrapBound flag. */
+    }
     <script is:inline define:vars={{ key: site.themeStorageKey }}>
       (function () {
         function applyTheme() {
@@ -201,14 +220,15 @@ const announcement = await getActiveAnnouncement().catch(() => null);
             const stored = localStorage.getItem(key) ?? 'light';
             dark =
               stored === 'dark' ||
-              (stored === 'system' &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches);
+              (stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
             document.documentElement.classList.toggle('dark', dark);
             document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
             // Keep the mobile browser chrome color in step with the app theme.
             const metaTC = document.getElementById('theme-color-meta');
             if (metaTC) metaTC.setAttribute('content', dark ? '#1C1813' : '#ECE4DA');
-          } catch (_) { /* localStorage unavailable, default light */ }
+          } catch (_) {
+            /* localStorage unavailable, default light */
+          }
 
           // Theme-aware images (header logo) — swap src/srcset to match the
           // active theme. Single-img approach means only one variant is ever
@@ -242,17 +262,19 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     </script>
 
     {/* Cloudflare Web Analytics — conditional, no cookie banner needed. */}
-    {cfToken && (
-      <script
-        defer
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon={`{"token": "${cfToken}"}`}
-      ></script>
-    )}
+    {
+      cfToken && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${cfToken}"}`}
+        />
+      )
+    }
 
     <ClientRouter />
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class="flex min-h-screen flex-col">
     <a href="#main" class="skip-link">Skip to main content</a>
 
     {/* Optional site-wide announcement banner (Announcement collection in Sanity). */}
@@ -266,7 +288,8 @@ const announcement = await getActiveAnnouncement().catch(() => null);
 
     <Footer siteSettings={siteSettings} />
 
-    {/*
+    {
+      /*
       Both islands were previously `client:load` which forced the JS to
       execute before the first paint completed. Neither is interactive
       until later in the page lifecycle (BackToTop only appears after the
@@ -274,20 +297,25 @@ const announcement = await getActiveAnnouncement().catch(() => null);
       sites import it on demand). Hydrating with `client:idle` lets the
       browser settle the main thread first and shifts ~10–20ms of TBT off
       the critical path on mobile.
-    */}
+    */
+    }
     <BackToTop client:idle />
 
-    {/* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */}
+    {
+      /* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */
+    }
     <Toaster client:idle position="bottom-right" />
 
-    {/* Lenis smooth scroll. The reduced-motion guard in globals.css already
+    {
+      /* Lenis smooth scroll. The reduced-motion guard in globals.css already
         kills smooth-scroll behavior; we also bail out here so we don't pay
         for the Lenis runtime when the user prefers reduced motion.
 
         Wrapped in requestIdleCallback so the ~10KB Lenis chunk isn't
         fetched until the browser is genuinely idle — keeps it out of the
         critical-path race with hero LCP. setTimeout fallback for browsers
-        without rIC support. */}
+        without rIC support. */
+    }
     <script>
       function startLenis() {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -306,7 +334,10 @@ const announcement = await getActiveAnnouncement().catch(() => null);
           // scroll cue) can trigger a smooth programmatic scroll through Lenis
           // instead of fighting it with a native scrollTo.
           (window as unknown as Window & { lenis?: typeof lenis }).lenis = lenis;
-          function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
+          function raf(time: number) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+          }
           requestAnimationFrame(raf);
 
           // Astro View Transitions reuse this single Lenis instance across
@@ -343,9 +374,11 @@ const announcement = await getActiveAnnouncement().catch(() => null);
       }
     </script>
 
-    {/* Polish layer: scroll-triggered reveal observer + sticky-header
+    {
+      /* Polish layer: scroll-triggered reveal observer + sticky-header
         hide-on-scroll-down behavior. Both honor prefers-reduced-motion.
-        Re-init on astro:page-load so they survive View Transitions. */}
+        Re-init on astro:page-load so they survive View Transitions. */
+    }
     <script>
       function initPolish() {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -377,7 +410,9 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         // ---- Grid stagger entrance ------------------------------------------
         // Adds .is-staggered to each [data-stagger-grid] container as it enters
         // the viewport. The CSS transition-delay on nth-child handles sequencing.
-        const staggerGrids = document.querySelectorAll<HTMLElement>('[data-stagger-grid]:not(.is-staggered)');
+        const staggerGrids = document.querySelectorAll<HTMLElement>(
+          '[data-stagger-grid]:not(.is-staggered)',
+        );
         if (staggerGrids.length > 0) {
           if (reduceMotion || !('IntersectionObserver' in window)) {
             staggerGrids.forEach((el) => el.classList.add('is-staggered'));
@@ -423,7 +458,9 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         // ---- Process connector lines ----------------------------------------
         // Adds .is-visible to each .step-connector when it enters the viewport,
         // triggering the scaleY draw animation on the ::after fill.
-        const connectors = document.querySelectorAll<HTMLElement>('.step-connector:not(.is-visible)');
+        const connectors = document.querySelectorAll<HTMLElement>(
+          '.step-connector:not(.is-visible)',
+        );
         if (connectors.length > 0) {
           if (reduceMotion || !('IntersectionObserver' in window)) {
             connectors.forEach((el) => el.classList.add('is-visible'));
@@ -447,7 +484,9 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         // Numbers inside [data-countup-grid] climb from 0 to their value as the
         // band enters view. Year-style stats opt out (they carry no
         // data-countup). easeOutCubic over 1.2s; snaps to the exact final text.
-        const countGrids = document.querySelectorAll<HTMLElement>('[data-countup-grid]:not(.is-counted)');
+        const countGrids = document.querySelectorAll<HTMLElement>(
+          '[data-countup-grid]:not(.is-counted)',
+        );
         if (countGrids.length > 0) {
           if (reduceMotion || !('IntersectionObserver' in window)) {
             countGrids.forEach((el) => el.classList.add('is-counted'));
@@ -502,7 +541,7 @@ const announcement = await getActiveAnnouncement().catch(() => null);
           let lastY = window.scrollY;
           let ticking = false;
           const SHOW_THRESHOLD = 80; // small jitter buffer
-          const HIDE_AFTER = 120;    // don't hide until past hero band
+          const HIDE_AFTER = 120; // don't hide until past hero band
 
           const onScroll = () => {
             if (ticking) return;

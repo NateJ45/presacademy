@@ -13,15 +13,15 @@ This reads as competent, modern, and long-standing (the brief's target), and it 
 
 ## 2. Divergence map (church move -> school move)
 
-| Church starter move | "Rule & Ledger" school move |
-|---|---|
-| Romanesque `.arch-top` image crowns (big round radius) | Squared image wells with a thin brass top-rule (radius ~2px) |
-| Triple-arch `ArchOrnament` reflective mark | The index numeral ("Course 03 / 12", "Session 04") + a full-width hairline rule |
+| Church starter move                                     | "Rule & Ledger" school move                                                               |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Romanesque `.arch-top` image crowns (big round radius)  | Squared image wells with a thin brass top-rule (radius ~2px)                              |
+| Triple-arch `ArchOrnament` reflective mark              | The index numeral ("Course 03 / 12", "Session 04") + a full-width hairline rule           |
 | Oxblood "chapel" devotional full-bleed bands everywhere | A ruled **facts ledger** for data; oxblood reserved for one sparing **colophon** CTA band |
-| 12px gold hairline stub under each eyebrow | A full-width 1px rule under the section label (a printed section divider) |
-| One-word keyword color flourish in headlines | Index numerals + tabular labels carry the rhythm; oxblood stays as link/CTA/ink |
-| Alternating arched image-side sections | An editorial hanging-label column grid (label left, content right) + ledger blocks |
-| Ken Burns hero photo zoom | A calm, documentary photo with a structured headline block; rules draw in on load |
+| 12px gold hairline stub under each eyebrow              | A full-width 1px rule under the section label (a printed section divider)                 |
+| One-word keyword color flourish in headlines            | Index numerals + tabular labels carry the rhythm; oxblood stays as link/CTA/ink           |
+| Alternating arched image-side sections                  | An editorial hanging-label column grid (label left, content right) + ledger blocks        |
+| Ken Burns hero photo zoom                               | A calm, documentary photo with a structured headline block; rules draw in on load         |
 
 The church identity lives in five tight code spots (the `--arch-radius` + `.arch-top` utilities, the `chapel` band tokens + `surface-chapel`, `ArchOrnament.astro`, the keyword split, the eyebrow->gold-hairline->serif heading). Replacing those five with the moves below sheds the sanctuary read while keeping every brand token.
 
@@ -50,6 +50,7 @@ The church identity lives in five tight code spots (the `--arch-radius` + `.arch
 ## 6. Section archetype library
 
 The buildable kit (Phase 4 components), all squared + ruled:
+
 - **Hero** — documentary photo well (squared, brass top-rule) beside a structured headline block: small label, Fraunces headline, one-line lede, dual CTA, and a thin "Next cohort begins ..." ledger line. No keyword color, no arch, no Ken Burns.
 - **Wayfinding ledger** — a 3-4 cell ruled row (Take a course / Meet the teachers / Find your path / Start free), each cell an index numeral + label + one line + arrow link.
 - **Course card** — squared cover well + brass top-rule, "Course NN" index, Fraunces title, instructor at equal weight, a compact 2-3 fact ledger chip (term, sessions, format), a status tag, hover lift + rule turns oxblood.

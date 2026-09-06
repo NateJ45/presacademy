@@ -46,7 +46,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage
     pageType="contactPage"
     {page}
@@ -58,13 +65,16 @@ const schemas = [
       cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started' },
     }}
   >
-    {/* Hero — photo variant, short height. Rendered here rather than inside
-        SingletonPage so its scoped style stays on the pages that use it. */}
+    {
+      /* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */
+    }
     <Hero
       slot="hero"
       eyebrow={page?.heroEyebrow ?? 'Contact'}
       headline={page?.heroHeadline ?? 'Get in touch'}
-      subhead={page?.heroSubhead ?? 'Questions about a course, scholarships, or getting started? Here is how to reach us.'}
+      subhead={page?.heroSubhead ??
+        'Questions about a course, scholarships, or getting started? Here is how to reach us.'}
       keyword={page?.heroKeyword}
       backgroundImage={page?.heroImage ?? null}
       localImage={heroContact}

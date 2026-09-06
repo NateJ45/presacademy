@@ -46,7 +46,13 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} hideFromSearch={page?.hideFromSearch === true}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  hideFromSearch={page?.hideFromSearch === true}
+>
   <SingletonPage
     pageType="pricingPage"
     {page}

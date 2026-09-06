@@ -160,7 +160,10 @@ describe('buttons and structural bands', () => {
   // The chapel band (footer + closing CTA) is deliberately theme-stable, so
   // one measurement covers both themes; the deep variant is the band's base.
   it('chapel band text clears AA on the band', () => {
-    const ratio = contrastRatio(lightValue('--color-chapel-foreground'), lightValue('--color-chapel'));
+    const ratio = contrastRatio(
+      lightValue('--color-chapel-foreground'),
+      lightValue('--color-chapel'),
+    );
     assert.ok(ratio >= AA_BODY_TEXT, `chapel-foreground on chapel is ${ratio}:1`);
   });
 

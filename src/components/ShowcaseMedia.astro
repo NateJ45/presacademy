@@ -80,51 +80,57 @@ const posterUrl = poster?.asset
 const needsScript = hasVideo || isSlideshow;
 ---
 
-{hasVideo && (
-  <video
-    data-arch-video
-    class="h-full w-full object-cover"
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="metadata"
-    poster={posterUrl}
-    aria-hidden="true"
-  >
-    <source src={videoSrc} type={videoType ?? undefined} />
-  </video>
-)}
+{
+  hasVideo && (
+    <video
+      data-arch-video
+      class="h-full w-full object-cover"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster={posterUrl}
+      aria-hidden="true"
+    >
+      <source src={videoSrc} type={videoType ?? undefined} />
+    </video>
+  )
+}
 
-{isSlideshow && (
-  <div class="hero-slideshow" data-arch-slideshow>
-    {slides.map((img, i) => (
-      <SanityImage
-        source={img}
-        width={width}
-        sizes={sizes}
-        loading={i === 0 && eager ? 'eager' : 'lazy'}
-        fetchpriority={i === 0 && eager ? 'high' : 'low'}
-        quality={quality}
-        alt={i === 0 ? (img.alt || fallbackAlt) : (img.alt || '')}
-        class={`hero-slide${i === 0 ? ' is-active' : ''}`}
-      />
-    ))}
-  </div>
-)}
+{
+  isSlideshow && (
+    <div class="hero-slideshow" data-arch-slideshow>
+      {slides.map((img, i) => (
+        <SanityImage
+          source={img}
+          width={width}
+          sizes={sizes}
+          loading={i === 0 && eager ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 && eager ? 'high' : 'low'}
+          quality={quality}
+          alt={i === 0 ? img.alt || fallbackAlt : img.alt || ''}
+          class={`hero-slide${i === 0 ? ' is-active' : ''}`}
+        />
+      ))}
+    </div>
+  )
+}
 
-{single && (
-  <SanityImage
-    source={single}
-    width={width}
-    sizes={sizes}
-    loading={eager ? 'eager' : 'lazy'}
-    fetchpriority={eager ? 'high' : undefined}
-    quality={quality}
-    alt={single.alt || fallbackAlt}
-    class="h-full w-full object-cover"
-  />
-)}
+{
+  single && (
+    <SanityImage
+      source={single}
+      width={width}
+      sizes={sizes}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      quality={quality}
+      alt={single.alt || fallbackAlt}
+      class="h-full w-full object-cover"
+    />
+  )
+}
 
 <script is:inline define:vars={{ needsScript }}>
   (function () {
@@ -136,16 +142,23 @@ const needsScript = hasVideo || isSlideshow;
     // multiple copies of this inline script) never stacks intervals.
     function initArchMedia() {
       if (window.__archMediaTimers) {
-        window.__archMediaTimers.forEach(function (t) { clearInterval(t); });
+        window.__archMediaTimers.forEach(function (t) {
+          clearInterval(t);
+        });
       }
       window.__archMediaTimers = [];
 
       var reduce = false;
-      try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
+      try {
+        reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      } catch (_) {}
 
       // Looping videos: honor reduced motion (hold on the poster frame).
       document.querySelectorAll('video[data-arch-video]').forEach(function (v) {
-        try { if (reduce) v.pause(); else v.play().catch(function () {}); } catch (_) {}
+        try {
+          if (reduce) v.pause();
+          else v.play().catch(function () {});
+        } catch (_) {}
       });
 
       if (reduce) return; // slideshows stay on their first slide, static

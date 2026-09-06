@@ -47,22 +47,30 @@ const grouped = groupFaqs(faqs, categoryOrder);
 
 {
   grouped.length > 0 && (
-    <section class="bg-background" aria-label={block?.landmarkLabel ?? 'Frequently asked questions'}>
-      <div class="mx-auto max-w-3xl px-m py-section-lg space-y-section-md" data-stagger-grid>
+    <section
+      class="bg-background"
+      aria-label={block?.landmarkLabel ?? 'Frequently asked questions'}
+    >
+      <div class="mx-auto max-w-3xl space-y-section-md px-m py-section-lg" data-stagger-grid>
         {grouped.map((group) => (
           <div>
-            <h2 class="font-display text-h3 text-foreground mb-m">{group.category}</h2>
+            <h2 class="mb-m font-display text-h3 text-foreground">{group.category}</h2>
             <div class="divide-y divide-border-soft border-t border-b border-border-soft">
               {group.items.map((f: any) => (
                 <details class="group py-m">
                   <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg text-foreground">
                     {f.question}
-                    <span class="shrink-0 text-link transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                    <span
+                      class="shrink-0 text-link transition-transform group-open:rotate-45"
+                      aria-hidden="true"
+                    >
+                      +
+                    </span>
                   </summary>
                   {typeof f.answer === 'string' ? (
-                    <p class="mt-s text-foreground/85 leading-relaxed">{f.answer}</p>
+                    <p class="mt-s leading-relaxed text-foreground/85">{f.answer}</p>
                   ) : (
-                    <div class="mt-s text-foreground/85 leading-relaxed [&>div>*:first-child]:mt-0">
+                    <div class="mt-s leading-relaxed text-foreground/85 [&>div>*:first-child]:mt-0">
                       <PortableTextStatic value={f.answer} />
                     </div>
                   )}

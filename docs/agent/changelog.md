@@ -3,7 +3,7 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
-*2026-06-15 (later) — Fix: hCaptcha was blocked by the site CSP on the live build,
+_2026-06-15 (later) — Fix: hCaptcha was blocked by the site CSP on the live build,
 so the widget never appeared even though the form asked for it. The
 Content-Security-Policy in `public/_headers` allowed YouTube/Vimeo/Maps for
 frame-src and only Cloudflare for script-src, so hCaptcha's `api.js` and challenge
@@ -14,11 +14,13 @@ same way). Root cause of the miss: the earlier theme verification used a plain
 static file server, which sends no CSP; re-verified here by serving the build under
 the EXACT production CSP (a throwaway node server) and confirming the widget renders
 with no CSP violations. Added a maintainer note to `_headers` to check captchas
-against `wrangler dev` / live, not a static server.*
+against `wrangler dev` / live, not a static server._
 
 *2026-06-15 (later) — hCaptcha now matches and follows the site theme.
 `FormRenderer.tsx` switched from auto-render to explicit render (`render=explicit`
-+ an `onHcaptchaLoad` ready flag): a MutationObserver watches the `dark` class on
+
+- an `onHcaptchaLoad` ready flag): a MutationObserver watches the `dark` class on
+
 <html> and re-renders the widget with `theme: 'light' | 'dark'` whenever the
 visitor toggles, since hCaptcha only reads its theme at render time. The submit
 gate now reads the token via `hcaptcha.getResponse(widgetId)` and only blocks when
@@ -29,7 +31,7 @@ toggling to dark live re-renders the iframe with `theme=dark`). Also removed the
 now-dead `PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` lines from
 local `.env`.*
 
-*2026-06-15 (later) — Swapped form spam protection from Cloudflare Turnstile to
+_2026-06-15 (later) — Swapped form spam protection from Cloudflare Turnstile to
 hCaptcha, because Web3Forms gates Turnstile behind a paid plan but verifies
 hCaptcha for free. `FormRenderer.tsx` now loads the hCaptcha script
 (`js.hcaptcha.com/1/api.js`), renders the `h-captcha` widget with Web3Forms'
@@ -42,9 +44,9 @@ with its own secret). The one manual step is switching the form's spam protectio
 to hCaptcha in the Web3Forms dashboard so the token is enforced. The now-dead
 `PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` vars can be removed
 from `.env` + the Cloudflare build env. Supersedes the Turnstile note in the entry
-below. Docs updated (ci-cd-and-ops.md, CLAUDE.md topic index).*
+below. Docs updated (ci-cd-and-ops.md, CLAUDE.md topic index)._
 
-*2026-06-15 (later) — Web3Forms wired into the live forms (`scripts/seed-forms.mjs`,
+_2026-06-15 (later) — Web3Forms wired into the live forms (`scripts/seed-forms.mjs`,
 idempotent). The Express-interest form (on /get-started) had `provider.service =
 web3forms` but no access key, so it was silently falling back to a mailto; set its
 `provider.accessKey` so it now posts to Web3Forms. Added a simple Contact form
@@ -52,9 +54,9 @@ web3forms` but no access key, so it was silently falling back to a mailto; set i
 `contactPage.contactForm`, so /contact now renders a real form instead of the
 "Email the Office" mailto pill. Both deliver to the one Web3Forms inbox tied to the
 key (a PUBLIC form id, so it lives in the Sanity form doc). Turnstile still gates
-both when `PUBLIC_TURNSTILE_SITEKEY` is set.*
+both when `PUBLIC_TURNSTILE_SITEKEY` is set._
 
-*2026-06-15 (later) — OG / social-card restyle to match the header logo.
+_2026-06-15 (later) — OG / social-card restyle to match the header logo.
 `scripts/lib/render-og.mjs` now renders the wordmark in the site's two-line logo
 style: ink "The" + green "Presbyterian" (the keyword-emphasis device) with a
 smaller, muted "Academy" tucked beneath, instead of one flat near-black line. The
@@ -64,7 +66,7 @@ header's lead/keyword/sub structure (mirrors Header.astro), so both OG generator
 pick it up. Also de-churched the DEFAULT card's tagline in
 `scripts/generate-og-default.mjs` ("Equipping tomorrow's church" ->
 "Reformed theological formation for everyday leaders"). All 13 OG PNGs
-regenerated and visually verified.*
+regenerated and visually verified._
 
 *2026-06-15 — Page-builder blocks overhaul + editability seeding remediation
 (commits c800211, 2fe3ce2, 296750f).
@@ -114,7 +116,7 @@ grouping, events cards, pricing extraction) and the green production build (incl
 existing dev-only React SSR "Invalid hook call" issue (two React copies in Vite's
 deps_ssr) hangs the preview screenshot tool; the build is unaffected.*
 
-*2026-06-14 — Home hero pixelation fix (commit 1d942b7). The slideshow looked
+_2026-06-14 — Home hero pixelation fix (commit 1d942b7). The slideshow looked
 pixelated because (a) three of the six placeholder images were only ~960px
 (rawpixel/stocksnap cap their hotlink downloads) and (b) `HeroSlideshow.astro`
 requested landscape-width variants that object-cover then upscaled ~1.85x to fill
@@ -131,12 +133,13 @@ a `--force-hero` flag to overwrite an already-populated hero. **Lesson:** hero
 images need high-res sources because the 4:5 portrait crop magnifies any shortfall.
 Turnstile aside: the sitekey env var must be `PUBLIC_TURNSTILE_SITEKEY` — the
 `PUBLIC_` prefix is what exposes it to the browser, so a `CLOUDFLARE_*`-named var
-stays server-side and the widget never renders.*
+stays server-side and the widget never renders._
 
 *2026-06-14 — CI/CD + operational hardening to pair with the staging workflow
 (full reference: docs/agent/ci-cd-and-ops.md). All committed and ready; the pieces
 that need an external account stay inert (warn + skip) until their secret/variable
 is added.
+
 - **CI gates** (`.github/workflows/ci.yml`): added a Sanity-types FRESHNESS check
   (fails if `npm run typegen` would change the committed `sanity.types.ts`, the
   bug that shipped earlier today), `npm run lint`, and a Lighthouse-CI job
@@ -156,13 +159,14 @@ is added.
 - **PR template** (`.github/pull_request_template.md`) codifies the definition of
   done (CI green, types regenerated + studio:deploy on schema changes, both
   themes/viewports, Lighthouse held, docs updated, no em-dashes/AI-tells).
-Deliberately skipped for now as overkill at this scale: Sentry, Renovate/Dependabot,
-a full alerting stack.*
+  Deliberately skipped for now as overkill at this scale: Sentry, Renovate/Dependabot,
+  a full alerting stack.*
 
 *2026-06-14 — Accessibility page, AA contrast fix, Ken Burns hero slideshow, and
 an academic-photo placeholder sweep (commits c803da6 -> 491215e, merged to main).
 Adopted a **staging-first git workflow**: work lands on `staging`, gets verified
 in-browser, then fast-forwards to `main` (which triggers the production rebuild).
+
 - **Accessibility statement page** (`/accessibility`, commits 54f565d + 736b3f2).
   A faculty-editable `accessibilityPage` Sanity singleton mirroring `privacyPage`
   (hero, SEO, Portable Text body, last-reviewed date, page-builder sections), every
@@ -203,6 +207,7 @@ in-browser, then fast-forwards to `main` (which triggers the production rebuild)
 *2026-06-14 — Mobile audit + horizontal-scroll fix + footer/CTA tidy (commit
 54d6f2f). Four fixes, all verified in-browser (no sideways scroll, vertical
 scroll intact, images sized well):
+
 - **Mobile image audit.** The large single images that went full-width and huge
   when their two-column sections collapse to one column on mobile are now
   constrained. HOME split-hero image: `aspect-[3/2] lg:aspect-[4/5]` (landscape
@@ -232,19 +237,19 @@ scroll intact, images sized well):
   brass "close mark" rule below it (the leading rule doubled up with the centered
   one and looked off).*
 
-*2026-06-14 — Theme default flipped to LIGHT for new visitors (commit eb1ce88).
+_2026-06-14 — Theme default flipped to LIGHT for new visitors (commit eb1ce88).
 A first-time visitor with no saved choice now gets light mode instead of
 following the OS. The OS preference is honored ONLY when the visitor explicitly
 picks "system" in the toggle; any explicit choice persists in localStorage. The
 mobile browser-chrome color now tracks the APP theme: a single `theme-color` meta
 that the anti-FOUC bootstrap in BaseLayout.astro rewrites on theme change,
 replacing the previous pair of `prefers-color-scheme` media metas. Changed in
-BaseLayout.astro + ThemeToggle.tsx.*
+BaseLayout.astro + ThemeToggle.tsx._
 
-*2026-06-14 — 404 rebranded to "Rule & Ledger" (commit eb1ce88). The custom 404
+_2026-06-14 — 404 rebranded to "Rule & Ledger" (commit eb1ce88). The custom 404
 was reframed onto the current brand: a brass top rule + rectangular crop in place
 of the retired Romanesque arch frame, a bookish headline ("This page isn't in the
-index."), and school CTAs (Browse courses / Meet the faculty / Get in touch).*
+index."), and school CTAs (Browse courses / Meet the faculty / Get in touch)._
 
 *2026-06-14 — Content-editability pass: "Sanity is the single source of truth"
 made true for the school pages (Phases 0-4). A 6-agent audit found the claim was
@@ -253,13 +258,14 @@ were hardcoded literals and the docs still carried orphaned / mismatched
 church-era schema fields. Full page-by-page map + fix plan in
 docs/agent/content-editability-audit.md, which SUPERSEDES the "everything
 editable" claim in editor-vs-hardcoded.md. What landed:
+
 - **Editor-UX** (commit 7c046b3) — a per-document "View this page on the live
   site" help banner at the top of every Studio form (src/sanity/components/PageHelpBanner.tsx
-  + StudioFormInput.tsx, composed with CharacterCountInput into the single
-  form.components.input slot; deep-links via a dedicated LIVE_SITE_URL in
-  sanity.config.ts; urlForDoc split into pathForDoc + base). Fixed
-  documentBadges.tsx, whose SEO/photo type lists still named deleted church types
-  (so the "Add SEO / Needs a photo" badges did nothing on course/facultyMember).
+  - StudioFormInput.tsx, composed with CharacterCountInput into the single
+    form.components.input slot; deep-links via a dedicated LIVE_SITE_URL in
+    sanity.config.ts; urlForDoc split into pathForDoc + base). Fixed
+    documentBadges.tsx, whose SEO/photo type lists still named deleted church types
+    (so the "Add SEO / Needs a photo" badges did nothing on course/facultyMember).
 - **Home + About re-schema** (commits 91c1e4d, bf88d1d) — homePage.ts +
   aboutPage.ts rewritten to clean SCHOOL fields (wayfinding, stats, ticker,
   strip eyebrow/heading pairs, hero button labels, next-cohort label; mission /
@@ -283,7 +289,7 @@ editable" claim in editor-vs-hardcoded.md. What landed:
   and brand constants (the "PA" monogram, the "PC(USA)" tag). Fielding these would
   bloat Studio with never-touched fields.*
 
-*2026-06-14 — Founding-year scrub + Presbytery funder (commits f2b71fa, 82bb126).
+_2026-06-14 — Founding-year scrub + Presbytery funder (commits f2b71fa, 82bb126).
 The school was FOUNDED IN 2026: do NOT highlight the founding year or imply a long
 history. Removed "Est. 1998", the home + pricing "Established / Learners formed /
 Denominations served" stat bands, and the about-page "founded in 1998 / a thousand
@@ -292,9 +298,9 @@ credentialed faculty, in-person cohorts, need-based scholarships, Westminster
 grounding). The Presbytery of Cincinnati funds the school THIS YEAR: a
 "Made possible by the Presbytery of Cincinnati" footer band driven by a new
 editable siteSettings.funder field (made editable in 82bb126), plus an about-page
-line.*
+line._
 
-*2026-06-14 — Header utility bar + colophon footer (commit de4723e). The header
+_2026-06-14 — Header utility bar + colophon footer (commit de4723e). The header
 utility bar now shows LIVE enrollment status: the soonest upcoming term via
 getNextTerm() ("Now enrolling · Fall 2026 begins September 8", with a pulsing
 .enroll-dot), tap-to-call, and a Request-info link; it falls back to
@@ -304,36 +310,36 @@ masthead + mission + two CTAs; an imprint row (where-we-meet / nav index /
 follow-along, each under a brass eyebrow rule); and a colophon bar (a "PA"
 monogram seal, locality + denomination, a typeface credit "Set in Fraunces &
 Source Sans 3", legal links, and the designer credit), over a faint graph-paper
-dot texture on the green band.*
+dot texture on the green band._
 
-*2026-06-14 — Per-page OG images folded into the build chain (commit 7e8c8c5).
+_2026-06-14 — Per-page OG images folded into the build chain (commit 7e8c8c5).
 `npm run build` is now `node scripts/generate-og-pages.mjs && astro build`
 (build:full chains `npm run build`), so per-page OG cards regenerate on every
 build. generate-og-pages.mjs is fail-safe: on a Pango-less host it ships the
-committed PNG instead of crashing the build.*
+committed PNG instead of crashing the build._
 
 *2026-06-14 — Lighthouse re-run after the kinetic motion pass (home page, on the
 workers.dev preview). Performance ~100 (LCP 205ms, CLS 0.01 — the animation pass
 did NOT regress performance), Accessibility 100, Best Practices 100. SEO showed
 66 ON THE PREVIEW ONLY: Cloudflare auto-injects an X-Robots-Tag: noindex header
-on every *.workers.dev URL, which fails Lighthouse's is-crawlable audit. The page
+on every _.workers.dev URL, which fails Lighthouse's is-crawlable audit. The page
 itself has no noindex meta and carries a valid description + canonical, so on the
 production custom domain SEO is 100. Documented in performance.md so a future
-SEO-66 on a preview is not mistaken for a regression.*
+SEO-66 on a preview is not mistaken for a regression._
 
-*2026-06-14 — Placeholder images seeded into the dataset so the site renders
+_2026-06-14 — Placeholder images seeded into the dataset so the site renders
 fully for styling while real photography is pending. New script
 scripts/seed-placeholder-images.mjs (commit 8a644e5) uploads placeholders and
 patches ONLY empty image fields (idempotent; never clobbers an editor's real
 images). Course coverImages and page heroImages use the in-repo Pexels library
-(src/assets/placeholders/teach-*, study-*, community-*); faculty photos come from
+(src/assets/placeholders/teach-_, study-_, community-_); faculty photos come from
 pravatar.cc. Run `node scripts/seed-placeholder-images.mjs` (dry run) /
 `--apply`; the apply run patched 22 docs (8 course covers, 5 faculty portraits, 9
 page heroes incl. home). The editor swaps in real photography later. Static
 deploys show the placeholders only after a rebuild; the dev server shows them
 immediately. Docs: images.md, sanity.md.*
 
-*2026-06-14 — Animation / effects pass: a CSS-first "refined kinetic editorial"
+_2026-06-14 — Animation / effects pass: a CSS-first "refined kinetic editorial"
 motion system, shipped on PR #9 (commit 864d173). All transform / opacity /
 clip-path only (zero CLS), and the whole system is neutralized by a dedicated
 prefers-reduced-motion reset block at the end of the motion section in
@@ -356,7 +362,7 @@ astro:page-load. SectionHeading's wrapper is now [data-reveal] so the reveal +
 eyebrow-draw cascade to nearly every section; Course/Faculty cards gained the
 green duotone hover; FinalCta reveals its content. The home page is the showcase
 (kinetic hero, graph-paper atmosphere + image parallax, topics ticker, stat
-count-up). Docs: design.md, animation.md, polish-layer.md, performance.md.*
+count-up). Docs: design.md, animation.md, polish-layer.md, performance.md._
 
 *2026-06-14 — Brand evolution (Direction A): "green-anchored bookish
 minimalism," shipped on PR #9 (branch feat/brand-evolution-direction-a).
@@ -369,6 +375,7 @@ grain, the oxblood structural bands), not from the serif or the warmth, which
 are credibility assets. Verdict and full method: docs/research/2026-06-14-brand-direction-debate.md.
 
 What changed (src/styles/globals.css is the source of truth):
+
 - Palette: page surface Stone Cream #F4EEE6 -> near-white warm paper #FAF8F4;
   cards #FCF9F4 -> white #FFFFFF; muted band #EDE5D9 -> warm grey #F1F0EB; ink
   Walnut #2A2521 -> soft near-black #1F1B18.
@@ -386,7 +393,7 @@ What changed (src/styles/globals.css is the source of truth):
   .eyebrow-inverse) — a short brand-green leading rule before every section/hero
   eyebrow (brass on dark/green/photo) — as the new unifying mark. Italic display
   quieted to true epigraphs; script accent stays OFF.
-- Photography: church placeholders (place-church-*, place-sanctuary-*) swapped
+- Photography: church placeholders (place-church-_, place-sanctuary-_) swapped
   for lay-school images (teach-seminar-discussion, teach-class-discussion,
   study-bible-notebook, study-bibles-closeup) on contact/faq/privacy/404.
 - Docs updated: design.md, theme-and-color.md, polish-layer.md, design-tokens.md,
@@ -394,7 +401,7 @@ What changed (src/styles/globals.css is the source of truth):
   names `chapel` / `chapel-ink` now carry GREEN, not oxblood — kept for
   reversibility, may be renamed in a later pass.*
 
-*2026-06-13 — Rebranded to The Presbyterian Academy, a PC(USA) Reformed
+_2026-06-13 — Rebranded to The Presbyterian Academy, a PC(USA) Reformed
 lay-formation school (presbyterianacademy.org). Identity stamped via
 scripts/rebrand.mjs from bootstrap.config.json. New brand: the "Oxblood &
 Stone" palette (Geneva Oxblood #7A2A2C, Walnut Ink #2A2521, Stone Cream
@@ -406,9 +413,9 @@ OG image and the Sanity Studio theme rebranded to match. Brand spec +
 implementation plan in docs/superpowers/. Shipped via PR #2; Studio deployed to
 presbyterian-academy.sanity.studio. Still pending before launch: content seed
 (starter-content.ndjson still carries placeholder copy), real photography, and
-a Lighthouse pass on the live site.*
+a Lighthouse pass on the live site._
 
-*2026-06-12 — ncs-church-starter extracted from the Second Presbyterian Church
+_2026-06-12 — ncs-church-starter extracted from the Second Presbyterian Church
 of Chicago build. Everything that made that site good ships here: the full
 page set, the Sanity content model (singletons + collections + page builder +
 configurable forms), the worship-time single-sourcing, the sermons module with
@@ -424,4 +431,4 @@ church name in components), docs/bootstrap/NEW-PROJECT.md + setup-checklist.md
 (the spin-up runbook), and a blanked docs/brand/voice.md template. Client
 secrets, Sanity project IDs, deploy hosts, and one-off content seed scripts
 were removed. Reference-build photography remains in src/assets/ as
-placeholder-only imagery: replace before any client launch.*
+placeholder-only imagery: replace before any client launch._

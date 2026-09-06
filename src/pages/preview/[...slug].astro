@@ -126,8 +126,11 @@ interface PreviewDoc {
 
 const singletonType = SINGLETON_BY_PATH[slug];
 
-const draftFetch = (q: string, p: Record<string, unknown> = {}, fallback: any = null): Promise<any> =>
-  previewFetch(draftMode, q, p).catch(() => fallback);
+const draftFetch = (
+  q: string,
+  p: Record<string, unknown> = {},
+  fallback: any = null,
+): Promise<any> => previewFetch(draftMode, q, p).catch(() => fallback);
 
 // ---------------------------------------------------------------------------
 // CONVERTED SINGLETONS: full-fidelity preview (2026-08-26). All thirteen.
@@ -200,8 +203,7 @@ if (singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
 // Home's hero is page-level too, and its ledger line names the next cohort, so
 // the term has to be fetched here the way the page file fetches it. Draft-aware,
 // because the old home special case fetched it that way (2026-08-26, Phase 4).
-const nextTerm =
-  converted && singletonType === 'homePage' ? await getNextTerm(draftFetch) : null;
+const nextTerm = converted && singletonType === 'homePage' ? await getNextTerm(draftFetch) : null;
 
 let pinned: Record<string, any> | null = null;
 if (converted && singletonType === 'coursesPage') {
@@ -223,12 +225,12 @@ if (converted && singletonType === 'coursesPage') {
 const doc = converted
   ? null
   : await previewFetch<PreviewDoc | null>(
-  draftMode,
-  singletonType
-    ? `*[_type == $type][0]${PREVIEW_FIELDS}`
-    : `*[_type == "page" && slug.current == $slug][0]${PREVIEW_FIELDS}`,
-  singletonType ? { type: singletonType } : { slug },
-);
+      draftMode,
+      singletonType
+        ? `*[_type == $type][0]${PREVIEW_FIELDS}`
+        : `*[_type == "page" && slug.current == $slug][0]${PREVIEW_FIELDS}`,
+      singletonType ? { type: singletonType } : { slug },
+    );
 
 if (!converted && !doc) {
   return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
@@ -264,9 +266,7 @@ const editDoc = converted
   : {
       id: doc!._id.replace(/^drafts\./, ''),
       type: doc!._type,
-      field: (singletonType ? 'flexibleSections' : 'sections') as
-        | 'flexibleSections'
-        | 'sections',
+      field: (singletonType ? 'flexibleSections' : 'sections') as 'flexibleSections' | 'sections',
     };
 
 const heroHeadline = generic ? doc!.heroHeadline || doc!.title || doc!.seoTitle || '' : '';
@@ -282,12 +282,7 @@ const title = converted
 // page (its scoped style must not follow every text-hero page). Here the slot is
 // filled from the draft's own hero fields. Keep this set in step with the
 // `kind: 'image'` entries in SingletonPage's hero map as those pages convert.
-const IMAGE_HERO_TYPES = new Set([
-  'privacyPage',
-  'accessibilityPage',
-  'faqPage',
-  'contactPage',
-]);
+const IMAGE_HERO_TYPES = new Set(['privacyPage', 'accessibilityPage', 'faqPage', 'contactPage']);
 const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.has(singletonType));
 ---
 
@@ -352,10 +347,10 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
   {
     generic && singletonType && (
       <div class="mx-auto max-w-3xl px-4 py-6">
-        <p class="rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm text-ink/80">
+        <p class="text-ink/80 rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm">
           This page has not moved to the page builder yet, so it previews as its editable surface
-          only: the hero above, any page sections below, and the closing call to action. Parts of
-          it that are drawn in code render on the live site.
+          only: the hero above, any page sections below, and the closing call to action. Parts of it
+          that are drawn in code render on the live site.
         </p>
       </div>
     )

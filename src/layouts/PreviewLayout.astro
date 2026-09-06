@@ -142,16 +142,20 @@ const announcementAttr = announcement?._id
   </head>
   <body class="relative bg-background text-foreground">
     <div
-      class="border-border-soft bg-card text-foreground/70 flex items-center justify-between border-b px-4 py-1.5 text-xs"
+      class="flex items-center justify-between border-b border-border-soft bg-card px-4 py-1.5 text-xs text-foreground/70"
     >
-      <span data-connected-note>Draft preview — click the header or footer to edit Site settings.</span>
+      <span data-connected-note
+        >Draft preview — click the header or footer to edit Site settings.</span
+      >
       <span data-reconnect-hint class="font-semibold"
         >Draft session ended — reload the Studio browser tab to reconnect the preview.</span
       >
     </div>
-    {/* The real site chrome, draft-aware, each piece an editable surface. The
+    {
+      /* The real site chrome, draft-aware, each piece an editable surface. The
         wrapper divs are REAL block boxes on purpose: the overlay outlines the
-        element's rect (same rule as sectionEditAttr). */}
+        element's rect (same rule as sectionEditAttr). */
+    }
     <AnnouncementBar announcement={announcement} editAttr={announcementAttr} />
     <div data-sanity={headerAttr}>
       <Header siteSettings={chromeSettings} />
@@ -161,14 +165,16 @@ const announcementAttr = announcement?._id
       <Footer siteSettings={chromeSettings} />
     </div>
 
-    {/* The motion system's END states, forced. BaseLayout's IntersectionObserver
+    {
+      /* The motion system's END states, forced. BaseLayout's IntersectionObserver
         script is not loaded here (this shell is deliberately minimal), and the
         reveal/stagger/kinetic entrances hide content at opacity 0 until it
         runs — so without this block, the shared page bodies (SingletonPage and
         its section blocks) would render INVISIBLE sections in the preview. Mirrors the settle() CSS in
         tests/helpers.ts; keep the two in sync when the motion vocabulary grows.
         (Ken Burns / marquee loops are left running — they are keyframe-driven
-        and need no JS.) */}
+        and need no JS.) */
+    }
     <style is:global>
       [data-reveal] {
         opacity: 1 !important;
@@ -209,7 +215,7 @@ const announcementAttr = announcement?._id
           <a
             href="/api/draft-mode/disable"
             data-exit-preview
-            class="bg-primary text-primary-foreground hover:bg-primary-dark fixed right-4 bottom-4 z-50 rounded-full px-4 py-2 text-sm font-bold shadow-lg"
+            class="fixed right-4 bottom-4 z-50 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-lg hover:bg-primary-dark"
           >
             Exit preview
           </a>
@@ -246,8 +252,18 @@ const announcementAttr = announcement?._id
       // src/pages/preview/[...slug].astro (plus: any single-segment path is a
       // custom `page` slug, which /preview/<slug> also renders). Keep in sync.
       const FIRST_SEGMENT_PREVIEWABLE = new Set([
-        'about', 'faq', 'contact', 'privacy', 'accessibility', 'events',
-        'courses', 'faculty', 'pricing', 'get-started', 'for-you', 'resources',
+        'about',
+        'faq',
+        'contact',
+        'privacy',
+        'accessibility',
+        'events',
+        'courses',
+        'faculty',
+        'pricing',
+        'get-started',
+        'for-you',
+        'resources',
       ]);
       const NEVER_REMAP = new Set(['api', 'studio', 'preview', 'style-guide', '404']);
 

@@ -27,9 +27,7 @@ import { client, apply, done } from './lib/sanity-lib.mjs';
 // Must match the _key in DEFAULT_SECTIONS (src/lib/default-sections.ts).
 const KEY = 'faqGrouped';
 
-const doc = await client.fetch(
-  `*[_type == "faqPage"][0]{ _id, categoryOrder, flexibleSections }`,
-);
+const doc = await client.fetch(`*[_type == "faqPage"][0]{ _id, categoryOrder, flexibleSections }`);
 
 if (!doc) {
   console.error('No faqPage document in the dataset. Nothing to seed.');

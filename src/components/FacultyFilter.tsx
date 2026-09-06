@@ -31,13 +31,19 @@ export default function FacultyFilter({ areas }: Props) {
   if (areas.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by teaching area">
+    <div
+      className="flex flex-wrap items-center gap-2"
+      role="group"
+      aria-label="Filter by teaching area"
+    >
       <button
         type="button"
         onClick={() => setActive(new Set())}
         aria-pressed={active.size === 0}
-        className={`rounded-[2px] border px-3 py-1 text-xs uppercase tracking-[0.1em] transition-colors ${
-          active.size === 0 ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-foreground/70 hover:border-foreground'
+        className={`rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
+          active.size === 0
+            ? 'border-primary bg-primary text-primary-foreground'
+            : 'border-border text-foreground/70 hover:border-foreground'
         }`}
       >
         All
@@ -50,8 +56,10 @@ export default function FacultyFilter({ areas }: Props) {
             type="button"
             onClick={() => toggle(a.slug)}
             aria-pressed={on}
-            className={`rounded-[2px] border px-3 py-1 text-xs uppercase tracking-[0.1em] transition-colors ${
-              on ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-foreground/70 hover:border-foreground'
+            className={`rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
+              on
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border text-foreground/70 hover:border-foreground'
             }`}
           >
             {a.label}

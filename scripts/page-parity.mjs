@@ -116,17 +116,22 @@ const PAGES = [
 /** Rule 1: hashed asset references under /_astro/. */
 function stripAssetHashes(html) {
   // Match a full /_astro/ path, then rewrite only its final hash segment.
-  return html.replace(/\/_astro\/([A-Za-z0-9._@-]+)\.([A-Za-z0-9_-]{6,})\.([a-z0-9]+)\b/g, '/_astro/$1.HASH.$3');
+  return html.replace(
+    /\/_astro\/([A-Za-z0-9._@-]+)\.([A-Za-z0-9_-]{6,})\.([a-z0-9]+)\b/g,
+    '/_astro/$1.HASH.$3',
+  );
 }
 
 /** Rule 2: generated hashes inside astro's own attribute names/values. */
 function stripAstroCids(html) {
-  return html
-    // class="... astro-cid-ge4ks5ma ..." and the matching data-astro-cid-* marker
-    .replace(/data-astro-cid-[a-z0-9]+/g, 'data-astro-cid-CID')
-    .replace(/astro-cid-[a-z0-9]{6,}/g, 'astro-cid-CID')
-    // View-transition scopes are generated per build from component identity.
-    .replace(/data-astro-transition-scope="[^"]*"/g, 'data-astro-transition-scope="SCOPE"');
+  return (
+    html
+      // class="... astro-cid-ge4ks5ma ..." and the matching data-astro-cid-* marker
+      .replace(/data-astro-cid-[a-z0-9]+/g, 'data-astro-cid-CID')
+      .replace(/astro-cid-[a-z0-9]{6,}/g, 'astro-cid-CID')
+      // View-transition scopes are generated per build from component identity.
+      .replace(/data-astro-transition-scope="[^"]*"/g, 'data-astro-transition-scope="SCOPE"')
+  );
 }
 
 /** Rule 3: the render-order counter in an island's hydration prefix. */
@@ -174,17 +179,22 @@ function requireDist() {
       'dist/client not found.\n' +
         'This script never builds. Run the build first, then re-run:\n' +
         '  npm run build\n' +
-        '  node scripts/page-parity.mjs ' + (process.argv[2] ?? 'capture'),
+        '  node scripts/page-parity.mjs ' +
+        (process.argv[2] ?? 'capture'),
     );
   }
   const marker = join(DIST, 'index.html');
   if (!existsSync(marker)) {
-    fail('dist/client exists but has no index.html. The build did not finish. Re-run npm run build.');
+    fail(
+      'dist/client exists but has no index.html. The build did not finish. Re-run npm run build.',
+    );
   }
   const age = Date.now() - statSync(marker).mtimeMs;
   if (age > STALE_MS) {
     const hours = (age / 3600000).toFixed(1);
-    console.warn(`WARNING: dist/client was built ${hours}h ago. It may not reflect your working tree.`);
+    console.warn(
+      `WARNING: dist/client was built ${hours}h ago. It may not reflect your working tree.`,
+    );
   }
 }
 
@@ -230,7 +240,9 @@ function unifiedDiff(oldText, newText, maxLines) {
   const CAP = 3000;
   if (midA.length > CAP || midB.length > CAP) {
     // Too big to LCS cheaply. Report the raw changed window instead.
-    const out = [`@@ changed region is large (${midA.length} old / ${midB.length} new lines), showing head @@`];
+    const out = [
+      `@@ changed region is large (${midA.length} old / ${midB.length} new lines), showing head @@`,
+    ];
     for (const line of midA.slice(0, Math.floor(maxLines / 2))) out.push('- ' + line);
     for (const line of midB.slice(0, Math.floor(maxLines / 2))) out.push('+ ' + line);
     return out;
@@ -299,7 +311,9 @@ function capture(only) {
     console.log(`  SAVE  ${name.padEnd(13)} ${kb.padStart(7)} KB  -> scripts/.parity/${name}.html`);
     written++;
   }
-  console.log(`\n${written} snapshot(s) written${missing ? `, ${missing} page(s) missing from dist` : ''}.`);
+  console.log(
+    `\n${written} snapshot(s) written${missing ? `, ${missing} page(s) missing from dist` : ''}.`,
+  );
   console.log('Commit scripts/.parity/*.html: they are the pre-conversion baseline.');
   if (missing) process.exit(1);
 }

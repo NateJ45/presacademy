@@ -34,54 +34,57 @@ const limit = block?.limit ? Number(block.limit) : undefined;
 const items: any[] = await getFaqItems({ category: categoryFilter, limit }).catch(() => []);
 ---
 
-{items.length > 0 && (
-  <div class="mx-auto max-w-3xl px-m">
-    {/* Section heading — only rendered when at least one field is present */}
-    {(block?.eyebrow || block?.headline || block?.subhead) && (
-      <div class="mb-l">
-        {block.eyebrow && (
-          <p class="text-xs uppercase tracking-eyebrow opacity-70">{block.eyebrow}</p>
-        )}
-        {block.headline && (
-          <h2 class="mt-s font-display text-h2">{block.headline}</h2>
-        )}
-        {block.subhead && (
-          <p class="mt-s opacity-80 leading-relaxed">{block.subhead}</p>
-        )}
-      </div>
-    )}
-
-    {/* FAQ accordion — matches the /faq page's native <details> pattern exactly */}
-    <div class="divide-y divide-current/15 border-t border-b border-current/15">
-      {items.map((f: any) => (
-        <details class="group py-m">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg">
-            {f.question}
-            <span class="shrink-0 text-gold transition-transform group-open:rotate-45" aria-hidden="true">+</span>
-          </summary>
-          {/* Handle both Portable Text answers (from faqItem) and plain strings
-              (future-proofing; currently all faqItem answers are Portable Text). */}
-          {typeof f.answer === 'string' ? (
-            <p class="mt-s opacity-85 leading-relaxed">{f.answer}</p>
-          ) : (
-            <div class="mt-s opacity-85 leading-relaxed [&>div>*:first-child]:mt-0">
-              <PortableTextStatic value={f.answer} />
-            </div>
+{
+  items.length > 0 && (
+    <div class="mx-auto max-w-3xl px-m">
+      {/* Section heading — only rendered when at least one field is present */}
+      {(block?.eyebrow || block?.headline || block?.subhead) && (
+        <div class="mb-l">
+          {block.eyebrow && (
+            <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
           )}
-        </details>
-      ))}
-    </div>
+          {block.headline && <h2 class="mt-s font-display text-h2">{block.headline}</h2>}
+          {block.subhead && <p class="mt-s leading-relaxed opacity-80">{block.subhead}</p>}
+        </div>
+      )}
 
-    {/* Optional "See all FAQ" style link at the bottom of the block */}
-    {block?.ctaUrl && block?.ctaLabel && (
-      <div class="mt-l">
-        <a
-          href={block.ctaUrl}
-          class="inline-flex items-center gap-xs text-xs uppercase tracking-eyebrow font-semibold text-link"
-        >
-          {block.ctaLabel} <span aria-hidden="true">&rarr;</span>
-        </a>
+      {/* FAQ accordion — matches the /faq page's native <details> pattern exactly */}
+      <div class="divide-y divide-current/15 border-t border-b border-current/15">
+        {items.map((f: any) => (
+          <details class="group py-m">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg">
+              {f.question}
+              <span
+                class="shrink-0 text-gold transition-transform group-open:rotate-45"
+                aria-hidden="true"
+              >
+                +
+              </span>
+            </summary>
+            {/* Handle both Portable Text answers (from faqItem) and plain strings
+              (future-proofing; currently all faqItem answers are Portable Text). */}
+            {typeof f.answer === 'string' ? (
+              <p class="mt-s leading-relaxed opacity-85">{f.answer}</p>
+            ) : (
+              <div class="mt-s leading-relaxed opacity-85 [&>div>*:first-child]:mt-0">
+                <PortableTextStatic value={f.answer} />
+              </div>
+            )}
+          </details>
+        ))}
       </div>
-    )}
-  </div>
-)}
+
+      {/* Optional "See all FAQ" style link at the bottom of the block */}
+      {block?.ctaUrl && block?.ctaLabel && (
+        <div class="mt-l">
+          <a
+            href={block.ctaUrl}
+            class="inline-flex items-center gap-xs text-xs font-semibold tracking-eyebrow text-link uppercase"
+          >
+            {block.ctaLabel} <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -43,8 +43,8 @@ decision would be grounded in what real peer institutions actually do.
   spec.
 
 The framing question for every round: is the "too old" read coming from the
-*bones* of the system (the serif, the warmth, the editorial layout) or from a
-specific *layer* sitting on top of them?
+_bones_ of the system (the serif, the warmth, the editorial layout) or from a
+specific _layer_ sitting on top of them?
 
 ## Key findings
 
@@ -60,7 +60,7 @@ These are the findings that survived all three rounds.
 2. **"Bookish" is paper plus serif, NOT bright-white minimal.** The instinct to
    fix "old" by going to a stark white, sans-serif, high-contrast minimal look
    actually fights the brand we want. A bookish, study-hall feel comes from
-   near-white *paper* and a serif face. Those two instincts diverge: chasing
+   near-white _paper_ and a serif face. Those two instincts diverge: chasing
    "modern" via bright-white minimalism would have thrown away the exact
    qualities that make the brand feel like a serious reading room.
 
@@ -112,12 +112,14 @@ Shipped values, confirmed against `src/styles/globals.css`. Hex pairs are
 light / dark where both are given.
 
 **Surfaces and ink**
+
 - Page surface: Stone Cream `#F4EEE6` -> near-white warm paper `#FAF8F4`.
 - Cards / raised surfaces: Chalk `#FCF9F4` -> white `#FFFFFF`.
 - Muted / alt band: `#EDE5D9` -> warm grey `#F1F0EB`.
 - Body + heading ink: Walnut `#2A2521` -> soft near-black `#1F1B18`.
 
 **Anchor (green)**
+
 - Primary: Geneva Oxblood `#7A2A2C` -> Geneva Green `#33503F`. Carries buttons,
   links, the nav underline, the focus ring, keyword emphasis, and the wordmark
   accent.
@@ -126,20 +128,24 @@ light / dark where both are given.
   warm near-black surfaces are unchanged.
 
 **Structural bands (the `chapel` token, name KEPT)**
+
 - Oxblood `#5E2122` / `#4A1B1C` -> forest green `#2A4233` / `#1F3227`.
 - Cream band text `#F1EAD9` retained. Footer and closing CTA now read green.
 
 **Accents**
+
 - Oxblood `#7A2A2C` demoted to a sparing secondary accent (new `--color-oxblood`
   token); no longer a field or band color.
 - Aged Brass `#A87C3E` KEPT as the hairline accent — the green-and-gold pairing.
 
 **Type**
+
 - Fraunces (serif display) + Source Sans 3 (humanist sans body) KEPT. The italic
   display "moment" is quieted to true epigraphs only. The calligraphic script
   accent stays OFF.
 
 **Signature moves**
+
 - RETIRED: the Romanesque arch. `--arch-radius` is neutralized to a quiet modern
   rounding `clamp(0.5rem, 1vw, 0.85rem)`; `.arch-top` / `.arch-top-sm` now render
   near-rectangular.
@@ -152,6 +158,7 @@ light / dark where both are given.
   serif-over-sans, and brass hairlines.
 
 **Photography**
+
 - Church placeholders (`place-church-*`, `place-sanctuary-*`) were swapped for
   lay-school images (`teach-seminar-discussion`, `teach-class-discussion`,
   `study-bible-notebook`, `study-bibles-closeup`) on the contact, FAQ, privacy,

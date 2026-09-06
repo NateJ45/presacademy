@@ -286,7 +286,8 @@ const sectionsEditDoc = sectionsAreFromDoc ? editDoc : undefined;
   editDoc={sectionsEditDoc}
 />
 
-{/* ---------------------------------------------------------------------------
+{
+  /* ---------------------------------------------------------------------------
     Pinned code regions: ONE slot, always after the sections (settled 2026-08-26)
     ---------------------------------------------------------------------------
     The few page middles that stay code on purpose render here: the courses
@@ -315,7 +316,8 @@ const sectionsEditDoc = sectionsAreFromDoc ? editDoc : undefined;
     catalog is the better home for an introduction to it. If a page ever needs
     editor sections BELOW its pinned region, that is the moment to add the
     second slot, with its own parity capture.
---------------------------------------------------------------------------- */}
+--------------------------------------------------------------------------- */
+}
 <slot name="pinned" />
 
 {

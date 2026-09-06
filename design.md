@@ -29,7 +29,7 @@ this direction; never swap it mid-project.
 > oxblood structural bands, a Romanesque arch, and a paper-grain texture). A
 > stakeholder read that as "too old," and a structured multi-agent debate
 > (grounded in real seminaries, divinity schools, and modern Christian-formation
-> brands) concluded the "old" read came from the *sanctuary layer* (the arches,
+> brands) concluded the "old" read came from the _sanctuary layer_ (the arches,
 > the grain, the oxblood bands), not from the serif or the warmth. The verdict
 > was **evolve, don't pivot**: keep the serif-over-sans bones, the near-white
 > warmth, and the deep structural bands; swap the anchor to green, retire the
@@ -39,6 +39,7 @@ this direction; never swap it mid-project.
 > oxblood.
 
 **The signature moves** (use them, don't dilute them):
+
 1. **The eyebrow rubric** (`.eyebrow`, `.eyebrow-inverse`) — a short brand-green
    leading rule set before every section / hero eyebrow, the manuscript "rubric"
    that introduces a headline. This is the unifying mark that REPLACES the
@@ -64,6 +65,7 @@ The italic display "moment" (epigraphs, blockquotes) is now quieted to true
 epigraphs only, and the calligraphic script accent stays OFF by default.
 
 **Retired in Direction A** (don't reintroduce without a deliberate decision):
+
 - **The Romanesque arch.** `--arch-radius` is neutralized to a quiet modern
   rounding (`clamp(0.5rem, 1vw, 0.85rem)`); `.arch-top` / `.arch-top-sm` now
   render near-rectangular. The arch utilities remain in the codebase but no
@@ -78,21 +80,21 @@ Direction A: green-anchored, near-white, soft near-black. Oxblood is demoted
 from the lead/field color to a sparing secondary accent (`--color-oxblood`).
 The `chapel` token names are kept but now carry green.
 
-| Token (utility) | Light | Dark | Role |
-|---|---|---|---|
-| `bg-background` | `#FAF8F4` near-white warm paper | `#1E1A17` | page surface |
-| `text-foreground` | `#1F1B18` soft near-black | `#F1EAD9` | body text |
-| `bg-card` / `bg-popover` | `#FFFFFF` white | `#2A2420` | raised surfaces |
-| `bg-muted` | `#F1F0EB` warm grey | `#262019` | quiet alt bands |
-| `bg-primary` (static) | `#33503F` Geneva Green | same | CTA pills (white text) |
-| `text-link` | `#33503F` Geneva Green | `#9CC6AC` | inline links, green text |
-| `bg-chapel` (static) | `#2A4233` forest green | same | structural bands |
-| `bg-chapel-deep` (static) | `#1F3227` forest green deepest | same | footer/CTA deepest base |
-| `text-chapel-foreground` | `#F1EAD9` cream | same | text on chapel |
-| `text-chapel-ink` | `#33503F` green | `#9CC6AC` | keyword emphasis on page bg |
-| `text-gold` / `bg-gold` (static) | `#A87C3E` Aged Brass | (dark ref `#C9A06A` via `--gold-ink`) | hairline rules, small accents, inverse rubric |
-| `--color-oxblood` | `#7A2A2C` Oxblood | same | demoted; sparing secondary accent only |
-| `border-border-soft` | `#EAE7DF` | — | faint warm dividers |
+| Token (utility)                  | Light                           | Dark                                  | Role                                          |
+| -------------------------------- | ------------------------------- | ------------------------------------- | --------------------------------------------- |
+| `bg-background`                  | `#FAF8F4` near-white warm paper | `#1E1A17`                             | page surface                                  |
+| `text-foreground`                | `#1F1B18` soft near-black       | `#F1EAD9`                             | body text                                     |
+| `bg-card` / `bg-popover`         | `#FFFFFF` white                 | `#2A2420`                             | raised surfaces                               |
+| `bg-muted`                       | `#F1F0EB` warm grey             | `#262019`                             | quiet alt bands                               |
+| `bg-primary` (static)            | `#33503F` Geneva Green          | same                                  | CTA pills (white text)                        |
+| `text-link`                      | `#33503F` Geneva Green          | `#9CC6AC`                             | inline links, green text                      |
+| `bg-chapel` (static)             | `#2A4233` forest green          | same                                  | structural bands                              |
+| `bg-chapel-deep` (static)        | `#1F3227` forest green deepest  | same                                  | footer/CTA deepest base                       |
+| `text-chapel-foreground`         | `#F1EAD9` cream                 | same                                  | text on chapel                                |
+| `text-chapel-ink`                | `#33503F` green                 | `#9CC6AC`                             | keyword emphasis on page bg                   |
+| `text-gold` / `bg-gold` (static) | `#A87C3E` Aged Brass            | (dark ref `#C9A06A` via `--gold-ink`) | hairline rules, small accents, inverse rubric |
+| `--color-oxblood`                | `#7A2A2C` Oxblood               | same                                  | demoted; sparing secondary accent only        |
+| `border-border-soft`             | `#EAE7DF`                       | —                                     | faint warm dividers                           |
 
 Anchor deepens to `#2A4233` (Green Deep) for a deeper green where needed.
 Dark mode lifts the primary to green `#74A98A` and link/keyword green to
@@ -195,7 +197,7 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
   in Direction A; treat them as a soft rounding, not an arch.
 - Section heading pattern: rubric eyebrow (`.eyebrow`) + serif headline (optional
   green keyword span) + optional lede. Use `SectionHeading.astro`.
-- **Footer colophon.** The footer is composed as a printed-book *colophon* page
+- **Footer colophon.** The footer is composed as a printed-book _colophon_ page
   (oversized Fraunces wordmark masthead, a brass-ruled imprint row, a monogram
   seal, and a typeface credit), not a generic link grid. It is a current brand
   idiom: keep the bookish colophon read on any footer work.

@@ -24,7 +24,13 @@ const instructorName = instructor
 const no = course.nextOffering;
 const status = no?.status as string | undefined;
 const statusLabel =
-  status === 'open' ? 'Open' : status === 'waitlist' ? 'Waitlist' : status === 'closed' ? 'Closed' : null;
+  status === 'open'
+    ? 'Open'
+    : status === 'waitlist'
+      ? 'Waitlist'
+      : status === 'closed'
+        ? 'Closed'
+        : null;
 const statusClass =
   status === 'open'
     ? 'border-status-success text-status-success'
@@ -38,8 +44,14 @@ const facts = no
   ? [no.term?.title, no.sessions ? `${no.sessions} sessions` : null, price].filter(Boolean)
   : ['New dates coming'];
 
-const topicSlugs = (course.teachingAreas ?? []).map((t: any) => t.slug).filter(Boolean).join(' ');
-const teacherSlugs = (course.instructors ?? []).map((i: any) => i.slug).filter(Boolean).join(' ');
+const topicSlugs = (course.teachingAreas ?? [])
+  .map((t: any) => t.slug)
+  .filter(Boolean)
+  .join(' ');
+const teacherSlugs = (course.instructors ?? [])
+  .map((i: any) => i.slug)
+  .filter(Boolean)
+  .join(' ');
 const termSlug = no?.term?.slug ?? '';
 ---
 
@@ -50,57 +62,74 @@ const termSlug = no?.term?.slug ?? '';
   data-term={termSlug}
   class="list-none"
 >
-  {/* Mobile: a compact row — a square cover thumbnail beside the text, so the
+  {
+    /* Mobile: a compact row — a square cover thumbnail beside the text, so the
       catalog stays quick to scroll. From sm up: the full Rule & Ledger card with
-      the 3:2 cover banner on top. */}
+      the 3:2 cover banner on top. */
+  }
   <a
     href={`/courses/${course.slug}`}
-    class="card-lift group no-underline grid grid-cols-[7rem_1fr] items-start gap-4 sm:block sm:h-full sm:gap-0"
+    class="card-lift group grid grid-cols-[7rem_1fr] items-start gap-4 no-underline sm:block sm:h-full sm:gap-0"
   >
     <div>
       <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary"></div>
-      <div class="img-zoom relative aspect-square sm:aspect-[3/2] overflow-hidden bg-muted">
-        {course.coverImage?.asset ? (
-          <>
-            <SanityImage
-              source={course.coverImage}
-              width={800}
-              loading={eager ? 'eager' : 'lazy'}
-              sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 7rem"
-              class="h-full w-full object-cover"
-            />
-            {/* Hover green-duotone wash: photos only. */}
-            <div class="img-tint img-tint-evergreen" aria-hidden="true"></div>
-          </>
-        ) : (
-          <div class="image-well grid h-full w-full place-items-center p-2 text-center sm:p-4" aria-hidden="true">
-            {/* No cover photo: a typographic "subject plate" on the brass-hatch
+      <div class="img-zoom relative aspect-square overflow-hidden bg-muted sm:aspect-[3/2]">
+        {
+          course.coverImage?.asset ? (
+            <>
+              <SanityImage
+                source={course.coverImage}
+                width={800}
+                loading={eager ? 'eager' : 'lazy'}
+                sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 7rem"
+                class="h-full w-full object-cover"
+              />
+              {/* Hover green-duotone wash: photos only. */}
+              <div class="img-tint img-tint-evergreen" aria-hidden="true" />
+            </>
+          ) : (
+            <div
+              class="image-well grid h-full w-full place-items-center p-2 text-center sm:p-4"
+              aria-hidden="true"
+            >
+              {/* No cover photo: a typographic "subject plate" on the brass-hatch
                 well so a cover-less course still reads as an intentional catalog
                 card, not a missing image. Decorative (the subject also shows as
                 the card-body eyebrow below); collapses to the PA monogram on the
                 compact mobile thumbnail. */}
-            <div>
-              <span class="font-display text-base text-foreground/55 sm:hidden">PA</span>
-              <span class="hidden font-display text-h4 leading-tight text-foreground/85 sm:block">{area || 'The Presbyterian Academy'}</span>
-              {area && <span class="mt-2 hidden text-gold-ink sm:block">&#10022;</span>}
+              <div>
+                <span class="font-display text-base text-foreground/55 sm:hidden">PA</span>
+                <span class="hidden font-display text-h4 leading-tight text-foreground/85 sm:block">
+                  {area || 'The Presbyterian Academy'}
+                </span>
+                {area && <span class="mt-2 hidden text-gold-ink sm:block">&#10022;</span>}
+              </div>
             </div>
-          </div>
-        )}
+          )
+        }
       </div>
     </div>
     <div class="sm:mt-3">
       <div class="flex items-center justify-between gap-2">
-        {area && <span class="text-xs uppercase tracking-eyebrow text-gold-ink">{area}</span>}
-        {statusLabel && (
-          <span class={`shrink-0 rounded-[2px] border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${statusClass}`}>
-            {statusLabel}
-          </span>
-        )}
+        {area && <span class="text-xs tracking-eyebrow text-gold-ink uppercase">{area}</span>}
+        {
+          statusLabel && (
+            <span
+              class={`shrink-0 rounded-[2px] border px-2 py-0.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${statusClass}`}
+            >
+              {statusLabel}
+            </span>
+          )
+        }
       </div>
-      <h3 class="mt-1 sm:mt-1.5 font-display text-h5 sm:text-h4 text-foreground transition-colors group-hover:text-link">{course.title}</h3>
+      <h3
+        class="mt-1 font-display text-h5 text-foreground transition-colors group-hover:text-link sm:mt-1.5 sm:text-h4"
+      >
+        {course.title}
+      </h3>
       {instructorName && <p class="mt-1 text-sm text-foreground/75">{instructorName}</p>}
-      <div class="mt-2 sm:mt-3 h-px w-full bg-border-soft"></div>
-      <p class="mt-2 sm:mt-3 text-sm text-foreground/70">{facts.join(' · ')}</p>
+      <div class="mt-2 h-px w-full bg-border-soft sm:mt-3"></div>
+      <p class="mt-2 text-sm text-foreground/70 sm:mt-3">{facts.join(' · ')}</p>
     </div>
   </a>
 </li>

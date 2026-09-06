@@ -91,27 +91,27 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
     <button
       type="button"
       aria-label="Open menu"
-      className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent transition-colors"
+      className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
     >
       <Menu size={22} />
     </button>
   );
 
   if (!mounted) {
-    return <div className="lg:hidden absolute right-m top-1/2 -translate-y-1/2">{trigger}</div>;
+    return <div className="absolute top-1/2 right-m -translate-y-1/2 lg:hidden">{trigger}</div>;
   }
 
   return (
-    <div className="lg:hidden absolute right-m top-1/2 -translate-y-1/2">
+    <div className="absolute top-1/2 right-m -translate-y-1/2 lg:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>{trigger}</SheetTrigger>
         <SheetContent
           side="right"
-          className="w-[min(380px,90vw)] sm:max-w-none bg-background border-t-4 border-t-primary p-0 gap-0 flex flex-col overflow-y-auto"
+          className="flex w-[min(380px,90vw)] flex-col gap-0 overflow-y-auto border-t-4 border-t-primary bg-background p-0 sm:max-w-none"
         >
           {/* Eyebrow header. */}
-          <SheetHeader className="px-l pt-xl pb-m">
-            <SheetTitle className="text-xs uppercase tracking-eyebrow text-foreground/80 font-body font-normal">
+          <SheetHeader className="pt-xl px-l pb-m">
+            <SheetTitle className="font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
               Menu
             </SheetTitle>
           </SheetHeader>
@@ -122,7 +122,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
               <a
                 href={cta.href}
                 onClick={close}
-                className="block w-full px-m py-m text-center rounded-full bg-primary text-primary-foreground text-xs uppercase tracking-eyebrow font-semibold hover:bg-primary-dark transition-colors"
+                className="block w-full rounded-full bg-primary px-m py-m text-center text-xs font-semibold tracking-eyebrow text-primary-foreground uppercase transition-colors hover:bg-primary-dark"
               >
                 {cta.label}
               </a>
@@ -130,7 +130,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
           )}
 
           {/* Tagline in display serif for editorial feel. */}
-          <p className="px-l pb-l font-display italic text-h4 text-foreground/85 leading-snug">
+          <p className="px-l pb-l font-display text-h4 leading-snug text-foreground/85 italic">
             {tagline}
           </p>
 
@@ -143,7 +143,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
                     key={item.href}
                     href={item.href}
                     onClick={close}
-                    className="flex items-center px-l py-s text-lg font-display text-foreground hover:bg-muted hover:text-link transition-colors"
+                    className="flex items-center px-l py-s font-display text-lg text-foreground transition-colors hover:bg-muted hover:text-link"
                   >
                     {item.label}
                   </a>
@@ -156,7 +156,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
                 <div key={item.label}>
                   {/* Group heading — visually distinct from flat items. Not
                       a link itself; the sub-items carry the real hrefs. */}
-                  <p className="px-l pt-m pb-xs text-xs uppercase tracking-eyebrow text-foreground/80">
+                  <p className="px-l pt-m pb-xs text-xs tracking-eyebrow text-foreground/80 uppercase">
                     {item.label}
                   </p>
                   {item.items.map((sub) => (
@@ -164,7 +164,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
                       key={sub.href}
                       href={sub.href}
                       onClick={close}
-                      className="flex items-center gap-xs pl-[calc(theme(spacing.l)+0.5rem)] pr-l py-xs text-base font-body text-foreground hover:bg-muted hover:text-link transition-colors"
+                      className="flex items-center gap-xs py-xs pr-l pl-[calc(theme(spacing.l)+0.5rem)] font-body text-base text-foreground transition-colors hover:bg-muted hover:text-link"
                     >
                       <ChevronRight
                         size={12}
@@ -184,7 +184,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
 
           {/* Contact + socials + theme. */}
           <div className="border-t border-border-soft px-l pt-m pb-s">
-            <p className="text-xs uppercase tracking-eyebrow text-foreground/80 mb-s">
+            <p className="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
               Get in touch
             </p>
             {email && (
@@ -213,7 +213,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground hover:bg-primary-dark hover:text-white hover:border-primary-dark transition-colors"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
                 >
                   <IconBrandInstagram size={20} stroke={1.5} />
                 </a>
@@ -224,7 +224,7 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground hover:bg-primary-dark hover:text-white hover:border-primary-dark transition-colors"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
                 >
                   <IconBrandFacebook size={20} stroke={1.5} />
                 </a>
@@ -239,10 +239,10 @@ export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Pr
               URLs come from Astro's image pipeline via Header.astro's
               getImage() calls, so this is a WebP file with the same hash
               as the desktop header logo (free cache hit). */}
-          <div className="border-t border-border-soft px-l py-l flex flex-col items-center text-center leading-none">
+          <div className="flex flex-col items-center border-t border-border-soft px-l py-l text-center leading-none">
             <span className="font-display text-xl text-foreground">{site.wordmark.line1}</span>
             {site.wordmark.line2 ? (
-              <span className="font-display text-base text-foreground/70 mt-0.5">
+              <span className="mt-0.5 font-display text-base text-foreground/70">
                 {site.wordmark.line2}
               </span>
             ) : null}

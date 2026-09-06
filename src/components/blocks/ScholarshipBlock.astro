@@ -30,8 +30,10 @@ const headingId = block?.headingId || undefined;
 <section class="surface-warm bg-muted" aria-labelledby={headingId}>
   <div class="mx-auto max-w-content px-m py-section-lg">
     <div data-reveal>
-      <p class="eyebrow text-xs uppercase tracking-eyebrow text-gold-ink">{block?.eyebrow}</p>
-      <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">{block?.headline}</h2>
+      <p class="eyebrow text-xs tracking-eyebrow text-gold-ink uppercase">{block?.eyebrow}</p>
+      <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">
+        {block?.headline}
+      </h2>
       <p class="mt-m max-w-2xl text-lg leading-relaxed text-foreground/85">{block?.body}</p>
     </div>
     {block?.footnote && <p class="mt-m max-w-2xl text-sm text-foreground/65">{block.footnote}</p>}

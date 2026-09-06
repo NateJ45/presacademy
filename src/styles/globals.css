@@ -3,13 +3,13 @@
    onto shadcn's semantic tokens (:root / .dark) so brand identity
    carries everywhere the design system is referenced. */
 
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/fraunces/standard.css";
-@import "@fontsource-variable/fraunces/standard-italic.css";
-@import "@fontsource-variable/source-sans-3/index.css";
-@import "@fontsource-variable/source-sans-3/wght-italic.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/fraunces/standard.css';
+@import '@fontsource-variable/fraunces/standard-italic.css';
+@import '@fontsource-variable/source-sans-3/index.css';
+@import '@fontsource-variable/source-sans-3/wght-italic.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -24,19 +24,19 @@
      forest green is promoted to the primary anchor. Token NAMES are kept
      (chapel, chapel-ink, etc.) and only VALUES changed, so the change is
      contained and reversible — chapel now carries green, not oxblood. */
-  --color-primary:      #33503F; /* Geneva Green — primary anchor (Direction A) */
-  --color-primary-dark: #2A4233; /* Green Deep — deeper anchor/link text */
-  --color-accent:       #1F1B18; /* Soft near-black — headings + body (Direction A) */
-  --color-accent-dark:  #1E1A17; /* Near-black deep — dark surfaces */
-  --color-secondary:    #B7A99B; /* Cloister Stone — borders, eyebrows */
-  --color-tertiary:     #9C8E7E; /* Stone Deep — sparingly */
-  --color-bg:           #FAF8F4; /* Near-white warm paper — page surface (Direction A) */
-  --color-bg-soft:      #FFFFFF; /* White — raised/alt surface (Direction A) */
-  --color-oxblood:      #7A2A2C; /* Oxblood — demoted, sparing secondary accent */
+  --color-primary: #33503f; /* Geneva Green — primary anchor (Direction A) */
+  --color-primary-dark: #2a4233; /* Green Deep — deeper anchor/link text */
+  --color-accent: #1f1b18; /* Soft near-black — headings + body (Direction A) */
+  --color-accent-dark: #1e1a17; /* Near-black deep — dark surfaces */
+  --color-secondary: #b7a99b; /* Cloister Stone — borders, eyebrows */
+  --color-tertiary: #9c8e7e; /* Stone Deep — sparingly */
+  --color-bg: #faf8f4; /* Near-white warm paper — page surface (Direction A) */
+  --color-bg-soft: #ffffff; /* White — raised/alt surface (Direction A) */
+  --color-oxblood: #7a2a2c; /* Oxblood — demoted, sparing secondary accent */
   /* border-soft is theme-aware (declared in the @theme inline map below, with
      per-theme values in :root / .dark). It used to be a static #DED6C8 here,
      which made every faint divider GLOW at ~12:1 on the dark page. */
-  --color-white-pure:   #FFFFFF;
+  --color-white-pure: #ffffff;
 
   /* Structural band — deep oxblood for the utility bar, footer, and closing CTA.
      The brand's signature color carrying the big structural moments (the way RTS
@@ -45,35 +45,39 @@
      always cream (--color-chapel-foreground). The token keeps its legacy `chapel`
      name; only the value changed to oxblood. Reachable as bg-chapel,
      bg-chapel-deep, text-chapel-foreground. */
-  --color-chapel:            #2A4233; /* Forest Green — footer + closing-CTA band (Direction A) */
-  --color-chapel-deep:       #1F3227; /* Forest Green Deepest — band base (Direction A) */
-  --color-chapel-foreground: #F1EAD9; /* warm cream text on green band surfaces */
-  --color-gold:              #A87C3E; /* Aged Brass — hairline rules, small accents */
+  --color-chapel: #2a4233; /* Forest Green — footer + closing-CTA band (Direction A) */
+  --color-chapel-deep: #1f3227; /* Forest Green Deepest — band base (Direction A) */
+  --color-chapel-foreground: #f1ead9; /* warm cream text on green band surfaces */
+  --color-gold: #a87c3e; /* Aged Brass — hairline rules, small accents */
 
   /* Arched-top crown radius — the building's architectural signature, applied to
      hero / feature / staff images via the .arch-top utility (a Romanesque
      rounded arch). One token so the curve stays consistent everywhere. */
-  --arch-radius: clamp(0.5rem, 1vw, 0.85rem); /* Direction A: Romanesque arch retired -> quiet modern rounding */
+  --arch-radius: clamp(
+    0.5rem,
+    1vw,
+    0.85rem
+  ); /* Direction A: Romanesque arch retired -> quiet modern rounding */
 
   /* Fonts */
-  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-body:    "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono:    ui-monospace, "SF Mono", Consolas, monospace;
-  --font-script:  "Snell Roundhand", "Apple Chancery", cursive;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Source Sans 3 Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
+  --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;
 
   /* Fluid heading sizes */
   --text-h6: 1rem;
   --text-h5: clamp(1.125rem, 1.5vw, 1.25rem);
-  --text-h4: clamp(1.25rem,  2vw,   1.5rem);
-  --text-h3: clamp(1.5rem,   2.5vw, 2rem);
-  --text-h2: clamp(2rem,     4vw,   3rem);
-  --text-h1: clamp(2.5rem,   6vw,   5rem);
+  --text-h4: clamp(1.25rem, 2vw, 1.5rem);
+  --text-h3: clamp(1.5rem, 2.5vw, 2rem);
+  --text-h2: clamp(2rem, 4vw, 3rem);
+  --text-h1: clamp(2.5rem, 6vw, 5rem);
 
   /* Typographic micro-rules. Codified so usage stays consistent across
      components — drift from ad-hoc arbitrary values (tracking-[0.22em],
      leading-[1.05]) into shared tokens. */
-  --leading-headline-tight: 1.05;   /* Hero H1 and any oversized display type */
-  --tracking-eyebrow:       0.18em; /* Uppercase eyebrow labels above headings */
+  --leading-headline-tight: 1.05; /* Hero H1 and any oversized display type */
+  --tracking-eyebrow: 0.18em; /* Uppercase eyebrow labels above headings */
 
   /* Fluid spacing.
      Note: the larger section-padding sizes use a `--spacing-section-*`
@@ -84,12 +88,12 @@
      site-wide (they'd inherit the fluid clamp instead of the container
      width). Section utilities are now `py-section-lg`, `mt-section-md`,
      etc. — Tailwind containers stay safe. */
-  --spacing-xs:           clamp(0.25rem, 0.5vw, 0.5rem);
-  --spacing-s:            clamp(0.5rem,  1vw,   1rem);
-  --spacing-m:            clamp(1rem,    2vw,   1.5rem);
-  --spacing-l:            clamp(2rem,    4vw,   3rem);
-  --spacing-section-md:   clamp(3rem,    6vw,   5rem); /* was --spacing-xl */
-  --spacing-section-lg:   clamp(4rem,    8vw,   7rem); /* was --spacing-2xl */
+  --spacing-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+  --spacing-s: clamp(0.5rem, 1vw, 1rem);
+  --spacing-m: clamp(1rem, 2vw, 1.5rem);
+  --spacing-l: clamp(2rem, 4vw, 3rem);
+  --spacing-section-md: clamp(3rem, 6vw, 5rem); /* was --spacing-xl */
+  --spacing-section-lg: clamp(4rem, 8vw, 7rem); /* was --spacing-2xl */
 
   --container-content: 82.5rem;
 
@@ -106,37 +110,37 @@
 /* ---------- shadcn semantic token map (added by CLI, preserved) ------- */
 
 @theme inline {
-    --font-heading: var(--font-display);
-    --font-sans: var(--font-body);
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    /* IMPORTANT: bg-accent must be theme-aware (shadcn convention — soft hover
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-body);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* IMPORTANT: bg-accent must be theme-aware (shadcn convention — soft hover
        surface, Cream in light / darker warm in dark). The @theme block above
        declares --color-accent as static Charcoal for legacy brand-palette
        reasons, but every component that uses bg-accent (ThemeToggle hover,
@@ -146,53 +150,67 @@
        because @theme inline is declared after @theme. Side effect: text-accent
        is now theme-aware too (Cream in light, darker in dark) — fine because
        no component uses bare text-accent (use text-foreground for body text). */
-    --color-accent: var(--accent);
-    /* Dark-mode-aware brand link/anchor color: Bronze Dark in light mode,
+  --color-accent: var(--accent);
+  /* Dark-mode-aware brand link/anchor color: Bronze Dark in light mode,
        lifted Bronze in dark mode. Use text-link for inline links and bronze
        link-style buttons that need to read in both modes. */
-    --color-link: var(--link);
-    /* Theme-aware status green for the "Open" course pill: deep green on cream
+  --color-link: var(--link);
+  /* Theme-aware status green for the "Open" course pill: deep green on cream
        in light, lifted green on the dark page in dark, so the tag clears AA in
        both modes (a static green can only satisfy one). */
-    --color-status-success: var(--status-success);
-    /* Theme-aware Chapel green for KEYWORD EMPHASIS in headlines (the Highland
+  --color-status-success: var(--status-success);
+  /* Theme-aware Chapel green for KEYWORD EMPHASIS in headlines (the Highland
        Park "set the key word in a second color" device). Deep green on light
        cream surfaces, lifted green on dark surfaces. Use text-chapel-ink on a
        headline span. (bg-chapel above is the static surface green; this ink
        token is the readable-on-either-background text variant.) */
-    --color-chapel-ink: var(--chapel-ink);
-    /* Theme-aware gold for gold TEXT on theme-flipping surfaces (card badges,
+  --color-chapel-ink: var(--chapel-ink);
+  /* Theme-aware gold for gold TEXT on theme-flipping surfaces (card badges,
        step numerals). The static --color-gold above stays for decorative
        hairlines/rules; as text it fails AA on cream (and on chapel green, where
        the lifted #C7A875 literal is used instead since chapel never flips). */
-    --color-gold-ink: var(--gold-ink);
-    /* Theme-aware faint divider. Static #DED6C8 in light (pixel-identical to
+  --color-gold-ink: var(--gold-ink);
+  /* Theme-aware faint divider. Static #DED6C8 in light (pixel-identical to
        the old token); a soft white veil in dark so hairlines recede instead of
        glowing. Matches the .dark --border oklch idiom. */
-    --color-border-soft: var(--border-soft);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
-    --animate-marquee:          marquee var(--duration) infinite linear;
-    --animate-marquee-vertical:  marquee-vertical var(--duration) linear infinite;
-    --animate-spotlight:         spotlight 2s ease 0.75s 1 forwards;
+  --color-border-soft: var(--border-soft);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
 
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(calc(-100% - var(--gap))); }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
     }
-    @keyframes marquee-vertical {
-      from { transform: translateY(0); }
-      to   { transform: translateY(calc(-100% - var(--gap))); }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
     }
-    @keyframes spotlight {
-      0%   { opacity: 0; transform: translate(-72%, -62%) scale(0.5); }
-      100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
     }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
 }
 
 /* ---------- Typographic utilities ------------------------------------- */
@@ -219,7 +237,7 @@
    Deliberately NOT applied to inline category tags, stat labels, footer/nav
    labels, or button text — those are a different element. */
 .eyebrow::before {
-  content: "";
+  content: '';
   display: inline-block;
   width: 1.5rem;
   height: 1px;
@@ -233,7 +251,7 @@
   top: -0.06em;
 }
 .eyebrow-inverse::before {
-  background: #C7A875;
+  background: #c7a875;
 }
 
 /* Script accent (OPT-IN) — no script font is loaded by default; the accent
@@ -292,59 +310,59 @@
 /* ---------- Light mode (overrides shadcn defaults) -------------------- */
 
 :root {
-    /* Surfaces */
-    --background: #FAF8F4;
-    --foreground: #1F1B18;
-    --card: #FFFFFF;
-    --card-foreground: #1F1B18;
-    --popover: #FFFFFF;
-    --popover-foreground: #1F1B18;
+  /* Surfaces */
+  --background: #faf8f4;
+  --foreground: #1f1b18;
+  --card: #ffffff;
+  --card-foreground: #1f1b18;
+  --popover: #ffffff;
+  --popover-foreground: #1f1b18;
 
-    /* Brand */
-    --primary: #33503F;
-    --primary-foreground: #FFFFFF;
-    --secondary: #B7A99B;
-    --secondary-foreground: #1F1B18;
+  /* Brand */
+  --primary: #33503f;
+  --primary-foreground: #ffffff;
+  --secondary: #b7a99b;
+  --secondary-foreground: #1f1b18;
 
-    /* Quiet surfaces / muted text */
-    --muted: #F1F0EB;
-    --muted-foreground: #55514A;    /* warm gray on near-white — AA */
+  /* Quiet surfaces / muted text */
+  --muted: #f1f0eb;
+  --muted-foreground: #55514a; /* warm gray on near-white — AA */
 
-    /* Accent */
-    --accent: #ECEAE3;
-    --accent-foreground: #1F1B18;
+  /* Accent */
+  --accent: #eceae3;
+  --accent-foreground: #1f1b18;
 
-    /* States */
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #E6E3DB;
-    --input: #E6E3DB;
-    --ring: #33503F;
-    --link: #33503F;                /* deep green on near-white — AA ~8:1 */
-    --status-success: #2F6B4F;      /* status green on near-white (~5.3:1, AA) */
-    --chapel-ink: #33503F;          /* green keyword emphasis on near-white (~8:1) */
-    --gold-ink: #6E5128;            /* deepened brass as TEXT on near-white (~4.8:1, AA) */
-    --border-soft: #EAE7DF;         /* faint warm divider */
+  /* States */
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #e6e3db;
+  --input: #e6e3db;
+  --ring: #33503f;
+  --link: #33503f; /* deep green on near-white — AA ~8:1 */
+  --status-success: #2f6b4f; /* status green on near-white (~5.3:1, AA) */
+  --chapel-ink: #33503f; /* green keyword emphasis on near-white (~8:1) */
+  --gold-ink: #6e5128; /* deepened brass as TEXT on near-white (~4.8:1, AA) */
+  --border-soft: #eae7df; /* faint warm divider */
 
-    /* Charts (kept neutral, not used at launch) */
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+  /* Charts (kept neutral, not used at launch) */
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
 
-    --radius: 0.5rem;
+  --radius: 0.5rem;
 
-    /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
-    --sidebar: #FAF8F4;
-    --sidebar-foreground: #1F1B18;
-    --sidebar-primary: #33503F;
-    --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #F1F0EB;
-    --sidebar-accent-foreground: #1F1B18;
-    --sidebar-border: #E6E3DB;
-    --sidebar-ring: #33503F;
+  /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
+  --sidebar: #faf8f4;
+  --sidebar-foreground: #1f1b18;
+  --sidebar-primary: #33503f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f0eb;
+  --sidebar-accent-foreground: #1f1b18;
+  --sidebar-border: #e6e3db;
+  --sidebar-ring: #33503f;
 
-    --tint-rgb: 168, 124, 62;
+  --tint-rgb: 168, 124, 62;
 }
 
 /* ---------- Dark mode --------------------------------------------------
@@ -352,57 +370,57 @@
    Slate and Ink hold their identity; surfaces flip to deep cool grays. */
 
 .dark {
-    --background: #1E1A17;
-    --foreground: #F1EAD9;
-    /* Card sits one step ABOVE muted (#262019) so the bg -> muted -> card
+  --background: #1e1a17;
+  --foreground: #f1ead9;
+  /* Card sits one step ABOVE muted (#262019) so the bg -> muted -> card
        ladder light mode has also exists in dark. They used to share one hex,
        which collapsed cards on muted bands into a single flat slab. */
-    --card: #2A2420;
-    --card-foreground: #F1EAD9;
-    --popover: #2A2420;
-    --popover-foreground: #F1EAD9;
+  --card: #2a2420;
+  --card-foreground: #f1ead9;
+  --popover: #2a2420;
+  --popover-foreground: #f1ead9;
 
-    --primary: #74A98A;
-    /* White on the static CTA pill: @theme bg-primary is the static green
+  --primary: #74a98a;
+  /* White on the static CTA pill: @theme bg-primary is the static green
        #33503F in both themes; white keeps every primary CTA at ~8:1. This
        shadcn --primary (lifted green) is used only for rings / underlines /
        decoration on the dark page, where #33503F would vanish. */
-    --primary-foreground: #FFFFFF;
-    --secondary: #8C7E70;
-    --secondary-foreground: #F1EAD9;
+  --primary-foreground: #ffffff;
+  --secondary: #8c7e70;
+  --secondary-foreground: #f1ead9;
 
-    --muted: #262019;
-    --muted-foreground: #B7AC9A;
+  --muted: #262019;
+  --muted-foreground: #b7ac9a;
 
-    --accent: #2E2820;
-    --accent-foreground: #F1EAD9;
+  --accent: #2e2820;
+  --accent-foreground: #f1ead9;
 
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: #74A98A;
-    --link: #9CC6AC;
-    --status-success: #6FBF95;      /* lifted status green for dark (~8:1, AA) */
-    --chapel-ink: #9CC6AC;          /* lifted green keyword emphasis on dark */
-    --gold-ink: #C9A06A;            /* lifted brass as TEXT on dark surfaces (AA) */
-    --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #74a98a;
+  --link: #9cc6ac;
+  --status-success: #6fbf95; /* lifted status green for dark (~8:1, AA) */
+  --chapel-ink: #9cc6ac; /* lifted green keyword emphasis on dark */
+  --gold-ink: #c9a06a; /* lifted brass as TEXT on dark surfaces (AA) */
+  --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
 
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
 
-    --sidebar: #2A2420;
-    --sidebar-foreground: #F1EAD9;
-    --sidebar-primary: #C16A5A;
-    --sidebar-primary-foreground: #1E1A17;
-    --sidebar-accent: #2E2820;
-    --sidebar-accent-foreground: #F1EAD9;
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: #C16A5A;
+  --sidebar: #2a2420;
+  --sidebar-foreground: #f1ead9;
+  --sidebar-primary: #c16a5a;
+  --sidebar-primary-foreground: #1e1a17;
+  --sidebar-accent: #2e2820;
+  --sidebar-accent-foreground: #f1ead9;
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: #c16a5a;
 
-    --tint-rgb: 198, 160, 106;
+  --tint-rgb: 198, 160, 106;
 }
 
 /* ---------- Base resets and defaults ---------------------------------- */
@@ -446,7 +464,12 @@
   footer :focus-visible {
     outline-color: var(--color-chapel-foreground);
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 400;
     color: var(--color-accent);
@@ -457,7 +480,12 @@
        Resolves at initial layout (no CLS); inert in older engines. */
     text-wrap: balance;
   }
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
     color: var(--foreground);
   }
 }
@@ -473,8 +501,8 @@
   /* Use --primary-dark (Bronze Dark) instead of --primary (Warm Bronze) so
      white-on-bronze contrast lands at 5.5:1 instead of 4.06:1. The skip-link
      is small semibold text, which falls under the AA 4.5:1 body-text rule. */
-  background: var(--primary-dark, #434E5C);
-  color: #FFFFFF;
+  background: var(--primary-dark, #434e5c);
+  color: #ffffff;
   text-decoration: none;
   font-weight: 600;
 }
@@ -518,7 +546,7 @@
   position: relative;
 }
 .nav-underline::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 50%;
   bottom: -0.35rem;
@@ -531,7 +559,7 @@
 }
 .nav-underline:hover::after,
 .nav-underline:focus-visible::after,
-.nav-underline[aria-current="page"]::after {
+.nav-underline[aria-current='page']::after {
   transform: translateX(-50%) scaleX(1);
 }
 
@@ -566,7 +594,7 @@
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
-.site-header[data-state="hidden"] {
+.site-header[data-state='hidden'] {
   transform: translateY(-100%);
 }
 
@@ -622,7 +650,7 @@
 .dark .surface-warm {
   background-image: radial-gradient(
     ellipse 70% 60% at 50% 0%,
-    rgba(var(--tint-rgb), 0.10),
+    rgba(var(--tint-rgb), 0.1),
     transparent 70%
   );
 }
@@ -666,12 +694,12 @@
    legible on a light or a dark page. */
 .accent-brass {
   --section-accent: var(--gold-ink);
-  --color-primary: #6E5128;
-  --color-primary-dark: #5A4120;
+  --color-primary: #6e5128;
+  --color-primary-dark: #5a4120;
 }
 .accent-ink {
   --section-accent: var(--foreground);
-  --color-primary: #1F1B18;
+  --color-primary: #1f1b18;
   --color-primary-dark: #141210;
 }
 
@@ -682,17 +710,17 @@
 .bg-chapel,
 .bg-chapel-deep,
 .surface-ink {
-  --section-accent: #9CC6AC;
+  --section-accent: #9cc6ac;
 }
 .bg-chapel.accent-brass,
 .bg-chapel-deep.accent-brass,
 .surface-ink.accent-brass {
-  --section-accent: #C7A875;
+  --section-accent: #c7a875;
 }
 .bg-chapel.accent-ink,
 .bg-chapel-deep.accent-ink,
 .surface-ink.accent-ink {
-  --section-accent: #F1EAD9;
+  --section-accent: #f1ead9;
 }
 
 /* The accent WORD inside a heading (Wave 2b). The section-accent colour, or the
@@ -728,10 +756,11 @@
   input,
   select,
   textarea,
-  [role="button"],
-  [role="tab"] {
-    transition-property: color, background-color, border-color, outline-color,
-      text-decoration-color, fill, stroke, box-shadow, transform, opacity;
+  [role='button'],
+  [role='tab'] {
+    transition-property:
+      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+      box-shadow, transform, opacity;
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     transition-duration: 440ms;
   }
@@ -769,23 +798,41 @@
    Reduced-motion users get the final state instantly — no animation, no
    stagger, content visible at full opacity. */
 @keyframes hero-fade-up {
-  from { opacity: 0; transform: translateY(0.5rem); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .hero-entry-stagger > * {
   opacity: 0;
   animation: hero-fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.hero-entry-stagger > *:nth-child(1) { animation-delay:   0ms; }
-.hero-entry-stagger > *:nth-child(2) { animation-delay: 120ms; }
-.hero-entry-stagger > *:nth-child(3) { animation-delay: 240ms; }
-.hero-entry-stagger > *:nth-child(4) { animation-delay: 360ms; }
+.hero-entry-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.hero-entry-stagger > *:nth-child(2) {
+  animation-delay: 120ms;
+}
+.hero-entry-stagger > *:nth-child(3) {
+  animation-delay: 240ms;
+}
+.hero-entry-stagger > *:nth-child(4) {
+  animation-delay: 360ms;
+}
 /* n+5 (not just 5): the home hero has SIX direct children; a bare :nth-child(5)
    left the sixth at 0ms delay, so the bottom line popped in BEFORE the
    headline. Open-ended selector + an explicit 6th step keeps any future extra
    child landing last instead of first. */
-.hero-entry-stagger > *:nth-child(n+5) { animation-delay: 480ms; }
-.hero-entry-stagger > *:nth-child(n+6) { animation-delay: 600ms; }
+.hero-entry-stagger > *:nth-child(n + 5) {
+  animation-delay: 480ms;
+}
+.hero-entry-stagger > *:nth-child(n + 6) {
+  animation-delay: 600ms;
+}
 @media (prefers-reduced-motion: reduce) {
   .hero-entry-stagger > * {
     opacity: 1 !important;
@@ -801,7 +848,10 @@
    component <style>, because the slides are rendered by the child SanityImage
    component and would not carry HeroBackground's scope attribute. Reduced-motion
    users keep the first slide static. ---- */
-.hero-slideshow { position: absolute; inset: 0; }
+.hero-slideshow {
+  position: absolute;
+  inset: 0;
+}
 .hero-slide {
   position: absolute;
   inset: 0;
@@ -814,22 +864,40 @@
   animation: hero-kb 16s ease-in-out infinite alternate;
   will-change: opacity, transform;
 }
-.hero-slide.is-active { opacity: 1; }
-.hero-slide:nth-child(3n + 2) { transform-origin: top left; animation-duration: 18s; }
-.hero-slide:nth-child(3n + 3) { transform-origin: bottom right; animation-duration: 20s; }
+.hero-slide.is-active {
+  opacity: 1;
+}
+.hero-slide:nth-child(3n + 2) {
+  transform-origin: top left;
+  animation-duration: 18s;
+}
+.hero-slide:nth-child(3n + 3) {
+  transform-origin: bottom right;
+  animation-duration: 20s;
+}
 @keyframes hero-kb {
-  from { transform: scale(1); }
-  to   { transform: scale(1.07); }
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-slide { transition: none; animation: none; transform: none; }
+  .hero-slide {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
 }
 
 /* ---- Single static hero image (interior pages + home). A slow, continuous
    Ken Burns drift so a one-image hero still feels alive, reusing the same
    hero-kb keyframe as the slideshow. Transform-only (no layout shift / CLS).
    Reduced-motion users get a perfectly still image. ---- */
-.hero-kb-img { transform-origin: center; }
+.hero-kb-img {
+  transform-origin: center;
+}
 @media (prefers-reduced-motion: no-preference) {
   .hero-kb-img {
     animation: hero-kb 22s ease-in-out infinite alternate;
@@ -843,9 +911,11 @@
    currentColor so it tracks the link's hover color. Apply .link-underline to
    links that don't already carry a static `underline`. Reduced-motion users get
    an instant underline (no wipe). ---- */
-.link-underline { position: relative; }
+.link-underline {
+  position: relative;
+}
 .link-underline::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: -2px;
@@ -857,9 +927,13 @@
   transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .link-underline:hover::after,
-.link-underline:focus-visible::after { transform: scaleX(1); }
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
 @media (prefers-reduced-motion: reduce) {
-  .link-underline::after { transition: none; }
+  .link-underline::after {
+    transition: none;
+  }
 }
 
 /* ---- Drop cap -- float cap on the first paragraph of every journal post.
@@ -937,9 +1011,13 @@
   transform: scale(1.06);
 }
 .group:hover .img-zoom .img-tint,
-.img-zoom:hover .img-tint                  { background: rgba(var(--tint-rgb), 0.15); }
+.img-zoom:hover .img-tint {
+  background: rgba(var(--tint-rgb), 0.15);
+}
 .group:hover .img-zoom .img-tint.img-tint-light,
-.img-zoom:hover .img-tint.img-tint-light   { background: rgba(var(--tint-rgb), 0.08); }
+.img-zoom:hover .img-tint.img-tint-light {
+  background: rgba(var(--tint-rgb), 0.08);
+}
 
 /* ---- Grid stagger entrance. Add data-stagger-grid to any card grid container.
    The BaseLayout observer adds .is-staggered on intersection. ---- */
@@ -962,11 +1040,21 @@
    The hover properties (transform, box-shadow, border-color) keep a 0ms delay,
    so hovering a later card responds instantly instead of waiting out its
    entrance stagger. The five values map to transition-property order above. */
-[data-stagger-grid].is-staggered > *:nth-child(1)   { transition-delay:   0ms,   0ms, 0ms, 0ms, 0ms; }
-[data-stagger-grid].is-staggered > *:nth-child(2)   { transition-delay: 100ms, 100ms, 0ms, 0ms, 0ms; }
-[data-stagger-grid].is-staggered > *:nth-child(3)   { transition-delay: 200ms, 200ms, 0ms, 0ms, 0ms; }
-[data-stagger-grid].is-staggered > *:nth-child(4)   { transition-delay: 300ms, 300ms, 0ms, 0ms, 0ms; }
-[data-stagger-grid].is-staggered > *:nth-child(n+5) { transition-delay: 400ms, 400ms, 0ms, 0ms, 0ms; }
+[data-stagger-grid].is-staggered > *:nth-child(1) {
+  transition-delay: 0ms, 0ms, 0ms, 0ms, 0ms;
+}
+[data-stagger-grid].is-staggered > *:nth-child(2) {
+  transition-delay: 100ms, 100ms, 0ms, 0ms, 0ms;
+}
+[data-stagger-grid].is-staggered > *:nth-child(3) {
+  transition-delay: 200ms, 200ms, 0ms, 0ms, 0ms;
+}
+[data-stagger-grid].is-staggered > *:nth-child(4) {
+  transition-delay: 300ms, 300ms, 0ms, 0ms, 0ms;
+}
+[data-stagger-grid].is-staggered > *:nth-child(n + 5) {
+  transition-delay: 400ms, 400ms, 0ms, 0ms, 0ms;
+}
 
 /* Portfolio filter override: re-assert .is-filtered-out at specificity (0,2,0)
    so it beats the [data-stagger-grid].is-staggered > * rule (also 0,2,0 but
@@ -1018,7 +1106,7 @@
   margin: 0 auto;
 }
 .step-connector::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background: var(--primary);
@@ -1034,20 +1122,38 @@
    Header and footer are named and pinned with animation: none so they stay
    put during the swap. Astro's ClientRouter is already wired in BaseLayout.
    Astro respects prefers-reduced-motion automatically — no extra rule needed. ---- */
-main#main           { view-transition-name: main-content; }
-.site-header        { view-transition-name: site-header; }
-footer              { view-transition-name: site-footer; }
+main#main {
+  view-transition-name: main-content;
+}
+.site-header {
+  view-transition-name: site-header;
+}
+footer {
+  view-transition-name: site-footer;
+}
 
 @keyframes vt-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 @keyframes vt-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-::view-transition-old(main-content) { animation: vt-fade-out 150ms ease forwards; }
-::view-transition-new(main-content) { animation: vt-fade-in  200ms ease forwards; }
+::view-transition-old(main-content) {
+  animation: vt-fade-out 150ms ease forwards;
+}
+::view-transition-new(main-content) {
+  animation: vt-fade-in 200ms ease forwards;
+}
 
 ::view-transition-old(site-header),
 ::view-transition-new(site-header),
@@ -1061,7 +1167,7 @@ footer              { view-transition-name: site-footer; }
    negative z-index inside the page wrapper. Visible enough to add tactile
    warmth to large flat surfaces, quiet enough not to read as a pattern. */
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -1091,42 +1197,58 @@ body::before {
    element background so it always sits behind content (no extra DOM,
    no stacking surprises). Theme-aware: ink lines on near-white, soft
    cream on the dark page. Very low alpha — atmosphere, not pattern. */
-:root { --grid-rgb: 31, 27, 24; }     /* soft near-black */
-.dark { --grid-rgb: 241, 234, 217; }  /* warm cream */
+:root {
+  --grid-rgb: 31, 27, 24;
+} /* soft near-black */
+.dark {
+  --grid-rgb: 241, 234, 217;
+} /* warm cream */
 
 .surface-grid {
   background-image:
-    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 .surface-dots {
-  background-image: radial-gradient(rgba(var(--grid-rgb), 0.10) 1px, transparent 1.5px);
+  background-image: radial-gradient(rgba(var(--grid-rgb), 0.1) 1px, transparent 1.5px);
   background-size: 22px 22px;
 }
 /* Hero atmosphere: a soft brand-green glow up top + the notebook grid
    beneath, as one background stack so it stays behind content. */
 .hero-atmos {
   background-image:
-    radial-gradient(58% 55% at 50% -8%, rgba(51, 80, 63, 0.10), transparent 72%),
-    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    radial-gradient(58% 55% at 50% -8%, rgba(51, 80, 63, 0.1), transparent 72%),
+    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
 }
 .dark .hero-atmos {
   background-image:
     radial-gradient(58% 55% at 50% -8%, rgba(116, 169, 138, 0.12), transparent 72%),
-    linear-gradient(to right,  rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
 }
 
 /* ---- Choreographed reveals (extend [data-reveal]) ----------- */
 /* Directional variants: pair a class with data-reveal on any element. */
-[data-reveal].reveal-l { translate: -1.5rem 0; }
-[data-reveal].reveal-r { translate:  1.5rem 0; }
+[data-reveal].reveal-l {
+  translate: -1.5rem 0;
+}
+[data-reveal].reveal-r {
+  translate: 1.5rem 0;
+}
 [data-reveal].reveal-l.is-visible,
-[data-reveal].reveal-r.is-visible { translate: 0 0; }
+[data-reveal].reveal-r.is-visible {
+  translate: 0 0;
+}
 
 /* Headline mask-rise: a display line wipes up from behind its own
    baseline as its [data-reveal] wrapper reveals. clip-path + transform
@@ -1149,20 +1271,34 @@ body::before {
   transform-origin: left center;
   transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1) 120ms;
 }
-[data-reveal]:not(.is-visible) .eyebrow::before { transform: scaleX(0); }
-[data-reveal].is-visible .eyebrow::before { transform: scaleX(1); }
+[data-reveal]:not(.is-visible) .eyebrow::before {
+  transform: scaleX(0);
+}
+[data-reveal].is-visible .eyebrow::before {
+  transform: scaleX(1);
+}
 
 /* Per-word headline rise — the hero signature. Each word sits in an
    overflow-hidden box and lifts into place on load, lightly staggered
    by its --i index. Transform-only, fires once (forwards). */
-.kinetic-words .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.16em; margin-bottom: -0.16em; }
+.kinetic-words .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
 .kinetic-words .w > span {
   display: inline-block;
   transform: translateY(1em);
   animation: word-rise 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: calc(var(--i, 0) * 65ms + 120ms);
 }
-@keyframes word-rise { to { transform: translateY(0); } }
+@keyframes word-rise {
+  to {
+    transform: translateY(0);
+  }
+}
 
 /* ---- Micro-interactions ------------------------------------- */
 /* Inline arrow that nudges forward on hover/focus of its link. */
@@ -1171,17 +1307,27 @@ body::before {
   transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .link-arrow:hover .link-arrow__icon,
-.link-arrow:focus-visible .link-arrow__icon { transform: translateX(0.28rem); }
+.link-arrow:focus-visible .link-arrow__icon {
+  transform: translateX(0.28rem);
+}
 
 /* Linked cards: a green border breathes in on hover, with the lift. */
-.card-link { transition: border-color 440ms cubic-bezier(0.16, 1, 0.3, 1); }
-.card-link:hover { border-color: rgba(51, 80, 63, 0.45); }
-.dark .card-link:hover { border-color: rgba(116, 169, 138, 0.45); }
+.card-link {
+  transition: border-color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-link:hover {
+  border-color: rgba(51, 80, 63, 0.45);
+}
+.dark .card-link:hover {
+  border-color: rgba(116, 169, 138, 0.45);
+}
 
 /* Green duotone wash on image hover. Pairs with .img-zoom; add
    .img-tint.img-tint-evergreen inside the image well. */
 .group:hover .img-zoom .img-tint-evergreen,
-.img-zoom:hover .img-tint-evergreen { background: rgba(51, 80, 63, 0.22); }
+.img-zoom:hover .img-tint-evergreen {
+  background: rgba(51, 80, 63, 0.22);
+}
 
 /* ---- Marquee / ticker --------------------------------------- */
 /* A slow, edge-faded ticker. Duplicate the content inside the track so
@@ -1189,7 +1335,7 @@ body::before {
 .marquee {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
 }
 .marquee__track {
   --duration: 46s;
@@ -1209,8 +1355,14 @@ body::before {
   padding-right: var(--gap);
   white-space: nowrap;
 }
-@keyframes marquee-loop { to { transform: translateX(-50%); } }
-.marquee:hover .marquee__track { animation-play-state: paused; }
+@keyframes marquee-loop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
 
 /* ---- Scroll-linked set-pieces (bolder, @supports-guarded) ---- */
 /* Modern CSS scroll-driven animation: no JS, degrades to a static
@@ -1223,8 +1375,12 @@ body::before {
       animation-range: cover;
     }
     @keyframes parallax-drift {
-      from { transform: translateY(-3%) scale(1.06); }
-      to   { transform: translateY(3%)  scale(1.06); }
+      from {
+        transform: translateY(-3%) scale(1.06);
+      }
+      to {
+        transform: translateY(3%) scale(1.06);
+      }
     }
   }
 }
@@ -1232,16 +1388,29 @@ body::before {
 /* ---- Reduced motion: neutralize the whole system ------------ */
 @media (prefers-reduced-motion: reduce) {
   [data-reveal].reveal-l,
-  [data-reveal].reveal-r { translate: 0 0 !important; }
+  [data-reveal].reveal-r {
+    translate: 0 0 !important;
+  }
   [data-reveal] .reveal-rise {
     clip-path: none !important;
     transform: none !important;
     transition: none !important;
   }
-  .eyebrow::before { transform: scaleX(1) !important; transition: none !important; }
-  .kinetic-words .w > span { transform: none !important; animation: none !important; }
-  .marquee__track { animation: none !important; }
-  .parallax-slow { animation: none !important; transform: none !important; }
+  .eyebrow::before {
+    transform: scaleX(1) !important;
+    transition: none !important;
+  }
+  .kinetic-words .w > span {
+    transform: none !important;
+    animation: none !important;
+  }
+  .marquee__track {
+    animation: none !important;
+  }
+  .parallax-slow {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /* ---------- Reduced motion -------------------------------------------- */
@@ -1257,7 +1426,9 @@ body::before {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  html { scroll-behavior: auto !important; }
+  html {
+    scroll-behavior: auto !important;
+  }
   /* Polish layer: kill the start-hidden state so content stays visible without
      waiting on the reveal animation. */
   [data-reveal] {
@@ -1271,9 +1442,14 @@ body::before {
     translate: none !important;
   }
   /* Curtain: skip the reveal entirely — image always visible */
-  .img-curtain { display: none !important; }
+  .img-curtain {
+    display: none !important;
+  }
   /* Connector: skip the draw animation — Gray track always visible */
-  .step-connector::after { transform: scaleY(1) !important; transition: none !important; }
+  .step-connector::after {
+    transform: scaleY(1) !important;
+    transition: none !important;
+  }
 }
 
 /* ---------- Print stylesheet ------------------------------------------ */
@@ -1291,27 +1467,30 @@ body::before {
     --muted: white;
     --border: #d4d4d4;
   }
-  html, body {
+  html,
+  body {
     background: white !important;
     color: black !important;
     font-size: 11pt;
   }
-  body::before { display: none !important; } /* kill the paper-grain overlay */
+  body::before {
+    display: none !important;
+  } /* kill the paper-grain overlay */
 
   /* Hide site chrome + interactive elements that don't translate to paper. */
   .site-header,
   footer,
-  nav[aria-label="More projects"],
-  nav[aria-label="More journal posts"],
+  nav[aria-label='More projects'],
+  nav[aria-label='More journal posts'],
   .reading-progress,
   [data-back-to-top],
-  [data-portfolio-cursor-zone] ~ * [aria-label="View →"],
+  [data-portfolio-cursor-zone] ~ * [aria-label='View →'],
   .no-print {
     display: none !important;
   }
 
   /* Sticky CTA chip, BackToTop button, custom cursor — all fixed elements. */
-  [class*="fixed"] {
+  [class*='fixed'] {
     display: none !important;
   }
 
@@ -1320,28 +1499,42 @@ body::before {
     color: black !important;
     text-decoration: underline;
   }
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
     font-size: 9pt;
     color: #666;
     text-decoration: none;
   }
   /* Don't print appended URLs on internal anchors or mailto/tel — too noisy. */
-  a[href^="/"]::after,
-  a[href^="#"]::after,
-  a[href^="mailto:"]::after,
-  a[href^="tel:"]::after { content: ""; }
+  a[href^='/']::after,
+  a[href^='#']::after,
+  a[href^='mailto:']::after,
+  a[href^='tel:']::after {
+    content: '';
+  }
 
   /* Headings shouldn't break across pages. */
-  h1, h2, h3, h4 { page-break-after: avoid; }
-  figure, .card-lift { page-break-inside: avoid; }
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+  }
+  figure,
+  .card-lift {
+    page-break-inside: avoid;
+  }
 
   /* Images — preserve aspect ratio, cap height so they fit on a printed page. */
-  img { max-width: 100%; max-height: 8in; height: auto; }
+  img {
+    max-width: 100%;
+    max-height: 8in;
+    height: auto;
+  }
 
   /* Print-only header + footer injected into every page. */
   body::after {
-    content: "The Presbyterian Academy · presbyterianacademy.org";
+    content: 'The Presbyterian Academy · presbyterianacademy.org';
     display: block;
     margin-top: 0.5in;
     padding-top: 0.25in;
