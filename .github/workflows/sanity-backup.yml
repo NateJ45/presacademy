@@ -14,14 +14,11 @@ name: Sanity dataset backup
 # recoverable, publishing the dataset is not. Never upload the tarball
 # without the openssl step. (Ported 2026-09-01 from wcp-website 73cfe3c.)
 
-# Schedule disabled 2026-07 (decision preserved through the 2026-08-26 history
-# scrub): SANITY_AUTH_TOKEN was never set, so the daily gate job billed a
-# minute a day just to log "skipping". Uncomment once BOTH secrets exist
-# (setup: docs/agent/ci-cd-and-ops.md) — the nightly backup is genuinely worth
-# having as soon as real content lands. Manual runs still work.
+# Schedule re-enabled 2026-09-05: SANITY_AUTH_TOKEN and BACKUP_PASSPHRASE are
+# both set and a manual run has verified the export/encrypt/upload path works.
 on:
-  # schedule:
-  #   - cron: '0 7 * * *' # daily 07:00 UTC
+  schedule:
+    - cron: '0 7 * * *' # daily 07:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -53,9 +50,9 @@ jobs:
     if: needs.gate.outputs.ready == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -87,7 +84,7 @@ jobs:
           ls -lh sanity-backup-*.tar.gz.enc
 
       - name: Upload backup artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sanity-backup
           path: sanity-backup-*.tar.gz.enc
