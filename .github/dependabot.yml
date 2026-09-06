@@ -28,7 +28,10 @@ updates:
     # member of that set (e.g. @sanity/preview-url-secret 4.0.8 -> 4.1.5) fails
     # npm ci with an ERESOLVE against the pinned @sanity/client, and took the
     # whole minor-and-patch group down with it on 2026-09-04. That stack moves
-    # by hand, together, when WCP has proven the next set.
+    # by hand, together. It last moved 2026-09-06 (phase 1: sanity 6.9.1 +
+    # @sanity/ui 3.5.4 + client 7.26.2 + visual-editing 5.7.3 + preview-url-secret
+    # 4.1.5), which is why client 7.26.2 sticks this time: the core asks for it.
+    # sanity 6.9.2 is the next wall, it moves to @sanity/ui 4.
     ignore:
       - dependency-name: 'sanity'
       - dependency-name: '@sanity/*'
@@ -36,7 +39,8 @@ updates:
       - dependency-name: 'react-dom'
       # The sanity-plugin-* set is pinned for the same reason: 2026-09-04 the
       # regenerated group bumped asset-source-unsplash and documents-pane, which
-      # import @sanity/ui/tooltip that the pinned @sanity/ui 3.3.5 does not export.
+      # import @sanity/ui/tooltip, which no @sanity/ui 3.x exports (3.5.4 still
+      # exports only ".", "./_visual-editing", "./theme" and "./package.json").
       - dependency-name: 'sanity-plugin-*'
 
   - package-ecosystem: github-actions

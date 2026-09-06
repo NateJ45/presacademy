@@ -10,6 +10,22 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Sign in to the staging Studio after the Sanity phase-1 bump**
+  (2026-09-06). The stack moved to `sanity` 6.9.1 / `@sanity/ui` 3.5.4 /
+  `@sanity/client` 7.26.2 / `@sanity/visual-editing` 5.7.3 /
+  `@sanity/preview-url-secret` 4.1.5. Every automated gate is green and the
+  single-instance invariant holds on disk and in the bundle (one
+  `@sanity/ui`, one `styled-components`, one `errors.md#` chunk). But the
+  failure mode this whole pinning regime exists for, gotcha #18, shows up
+  ONLY after sign-in: the login screen is core code and renders fine even
+  when the theme context is broken. So the last check is a human one. Open
+  `/studio` on staging, sign in, open any document (a custom component
+  pane, not just the list), then open the **Presentation** tool and click a
+  section handle. If the desk throws styled-components error #18 or
+  `Cannot read properties of undefined (reading 'v2')`, the bump is bad and
+  the revert is the two-file diff on package.json + package-lock.json.
+  Bonus while you are in there: 6.6.0 added **tables in Portable Text**, so
+  a table should now be insertable in body copy.
 - **Click-through the two Presentation fixes in the DEPLOYED Studio**
   (2026-08-28). Both were reported live and neither can be reproduced
   locally, so both need your eyes once staging is up. (1) The section

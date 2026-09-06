@@ -8,7 +8,9 @@
 // iframe, in the site's bundle, positioned over the element's outline.
 //
 // THREE FACTS ABOUT THE HOST, all verified against the pinned 5.4.5 source
-// before any of this was written:
+// before any of this was written, and re-checked against 5.7.3 on 2026-09-06
+// (OverlayComponentProps still hands in `PointerEvents`, the overlay layer is
+// still pointer-events: none):
 //
 //   1. The resolver only runs while the optimistic actor is ready, and the
 //      overlay only draws for hovered or focused elements. So "these controls
