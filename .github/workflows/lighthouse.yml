@@ -1,0 +1,45 @@
+name: Lighthouse
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Manual runs: the family standard triggers this on main and PRs only, so
+  # a staging push needs a hand-dispatched run to prove the budgets hold
+  # before the merge (gh workflow run lighthouse.yml --ref staging).
+  workflow_dispatch:
+
+# A newer push to the same branch obsoletes the in-flight run; cancel it
+# instead of paying for both (private-repo Actions minutes are metered).
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # PUBLIC_SANITY_PROJECT_ID is intentionally left unset (the placeholder
+      # path). sanityFetch() detects this and returns empty-state fallbacks for
+      # every query, so the build completes with no Sanity project configured
+      # and no credentials are required. Every fixed route still renders.
+      - name: Build
+        env:
+          PUBLIC_SANITY_PROJECT_ID: ''
+        run: npm run build
+
+      # Reads ./lighthouserc.json. Accessibility is a hard gate (minScore 1),
+      # LCP and CLS assert as errors; performance / best-practices / SEO are
+      # warnings.
+      - name: Lighthouse CI
+        run: npx lhci autorun
