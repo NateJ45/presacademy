@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Generates public/llms-full.txt — the expanded companion to llms.txt. It
 // inlines the substantive site content (services and prices, the process,
 // FAQs, service area and contact, plus the current portfolio, journal, and
@@ -9,28 +10,15 @@
 // Output is committed so Cloudflare serves it without Sanity access at runtime.
 
 import { createClient } from '@sanity/client';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadEnv } from './lib/loadEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
-function loadEnv() {
-  const env = { ...process.env };
-  try {
-    const raw = readFileSync(resolve(root, '.env'), 'utf-8');
-    for (const line of raw.split('\n')) {
-      const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
-      if (m && !env[m[1]]) env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '');
-    }
-  } catch {
-    /* .env optional */
-  }
-  return env;
-}
-
-const env = loadEnv();
+const env = loadEnv(root);
 const projectId = env.PUBLIC_SANITY_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET ?? 'production';
 const apiVersion = env.PUBLIC_SANITY_API_VERSION ?? '2026-05-01';

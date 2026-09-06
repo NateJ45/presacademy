@@ -1,9 +1,10 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readingTimeFromPortableText, formatReadingTime } from './reading-time.ts';
 import { telHref } from './phone.ts';
 
-// -- readingTimeFromPortableText -------------------------------------------
+// ── readingTimeFromPortableText ───────────────────────────────────────────
 
 function makeBlock(text: string) {
   return {
@@ -12,9 +13,11 @@ function makeBlock(text: string) {
   };
 }
 
-test('returns 0 for empty array', () => {
-  // This repo's reading-time.ts returns max(1, ...) for arrays but 0 for non-arrays.
-  // An empty array has 0 words; Math.max(1, ceil(0/200)) = 1.
+// The two branches disagree on purpose, so the names have to say which is
+// which: an ARRAY is floored at one minute (`Math.max(1, ...)`, so even an
+// empty one reads as "1 min"), while a NON-array is not a document at all and
+// returns a bare 0 for the caller to hide the label entirely.
+test('returns 1 for empty array', () => {
   assert.equal(readingTimeFromPortableText([]), 1);
 });
 
@@ -61,7 +64,7 @@ test('multiple blocks are summed together', () => {
   assert.equal(readingTimeFromPortableText([block, block, block]), 2);
 });
 
-// -- formatReadingTime -------------------------------------------------------
+// ── formatReadingTime ─────────────────────────────────────────────────────
 
 test('formatReadingTime formats 1 minute', () => {
   assert.equal(formatReadingTime(1), '1 min read');
@@ -75,7 +78,7 @@ test('formatReadingTime formats 12 minutes', () => {
   assert.equal(formatReadingTime(12), '12 min read');
 });
 
-// -- telHref -----------------------------------------------------------------
+// ── telHref ───────────────────────────────────────────────────────────────
 
 test('telHref returns empty string for undefined', () => {
   assert.equal(telHref(undefined), '');
