@@ -59,9 +59,15 @@ export interface PageOpsPatch {
   append: (path: string, items: unknown[]) => PageOpsPatch;
 }
 
-/** The patch builder `client.patch(id)` returns: the same verbs, plus commit.
- *  Each verb is re-declared to hand back the committable builder, so a chain
- *  like `patch(id).setIfMissing().append().commit()` keeps its `commit`. */
+/**
+ * The patch builder `client.patch(id)` returns: the same verbs, plus commit.
+ *
+ * The verbs are REDECLARED rather than inherited so each one returns a
+ * committable patch again. Inheriting them from PageOpsPatch narrowed the
+ * chain back to PageOpsPatch on the first call, so
+ * `client.patch(id).setIfMissing({...}).append(...).commit()` failed to
+ * compile even though it is the shape every caller here uses.
+ */
 export interface PageOpsCommittablePatch extends PageOpsPatch {
   set: (value: Record<string, unknown>) => PageOpsCommittablePatch;
   unset: (paths: string[]) => PageOpsCommittablePatch;
