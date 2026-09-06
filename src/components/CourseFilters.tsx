@@ -42,8 +42,13 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
       if (ok) visible++;
     }
     setShown(visible);
+    // The "no courses match those filters" note is only meaningful when there
+    // are cards to filter. With an empty catalog the server already renders
+    // "the catalog is being prepared"; unhiding this too stacked a second
+    // empty state under it after hydration, an 80px layout shift on mobile
+    // that showed up as CLS in the (empty-content) Lighthouse gate.
     const empty = document.querySelector<HTMLElement>('[data-course-empty]');
-    if (empty) empty.hidden = visible !== 0;
+    if (empty) empty.hidden = cards.length === 0 || visible !== 0;
   }, [activeTopics, activeTeachers, term]);
 
   function toggle(set: Set<string>, slug: string, setter: (s: Set<string>) => void) {
