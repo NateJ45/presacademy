@@ -220,9 +220,30 @@ one-attribute change is caught with a unified diff.
   try/catch in chrome-launcher's `dist/chrome-launcher.js` (since
   2026-09-05 `@lhci/cli` is a devDependency, so the copy to patch is under
   `node_modules/`, not the npx cache) — after which all 15 URLs audit and
-  assertions run to completion. An `npm ci` (or lhci version bump) brings
-  the crash back; re-apply the same one-liner. Linux CI is the real
-  Lighthouse gate and is unaffected.
+  assertions run to completion. There are TWO copies to patch (2026-09-06):
+  `node_modules/chrome-launcher/` (lhci's) and the nested
+  `node_modules/lighthouse/node_modules/chrome-launcher/` (the one that
+  actually runs the audits); patching only the first still crashes. An
+  `npm ci` (or lhci version bump) brings the crash back; re-apply the same
+  one-liner to both. Linux CI is the real Lighthouse gate and is unaffected.
+- **CLS gate (0.1) and the web fonts.** Fraunces and Source Sans 3 load
+  with `font-display: swap`, so the first paint is a system font and the
+  page reflows when the real faces arrive. On the Linux runner, which has
+  neither Georgia nor Times and fell to DejaVu Serif, that reflow alone was
+  0.10 to 0.22 CLS on `/courses`, `/resources` and `/style-guide`
+  (2026-09-05). The fix is the pair of "Fallback" `@font-face` families at
+  the top of `src/styles/globals.css` (Fraunces Fallback, Source Sans 3
+  Fallback): local Times / Arial (Liberation on Linux) with `size-adjust` and
+  ascent/descent overrides MEASURED against the rendered web font, so text
+  wraps identically before and after the swap. Local Windows runs
+  under-report this shift (Georgia and Times are installed), so a green
+  local CLS is not proof; the numbers to trust are CI's. If either font
+  package gets a major bump, re-measure (real sentences, in Chrome, web
+  font vs fallback width ratio) and update the percentages; the table
+  metrics in the woff2 describe the variable font's default instance and
+  are 4 to 12 percent off. Font preloads were tried and rejected: they cut
+  nothing further once the fallback matches, and Lighthouse's simulation
+  puts preloaded fonts on the LCP path (home LCP 1.5s to 2.6s).
 - **CI runs the e2e suite with no Sanity credentials on purpose** (empty
   `PUBLIC_SANITY_PROJECT_ID` → `sanityFetch()` fallbacks): every fixed route
   still renders, and the dynamic-detail smoke test skips itself when the
