@@ -1,17 +1,23 @@
 # TESTING — which suite covers what
 
-The map of the repo's automated checks. The pattern (and most of the test
-code) is ported from the WCP site repo's safety net.
+The map of the repo's automated checks. This is the **family test standard**:
+every Astro site in the studio runs the same gates, with the same script
+names, copied from the WCP site repo (the reference implementation).
 
 ## The suites
 
-| Suite               | Command                                                      | Browser / runtime                                          | Covers                                                                                                                                                                                                  |
-| ------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit tests          | `npm test`                                                   | Node's built-in test runner (`node --test`, type-stripped) | Pure functions in `src/lib/*.test.ts`: sectionVisibility, slugify, utils, **theme-tokens** (see below)                                                                                                  |
-| E2E — chromium      | `npm run test:e2e` (or `npx playwright test`)                | Desktop Chrome                                             | ALL Playwright suites: smoke, axe a11y light + dark, dark-mode focus indicators, reflow at 320/768/1024/1440                                                                                            |
-| E2E — webkit-iphone | same command (second project)                                | Real WebKit, iPhone 14 profile                             | The viewport-agnostic suites only: smoke + the light-mode axe sweep. Safari's engine finds layout/JS issues Chromium never will; reflow drives its own viewports, which conflicts with mobile emulation |
-| Lighthouse CI       | `npx --yes @lhci/cli@0.14.x autorun` (after `npm run build`) | Headless Chrome, desktop preset                            | Category budgets on every fixed route per `lighthouserc.json`. **Accessibility is a hard error gate (minScore 1)**; SEO / best-practices warn at 0.95, performance warns at 0.85                        |
-| CI guards           | on push / PR (`.github/workflows/ci.yml`)                    | GitHub Actions                                             | typegen-staleness guard, lint, empty-env Astro build, Studio build, unit tests, the full Playwright run, and the Lighthouse gate                                                                        |
+| Suite               | Command                                              | Browser / runtime                                          | Covers                                                                                                                                                                                                                                  |
+| ------------------- | ---------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type check + lint   | `npm run check` (= `astro check && npm run lint`)    | TypeScript via `@astrojs/check`, eslint                    | Every `.astro` / `.ts` / `.tsx` file type-checks (0 errors); eslint flat config in `eslint.config.js`                                                                                                                                    |
+| Format check        | `npm run format:check` (fix with `npm run format`)   | prettier + `prettier-plugin-astro` + `prettier-plugin-tailwindcss` | The whole repo is prettier-clean (`.prettierrc`, exclusions in `.prettierignore`)                                                                                                                                                     |
+| Unit tests          | `npm run test:unit`                                  | Node's built-in test runner (`node --test`, type-stripped) | Pure functions in `src/lib/*.test.ts`: sectionVisibility, slugify, utils, **theme-tokens** (see below)                                                                                                                                  |
+| E2E: chromium       | `npm test` (= `playwright test`; `npm run test:ui`)  | Desktop Chrome                                             | ALL Playwright suites: smoke, axe a11y light + dark, dark-mode focus indicators, reflow at 320/768/1024/1440                                                                                                                            |
+| E2E: webkit-iphone  | same command (second project)                        | Real WebKit, iPhone 14 profile                             | The viewport-agnostic suites only: smoke + the light-mode axe sweep. Safari's engine finds layout/JS issues Chromium never will; reflow drives its own viewports, which conflicts with mobile emulation                                 |
+| Visual regression   | `npm run test:visual`                                | Desktop Chrome, reduced motion                             | Full-page screenshots of `/style-guide` in light + dark against the committed Linux baselines in `tests/visual/__screenshots__/` (`playwright.visual.config.ts`). Baselines are generated in CI only; see below                          |
+| Internal links      | `npm run check:links` (after `npm run build`)        | linkinator over `dist/client`                              | Every internal link in the static build resolves. External URLs and the `/studio`, `/preview`, `/api` plumbing are skipped                                                                                                              |
+| Lighthouse CI       | `npx lhci autorun` (after `npm run build`)           | Headless Chrome, mobile default                            | Budgets on every fixed route per `lighthouserc.json`. **Accessibility is a hard error gate (minScore 1)**, LCP (4.5s) and CLS (0.1) are error gates; SEO / best-practices warn at 0.95, performance warns at 0.85                       |
+| CI                  | `.github/workflows/ci.yml` (push / PR / dispatch)    | GitHub Actions                                             | `build` job: typegen-staleness guard, astro check, lint, format check, unit tests, empty-env build (Studio included), link check. `test` job: the full Playwright run + the visual suite                                                  |
+| Lighthouse workflow | `.github/workflows/lighthouse.yml` (main / PR / dispatch) | GitHub Actions                                        | The Lighthouse gate above, as its own workflow so every repo in the family matches. A staging push does not trigger it: `gh workflow run lighthouse.yml --ref staging`                                                                   |
 
 ## What the Playwright suites assert
 
@@ -52,6 +58,25 @@ loops). The injected CSS mirrors the `prefers-reduced-motion` block in
 `src/styles/globals.css` — keep the two in sync when the motion vocabulary
 grows. Without settling, axe sees half-faded text (false contrast results)
 and _skips_ still-hidden opacity-0 content entirely.
+
+## Visual regression (the style guide wall)
+
+`tests/visual/styleguide.spec.ts` (own config: `playwright.visual.config.ts`)
+takes one full-page screenshot of `/style-guide` per theme and diffs it
+against `tests/visual/__screenshots__/` at a 1% pixel tolerance. The page
+qualifies because it is fixture-driven: the token tables, type scale, and
+example components are written into the page, not read from Sanity, so its
+pixels move only when the design system moves. CMS-driven pages are never
+screenshotted (they change with content and would flake).
+
+Baselines are platform-sensitive (font rasterisation differs between Windows
+and the Linux runners), so they are generated **in CI only** by
+`.github/workflows/update-visual-baselines.yml` (manual dispatch), which
+commits them with the Actions bot. A local Windows run diffs against Linux
+truth and fails; that is expected, CI is the arbiter. When a red diff is an
+INTENDED design change, look at the `visual-diffs` artifact first, then
+dispatch the baselines workflow on the branch, then dispatch CI by hand (bot
+pushes never trigger workflows).
 
 ## The Presentation drift gate
 
@@ -142,10 +167,14 @@ one-attribute change is caught with a unified diff.
 
 - **Anything stale holding :4321 silently invalidates the e2e run.** The
   Playwright webServer has `reuseExistingServer` locally, so an orphaned
-  server (a forgotten `wrangler dev`/`npm run preview`, an old http-server)
-  becomes the test target and every result is meaningless. Check with
-  `netstat -ano | findstr :4321` and `taskkill /F /PID <pid>` before trusting
-  a surprising local run. Relatedly, a running `wrangler dev` holds a lock on
+  server (a forgotten `wrangler dev`/`npm run preview`, an old http-server,
+  or a SIBLING project's test server: on 2026-09-05 a whole run passed axe
+  against another site's pages) becomes the test target and every result is
+  meaningless. Check with `netstat -ano | findstr :4321` before trusting a
+  surprising local run. When the port belongs to someone else, move the run
+  instead of killing it: `$env:PLAYWRIGHT_PORT = 4399; npm test` (both
+  Playwright configs and the dark-mode storage origin honor it; CI never
+  sets it). Relatedly, a running `wrangler dev` holds a lock on
   `dist/client` and used to make the build fail with EPERM while emptying
   `dist`. **This is now handled automatically**: the `prebuild` hook runs
   `scripts/free-dist.mjs`, which stops any node/workerd process whose command
@@ -167,8 +196,16 @@ one-attribute change is caught with a unified diff.
 
 - **Static-server trailing slashes.** `http-server` (the e2e server) serves
   `/about` via a redirect to `/about/` — tests follow it and assert the final 200. It has NO clean-URL mapping, so the 404 page is addressed as
-  `/404.html` in `tests/routes.ts`. `serve` (the Lighthouse server) DOES
-  clean-map `/404` → `404.html`, so `lighthouserc.json` uses `/404`.
+  `/404.html` in `tests/routes.ts`. Lighthouse serves `dist/client` itself
+  (`staticDistDir`) and addresses files directly, so `lighthouserc.json`
+  lists `/about/index.html` and `/404.html`.
+- **`check:links` must skip by `127.0.0.1`, not `localhost`.** linkinator
+  serves `dist/client` on `http://127.0.0.1:<port>`, so a skip pattern of
+  `^(?!http://localhost)` (the WCP script) skips the root page itself and
+  reports "Successfully scanned 0 links": green, and checking nothing. This
+  repo's script skips `^https?://(?!127\.0\.0\.1)` and scans ~40 internal
+  links on the empty-env build; if the count ever reads 0, the check is
+  broken, not the site.
 - **Dark mode in tests = the visitor path, not a hack.** The theme choice
   lives in localStorage under `site.themeStorageKey` (raw string `'dark'`,
   not JSON — see `ThemeToggle.tsx`). `a11y-dark.spec.ts` pre-seeds it via
@@ -180,11 +217,11 @@ one-attribute change is caught with a unified diff.
   `%TEMP%\lighthouse.*` profile dir and the whole run aborts after the FIRST
   URL (no report saved — worse than the "exit 1 but audits passed" variant).
   Verified fix on this machine (2026-08-25): wrap that `rmSync` in a
-  try/catch inside the npx cache copy
-  (`%LOCALAPPDATA%\npm-cache\_npx\<hash>\node_modules\lighthouse\node_modules\chrome-launcher\dist\chrome-launcher.js`)
-  — after which all 15 URLs audit and assertions run to completion. The
-  patch lives in the npm cache, so a cache eviction (or lhci version bump)
-  brings the crash back; re-apply the same one-liner. Linux CI is the real
+  try/catch in chrome-launcher's `dist/chrome-launcher.js` (since
+  2026-09-05 `@lhci/cli` is a devDependency, so the copy to patch is under
+  `node_modules/`, not the npx cache) — after which all 15 URLs audit and
+  assertions run to completion. An `npm ci` (or lhci version bump) brings
+  the crash back; re-apply the same one-liner. Linux CI is the real
   Lighthouse gate and is unaffected.
 - **CI runs the e2e suite with no Sanity credentials on purpose** (empty
   `PUBLIC_SANITY_PROJECT_ID` → `sanityFetch()` fallbacks): every fixed route

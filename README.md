@@ -37,8 +37,11 @@ editors see unpublished drafts immediately in the Studio's Presentation tool,
 which previews the SSR `/preview/**` routes with click-to-edit. Work lands on
 `staging`, then fast-forwards to `main`.
 
-Testing: `npm test` (unit + theme-token contrast), `npm run test:e2e`
-(Playwright: smoke, axe in both themes, reflow). See `docs/TESTING.md`.
+Quality gates (the family test standard, same as the WCP repo): `npm run check`
+(astro check + eslint), `npm run format:check` (prettier), `npm run test:unit`
+(unit + theme-token contrast), `npm test` (Playwright: smoke, axe in both
+themes, reflow), `npm run test:visual` (style guide screenshots, CI baselines),
+`npm run check:links` (after a build). See `docs/TESTING.md`.
 
 ## The files that orient you
 
