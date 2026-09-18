@@ -12,7 +12,7 @@
 
 import CtaLink from '@/components/CtaLink.astro';
 import SanityImage from '@/components/SanityImage.astro';
-import { splitScriptAccent } from '@/lib/scriptAccent';
+import { splitHeadingAccent } from '@/lib/heading-accent';
 
 interface CtaBlock {
   label?: string;
@@ -80,7 +80,7 @@ const {
   before: scriptBefore,
   word: scriptWord,
   after: scriptAfter,
-} = splitScriptAccent(headline, scriptAccent);
+} = splitHeadingAccent(headline, scriptAccent);
 ---
 
 <section
