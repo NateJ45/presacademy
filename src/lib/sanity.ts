@@ -110,7 +110,7 @@ export async function sanityFetch<T = any>(
     return fallback;
   }
   try {
-    return await client.fetch<T>(query, params);
+    return await fetchWithRetry<T>(query, params);
   } catch (err) {
     // A production build must not quietly ship placeholder content: if Sanity
     // is unreachable or refusing requests (a quota block, an outage), fail the
@@ -120,6 +120,22 @@ export async function sanityFetch<T = any>(
     }
     console.warn('[sanity] fetch error (returning empty fallback):', err);
     return fallback;
+  }
+}
+
+// A build makes many reads, and one of them failing on a network blip could
+// publish a page as a redirect to /404 or as an empty page. Two retries, 0.5 s
+// then 1.5 s apart, ride out a blip; a real outage still fails after about 2 s
+// and a production build stops (sibling repo fbcm, 2026-09-24).
+async function fetchWithRetry<T>(query: string, params: Record<string, unknown>): Promise<T> {
+  const waits = [500, 1500];
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await client.fetch<T>(query, params);
+    } catch (err) {
+      if (attempt >= waits.length) throw err;
+      await new Promise((r) => setTimeout(r, waits[attempt]));
+    }
   }
 }
 

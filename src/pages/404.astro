@@ -13,10 +13,7 @@ import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
 import SanityImage from '@/components/SanityImage.astro';
 import notFoundPhoto from '@/assets/placeholders/acad-woman-reading.jpg';
 
-const [notFoundPage, siteSettings] = await Promise.all([
-  getNotFoundPage().catch(() => null),
-  getSiteSettings().catch(() => null),
-]);
+const [notFoundPage, siteSettings] = await Promise.all([getNotFoundPage(), getSiteSettings()]);
 
 const seoTitle = notFoundPage?.seoTitle ?? 'Page not found';
 const seoDescription =

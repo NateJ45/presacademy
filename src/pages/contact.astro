@@ -26,8 +26,8 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 import Hero from '@/components/Hero.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
 
-const siteSettings = await getSiteSettings().catch(() => null);
-const page = await getContactPage().catch(() => null);
+const siteSettings = await getSiteSettings();
+const page = await getContactPage();
 
 // One resolved settings object; every contact value below comes from Sanity via
 // this helper, with no hardcoded site.ts fallbacks.

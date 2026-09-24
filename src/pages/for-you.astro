@@ -23,10 +23,7 @@ import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 
-const [page, siteSettings] = await Promise.all([
-  getForYouPage().catch(() => null),
-  getSiteSettings().catch(() => null),
-]);
+const [page, siteSettings] = await Promise.all([getForYouPage(), getSiteSettings()]);
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? `For You · ${site.name}`;

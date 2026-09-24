@@ -35,10 +35,10 @@ import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 
 const [page, faculty, areas, siteSettings] = await Promise.all([
-  getFacultyPage().catch(() => null),
-  getFaculty().catch(() => []),
-  getTeachingAreas().catch(() => []),
-  getSiteSettings().catch(() => null),
+  getFacultyPage(),
+  getFaculty(),
+  getTeachingAreas(),
+  getSiteSettings(),
 ]);
 const settings = resolveSiteSettings(siteSettings);
 

@@ -15,18 +15,27 @@ import SanityImage from '@/components/SanityImage.astro';
 import FinalCta from '@/components/FinalCta.astro';
 
 export async function getStaticPaths() {
-  const slugs = await getAllCourseSlugs().catch(() => []);
+  const slugs = await getAllCourseSlugs();
   return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
 const [course, coursesPage, siteSettings] = await Promise.all([
   getCourseBySlug(slug as string),
-  getCoursesPage().catch(() => null),
-  getSiteSettings().catch(() => null),
+  getCoursesPage(),
+  getSiteSettings(),
 ]);
 const settings = resolveSiteSettings(siteSettings);
 
+// getStaticPaths listed this slug, so an empty answer here is a failed read,
+// not a missing course. A production build stops rather than publish the
+// course as a redirect to /404 (sibling repo fbcm, 2026-09-24). In dev it
+// still redirects.
+if (!course && import.meta.env.PROD) {
+  throw new Error(
+    `[courses] "${slug}" was listed but came back empty; refusing to publish it as a 404`,
+  );
+}
 if (!course) {
   return Astro.redirect('/404');
 }

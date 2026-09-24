@@ -27,10 +27,7 @@ import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 
-const [page, siteSettings] = await Promise.all([
-  getPricingPage().catch(() => null),
-  getSiteSettings().catch(() => null),
-]);
+const [page, siteSettings] = await Promise.all([getPricingPage(), getSiteSettings()]);
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? `Pricing & Scholarships · ${site.name}`;

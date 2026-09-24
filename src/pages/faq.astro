@@ -31,10 +31,7 @@ import Hero from '@/components/Hero.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
 import { FALLBACK_FAQS } from '@/lib/faq-fallback';
 
-const [siteSettings, page] = await Promise.all([
-  getSiteSettings().catch(() => null),
-  getFaqPage().catch(() => null),
-]);
+const [siteSettings, page] = await Promise.all([getSiteSettings(), getFaqPage()]);
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? `Frequently Asked Questions · ${site.name}`;
