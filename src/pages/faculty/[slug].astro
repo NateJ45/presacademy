@@ -21,18 +21,25 @@ import PortableText from '@/components/PortableText';
 import FinalCta from '@/components/FinalCta.astro';
 
 export async function getStaticPaths() {
-  const slugs = await getAllFacultySlugs().catch(() => []);
+  const slugs = await getAllFacultySlugs();
   return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
 const [person, facultyPage, siteSettings] = await Promise.all([
   getFacultyBySlug(slug as string),
-  getFacultyPage().catch(() => null),
-  getSiteSettings().catch(() => null),
+  getFacultyPage(),
+  getSiteSettings(),
 ]);
 const settings = resolveSiteSettings(siteSettings);
 
+// Listed by getStaticPaths, so empty means a failed read: stop the build rather
+// than publish the faculty member as a redirect to /404 (see courses/[slug].astro).
+if (!person && import.meta.env.PROD) {
+  throw new Error(
+    `[faculty] "${slug}" was listed but came back empty; refusing to publish it as a 404`,
+  );
+}
 if (!person) {
   return Astro.redirect('/404');
 }

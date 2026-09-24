@@ -29,10 +29,7 @@ import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 
-const [page, siteSettings] = await Promise.all([
-  getAccessibilityPage().catch(() => null),
-  getSiteSettings().catch(() => null),
-]);
+const [page, siteSettings] = await Promise.all([getAccessibilityPage(), getSiteSettings()]);
 const settings = resolveSiteSettings(siteSettings);
 
 const title = page?.seoTitle ?? `Accessibility · ${site.name}`;

@@ -31,9 +31,9 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 // What is left here is the page document, the settings, and the next term, which
 // the hero's ledger line reads.
 const [page, siteSettings, nextTerm] = await Promise.all([
-  getHomePage().catch(() => null),
-  getSiteSettings().catch(() => null),
-  getNextTerm().catch(() => null),
+  getHomePage(),
+  getSiteSettings(),
+  getNextTerm(),
 ]);
 const settings = resolveSiteSettings(siteSettings);
 
