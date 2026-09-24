@@ -3,6 +3,22 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+_2026-09-23 — Fix: `src/lib/sanity.ts`'s build client now always reads through
+the Sanity API CDN (`useCdn: true`), ported from fbcm commit 897cec9 / starter
+PORTS.md card 55. It used to be `useCdn: !readToken`, on the belief that the
+CDN rejects a token; the API CDN has accepted authenticated requests since API
+version 2021-03-25. With `SANITY_API_READ_TOKEN` set in `.env`, every local
+build was reading the uncached API instead of the CDN, and a full build is
+several hundred queries, so a day of agent-heavy local builds (rebuilds,
+Playwright webServer builds) could burn a monthly quota fast, while CI (no
+token locally) stayed on the CDN the whole time. Also: `sanityFetch`'s catch
+block now throws instead of silently returning the fallback when
+`import.meta.env.PROD` is true, so a production build fails loudly on a
+Sanity outage or quota block rather than shipping placeholder/empty content;
+the dev warn-and-fallback path and the no-project-configured early return are
+unchanged. The separate draft/preview client in `src/lib/cms-preview.ts`
+(`useCdn: false`, drafts perspective) is intentional and was left alone._
+
 _2026-06-15 (later) — Fix: hCaptcha was blocked by the site CSP on the live build,
 so the widget never appeared even though the form asked for it. The
 Content-Security-Policy in `public/_headers` allowed YouTube/Vimeo/Maps for
