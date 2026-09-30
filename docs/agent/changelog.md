@@ -3,6 +3,16 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+_2026-09-30 — Fix: the reduced-motion reset in `globals.css` now sets
+`transition-duration: 0s` and `transition-delay: 0s` (was `0.01ms`). `0.01ms`
+gives every element a transition (`transition-property` defaults to `all`) and
+WebKit never finishes it, leaving stuck transitions holding old values. Added
+the PORTABLE `tests/reduced-motion.spec.ts` (no animation still running 2.5s
+after load, every route) and put it on the `webkit-iphone` project in
+`playwright.config.ts`. Nothing here listens for `transitionend`. Ported from
+starter PORTS.md card 61. `@playwright/test` bumped ^1.62.1 to ^1.63.0 in the
+same change: the spec's `test.use({ reducedMotion })` only type-checks on 1.63+._
+
 _2026-09-29 — Fix: `npm run dev` no longer crashes on Windows. `@sanity/astro`'s
 dev-only `sanity:module-dedupe` alias pointed `sanity` at its package.json file
 (`[MISSING_EXPORT] ... is not exported by "node_modules/sanity/package.json"`).
