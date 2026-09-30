@@ -9,6 +9,7 @@ import sanity from '@sanity/astro';
 import { fetchHiddenPagePaths } from './scripts/lib/hidden-pages.mjs';
 import { fetchRedirectDocs } from './scripts/lib/redirects.mjs';
 import { buildRedirectMap } from './src/lib/redirects.ts';
+import { fixSanityDedupeAlias } from './src/lib/sanity-dedupe-alias.ts';
 
 // Pages an editor switched "Hide this page from search engines" on, as
 // site-relative paths. Read once, here, because @astrojs/sitemap's filter is
@@ -91,7 +92,13 @@ export default defineConfig({
     react(),
   ],
   vite: {
-    plugins: [tailwindcss()],
+    // fixSanityDedupeAlias() repairs @sanity/astro's dev-only alias, which is
+    // broken on Windows (it points `sanity` at a package.json FILE, so `astro
+    // dev` dies with MISSING_EXPORT). It does nothing in `astro build` and on
+    // macOS/Linux. Do not delete it, and do not "fix" this with
+    // SANITY_ASTRO_DISABLE_MODULE_DEDUPE=1 (the Studio then fails to hydrate).
+    // Full story: src/lib/sanity-dedupe-alias.ts and PORTS.md card 60.
+    plugins: [tailwindcss(), fixSanityDedupeAlias()],
     // @sanity/ui ships an ESM build that Vite's dependency pre-bundler
     // mis-scans on this stack (MISSING_EXPORT errors for styled-components).
     // Excluding it from pre-bundling matches the WCP repo's working config;

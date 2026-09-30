@@ -121,7 +121,9 @@ them all. Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
 `scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
 `src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
 `src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
-`src/sanity/components/slugRedirect.tsx`.
+`src/sanity/components/slugRedirect.tsx`; and, since 2026-09-29 (card 60), the Windows
+`astro dev` fix `src/lib/sanity-dedupe-alias.ts` + `.test.ts` (wired into
+`astro.config.mjs` as `fixSanityDedupeAlias()`; never delete it, see stack-and-config.md).
 `scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
 
 **The in-canvas control layer joined them 2026-08-28** (PORTS.md cards 28 and 28b):
