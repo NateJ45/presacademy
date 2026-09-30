@@ -3,6 +3,13 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+_2026-09-29 — Fix: `npm run dev` no longer crashes on Windows. `@sanity/astro`'s
+dev-only `sanity:module-dedupe` alias pointed `sanity` at its package.json file
+(`[MISSING_EXPORT] ... is not exported by "node_modules/sanity/package.json"`).
+Ported the canonical `src/lib/sanity-dedupe-alias.ts` + `.test.ts` from the
+starter (PORTS.md card 60) and added `fixSanityDedupeAlias()` to `vite.plugins`
+in `astro.config.mjs`. `astro build` output is byte-identical (dev-only plugin)._
+
 _2026-09-23 — Fix: `src/lib/sanity.ts`'s build client now always reads through
 the Sanity API CDN (`useCdn: true`), ported from fbcm commit 897cec9 / starter
 PORTS.md card 55. It used to be `useCdn: !readToken`, on the belief that the
