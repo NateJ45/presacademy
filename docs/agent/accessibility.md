@@ -35,7 +35,7 @@ Target: WCAG 2.1 AA in both light and dark modes. Aim for 100 Lighthouse Accessi
 - `--foreground` (Ink in light, Paper in dark): headings and body text.
 - `--secondary`: borders, dividers, decorative ornaments. NOT eyebrow labels (those use `text-foreground/65`).
 
-**Motion.** `globals.css` disables animations and transitions globally under `prefers-reduced-motion: reduce`, and Lenis smooth scroll becomes a no-op. The before/after slider (if active) falls back to a tap-to-toggle behavior. View Transitions become instant cross-fades. New animations inherit this; no per-component handling needed.
+**Motion.** `globals.css` disables animations and transitions globally under `prefers-reduced-motion: reduce`, and Lenis smooth scroll becomes a no-op. The before/after slider (if active) falls back to a tap-to-toggle behavior. View Transitions become instant cross-fades. New animations inherit this; no per-component handling needed. Transitions are zeroed (`0s` duration AND delay), not `0.01ms`: WebKit never finishes a 10-microsecond transition and holds the old value (starter PORTS.md card 61, 2026-09-30). `transitionend` therefore does not fire under reduce, so nothing may wait on it; animations keep `0.01ms` so `animationend` still fires. `tests/reduced-motion.spec.ts` holds it on chromium and webkit-iphone.
 
 **Language and metadata.** `<html lang="en">` and the document `title` and `description` come from `BaseLayout`. Pass `title` and `description` through every page that uses the layout. Any Calendly embed needs an `aria-label` on its iframe.
 
