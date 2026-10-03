@@ -1,4 +1,4 @@
-# WHEN IT RUNS (PORTS.md card 62 in ncs-astro-sanity-starter)
+# WHEN IT RUNS (PORTS.md card 70 in ncs-astro-sanity-starter)
 # Lighthouse was the slowest gate by a distance (3 passes over 15 URLs, ~650s)
 # and it ran on every PR, including ones that cannot move a score. It is NOT a
 # required status check (only `build` and `test` are), so it is free to be

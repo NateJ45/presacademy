@@ -1,5 +1,5 @@
-# SHAPE (why this looks like this; PORTS.md card 62 in ncs-astro-sanity-starter)
-# Before card 62 this was two serial jobs and the site was built THREE times
+# SHAPE (why this looks like this; PORTS.md card 70 in ncs-astro-sanity-starter)
+# Before card 70 this was two serial jobs and the site was built THREE times
 # per PR (the build job, Playwright's webServer, Lighthouse), so wall time was
 # the sum of every gate. Now:
 #

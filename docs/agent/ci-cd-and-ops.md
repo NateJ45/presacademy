@@ -15,7 +15,7 @@ Every change goes through a **pull request** so CI gates the merge and the PR te
 
 ## What runs in CI (`.github/workflows/ci.yml`)
 
-Runs on every PR, on pushes to `main`, and by hand (`workflow_dispatch`). This is the family test standard (the same gates the WCP repo runs; see `docs/TESTING.md`), restructured for speed by PORTS.md card 62 in `ncs-astro-sanity-starter`. Before, two serial-ish jobs built the site three times per PR (the build job, Playwright's `webServer`, Lighthouse). Now the site is built once and the gates run in parallel:
+Runs on every PR, on pushes to `main`, and by hand (`workflow_dispatch`). This is the family test standard (the same gates the WCP repo runs; see `docs/TESTING.md`), restructured for speed by PORTS.md card 70 in `ncs-astro-sanity-starter`. Before, two serial-ish jobs built the site three times per PR (the build job, Playwright's `webServer`, Lighthouse). Now the site is built once and the gates run in parallel:
 
 ```
 static --+                       (drift check, audit, typegen, types, check, lint, format, unit)

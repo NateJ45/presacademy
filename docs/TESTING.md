@@ -170,7 +170,7 @@ one-attribute change is caught with a unified diff.
   all just work with no manual env setup. (This bit a real deploy on
   2026-08-26: the workaround was documented but not wired into the build, so
   `npm run deploy` died at prerender.) `playwright.config.ts` keeps its own
-  copy of the same logic. In CI the shards set `PLAYWRIGHT_SKIP_BUILD=1` (card 62), so the config's webServer only serves the downloaded `dist/client`; unset locally, it still builds fresh. Linux CI is unaffected and stays on the stock
+  copy of the same logic. In CI the shards set `PLAYWRIGHT_SKIP_BUILD=1` (card 70), so the config's webServer only serves the downloaded `dist/client`; unset locally, it still builds fresh. Linux CI is unaffected and stays on the stock
   binary. Delete the wrapper when @astrojs/cloudflare bumps its
   miniflare/workerd.
 
