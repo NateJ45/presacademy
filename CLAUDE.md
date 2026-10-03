@@ -39,7 +39,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 
 ## Never-break rules (numbered gotchas)
 
-Numbers are stable (code comments cite them). Gotchas #8 and #11 to #18 are in `.claude/rules/build-and-deps.md`, #9 and #21 in `.claude/rules/ui-and-verification.md`, #19 in `.claude/rules/sanity-and-scripts.md`.
+Numbers are stable (code comments cite them). Gotchas #8, #11 to #18 and #22 are in `.claude/rules/build-and-deps.md`, #9 and #21 in `.claude/rules/ui-and-verification.md`, #19 in `.claude/rules/sanity-and-scripts.md`.
 
 Each entry carries the date it bit (or was decided) and the symptom, so future sessions can judge whether it still applies.
 
@@ -103,7 +103,7 @@ Site copy voice and banned vocabulary: `.claude/rules/site-copy-voice.md` (also 
 Path-scoped rules (load automatically when you touch matching files):
 
 - `.claude/rules/live-preview.md`: the `/preview/**` SSR draft preview, stega, SSE proxy, in-canvas controls.
-- `.claude/rules/build-and-deps.md`: gotchas #8, #11 to #18 (adapter, workerd, wrangler pin, Sanity version pins, deploy config).
+- `.claude/rules/build-and-deps.md`: gotchas #8, #11 to #18, #22 (adapter, workerd, wrangler pin, Sanity version pins, deploy config, never regenerate the lockfile).
 - `.claude/rules/sanity-and-scripts.md`: gotcha #19, build pipeline, seeds and standalone scripts.
 - `.claude/rules/pages-and-routes.md`: routes table, page-builder conversion, pinned code regions.
 - `.claude/rules/ui-and-verification.md`: gotchas #9 and #21, the both-themes-both-viewports verification loop.

@@ -143,6 +143,8 @@ _between_ tags plus trailing whitespace is dropped. Everything else (text,
 classes, ids, aria, inline styles, JSON-LD) stays byte-faithful, because that
 is exactly what must not drift. The script header explains each rule.
 
+**Baselines are HTML, so Tailwind must not scan them (2026-10-03, vault gotcha `committed-parity-baselines-feed-tailwind`).** Tailwind v4 skips only gitignored paths. `globals.css` therefore carries `@source not` for `scripts/.parity`, `docs` and the root `*.md`; without it every class named in an old baseline or in prose kept a dead rule alive in the shipped sheet (67 declarations, 3,297 bytes of `BaseLayout.*.css` on this repo) and the compare could pass because the baselines fed the build. Note the compare normalizes the stylesheet's hashed filename and never reads the CSS itself, so check the sheet separately: after the exclusion, `npm run build`, recapture, `npm run build` again must give a byte-identical `dist/client/_astro/BaseLayout.*.css` and 13/13 PASS. Keep utility class names out of prose in any NEW committed directory the scanner can see, or add it to the `@source not` list. The baselines had also drifted far behind the site (0/13 on an untouched main: title separator, preconnect, theme-script formatting) and were recaptured 2026-10-03.
+
 Baselines live in `scripts/.parity/*.html` and **are committed**: git history
 is the record of when a baseline legitimately moved. Re-capture only when you
 mean to move it, and say so in the commit message. Verified 2026-08-26: a

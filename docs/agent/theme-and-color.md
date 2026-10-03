@@ -136,7 +136,7 @@ These are shadcn's semantic tokens, defined in `:root` for light and overridden 
 - `bg-primary/90` (or a dedicated darker variant) -- CTA hover state
 - `bg-chapel`, `bg-chapel-deep`, `text-chapel-foreground` -- the forest-green structural bands (footer, closing CTA), static cream-on-green in both modes
 
-**`text-accent` and `bg-accent` are theme-aware via shadcn's `--accent` token.** The `@theme inline` block remaps `--color-accent -> var(--accent)` so `bg-accent` works as a hover surface that flips with theme. **Don't use `text-accent` for body text** -- its color mirrors `--accent` which is meant for hover surfaces, not text. Always use `text-foreground` for headings and body copy.
+**`text-accent` and `bg-accent` are theme-aware via shadcn's `--accent` token.** The `@theme inline` block remaps `--color-accent -> var(--accent)` so `bg-accent` works as a hover surface that flips with theme. **Don't use `text-accent` for body text** -- its color mirrors `--accent` which is meant for hover surfaces, not text. Always use `text-foreground` for headings and body copy. The same trap applied to the BASE heading rule: `h1`-`h6` in `globals.css` used to read `color: var(--color-accent)`, which the `@theme inline` remap turns into the pale hover surface, so a heading with no text class of its own rendered near-invisible in light mode (only the two `sr-only` list headings on /courses and /faculty showed it, because every visible heading sets its own class). Fixed 2026-10-03: the base rule is `color: inherit` (body ink in light, paper in dark, chapel foreground inside dark bands). Check a new component with a bare `<h2>` in a section: it must render in the body ink colour.
 
 **Quick checklist before adding a color class:**
 
