@@ -17,8 +17,8 @@ names, copied from the WCP site repo (the reference implementation).
 | Internal links       | `npm run check:links` (after `npm run build`)             | linkinator over `dist/client`                                      | Every internal link in the static build resolves. External URLs and the `/studio`, `/preview`, `/api` plumbing are skipped                                                                                               |
 | Lighthouse CI        | `npx lhci autorun` (after `npm run build`)                | Headless Chrome, mobile default                                    | Budgets on every fixed route per `lighthouserc.json`. **Accessibility is a hard error gate (minScore 1)**, LCP (4.5s) and CLS (0.1) are error gates; SEO / best-practices warn at 0.95, performance warns at 0.85        |
 | Canonical-file drift | `npm run sync-check`                                      | Node, dependency-free                                              | Every file whose first lines carry `PORTABLE: canonical copy`, byte-diffed against `ncs-astro-sanity-starter`, the library of record (line endings normalized). Point at it with `NCS_STARTER_DIR`                       |
-| CI                   | `.github/workflows/ci.yml` (push / PR / dispatch)         | GitHub Actions                                                     | `build` job: the canonical-file drift gate, typegen-staleness guard, astro check, lint, format check, unit tests, empty-env build (Studio included), link check. `test` job: the full Playwright run + the visual suite  |
-| Lighthouse workflow  | `.github/workflows/lighthouse.yml` (main / PR / dispatch) | GitHub Actions                                                     | The Lighthouse gate above, as its own workflow so every repo in the family matches. Runs on PRs and main pushes, so the budgets are proven before the merge                                                              |
+| CI                   | `.github/workflows/ci.yml` (push / PR / dispatch)         | GitHub Actions                                                     | `static` (drift gate, typegen-staleness guard, astro check, lint, format, unit) and `site` (empty-env build with Studio, link check, uploads `dist/client`) run in parallel; `e2e` runs Playwright in 3 shards on that uploaded build (`PLAYWRIGHT_SKIP_BUILD=1`; the visual suite rides on shard 1). REQUIRED checks `build` and `test` are aggregators over them. See `docs/agent/ci-cd-and-ops.md` |
+| Lighthouse workflow  | `.github/workflows/lighthouse.yml` (PR sample / main / weekly / dispatch) | GitHub Actions                                                     | The Lighthouse gate above, as its own workflow. Not a required check. PRs touching score-moving paths audit a sample of 8 URLs (one per template, `--collect.url`); main pushes with the same paths filter, a weekly cron and dispatch audit all 15 URLs from `lighthouserc.json` |
 
 ## What the Playwright suites assert
 
@@ -170,7 +170,7 @@ one-attribute change is caught with a unified diff.
   all just work with no manual env setup. (This bit a real deploy on
   2026-08-26: the workaround was documented but not wired into the build, so
   `npm run deploy` died at prerender.) `playwright.config.ts` keeps its own
-  copy of the same logic. Linux CI is unaffected and stays on the stock
+  copy of the same logic. In CI the shards set `PLAYWRIGHT_SKIP_BUILD=1` (card 62), so the config's webServer only serves the downloaded `dist/client`; unset locally, it still builds fresh. Linux CI is unaffected and stays on the stock
   binary. Delete the wrapper when @astrojs/cloudflare bumps its
   miniflare/workerd.
 

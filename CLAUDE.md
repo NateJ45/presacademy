@@ -34,7 +34,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 
 ## Branch, CI and deploy
 
-- Git workflow: `main` is the only branch (staging abandoned 2026-10-03). Work on short-lived branches, open a PR to `main`, CI must be green (required checks `build` and `test`), merge = production deploy (Cloudflare watches `main`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
+- Git workflow: `main` is the only branch (staging abandoned 2026-10-03). Work on short-lived branches, open a PR to `main`, CI must be green (required checks `build` and `test`, now aggregator jobs over parallel `static` / `site` / sharded `e2e`; Lighthouse is scheduled and path-filtered, not required), merge = production deploy (Cloudflare watches `main`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
 - The PUBLIC site is statically built; a Sanity edit reaches visitors only after a rebuild (gotcha #7).
 
 ## Never-break rules (numbered gotchas)

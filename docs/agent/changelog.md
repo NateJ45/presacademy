@@ -3,6 +3,8 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+_2026-10-03 — CI: parallel and built once (PORTS.md card 62 in `ncs-astro-sanity-starter`). `ci.yml` is now `static` + `site` in parallel, 3 sharded `e2e` jobs that reuse the uploaded `dist/client` (`PLAYWRIGHT_SKIP_BUILD=1`, a one-line webServer change in `playwright.config.ts` and `playwright.visual.config.ts`), and aggregator jobs named `build` and `test` (the required checks). Playwright browsers are cached by version. `lighthouse.yml` is path-filtered, runs a one-URL-per-template sample on PRs, and the full 15-URL list on main pushes, weekly cron and dispatch; `lighthouserc.json` untouched._
+
 _2026-10-03: Closed four vault "Ported to" gaps. (1) `.claude/rules/build-and-deps.md` #22: never delete or regenerate `package-lock.json`, `npm ci` for any run you reason from. (2) `globals.css` base `h1`-`h6` now `color: inherit` (was `var(--color-accent)`, the pale hover token); verified by computed colour on 15 routes in light and dark and full-page screenshots of home, about and courses, which are pixel-identical; the only computed-colour changes are the two `sr-only` list headings. (3) `globals.css` `@source not` for `scripts/.parity`, `docs`, `*.md` (shipped `BaseLayout.*.css` 110,641 to 107,344 bytes, 67 dead declarations, none used under `src/`), baselines recaptured. (4) `FormRenderer.tsx` `<select>` uses `selectCls` (no focus utilities) so the global `:focus-visible` outline paints in WebKit._
 
 _2026-09-30 — Fix: the reduced-motion reset in `globals.css` now sets
