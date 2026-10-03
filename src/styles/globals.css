@@ -567,7 +567,12 @@
   h6 {
     font-family: var(--font-display);
     font-weight: 400;
-    color: var(--color-accent);
+    /* inherit, NOT var(--color-accent): the later @theme inline block remaps
+       --color-accent to shadcn's --accent, the pale hover surface, so a heading
+       without its own text class rendered near-invisible (vault gotcha
+       base-heading-color-accent-is-the-hover-token). Inherit picks up the
+       body ink, and the chapel / footer foreground inside dark bands. */
+    color: inherit;
     line-height: 1.1;
     letter-spacing: -0.01em;
     /* Balance multi-line display type so headlines never strand one word on
