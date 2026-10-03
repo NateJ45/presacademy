@@ -47,7 +47,9 @@ export default defineConfig({
     // paying for the same build once per shard. Unset, every local run still
     // builds fresh, which is what keeps a stale dist from passing.
     command: `${process.env.PLAYWRIGHT_SKIP_BUILD ? '' : 'npm run build && '}${
-      PORT === 4321 ? 'npm run serve:dist' : `npx http-server dist/client -p ${PORT} -s -c-1 --silent`
+      PORT === 4321
+        ? 'npm run serve:dist'
+        : `npx http-server dist/client -p ${PORT} -s -c-1 --silent`
     }`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
