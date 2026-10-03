@@ -1,21 +1,21 @@
 # CI/CD + operational hardening
 
-The automation that backs the staging-first workflow. Everything here is committed and ready; the pieces that need an external account stay inert (logging a warning and skipping) until you add the secret or variable noted below.
+The automation that backs the main-only workflow (`main` is the only branch; staging was abandoned 2026-10-03). Everything here is committed and ready; the pieces that need an external account stay inert (logging a warning and skipping) until you add the secret or variable noted below.
 
 ## The workflow at a glance
 
 ```
-work on `staging`  ->  open a PR to `main`  ->  CI must pass  ->  merge (fast-forward)  ->  push to `main` rebuilds production
-                                   |                                      |
-                          staging preview deploy                  Sanity backup runs nightly
-                          (real edge, real data)                  uptime check runs hourly
+work on a short-lived branch  ->  open a PR to `main`  ->  CI must be green  ->  merge  ->  merge = push to `main` rebuilds production
+                                                                 |
+                                                  Sanity backup runs nightly
+                                                  uptime check runs hourly
 ```
 
-Move from local fast-forward merges to **pull requests** so CI gates the merge and the PR template's definition-of-done travels with every change. Fast-forward is still the merge style (keeps history linear); the PR is just where the checks run.
+Every change goes through a **pull request** so CI gates the merge and the PR template's definition-of-done travels with every change. Required checks are `build` and `test`; squash-merge keeps history linear.
 
 ## What runs in CI (`.github/workflows/ci.yml`)
 
-Runs on every PR, on pushes to `main` / `staging`, and by hand (`workflow_dispatch`). This is the family test standard (the same gates the WCP repo runs; see `docs/TESTING.md`). Two parallel jobs.
+Runs on every PR, on pushes to `main`, and by hand (`workflow_dispatch`). This is the family test standard (the same gates the WCP repo runs; see `docs/TESTING.md`). Two parallel jobs.
 
 The `build` job:
 
@@ -30,13 +30,11 @@ The `build` job:
 
 The `test` job installs Chromium + WebKit and runs **`npm test`** (Playwright: smoke, axe light + dark, reflow) against a fresh empty-env build, then **`npm run test:visual`** (the `/style-guide` screenshot diff against the committed Linux baselines). `playwright-report/` and any `test-results/` diffs upload as artifacts.
 
-**Lighthouse** is its own workflow (`.github/workflows/lighthouse.yml`): on pushes to `main` / `staging`, PRs, and by hand. It builds the same empty-env site and runs `npx lhci autorun` with `lighthouserc.json`: accessibility is a hard gate (must hold 100), LCP (4.5s) and CLS (0.1) assert as errors, and performance / best-practices / SEO warn at 0.85 / 0.95 / 0.95. Work lands on `staging` first, so the budgets are proven there before the fast-forward to `main`.
+**Lighthouse** is its own workflow (`.github/workflows/lighthouse.yml`): on pushes to `main`, PRs, and by hand. It builds the same empty-env site and runs `npx lhci autorun` with `lighthouserc.json`: accessibility is a hard gate (must hold 100), LCP (4.5s) and CLS (0.1) assert as errors, and performance / best-practices / SEO warn at 0.85 / 0.95 / 0.95. The budgets are proven on the PR before the merge to `main`.
 
-## Staging preview deploy (`.github/workflows/deploy-staging.yml`)
+## Staging preview deploy (removed)
 
-On every push to `staging`, deploys to a SEPARATE Cloudflare Worker, `presacademy-staging`, at `https://presacademy-staging.<your-subdomain>.workers.dev`. Production (`presacademy`) is never touched: the same `wrangler.jsonc` is reused with only the Worker `name` overridden. This lets you verify the things localhost can't show: the `public/_headers` rules, the Sanity CDN image pipeline, redirects, and real edge Lighthouse.
-
-**To activate:** add repo secrets `CLOUDFLARE_API_TOKEN` (a token with the "Edit Workers" template) and `CLOUDFLARE_ACCOUNT_ID`. For real content in the preview, set the repo _variables_ `PUBLIC_SANITY_PROJECT_ID` and `PUBLIC_SANITY_DATASET` to the same values your production deploy uses (add a read token if your dataset is private); otherwise the preview builds empty-state fallbacks, which still validates the edge behaviour.
+The `staging` branch and `deploy-staging.yml` were removed on 2026-10-03; `main` is the only branch. Verify on the PR (CI + Lighthouse) and locally; merge = production deploy. The `presacademy-staging` Worker and the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets and `PUBLIC_SANITY_*` variables that fed it may still exist in Cloudflare/GitHub; they are now unused.
 
 ## Sanity backups (`.github/workflows/sanity-backup.yml`)
 
@@ -88,16 +86,12 @@ Note: hCaptcha's image puzzles are more intrusive than Turnstile's checkbox; we 
 
 ## Secrets & variables summary
 
-| Name                       | Kind                                      | Used by        | Needed for                                                                                  |
-| -------------------------- | ----------------------------------------- | -------------- | ------------------------------------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN`     | secret                                    | deploy-staging | staging preview deploys                                                                     |
-| `CLOUDFLARE_ACCOUNT_ID`    | secret                                    | deploy-staging | staging preview deploys                                                                     |
-| `SANITY_AUTH_TOKEN`        | secret                                    | sanity-backup  | nightly dataset backups (read token)                                                        |
-| `BACKUP_PASSPHRASE`        | secret                                    | sanity-backup  | encrypts the backup artifact (public repo — required, keep an off-GitHub copy)              |
-| `PUBLIC_SANITY_PROJECT_ID` | variable                                  | deploy-staging | real content in the preview (optional)                                                      |
-| `PUBLIC_SANITY_DATASET`    | variable                                  | deploy-staging | real content in the preview (optional)                                                      |
-| `SITE_URL`                 | variable                                  | uptime         | hourly uptime check                                                                         |
-| `PUBLIC_HCAPTCHA_SITEKEY`  | build env (`.env` + Cloudflare), OPTIONAL | the forms      | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
+| Name                      | Kind                                      | Used by       | Needed for                                                                                  |
+| ------------------------- | ----------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
+| `SANITY_AUTH_TOKEN`       | secret                                    | sanity-backup | nightly dataset backups (read token)                                                        |
+| `BACKUP_PASSPHRASE`       | secret                                    | sanity-backup | encrypts the backup artifact (public repo — required, keep an off-GitHub copy)              |
+| `SITE_URL`                | variable                                  | uptime        | hourly uptime check                                                                         |
+| `PUBLIC_HCAPTCHA_SITEKEY` | build env (`.env` + Cloudflare), OPTIONAL | the forms     | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
 
 Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. The optional `PUBLIC_HCAPTCHA_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare). The default hCaptcha protection needs no var at all.
 

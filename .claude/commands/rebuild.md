@@ -10,17 +10,17 @@ until a rebuild runs (see docs/agent/deployment.md). This command triggers one.
    them) or stash them. Never bundle unrelated dirty files into a rebuild.
 
 2. If the tree is clean, trigger the rebuild with an empty commit. The repo
-   uses a staging-first workflow (work lands on `staging`, then fast-forwards
-   to `main`); production builds from `main`, so the empty commit must reach
-   `main`:
+   has one branch, `main` (production builds from it), and `main` is
+   protected, so the empty commit goes through a PR:
 
    ```
-   git checkout main
-   git merge --ff-only staging
+   git switch main && git pull --ff-only
+   git switch -c chore/rebuild
    git commit --allow-empty -m "chore: trigger production rebuild for published Sanity content"
-   git push origin main
-   git checkout staging
-   git merge --ff-only main
+   git push -u origin chore/rebuild
+   gh pr create --fill
+   gh pr merge --squash --delete-branch   # once CI is green
+   git switch main && git pull --ff-only
    ```
 
    Cloudflare detects the push and runs `npm run build` (which re-fetches all

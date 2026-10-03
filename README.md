@@ -35,7 +35,7 @@ at **`/studio`**. The public site is statically built, so a publish reaches
 visitors after a rebuild (push to `main`, or the publish webhook) — but
 editors see unpublished drafts immediately in the Studio's Presentation tool,
 which previews the SSR `/preview/**` routes with click-to-edit. Work lands on
-`staging`, then fast-forwards to `main`.
+short-lived branches and merges to `main` by PR (`main` is the only branch).
 
 Quality gates (the family test standard, same as the WCP repo): `npm run check`
 (astro check + eslint), `npm run format:check` (prettier), `npm run test:unit`

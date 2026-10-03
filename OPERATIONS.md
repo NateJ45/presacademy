@@ -8,6 +8,8 @@ If you are a future Claude session and you can only read one doc, read `CLAUDE.m
 
 ---
 
+2026-10-03: staging abandoned; main is the only branch.
+
 ## Deploy
 
 The site is `output: 'static'` + `@astrojs/cloudflare` adapter. Two paths:
@@ -344,13 +346,13 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 
 ### Common diagnostic findings (most are unscored)
 
-| Lighthouse flag                              | What it's actually saying                                     | Fix                                                                                                            |
-| -------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| "Reduce unused JavaScript"                   | React + Astro runtime has unreachable error-handling branches | Unavoidable without Preact swap. Accept.                                                                       |
-| "Improve image delivery — Est savings X KiB" | Loaded files are slightly bigger than display needs           | Tighten srcset breakpoints if X > 100 KiB. Otherwise theoretical.                                              |
-| "Avoid long main-thread tasks (78 ms found)" | Radix Sheet hydration on `MobileNav`                          | Fires after LCP/FCP. Real-user INP is fine. Accept.                                                            |
-| "Render-blocking SanityImage.css (18 KiB)"   | The whole Tailwind output is chunked under that name          | Extracting critical CSS is high effort for marginal LCP benefit at current scores. Skip.                       |
-| "Uses third-party cookies (sanitySession)"   | Sanity CDN sets a session cookie                              | `crossorigin="anonymous"` BREAKS Sanity images. Skip.                                                          |
+| Lighthouse flag                              | What it's actually saying                                     | Fix                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| "Reduce unused JavaScript"                   | React + Astro runtime has unreachable error-handling branches | Unavoidable without Preact swap. Accept.                                                                                         |
+| "Improve image delivery — Est savings X KiB" | Loaded files are slightly bigger than display needs           | Tighten srcset breakpoints if X > 100 KiB. Otherwise theoretical.                                                                |
+| "Avoid long main-thread tasks (78 ms found)" | Radix Sheet hydration on `MobileNav`                          | Fires after LCP/FCP. Real-user INP is fine. Accept.                                                                              |
+| "Render-blocking SanityImage.css (18 KiB)"   | The whole Tailwind output is chunked under that name          | Extracting critical CSS is high effort for marginal LCP benefit at current scores. Skip.                                         |
+| "Uses third-party cookies (sanitySession)"   | Sanity CDN sets a session cookie                              | `crossorigin="anonymous"` BREAKS Sanity images. Skip.                                                                            |
 | "No CSP"                                     | Astro's `security.csp` would satisfy this                     | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md gotcha #10 and `docs/agent/stack-and-config.md`. |
 
 ---

@@ -28,7 +28,7 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 | Content data + Sanity integration                                                  | `docs/agent/sanity.md`                                                             |
 | Content editability (live page-by-page map)                                        | `docs/agent/content-editability-audit.md`                                          |
 | Deployment + env vars + rebuild model                                              | `docs/agent/deployment.md`                                                         |
-| CI/CD, staging preview, Sanity backups, uptime, hCaptcha (ops hardening)           | `docs/agent/ci-cd-and-ops.md`                                                      |
+| CI/CD, Sanity backups, uptime, hCaptcha (ops hardening)                            | `docs/agent/ci-cd-and-ops.md`                                                      |
 | Change history                                                                     | `docs/agent/changelog.md`                                                          |
 | Launch-gate checklist                                                              | `docs/bootstrap/setup-checklist.md`                                                |
 | Research (peer audits, lay-school IA patterns, the 2026-06 brand-direction debate) | `docs/research/`                                                                   |
