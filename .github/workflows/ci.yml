@@ -214,7 +214,8 @@ jobs:
           [ "${{ needs.static.result }}" = "success" ] && [ "${{ needs.site.result }}" = "success" ]
 
   # The Playwright suite, sharded. fullyParallel is on in playwright.config.ts,
-  # so --shard splits at TEST granularity and the shards come out even.
+  # so --shard splits at TEST granularity, but into EQUAL-COUNT blocks (see the
+  # PWTEST_SHARD_WEIGHTS note on the test step: the tests are not equal cost).
   e2e:
     name: e2e (shard ${{ matrix.shard }}/3)
     needs: [site]
@@ -285,6 +286,20 @@ jobs:
         env:
           PUBLIC_SANITY_PROJECT_ID: ''
           PLAYWRIGHT_SKIP_BUILD: '1'
+          # Playwright's default --shard hands each shard a CONTIGUOUS block of
+          # an EQUAL NUMBER of tests (47 / 46 / 46 of 139), in project order
+          # (all chromium, then all webkit-iphone). The tests are not equal:
+          # the middle 46 (all chromium, mostly reflow and smoke) cost 7-11s of
+          # test step, the other two shards 42-50s (runs 37157011093 and
+          # 37158003175). PWTEST_SHARD_WEIGHTS (colon separated, one weight per
+          # shard, an INTERNAL Playwright variable) resizes the three blocks
+          # instead: 37 + 67 + 35 = 139 tests, about 62s / 71s / 70s of summed
+          # per-test time on the local reference run, with shard 1's visual
+          # step counted. Every test still runs exactly once (the blocks always
+          # partition the whole list); a stale weight only unbalances the
+          # shards, it cannot drop a test. RE-CUT when tests are added in bulk:
+          # docs/agent/ci-cd-and-ops.md, "Re-cutting the shard weights".
+          PWTEST_SHARD_WEIGHTS: '37:67:35'
         run: npm test -- --shard=${{ matrix.shard }}/3 --reporter=github,html
 
       # Pixel-diffs /style-guide (light + dark) against the committed Linux
