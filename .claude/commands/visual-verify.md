@@ -3,7 +3,7 @@ description: Screenshot-verify UI changes in both themes and both viewports
 argument-hint: '[route, e.g. / or /worship]'
 ---
 
-Run the visual verification loop from CLAUDE.md ("Visual verification
+Run the visual verification loop from `.claude/rules/ui-and-verification.md` ("Visual verification
 workflow") against $ARGUMENTS (default: every page touched by the current
 change). No UI change ships without this.
 

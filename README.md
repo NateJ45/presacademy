@@ -48,6 +48,8 @@ themes, reflow), `npm run test:visual` (style guide screenshots, CI baselines),
 | File              | What it is                                                           |
 | ----------------- | -------------------------------------------------------------------- |
 | `CLAUDE.md`       | The constitution: stack, conventions, landmines, content model       |
+| `.claude/rules/`  | Path-scoped rules that load only when matching files are touched     |
+| `docs/claude/`    | Moved-out CLAUDE.md reference: state, file ownership, topic index    |
 | `design.md`       | The one-file design brief (palette, type, motion, signature moves)   |
 | `OPERATIONS.md`   | The tactical runbook (deploy, audit content, patch data, gotchas)    |
 | `docs/PENDING.md` | The live registry of open loops: queued work, waiting-on-human items |
