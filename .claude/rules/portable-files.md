@@ -1,6 +1,8 @@
 ---
 paths:
+  - '.claude/settings.json'
   - 'docs/RESTORE-DRILL.md'
+  - 'docs/claude/family-conventions.md'
   - 'scripts/free-dist.mjs'
   - 'scripts/generate-llms-full.mjs'
   - 'scripts/lib/loadEnv.mjs'
@@ -72,14 +74,14 @@ which. Files the starter owns carry a first-line marker:
 // PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 ```
 
-Forty-two files are marked here as of 2026-08-28, and `node scripts/sync-check.mjs` lists
-them all. Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
+`node scripts/sync-check.mjs` lists every marked file (61 as of 2026-10-03; 42 when this rule was first written 2026-08-28). Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
 `scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
 `src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
 `src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
 `src/sanity/components/slugRedirect.tsx`; and, since 2026-09-29 (card 60), the Windows
 `astro dev` fix `src/lib/sanity-dedupe-alias.ts` + `.test.ts` (wired into
 `astro.config.mjs` as `fixSanityDedupeAlias()`; never delete it, see stack-and-config.md).
+Since 2026-10-03 (card 71) two Claude setup files are marked too: `.claude/settings.json` (JSON, marker is the top-level `"_portable"` key; deny rules for `git reset --hard` and force pushes) and `docs/claude/family-conventions.md` (the code conventions and working-with-Claude text, imported from CLAUDE.md with `@docs/claude/family-conventions.md`). Edit neither here. `.claude/settings.local.json` stays git-ignored and personal.
 `scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
 
 **The in-canvas control layer joined them 2026-08-28** (PORTS.md cards 28 and 28b):
