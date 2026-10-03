@@ -119,7 +119,7 @@ Read on demand:
 
 ## Vault (business context)
 
-Business context, decisions and the Work log live in `_vault/clients/presacademy.md` at the Projects root, never in this repo. Read its `## Current state` before strategy questions. Update the repo docs in the same piece of work as any change. The note's `plan` is `none` (not paying): no Work log row unless Nathan asks; if the plan ever becomes paying, append a Work log row at session end.
+Business context, decisions and the Work log live in `_vault/clients/presacademy.md` at the Projects root, never in this repo. Read its `## Current state` before strategy questions. Update the repo docs in the same piece of work as any change. Work log: the note keeps a `## Work log`, so append a row (`- YYYY-MM-DD | ~Xh | summary`) at the end of each real-work session and commit and push `_vault/` (`_vault/README.md` rule 6), even though `plan` is `none` (free portfolio build, hours still logged).
 
 ## Ports
 
