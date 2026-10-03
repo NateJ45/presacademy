@@ -42,10 +42,15 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command:
+    // PLAYWRIGHT_SKIP_BUILD (set by the CI shards, PORTS.md card 70) serves a
+    // dist/client that an earlier job already built and uploaded, instead of
+    // paying for the same build once per shard. Unset, every local run still
+    // builds fresh, which is what keeps a stale dist from passing.
+    command: `${process.env.PLAYWRIGHT_SKIP_BUILD ? '' : 'npm run build && '}${
       PORT === 4321
-        ? 'npm run build && npm run serve:dist'
-        : `npm run build && npx http-server dist/client -p ${PORT} -s -c-1 --silent`,
+        ? 'npm run serve:dist'
+        : `npx http-server dist/client -p ${PORT} -s -c-1 --silent`
+    }`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
