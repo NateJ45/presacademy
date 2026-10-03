@@ -85,6 +85,14 @@ declare global {
 const inputCls =
   'w-full px-s py-s border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring min-h-[44px]';
 
+// A native <select> must NOT use focus:ring: ring is a box-shadow, WebKit drops
+// box-shadow on natively-rendered form controls, and focus:outline-none then
+// leaves Safari and iPhone visitors with no focus indicator (WCAG 2.4.7). No
+// focus utilities here, so the global :focus-visible outline in globals.css
+// (2px solid --ring, 2px offset) paints. Vault: webkit-drops-box-shadow-on-form-controls.
+const selectCls =
+  'w-full px-s py-s border border-input bg-background text-foreground rounded-md min-h-[44px]';
+
 export default function FormRenderer({ form, fallbackEmail }: Props) {
   if (!form) return null;
 
@@ -365,7 +373,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
                     placeholder={f.placeholder}
                     value={(values[f.name] as string) || ''}
                     onChange={(e) => setField(f.name, e.target.value)}
-                    className={inputCls}
+                    className={selectCls}
                   />
                 ) : f.type === 'select' ? (
                   <select
