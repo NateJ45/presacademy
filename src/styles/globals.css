@@ -4,6 +4,14 @@
    carries everywhere the design system is referenced. */
 
 @import 'tailwindcss';
+/* Tailwind v4 auto-detection skips only gitignored paths. These are committed
+   and are not source: scripts/.parity/*.html (rendered-page baselines, so
+   every class in an old baseline kept its rule alive and the parity compare
+   measured its own baselines), docs/ and the root Markdown files (they name
+   utility classes in prose). Vault: committed-parity-baselines-feed-tailwind. */
+@source not '../../scripts/.parity';
+@source not '../../docs';
+@source not '../../*.md';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/fraunces/standard.css';
