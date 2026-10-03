@@ -35,7 +35,7 @@ at **`/studio`**. The public site is statically built, so a publish reaches
 visitors after a rebuild (push to `main`, or the publish webhook) — but
 editors see unpublished drafts immediately in the Studio's Presentation tool,
 which previews the SSR `/preview/**` routes with click-to-edit. Work lands on
-`staging`, then fast-forwards to `main`.
+short-lived branches and merges to `main` by PR (`main` is the only branch).
 
 Quality gates (the family test standard, same as the WCP repo): `npm run check`
 (astro check + eslint), `npm run format:check` (prettier), `npm run test:unit`
@@ -48,6 +48,8 @@ themes, reflow), `npm run test:visual` (style guide screenshots, CI baselines),
 | File              | What it is                                                           |
 | ----------------- | -------------------------------------------------------------------- |
 | `CLAUDE.md`       | The constitution: stack, conventions, landmines, content model       |
+| `.claude/rules/`  | Path-scoped rules that load only when matching files are touched     |
+| `docs/claude/`    | Moved-out CLAUDE.md reference: state, file ownership, topic index    |
 | `design.md`       | The one-file design brief (palette, type, motion, signature moves)   |
 | `OPERATIONS.md`   | The tactical runbook (deploy, audit content, patch data, gotchas)    |
 | `docs/PENDING.md` | The live registry of open loops: queued work, waiting-on-human items |

@@ -1,6 +1,6 @@
-# The Presbyterian Academy — CLAUDE.md
+# The Presbyterian Academy: CLAUDE.md
 
-This is the always-loaded reference for the `ncs-presacademy` codebase: the conventions and landmines an agent needs on every task. Deep detail for specific areas (theme, components, SEO, performance, Sanity, deployment) lives under `docs/agent/` and is read on demand. The topic index at the bottom is the map.
+Always-loaded reference for the `ncs-presacademy` codebase. File-specific guidance loads on demand from `.claude/rules/` (path-scoped); long reference lives in `docs/claude/` and `docs/agent/`. The docs map below says what to open and when.
 
 > **What this is.** The live website for **The Presbyterian Academy**, a Reformed lay-formation SCHOOL (not a church), funded by the Presbytery of Cincinnati. Astro 7 + Sanity v6 + Cloudflare Workers, fully static output. The repo was forked from the NCS church starter, de-churched in 2026-06, and **cut loose from the starter entirely on 2026-08-25** (the rebrand machinery, opt-in modules, church placeholder media, and the `upstream` remote are gone). Do not resurrect starter framing: this is a single-purpose site.
 >
@@ -10,9 +10,7 @@ This is the always-loaded reference for the `ncs-presacademy` codebase: the conv
 
 Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. Project slash commands (in `.claude/commands/`): `/sanity-audit` (ground truth on the dataset: counts, gaps, drafts; run it before debugging any "content looks wrong" report), `/rebuild` (trigger the production rebuild that makes published Sanity content live), `/visual-verify` (the both-themes-both-viewports screenshot loop). The design system summary for visual work is `design.md` at the repo root.
 
-> **Current project state (updated 2026-08-25).** Upgraded to **Astro 7 + Sanity Studio v6** on 2026-08-25 (adapter `@astrojs/cloudflare` ^14, vite 7 override removed, `sanity schema extract --force` in typegen). The Sanity packages are PINNED to exact versions (sanity 6.9.1 / @sanity/ui 3.5.4 / @sanity/client 7.26.2 / @sanity/visual-editing 5.7.3, moved together on 2026-09-06) — see gotcha #18 before changing any of them. The site carries the school catalog: **courses, faculty, terms, pricing tiers, teaching areas, testimonials, events, FAQ**, plus a 19-block page builder for custom pages. The brand is **"Direction A": green-anchored bookish minimalism** (near-white warm paper, soft near-black ink, a deep Reformed forest green anchor, brass hairlines, Fraunces over Source Sans 3, a green eyebrow-rubric signature; the Romanesque arch and paper grain are retired). Palette lives in `design.md` and `docs/agent/theme-and-color.md`; the branding decision is `docs/research/2026-06-14-brand-direction-debate.md`; a live visual reference of every token is the secret **`/style-guide`** route (noindex, unlinked, sitemap-excluded). The site has a CSS-first "refined kinetic editorial" motion system (`docs/agent/animation.md`) and a 6-image Ken Burns home hero (`HeroSlideshow.astro` rendering `homePage.heroImages`). The theme **defaults to LIGHT** ("system" is opt-in via the toggle; the choice persists). **The school was founded in 2026: never highlight a founding year or imply a long history or large enrollment.** The **Presbytery of Cincinnati funds the school**, surfaced as the editable `siteSettings.funder` footer line. The Sanity dataset still runs on **placeholder CC0 photography** (`src/assets/placeholders/acad-*.jpg`, seeded by `scripts/seed-academic-images.mjs`); real Academy photography has never been added. Git workflow is **staging-first**: work on `staging`, then fast-forward `main`.
-
----
+**Current state, in brief.** Astro 7 + Sanity Studio v6; the Sanity packages are PINNED to exact versions (never bump one alone; see gotcha #18). The theme **defaults to LIGHT**. **The school was founded in 2026: never highlight a founding year or imply a long history or large enrollment.** The Sanity dataset still runs on placeholder CC0 photography. Full state and history: `docs/claude/project-state.md`.
 
 ## Stack essentials
 
@@ -26,28 +24,36 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 - **Web3Forms** contact + express-interest forms with **hCaptcha**, **Calendly** intro calls, **Cloudflare Web Analytics** (cookieless, no banner).
 - **`sanityFetch(query, params, fallback)`** in `src/lib/sanity.ts` is the single chokepoint for all Sanity reads. When `PUBLIC_SANITY_PROJECT_ID` is absent or set to the placeholder value, it returns the fallback without any network call, so `npm run build` succeeds with no Sanity project configured; pages render empty-state content.
 
-## Live draft preview (`/preview/**`)
+## Commands
 
-Editors see their **unpublished drafts** rendered in the real design, live, inside the Studio: open the **Presentation** tool at `/studio`, and the page list on the left drives an iframe of the site.
+- `npm run dev`: dev server; the Studio is at `/studio`. `npm run build`: OG pages then `astro build` (does NOT run typegen). `npm run build:full`: typegen then build.
+- `npm run typegen`: regenerate `src/lib/sanity.types.ts` after any schema edit (committed, CI-guarded).
+- `npm run check` (astro check + eslint), `npm run lint`, `npm run format` / `npm run format:check`.
+- Tests: `npm run test:unit` (node --test on `src/lib/*.test.ts`), `npm test` (Playwright), `npm run test:visual`. Suite map: `docs/TESTING.md`.
+- `npm run deploy`: build then `wrangler deploy -c dist/server/wrangler.json`. `npm run sync-check`: drift against the starter.
 
-How it fits together (ported from the WCP site 2026-08-25; that repo's architecture notes are the reference):
+## Branch, CI and deploy
 
-- `/preview/**` and `/api/draft-mode/*` are the site's only **SSR** routes (`prerender = false`). Everything else stays statically built. They are `noindex` and never appear in the sitemap.
-- `src/lib/cms-preview.ts` is a THIRD Sanity client, separate from `src/lib/sanity.ts` (build-time): it reads the token from the **Worker runtime env** per request, uses `perspective: 'drafts'`, and turns on **stega** so click-to-edit works.
-- **Never compare a stega-encoded string in logic.** Stega hides ~1KB of invisible markers inside every string it touches, so `tone === 'chapel'` is `false` on an encoded value and the component silently picks the wrong branch, in preview only. Every enum that drives rendering is excluded via `NON_STEGA_FIELDS` in `cms-preview.ts`. **Add any new logic-driving dropdown field to that list.**
-- `src/pages/preview/live.ts` is an **SSE proxy**: it holds ONE long-lived connection to Sanity's listen API server-side (the token never reaches the browser) and forwards a tiny "change" signal. `VisualEditingOverlay` soft-refetches the page and swaps `#main`. It is event-driven on purpose. **Never replace it with an interval poll** (that is what burned the WCP Sanity quota). Its `visibility: 'query'` is also load-bearing: an earlier signal would refetch data the query index has not caught up with. That refetch is the COMPLETE path, not the fast one — `useInstantText` (2026-08-28) swaps changed plain strings into the page the moment the Studio's own mutation reaches the frame over the comlink, keeping each text node's stega so click-to-edit never degrades. **There are now TWO feeds into that swap** (2026-08-28): the optimistic actor (a listen, so it waits for the save to commit) and the Studio's OWN local edit state, which `src/sanity/components/LiveDraftBridge.tsx` reads with `useEditState(id, type, 'default')` and posts into the same-origin preview iframe as the editor types (`'low'` let the store coalesce isolated keystrokes into the autosave commit — measured 413ms then 1429ms; the bridge's own 60ms trailing throttle is what keeps it cheap). `src/lib/preview-live-draft.ts` is the contract both ends share: it validates every inbound message (the island is a public bundle, so a `message` listener must distrust everything), and its `acceptsSource` holds the actor back for 2s after a local snapshot — a stale snapshot applied over a newer one would type the page backwards a keystroke. **Every document instant text applies is also a change event for the refresh scheduler** (2026-08-28, card 29d): `useInstantText` calls back into the same `onChange` the SSE handler uses, so a render that STARTED before those words is discarded on arrival instead of morphed in. Without it the scheduler's staleness stamp moved only at Sanity's transaction visibility, a second behind the keystroke, and a render begun mid-burst landed looking current and wrote the server's half-typed sentence over the finished one ("half my text disappears, then comes back"). The extra events cost discards, not renders: single flight plus `REFRESH_MIN_INTERVAL_MS` cap starts at one per 1.2s however fast anyone types. Set `localStorage.previewTiming = '1'` in the preview frame to have every path log its timings; the `instant-text` line names which feed made the swap (`local` or `actor`), and a typing burst should now log `discarded (stale)` where it used to log `main morphed`.
-- The preview cookie carries an **unforgeable fingerprint** of the server-side token (`src/lib/preview-auth.ts`), not the package's default `'true'`.
-- Preview pages render the REAL chrome (2026-08-28): a slim status bar, then the announcement bar, Header, the page, and Footer. This was safe only once `PreviewLayout`'s click interceptor existed; before it, a header link bounced the editor's iframe onto the live site. Header and Footer each sit in a `data-sanity` wrapper pointed at `siteSettings`, and the announcement bar in one pointed at the announcement it is showing, so a click in Edit mode opens the owning document in the edit panel.
-- **The announcement bar previews draft-aware.** `src/components/AnnouncementBar.astro` holds the markup; `BaseLayout` feeds it the build-time published answer and `PreviewLayout` the draft-aware one, both through `ACTIVE_ANNOUNCEMENT_QUERY` in `src/lib/queries.ts`. One query, two readers, so a notice previews exactly as it will ship. On the live site it appears at the next rebuild, which the field descriptions and the Studio guide both say out loud.
-- **Empty sections coach instead of rendering a blank band (2026-08-28).** A section holding none of its own content renders `src/components/SectionCoach.astro`, a dashed note naming the section and saying what to type. The per-type emptiness tests live in `src/lib/section-coach.ts` (23 types; the 12 self-filling ones from `SELF_FILLING_SECTIONS` in `pageBuilderConfig.ts` are excluded, because they fetch their own collection and this file cannot see that fetch). Gated strictly on `editDoc` in `Sections.astro`, exactly like the section edit attributes, so the live build is untouched. `src/lib/section-coach.test.ts` reads the renderer's own MAP and fails if a rendered type is neither coached nor self-filling, so a NEW section type must be added to one list or the other.
-- **ALL THIRTEEN singleton pages preview in FULL fidelity** (the page-builder conversion finished 2026-08-26). Each page's body is a Sanity section array rendered by the shared `src/components/SingletonPage.astro`, which the page file and the preview route both use, so the preview cannot drift from the page; the preview passes a draft-aware `fetcher` into the same query function the page calls. Converting a new page upgrades its preview automatically: add its type to `CONVERTED_PAGE_FETCHERS` in the preview route in the same commit. `HomeBody.astro`, which pioneered the one-template contract, was deleted when home converted last.
-- Heroes and closing CTAs stay **page-level fields** (decision D2), and the two hero kinds with scoped CSS render from the PAGE into `SingletonPage`'s `hero` slot: the photo `Hero` (faq, contact, privacy, accessibility) and home's `HomeHero`. Astro collects CSS from the module graph, so importing either into the shared renderer would inject its styles into all thirteen pages.
-- **Auto sections read PUBLISHED collection data in the preview**, with one exception: home passes the draft fetcher down (`SingletonPage` → `Sections` → the auto blocks), because its preview showed draft courses, faculty and testimonials before the conversion. Pass it from another page's preview branch the day that page needs it.
-- The generic "editable surface only" preview branch (hero + `flexibleSections` + closing CTA) is reached only by `404` and by any new singleton before it converts. Its note was reworded in Phase 5 (2026-08-27): it used to say a code-owned page middle renders on the live site only, which stopped being true of every other page when the conversion finished. Custom `page` docs preview in full (they are pure builder pages).
-- **In-canvas section controls (2026-08-27).** Every section rendered in the preview carries a `data-sanity` attribute built by `sectionEditAttr` in `src/lib/preview-edit-attr.ts`, so the Presentation overlay can outline a whole section and offer insert-before/after (through the grouped, searchable insert menu), duplicate, remove, and drag-to-reorder right on the page. Stega alone cannot do this: it marks TEXT, and a section band has no text of its own. Three rules. (1) The attribute is **preview-only**: `Sections.astro` renders the wrapper only when the preview route passes `editDoc`, so every live and static render is byte-identical (`node scripts/page-parity.mjs compare` is the gate, 13/13). (2) The wrapper must be a **real block box**, never `display: contents` — the overlay outlines the element's rect and a `contents` element has none. (3) The **field name differs by document**: singletons build their body in `flexibleSections`, custom `page` docs in `sections`, so `EditDoc.field` names it. `SingletonPage` withholds `editDoc` when the sections came from `DEFAULT_SECTIONS` rather than the document, because those seed `_key`s do not exist in the doc yet. The overlay needs no extra props for drag-and-drop in `@sanity/visual-editing` 5.7.3; it is on as soon as the attribute exists.
-- Path→type mapping lives in TWO places that must stay in sync: `SINGLETON_PREVIEW_PATHS` in `src/sanity/locations.ts` (re-exported by `src/sanity/resolve.ts`, which is where every caller imports it from) and `SINGLETON_BY_PATH` in `src/pages/preview/[...slug].astro`.
-- **The "Used on" panel QUERIES the dataset (2026-08-29).** `src/sanity/locations.ts` answers "where does this document appear?" from real content: pages that reference it, plus pages carrying the self-filling SECTION TYPE that renders its collection (a faculty strip fetches the roster, so `references()` sees nothing), plus the pages a document is on by construction (the course catalog and the faculty roster are pinned code regions). It replaced a hardcoded one-page-per-type map that under-reported everything on more than one page. `src/lib/sanity-resolve.test.ts` is the drift gate over both halves: it pins that `page.slug` really is Sanity's `slug` type here (so the Presentation filters keep `.current`, the OPPOSITE of the WCP repo), the route order, and every schema fact the resolver assumes.
-- Runtime secret: `SANITY_TOKEN` (`.dev.vars` locally, `wrangler secret put SANITY_TOKEN` in production). Without it the preview routes fail closed.
+- Git workflow: `main` is the only branch (staging abandoned 2026-10-03). Work on short-lived branches, open a PR to `main`, CI must be green (required checks `build` and `test`), merge = production deploy (Cloudflare watches `main`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
+- The PUBLIC site is statically built; a Sanity edit reaches visitors only after a rebuild (gotcha #7).
+
+## Never-break rules (numbered gotchas)
+
+Numbers are stable (code comments cite them). Gotchas #8 and #11 to #18 are in `.claude/rules/build-and-deps.md`, #9 and #21 in `.claude/rules/ui-and-verification.md`, #19 in `.claude/rules/sanity-and-scripts.md`.
+
+Each entry carries the date it bit (or was decided) and the symptom, so future sessions can judge whether it still applies.
+
+<!-- prettier-ignore-start -->
+1. **Never click "Remove field" in the Studio** (2026-06). It deletes that field's data across every document and cannot be undone without a dataset restore. It appears when the Studio's schema is older than the data. Since the Studio is now embedded (it ships with the site build), the sequence after a schema change is: edit schema, `npm run typegen`, commit, deploy. No separate `studio:deploy` step.
+2. **`npm run build` does NOT run typegen** (bit 2026-06-14: schema changed, committed `src/lib/sanity.types.ts` went stale, build used old types). Run `npm run typegen` manually after any schema change, or use `npm run build:full`. CI fails if the committed types are stale; that guard is the durable fix, keep it.
+3. **No em-dashes in public-facing site copy** (standing rule). Use commas, colons, or restructure. Code comments, commit messages, and internal docs are exempt, but avoid them there too.
+4. **Build in both light AND dark mode** on every UI change (standing rule). **Light is the default** (a new visitor does not follow the OS; "system" is opt-in). Detail in `docs/agent/theme-and-color.md`.
+5. **Desktop nav is server-rendered** in `Header.astro` (standing rule). Do not regress it to a client-only island. Detail in `docs/agent/page-architecture.md`.
+6. **The Lenis scroll reset on navigation** (forward goes to top, back/forward restores) lives in the BaseLayout Lenis init. Do not remove it. Detail in `docs/agent/polish-layer.md`.
+7. **The PUBLIC site is statically built** (standing). A Sanity edit only reaches visitors after a rebuild (push to `main`, or the publish webhook). Editors do not have to wait to SEE their work, though: the `/preview` routes are SSR and draft-aware, so the Presentation tool shows unpublished edits immediately. Detail in `docs/agent/deployment.md`.
+10. **The CSP is hand-maintained in `public/_headers`** (2026-06: Astro's `security.csp` missed runtime inline scripts and broke theme bootstrap + islands; it was reverted). Any new embed origin (video host, captcha, analytics) must be added there manually or the widget silently fails to render (bit 2026-06-15 with hCaptcha).
+20. **Curling a page is not verifying it.** `/studio` returned 200 with real HTML while being completely broken at React mount. Anything that mounts a client framework has to be opened in a real browser with the console read. Same rule as the schema gotcha: a green build proves nothing about runtime.
+<!-- prettier-ignore-end -->
 
 ## Keep the docs in sync
 
@@ -59,107 +65,6 @@ A change is not done until the documentation that describes the changed behavior
 
 Stale docs in this repo have already shipped real bugs (the 2026-06-14 stale-types incident traced to a doc claiming typegen ran in the build when it did not). Doc drift is a defect, not a chore.
 
-## Gotchas: the rules that bite if you forget them
-
-Each entry carries the date it bit (or was decided) and the symptom, so future sessions can judge whether it still applies.
-
-1. **Never click "Remove field" in the Studio** (2026-06). It deletes that field's data across every document and cannot be undone without a dataset restore. It appears when the Studio's schema is older than the data. Since the Studio is now embedded (it ships with the site build), the sequence after a schema change is: edit schema, `npm run typegen`, commit, deploy. No separate `studio:deploy` step.
-2. **`npm run build` does NOT run typegen** (bit 2026-06-14: schema changed, committed `src/lib/sanity.types.ts` went stale, build used old types). Run `npm run typegen` manually after any schema change, or use `npm run build:full`. CI fails if the committed types are stale; that guard is the durable fix, keep it.
-3. **No em-dashes in public-facing site copy** (standing rule). Use commas, colons, or restructure. Code comments, commit messages, and internal docs are exempt, but avoid them there too.
-4. **Build in both light AND dark mode** on every UI change (standing rule). **Light is the default** (a new visitor does not follow the OS; "system" is opt-in). Detail in `docs/agent/theme-and-color.md`.
-5. **Desktop nav is server-rendered** in `Header.astro` (standing rule). Do not regress it to a client-only island. Detail in `docs/agent/page-architecture.md`.
-6. **The Lenis scroll reset on navigation** (forward goes to top, back/forward restores) lives in the BaseLayout Lenis init. Do not remove it. Detail in `docs/agent/polish-layer.md`.
-7. **The PUBLIC site is statically built** (standing). A Sanity edit only reaches visitors after a rebuild (push to `main`, or the publish webhook). Editors do not have to wait to SEE their work, though: the `/preview` routes are SSR and draft-aware, so the Presentation tool shows unpublished edits immediately. Detail in `docs/agent/deployment.md`.
-8. **Verify image output paths after any `@astrojs/cloudflare` bump** (2026-06: `13.6.0` regressed Astro's image optimizer and the adapter sat pinned at `13.5.5` until the 2026-08-25 Astro 7 upgrade moved it to `^14`; the upgrade also removed the old `overrides: {vite: "^7"}` pin, which broke Astro 7's prerender step). The v14 adapter splits output into `dist/client` + `dist/server`; `wrangler.jsonc` points assets at `./dist/client`.
-9. **`overflow-x: clip` on `html` + `body`** (in `globals.css`, `@layer base`) is the mobile horizontal-scroll guard: the scroll-reveal `.reveal-l`/`.reveal-r` `translate` would otherwise shift not-yet-revealed elements off-screen and let every page wobble sideways on phones. Don't remove it or swap it to `overflow: hidden` (which breaks the sticky course-detail aside and Lenis's smooth scroll).
-10. **The CSP is hand-maintained in `public/_headers`** (2026-06: Astro's `security.csp` missed runtime inline scripts and broke theme bootstrap + islands; it was reverted). Any new embed origin (video host, captcha, analytics) must be added there manually or the widget silently fails to render (bit 2026-06-15 with hCaptcha).
-11. **Dev-server React `Invalid hook call` noise is a known dev-only Cloudflare-adapter bug** (astro#16529). The production build is clean. Don't chase it.
-12. **`react` and `react-dom` must be the EXACT same version, in both packages** (bit 2026-08-25: installing Sanity into the root pulled react to 19.2.8 while react-dom stayed 19.2.6, and the build died inside workerd with a wall of Miniflare stack frames; the real message, `Incompatible React versions`, was buried above them). Pinned exact (no caret) in `package.json` (there is only one package since the 2026-08-26 fold). When a Miniflare/workerd failure looks unexplainable, read the lines ABOVE the `MiniflareCoreError` wrapper.
-13. **The Windows build needs wrangler's workerd; `npm run build` handles it.** The plugin's pinned workerd aborts at prerender on Windows (`std::terminate`), so `scripts/with-workerd.mjs` sets `MINIFLARE_WORKERD_PATH` to wrangler's newer binary on win32. Bit a real deploy 2026-08-26 back when the workaround lived only in the docs. Detail in `docs/TESTING.md`.
-14. **`wrangler` is pinned to `~4.110.0`** (2026-08-25). `@astrojs/cloudflare` v14 writes `legacy_env: true` into the generated `dist/server/wrangler.json`, and wrangler 4.126+ rejects that field outright ("no longer supported"), so every `wrangler dev`/`deploy` against the generated config fails. Revisit when a newer adapter stops emitting it.
-15. **Deploy with the generated config: `wrangler deploy -c dist/server/wrangler.json`** (baked into `npm run deploy`). The build is now hybrid static + SSR; a bare `wrangler deploy` reads the root `wrangler.jsonc`, which knows nothing about the SSR entrypoint, and every sub-route 404s.
-16. **`session: false` in `astro.config.mjs` is load-bearing.** Left on, the Cloudflare adapter auto-declares a `SESSION` KV binding in the generated config, and a KV binding with no namespace id fails the deploy. This site has no login, so there is nothing to keep.
-17. **HISTORICAL (ended 2026-08-26 by folding the studio into the root package) but keep `resolve.dedupe` anyway. The old nested studio package meant TWO node_modules trees** (this was the ACTUAL cause of the 2026-08-26 production Studio crashes, behind four failed fixes). The Studio shell (`@sanity/astro`) resolves `sanity`/`styled-components`/`@sanity/ui` from the ROOT `node_modules`; every file under `studio/` resolves them from `studio/node_modules` — same pinned versions, two module instances, two React contexts. The ThemeProvider mounted by one styled-components is invisible to `useTheme` in the other, so the desk died on its first custom-component render (styled-components error #18, then `Cannot read properties of undefined (reading 'v2')`) while the login screen — core code only — rendered fine. WCP never hits this because its studio lives in the same package as the site. Verification that matters: `grep -l "errors.md#" dist/client/_astro/*.js` must list exactly ONE file (every broken build listed two), and any disk-copy audit must sweep BOTH trees: `find node_modules studio/node_modules -path "*@sanity/ui/package.json"`. `@sanity/icons` is deliberately NOT deduped (sanity core wants v5, this repo's own Studio components import v3.8 from the root; icons are stateless SVG with no React context, so duplication is harmless — deduping them broke the build on the missing v5 `CogIcon`). From 2026-09-06, `@sanity/ui` 3.5.4 also nests its own icons 5 (3.3.5 used the hoisted 3.8). Same reasoning: leave it.
-18. **The Sanity stack is PINNED to exact versions that are known to work together — do not bump one in isolation** (cost most of 2026-08-26 and three failed production fixes). The Studio threw styled-components **error #18** ("Accessing `useTheme` hook outside of a `<ThemeProvider>`") for every signed-in editor. Root cause: **mixed `@sanity/ui` majors**. `sanity` 6.11 pulls `@sanity/ui` v4 (a rewrite that themes via CSS variables), while much of the plugin ecosystem still ships v3 components that read their theme through styled-components. npm nested a second copy, and the v3 components found no styled-components ThemeProvider. The fix was to mirror the WCP repo's proven, working combination **exactly**: `sanity` 6.4.0, `@sanity/ui` **3.3.5**, `sanity-plugin-media` 5.0.11, `sanity-plugin-utils` 2.0.6 (pinned through `overrides`; the default 2.0.17 drags in v4), `sanity-plugin-asset-source-unsplash` 7.0.15, `styled-components` 6.4.3, react/react-dom/react-is 19.2.7.
-    **"Latest v3" is not close enough.** Pinning `@sanity/ui` to 3.5.3 while `sanity` stayed at 6.4.0 cleared error #18 but then failed differently — `TypeError: Cannot read properties of undefined (reading 'v2')` from inside styled-components' `generateAndInjectStyles`, because `sanity` 6.4.0 expects the 3.3.x theme shape. The rule is not "hold @sanity/ui at 3.3.5" but **"@sanity/ui must be the version the installed `sanity` core declares"**. Any Sanity dependency change must be checked against resolved versions on disk, not just semver ranges. **Invariant: `find node_modules -path "*@sanity/ui/package.json"` must print exactly ONE line.** Check it after touching any Sanity dependency.
-    **The set as of 2026-09-06 (phase 1 of the coordinated stack migration):** `sanity` **6.9.1**, `@sanity/vision` 6.9.1, `@sanity/ui` **3.5.4** (which is what 6.9.1 declares: `^3.5.1`), `@sanity/client` **7.26.2** (6.9.1 declares `^7.26.0`), `@sanity/visual-editing` **5.7.3** (direct dep AND `overrides`, they must match or npm refuses with EOVERRIDE), `@sanity/preview-url-secret` **4.1.5** (5.7.3 and 6.9.1 both want `^4.1.2`), plugins unchanged at `sanity-plugin-media` 5.0.11 / `sanity-plugin-utils` 2.0.6 / `sanity-plugin-asset-source-unsplash` 7.0.15, `styled-components` 6.5.3, react/react-dom 19.2.7, react-is 19.2.8. `sanity` **6.9.2 is the wall**: that PATCH release moves to `@sanity/ui` 4, which is phase 2 and a real migration. The exact pins are what stop npm walking through it.
-    Two traps this hid behind: the Studio shell and the LOGIN screen render fine (they are core code), so the crash only appears AFTER signing in; and the chunk named in the stack trace changes between builds (`layer-*`, `button-*`, `sanity-ui-runtime-*`), which makes one bug look like several.
-19. **`@sanity/ui` v3 has no subpath exports beyond `./theme`.** `import { useToast } from '@sanity/ui/toast'` is v4-only syntax and fails `sanity schema extract` with "is not exported under the conditions". On v3, import it from the package root. v3 exports exactly: `.`, `./_visual-editing`, `./theme`, `./package.json`.
-20. **Curling a page is not verifying it.** `/studio` returned 200 with real HTML while being completely broken at React mount. Anything that mounts a client framework has to be opened in a real browser with the console read. Same rule as the schema gotcha: a green build proves nothing about runtime.
-21. **`src/components/ui/accordion.tsx` is customized** (removed the `h-(--radix-accordion-content-height)` lock, dropped `text-sm font-medium` from the trigger). Reinstalling via `npx shadcn add` reverts it; reapply the changes.
-
----
-
-## Build pipeline
-
-`npm run build` is: `node scripts/generate-og-pages.mjs` (per-page OG cards), then `astro build`. Pages fetch content from Sanity at build time via `sanityFetch`; with no Sanity project configured every query returns its fallback and the build still completes with empty-state pages. **Typegen is NOT part of this chain** (gotcha #2): run it yourself after schema edits, or use `npm run build:full`.
-
-Standalone scripts:
-
-- `npm run typegen` regenerates `src/lib/sanity.types.ts` from the schemas (committed, CI-guarded).
-- `npm run og` regenerates `public/og-default.png` (after changing brand colors, tagline, or wordmark inputs in `scripts/generate-og-default.mjs`).
-- There is no separate studio dev server or deploy: `npm run dev` serves the Studio at `/studio`, and deploying the site deploys the Studio. For CLI work (`sanity dataset`, `sanity cors`, typegen) run `npx sanity ...` from the repo root; `sanity.cli.ts` configures it.
-- Content seeds, all **dry-run by default** (add `--apply` to write), all idempotent:
-  - `node scripts/seed-academic-images.mjs` sets the home hero slideshow and fills empty course covers + page heroes with academic placeholders. Protects real editor images.
-  - `node scripts/seed-page-copy.mjs` patches the built-in inline-fallback copy into any EMPTY home / about / get-started / faculty / `siteSettings.funder` field, so Studio mirrors the live site. Never clobbers an editor's copy.
-  - `node scripts/seed-editability.mjs` is the full editability seed (2026-06-15): render-neutral, only-empty + `createIfNotExists`. Re-run safe.
-  - `node scripts/sanity-audit.mjs` (also `/sanity-audit`) reports dataset ground truth.
-
-### Shared-file sync (the site family)
-
-This repo is a member of the cross-repo sync system whose **library of record** is
-`ncs-astro-sanity-starter`. Its `PORTS.md` is the registry: one dated card per portable
-improvement (what it is, why it exists, how to install it) plus a matrix of which repo has
-which. Files the starter owns carry a first-line marker:
-
-```
-// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
-```
-
-Forty-two files are marked here as of 2026-08-28, and `node scripts/sync-check.mjs` lists
-them all. Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
-`scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
-`src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
-`src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
-`src/sanity/components/slugRedirect.tsx`; and, since 2026-09-29 (card 60), the Windows
-`astro dev` fix `src/lib/sanity-dedupe-alias.ts` + `.test.ts` (wired into
-`astro.config.mjs` as `fixSanityDedupeAlias()`; never delete it, see stack-and-config.md).
-`scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
-
-**The in-canvas control layer joined them 2026-08-28** (PORTS.md cards 28 and 28b):
-`src/lib/sanity-path.ts`, `src/lib/inline-rich.ts`, `src/lib/inline-rich-write.ts`,
-`src/lib/heading-accent.ts` (+ the two canonical `.test.ts`), and
-`src/components/preview/overlay/{usePopover,useDraftDocument,styles}.ts`. Two seams keep
-them shareable, and BOTH are edited here rather than there:
-
-- `readSectionPath(path, arrayFields)` TAKES this schema's page-builder array names.
-  The list is `SECTION_ARRAY_FIELDS` in `src/lib/section-fields.ts`.
-- `src/components/preview/overlay/tool-theme.ts` holds the six palette values the
-  canonical `styles.ts` draws every control with. A rebrand edits that file alone.
-
-`src/components/preview/overlay/{index,tool-theme,HeadingAccentPicker,SurfaceChips,
-TextPopover,useInstantText,timing}.ts(x)` and `src/lib/section-fields.ts` stay per-repo
-on purpose: they name this schema's sections, fields and labels.
-
-`src/lib/site-stats.ts` is deliberately **unmarked for now**: it is repo-agnostic and the
-starter should adopt it, but the starter has no copy yet. Add the marker to both in the
-sync session that ports it.
-
-Check for drift with:
-
-```
-NCS_STARTER_DIR=<path-to-starter> node scripts/sync-check.mjs
-```
-
-It diffs every marked file against the starter's copy (line endings normalized, everything
-else byte-exact) and exits 1 on drift. **A marked file is not edited here.** Improve it in
-the starter with a PORTS.md card in the same commit, then pull it back. If a local
-adaptation is genuinely required, drop the marker and record the fork on that card.
-
-`scripts/page-parity.mjs` is deliberately **unmarked**: it is the origin of the starter's
-harness, and both copies accrue site-specific normalizer rules, so it is a ported pattern
-rather than a canonical file.
-
 ## Code conventions
 
 - TypeScript strict mode. No `any`.
@@ -169,98 +74,6 @@ rather than a canonical file.
 - Prefer Astro's `<Image />` / `<Picture />` for locally-bundled assets; the `<SanityImage />` wrapper for Sanity-hosted images.
 - Tailwind utility classes inline. Pull into `@apply` only when a pattern repeats four or more times.
 - `clsx` / `class-variance-authority` for conditional classes once components get state-dependent styling.
-
----
-
-## Routes summary
-
-| Path                 | Source                              | Notes                                                                                                                                                                                                               |
-| -------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                  | `src/pages/index.astro`             | Home: split hero (`HomeHero`, page-level); the body is editor-owned sections (wayfinding ledger, start-here rail, stats, ticker, course + faculty + testimonial strips)                                             |
-| `/about`             | `src/pages/about.astro`             | About page singleton                                                                                                                                                                                                |
-| `/courses`           | `src/pages/courses/index.astro`     | Course catalog + filters (topic, teacher, term); catalog is a pinned code region                                                                                                                                    |
-| `/courses/[slug]`    | `src/pages/courses/[slug].astro`    | Course detail: sessions, pricing, instructors                                                                                                                                                                       |
-| `/faculty`           | `src/pages/faculty/index.astro`     | Faculty index; the roster is a pinned code region                                                                                                                                                                   |
-| `/faculty/[slug]`    | `src/pages/faculty/[slug].astro`    | Faculty profile: degrees, publications, courses taught                                                                                                                                                              |
-| `/events`            | `src/pages/events/index.astro`      | Events: info sessions, lectures, term starts                                                                                                                                                                        |
-| `/events/[slug]`     | `src/pages/events/[slug].astro`     | Event detail                                                                                                                                                                                                        |
-| `/pricing`           | `src/pages/pricing.astro`           | Pricing tiers + scholarships                                                                                                                                                                                        |
-| `/for-you`           | `src/pages/for-you.astro`           | "Find your path" audience routing                                                                                                                                                                                   |
-| `/get-started`       | `src/pages/get-started.astro`       | Express-interest + Calendly intro                                                                                                                                                                                   |
-| `/resources`         | `src/pages/resources.astro`         | Resources page                                                                                                                                                                                                      |
-| `/faq`               | `src/pages/faq.astro`               | FAQ page + faqItem collection grouped by category                                                                                                                                                                   |
-| `/contact`           | `src/pages/contact.astro`           | Contact details + map                                                                                                                                                                                               |
-| `/privacy`           | `src/pages/privacy.astro`           | Privacy policy singleton, static fallback when the doc is absent                                                                                                                                                    |
-| `/accessibility`     | `src/pages/accessibility.astro`     | Accessibility statement singleton + static fallback; barrier-report contact from `siteSettings`                                                                                                                     |
-| `/[slug]`            | `src/pages/[slug].astro`            | Custom pages: the `page` collection + the 19-block page builder (with a `RESERVED` slug guard)                                                                                                                      |
-| `/style-guide`       | `src/pages/style-guide.astro`       | SECRET internal brand reference: noindex, unlinked, sitemap-excluded                                                                                                                                                |
-| `/studio`            | `@sanity/astro` (mounted)           | The embedded Sanity Studio (SSR shell)                                                                                                                                                                              |
-| `/preview/**`        | `src/pages/preview/[...slug].astro` | SSR draft preview for the Studio's Presentation tool. noindex, sitemap-excluded                                                                                                                                     |
-| `/preview/live`      | `src/pages/preview/live.ts`         | SSE proxy for preview auto-refresh (403 without the Studio cookie)                                                                                                                                                  |
-| `/api/draft-mode/*`  | `src/pages/api/draft-mode/`         | Turns draft mode on/off for the preview                                                                                                                                                                             |
-| `/api/stats`         | `src/pages/api/stats.ts`            | SSR. Feeds the Studio's "Site stats" tool with Cloudflare Workers analytics for this Worker. Gated on the Studio preview cookie (401 without it); 503 naming the missing variable until `CF_ANALYTICS_TOKEN` is set |
-| `/sitemap-index.xml` | `@astrojs/sitemap` (auto)           | Production sitemap                                                                                                                                                                                                  |
-| `/404`               | `src/pages/404.astro`               | Custom 404                                                                                                                                                                                                          |
-
-**The page-builder conversion is COMPLETE** (Phases 0 through 5, 2026-08-26 and 2026-08-27; the plan is `docs/superpowers/plans/2026-08-26-page-builder-conversion.md`, now marked done). **All thirteen singleton routes** render their whole body from `flexibleSections` through `src/components/SingletonPage.astro`, with `src/lib/default-sections.ts` supplying the same copy when the array is empty (so the credential-less CI build still renders complete pages). Each page file is now queries + JSON-LD + `SingletonPage`; the photo-hero pages and home pass their hero in through the `hero` slot, so its scoped style stays off the text-hero pages.
-
-Phase 5 finished the job on the CONTENT side: the superseded body-copy fields were unset from the dataset by `scripts/cleanup-builder-fields.mjs` (dry-run by default; the run is recorded in `docs/PENDING.md` with its backup filename) and removed from the schemas in the same commit. What is left on a page singleton is the hero fields, the closing-CTA fields, SEO, and the handful of extras a renderer still reads (`pricingIntro` / `personasIntro` / `listIntro`, `aggregateTrustLine`, both `emptyState` fields plus `emptyStateBody`, and the course/event DETAIL-page fields). **Never remove a field by clicking "Remove field" in the Studio** (gotcha #1): the pattern is schema edit plus a dry-run-first unset script, and `cleanup-builder-fields.mjs` is the worked example.
-
-**Pinned code regions** (Phase 3): a few page middles stay code on purpose and render through `SingletonPage`'s `pinned` slot, which sits between the sections array and the closing CTA. `src/components/pinned/` holds the shared ones (`CoursesCatalog.astro`, `FacultyRoster.astro`, each a React filter island over a server-rendered grid); the preview route fills the same slot so a preview shows the whole page. There is ONE pinned slot and it is always after the sections, which means an editor's new section lands ABOVE the pinned region. `SingletonPage.astro`'s header explains why that is the rule and when to revisit it.
-
----
-
-## Safe to edit by hand
-
-Files a maintainer can change without risk of breaking the architecture:
-
-- Inline **fallback** copy inside `src/pages/*.astro` (the safety net, NOT the live content; live copy is edited in Studio).
-- `src/data/site.ts` static identity constants (site name, domain, derived storage keys).
-- The design seam:
-  - `src/styles/globals.css` `@theme` block: palette tokens, font-family tokens.
-  - Font imports at the top of `globals.css` (`@fontsource-variable/fraunces`, `@fontsource-variable/source-sans-3`).
-  - `public/favicon.png` + `public/apple-touch-icon.png` (overridable per-site via `siteSettings.favicon`), `public/og-default.png` (regenerate via `npm run og`).
-  - Logo files in `src/assets/`.
-- Placeholder images in `src/assets/placeholders/` (see its `MANIFEST.md`).
-- Copy strings and `href` values in static page components.
-- Tailwind utility classes on existing components when content needs different visual weight.
-- Brand inputs in `scripts/generate-og-default.mjs` (re-run `npm run og` after editing).
-
-## Foundation, edit with care (route through a planned session)
-
-- `src/styles/globals.css` beyond the design-seam tokens: shadcn `:root` / `.dark` overrides, polish-layer utilities, base resets, print styles.
-- `src/sanity/schemaTypes/*.ts` Sanity schemas. Changing fields can break existing content. See gotcha #1.
-- `src/sanity/structure.ts`, `sanity.config.ts`, `src/sanity/guides/` (the desk structure, workspace config, and editor help center).
-- `src/lib/sanity.ts` (client + `sanityFetch` + `urlFor`; the graceful-fallback behavior is load-bearing for fresh-clone builds), `src/lib/queries.ts`, `src/lib/sanity.types.ts` (generated), `src/lib/schemas.ts`, `src/lib/siteSettings.ts`, `src/lib/sectionVisibility.ts`, `src/lib/scriptAccent.ts`, `src/lib/slugify.ts`, `src/lib/subscribe.ts`, `src/lib/phone.ts`, `src/lib/reading-time.ts`, `src/lib/portable-text-headings.ts`, `src/lib/utils.ts`.
-- `src/layouts/BaseLayout.astro`: anti-FOUC theme bootstrap, skip link, ClientRouter, Lenis init, scroll-reveal observer, sticky-header listener, analytics, OG meta, JSON-LD.
-- React islands: `MobileNav.tsx`, `ThemeToggle.tsx`, `BackToTop.tsx`, `CourseFilters.tsx`, `FacultyFilter.tsx`, `FaqAccordion.tsx`, `FormRenderer.tsx`, `NewsletterSignup.tsx`, `CopyEmailButton.tsx`, `PortableText.tsx`, `Embed.tsx`.
-- Astro components: `Header.astro`, `Footer.astro`, `Hero.astro`, `HeroBackground.astro`, `HeroSlideshow.astro`, `Sections.astro` (the block renderer), `SectionShell.astro`, `SectionHeading.astro`, `SanityImage.astro`, `PortableTextStatic.astro`, `CourseCard.astro`, `FacultyCard.astro`, `PricingTierCards.astro`, `FinalCta.astro`, `CtaLink.astro`, `ShowcaseMedia.astro`, `EmbedBlock.astro`, `FormBlock.astro`, `SingletonPage.astro` (the one renderer all 13 singletons run through), `PageHeader.astro`, `home/HomeHero.astro`, the pinned code regions in `src/components/pinned/`, plus the block components in `src/components/blocks/` (the 19 tone-adaptive ones and the 15 ported Rule & Ledger ones).
-- `src/components/ui/` shadcn primitives (see gotcha #12 for `accordion.tsx`).
-- `scripts/generate-*.mjs`, `scripts/optimize-logo-files.mjs`, `scripts/lib/`.
-- `astro.config.mjs`, `wrangler.jsonc`, `package.json`, `tsconfig.json`, `components.json`, `public/_headers` (see gotcha #10), `public/llms.txt`.
-
-If a change requires editing the foundation set, do it deliberately and update this doc when the architecture shifts.
-
----
-
-## Visual verification workflow
-
-Every UI change is verified before being reported done. The automated suites (see `docs/TESTING.md`) are the regression net; the screenshot loop below is for judging the change itself.
-
-For any change touching components, layouts, styles, or copy that affects layout:
-
-1. **Both themes.** Light AND dark. Light is primary, but dark must read as the brand, not as broken.
-2. **Both viewports.** Mobile (~375px) and desktop (~1280px). Most visitors arrive on mobile.
-3. **Interactive states.** Hover, focus (keyboard Tab), active. Mouse AND keyboard.
-4. **Adjacent regressions.** Look at the sections immediately before and after the change.
-
-Use the Playwright MCP for the screenshot-and-compare loop against `npm run dev`. Don't ship a change you haven't seen rendered. For accessibility-affecting changes, the automated axe + Lighthouse gates are the floor, not the ceiling: targets stay 100/100/100/100 desktop.
-
-For Sanity Studio changes (schema or structure), run `npm run studio:dev` and check the editor experience as a content editor would see it. Broken Studio = broken editor workflow.
-
-Even "tiny" changes (a color tweak, a spacing nudge, a copy edit) go through the same loop. The smallest changes are where regressions hide.
-
----
 
 ## Working with Claude
 
@@ -283,54 +96,31 @@ These apply to everything written: code comments, PR descriptions, commit messag
 - Avoid three-item lists where the third item is filler. Two items is fine if two is the truth.
 - Use bold for genuine emphasis or list labels only. Default to prose unless content is genuinely a list.
 
-### Site copy voice (for copy that appears on the live site)
+Site copy voice and banned vocabulary: `.claude/rules/site-copy-voice.md` (also `docs/brand/voice.md`).
 
-The Academy's specific voice, tone, and banned words live in `docs/brand/voice.md` (read it before writing site copy). The general patterns:
+## Docs map
 
-1. **Say it plainly. Especially about money.** Don't apologize, don't pad, don't soften prices.
-2. **Sound like a smart friend, not a brochure.**
-3. **Show the thinking, not the credentials.** Specific reasoning beats generic claims of expertise.
-4. **Stop talking when you're done.** End the paragraph.
-5. **Be specific.** Concrete details beat generic descriptors.
+Path-scoped rules (load automatically when you touch matching files):
 
-Banned vocabulary: "transformative," "curated experience," "investment in your space," "elevated living," "tailored solutions."
+- `.claude/rules/live-preview.md`: the `/preview/**` SSR draft preview, stega, SSE proxy, in-canvas controls.
+- `.claude/rules/build-and-deps.md`: gotchas #8, #11 to #18 (adapter, workerd, wrangler pin, Sanity version pins, deploy config).
+- `.claude/rules/sanity-and-scripts.md`: gotcha #19, build pipeline, seeds and standalone scripts.
+- `.claude/rules/pages-and-routes.md`: routes table, page-builder conversion, pinned code regions.
+- `.claude/rules/ui-and-verification.md`: gotchas #9 and #21, the both-themes-both-viewports verification loop.
+- `.claude/rules/site-copy-voice.md`: voice for live-site copy.
+- `.claude/rules/portable-files.md`: PORTABLE-marked files and the shared-file sync system.
 
----
+Read on demand:
 
-## Topic index
+- `docs/claude/project-state.md`: current state, stack-pin history, brand direction. Read for background.
+- `docs/claude/file-ownership.md`: safe-to-edit vs foundation file lists. Read before touching foundation files.
+- `docs/claude/topic-index.md`: index of every `docs/agent/*` deep dive, research and checklists. Read when a task touches those areas.
+- `docs/PENDING.md` (open loops), `docs/TESTING.md`, `OPERATIONS.md`, `design.md`, `PRODUCT.md`, `docs/agent/changelog.md` (change history).
 
-Read these on demand. They are NOT auto-loaded; open with the Read tool when a task touches the area.
+## Vault (business context)
 
-**Note:** some `docs/agent/` deep-dives still carry examples from the builds this repo descends from. Trust the patterns; ignore off-brand nouns, and fix them when you touch a file.
+Business context, decisions and the Work log live in `_vault/clients/presacademy.md` at the Projects root, never in this repo. Read its `## Current state` before strategy questions. Update the repo docs in the same piece of work as any change. Work log: the note keeps a `## Work log`, so append a row (`- YYYY-MM-DD | ~Xh | summary`) at the end of each real-work session and commit and push `_vault/` (`_vault/README.md` rule 6), even though `plan` is `none` (free portfolio build, hours still logged).
 
-| Area                                                                               | Doc                                                                                |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| **Open loops registry (read early each session)**                                  | `docs/PENDING.md`                                                                  |
-| **Test-suite map (which suite covers what)**                                       | `docs/TESTING.md`                                                                  |
-| **Design brief (one-file system: palette, type, motion, idioms, hard rules)**      | `design.md`; live visual reference: the secret `/style-guide` route                |
-| **Product strategy (register, users, anti-references, design principles)**         | `PRODUCT.md` (root); companion to `design.md`, read by the Impeccable design skill |
-| Stack detail + astro.config landmines                                              | `docs/agent/stack-and-config.md`                                                   |
-| Page + section architecture, nav, visibility toggles                               | `docs/agent/page-architecture.md`                                                  |
-| Brand colors + theme system (light/dark discipline)                                | `docs/agent/theme-and-color.md`                                                    |
-| Polish layer (card-lift, scroll, Lenis, script accents)                            | `docs/agent/polish-layer.md`                                                       |
-| Animation layer (Lenis, motion, scroll-reveal, Ken Burns hero)                     | `docs/agent/animation.md`                                                          |
-| Typography + spacing tokens                                                        | `docs/agent/design-tokens.md`                                                      |
-| Component catalog + long-read layout                                               | `docs/agent/components.md`                                                         |
-| Component sourcing guide (approved sources, token-remap cheat sheet)               | `docs/agent/component-sources.md`                                                  |
-| Error + empty states                                                               | `docs/agent/error-states.md`                                                       |
-| Image handling                                                                     | `docs/agent/images.md`                                                             |
-| Accessibility                                                                      | `docs/agent/accessibility.md`                                                      |
-| SEO + JSON-LD                                                                      | `docs/agent/seo.md`                                                                |
-| Performance budgets + Lighthouse                                                   | `docs/agent/performance.md`                                                        |
-| Content data + Sanity integration                                                  | `docs/agent/sanity.md`                                                             |
-| Content editability (live page-by-page map)                                        | `docs/agent/content-editability-audit.md`                                          |
-| Deployment + env vars + rebuild model                                              | `docs/agent/deployment.md`                                                         |
-| CI/CD, staging preview, Sanity backups, uptime, hCaptcha (ops hardening)           | `docs/agent/ci-cd-and-ops.md`                                                      |
-| Change history                                                                     | `docs/agent/changelog.md`                                                          |
-| Launch-gate checklist                                                              | `docs/bootstrap/setup-checklist.md`                                                |
-| Research (peer audits, lay-school IA patterns, the 2026-06 brand-direction debate) | `docs/research/`                                                                   |
-| Placeholder media licensing                                                        | `src/assets/placeholders/MANIFEST.md`                                              |
+## Ports
 
----
-
-_Structure: this file is the always-loaded constitution. Deep reference lives under `docs/agent/`. Change history is in `docs/agent/changelog.md`. Tactical playbook: `OPERATIONS.md`._
+`internal/ncs-astro-sanity-starter/PORTS.md` is the registry. Files marked `PORTABLE:` on their first lines are canonical in the starter and checked by `node scripts/sync-check.mjs` (CI runs it); never edit a marked file here. A fix that generalises gets a port card in the same commit. Cross-project lessons go to `_vault/gotchas/` with a "Ported to" checklist. Detail: `.claude/rules/portable-files.md`.

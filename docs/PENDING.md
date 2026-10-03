@@ -10,7 +10,7 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
-- **Sign in to the staging Studio after the Sanity phase-1 bump**
+- **Sign in to the Studio after the Sanity phase-1 bump**
   (2026-09-06). The stack moved to `sanity` 6.9.1 / `@sanity/ui` 3.5.4 /
   `@sanity/client` 7.26.2 / `@sanity/visual-editing` 5.7.3 /
   `@sanity/preview-url-secret` 4.1.5. Every automated gate is green and the
@@ -19,7 +19,7 @@ that section when it gets long.
   failure mode this whole pinning regime exists for, gotcha #18, shows up
   ONLY after sign-in: the login screen is core code and renders fine even
   when the theme context is broken. So the last check is a human one. Open
-  `/studio` on staging, sign in, open any document (a custom component
+  `/studio` (on the production site or a local build), sign in, open any document (a custom component
   pane, not just the list), then open the **Presentation** tool and click a
   section handle. If the desk throws styled-components error #18 or
   `Cannot read properties of undefined (reading 'v2')`, the bump is bad and
@@ -28,7 +28,7 @@ that section when it gets long.
   a table should now be insertable in body copy.
 - **Click-through the two Presentation fixes in the DEPLOYED Studio**
   (2026-08-28). Both were reported live and neither can be reproduced
-  locally, so both need your eyes once staging is up. (1) The section
+  locally, so both need your eyes once the change is live. (1) The section
   **🎨 handle** now opens a labelled "Section style" card instead of a bare
   column of dots: open it, move the mouse down onto the rows, and it should
   stay put until you press ✕, Escape, or click the page. Picking a colour
@@ -40,16 +40,15 @@ that section when it gets long.
   which of the two and what you saw.
 - **Wire a deploy webhook so publishing rebuilds the site** (2026-08-28,
   opened with PORTS.md card 20). Nothing in this repo rebuilds the public
-  site when a document is published: `.github/workflows/` has CI, a
-  staging deploy on push to `staging`, backup and uptime, and now
+  site when a document is published: `.github/workflows/` has CI,
+  backup and uptime (the staging deploy was removed 2026-10-03), and now
   `publish-due.yml`. Production is `npm run deploy`, by hand. That was
   survivable while every publish had a human beside it, but scheduled
   publishing makes the gap visible: a page can publish itself at 6am and
   still not be on the website. The Studio guide "Schedule a page to
   publish itself" says so out loud rather than promising something the
   repo cannot keep. The fix is a Sanity webhook (Project → API → Webhooks)
-  pointed at a `repository_dispatch` workflow that runs the same steps as
-  `deploy-staging.yml` against the production Worker. Worth debouncing so
+  pointed at a `repository_dispatch` workflow that runs the production build and deploy steps. Worth debouncing so
   a burst of edits does not queue a dozen builds. Note the existing
   "Start here" guide already tells editors the site "rebuilds itself",
   so today that sentence is aspirational too.
@@ -111,13 +110,12 @@ that section when it gets long.
   left empty by `seed-editability.mjs` because they need real values.
   Empty fields hide rather than show stand-ins, so nothing is broken,
   just absent.
-- **GitHub Actions secrets/variables may be unset.** `deploy-staging.yml`
-  (needs `CLOUDFLARE_API_TOKEN`), `sanity-backup.yml` (needs
+- **GitHub Actions secrets/variables may be unset.** `sanity-backup.yml` (needs
   `SANITY_AUTH_TOKEN` AND `BACKUP_PASSPHRASE` — the artifact is encrypted
   because the repo is public; keep an off-GitHub copy of the passphrase,
   see docs/agent/ci-cd-and-ops.md), and `uptime.yml` (needs the `SITE_URL` repo
-  variable) all warn-and-skip when their secret is missing, so staging
-  deploys, nightly dataset backups, and uptime checks may be silently
+  variable) all warn-and-skip when their secret is missing, so nightly
+  dataset backups, and uptime checks may be silently
   inert. Check the repo settings on GitHub and set whichever are missing.
 
 ## Open — code/content work queued

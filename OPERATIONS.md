@@ -8,6 +8,8 @@ If you are a future Claude session and you can only read one doc, read `CLAUDE.m
 
 ---
 
+2026-10-03: staging abandoned; main is the only branch.
+
 ## Deploy
 
 The site is `output: 'static'` + `@astrojs/cloudflare` adapter. Two paths:
@@ -344,14 +346,14 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 
 ### Common diagnostic findings (most are unscored)
 
-| Lighthouse flag                              | What it's actually saying                                     | Fix                                                                                                            |
-| -------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| "Reduce unused JavaScript"                   | React + Astro runtime has unreachable error-handling branches | Unavoidable without Preact swap. Accept.                                                                       |
-| "Improve image delivery — Est savings X KiB" | Loaded files are slightly bigger than display needs           | Tighten srcset breakpoints if X > 100 KiB. Otherwise theoretical.                                              |
-| "Avoid long main-thread tasks (78 ms found)" | Radix Sheet hydration on `MobileNav`                          | Fires after LCP/FCP. Real-user INP is fine. Accept.                                                            |
-| "Render-blocking SanityImage.css (18 KiB)"   | The whole Tailwind output is chunked under that name          | Extracting critical CSS is high effort for marginal LCP benefit at current scores. Skip.                       |
-| "Uses third-party cookies (sanitySession)"   | Sanity CDN sets a session cookie                              | `crossorigin="anonymous"` BREAKS Sanity images. Skip.                                                          |
-| "No CSP"                                     | Astro's `security.csp` would satisfy this                     | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md → Stack → Astro config don'ts. |
+| Lighthouse flag                              | What it's actually saying                                     | Fix                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| "Reduce unused JavaScript"                   | React + Astro runtime has unreachable error-handling branches | Unavoidable without Preact swap. Accept.                                                                                         |
+| "Improve image delivery — Est savings X KiB" | Loaded files are slightly bigger than display needs           | Tighten srcset breakpoints if X > 100 KiB. Otherwise theoretical.                                                                |
+| "Avoid long main-thread tasks (78 ms found)" | Radix Sheet hydration on `MobileNav`                          | Fires after LCP/FCP. Real-user INP is fine. Accept.                                                                              |
+| "Render-blocking SanityImage.css (18 KiB)"   | The whole Tailwind output is chunked under that name          | Extracting critical CSS is high effort for marginal LCP benefit at current scores. Skip.                                         |
+| "Uses third-party cookies (sanitySession)"   | Sanity CDN sets a session cookie                              | `crossorigin="anonymous"` BREAKS Sanity images. Skip.                                                                            |
+| "No CSP"                                     | Astro's `security.csp` would satisfy this                     | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md gotcha #10 and `docs/agent/stack-and-config.md`. |
 
 ---
 
@@ -463,7 +465,7 @@ curl -s "https://your-worker.workers.dev/?cb=$(date +%s)" | grep -oE 'SOMETHING_
 
 1. **Check the deployed workers URL first**, not localhost — the bug might already be fixed and just hasn't been redeployed.
 2. **Open Chrome DevTools and check Console + Network** — most of the "weird" bugs in this codebase have been either CSP violations, CORS issues, or theme/View Transitions interaction. All show up loudly in DevTools.
-3. **Read CLAUDE.md → relevant section** before changing anything. The non-obvious fixes are documented; reverting them tends to re-break the same bugs.
+3. **Read CLAUDE.md and the matching `.claude/rules/` file** before changing anything. The non-obvious fixes are documented; reverting them tends to re-break the same bugs.
 4. **Run `npm run build` locally** — Astro's build output catches a lot (missing imports, schema mismatches, image-pipeline errors).
 5. **Diff against the last known-good commit** — `git log --oneline -20` then `git diff <hash>..HEAD -- src/path`.
 
