@@ -68,6 +68,8 @@ Sitemap: https://example.com/sitemap-index.xml
 
 `public/llms.txt` also ships -- an AI/LLM crawler index of the site for tools that follow the emerging llms.txt convention. Keep it updated if major pages are added or removed.
 
+`public/llms-full.txt` is generated, not hand-edited: `npm run llms:full` (needs `PUBLIC_SANITY_PROJECT_ID` and `SANITY_API_READ_TOKEN` in `.env`). Its name and URL come from `brand/brand.config.json` (`name`, `domain`) unless `SITE_NAME` / `PUBLIC_SITE_URL` are set; the live canonical host is `www`, so set `PUBLIC_SITE_URL=https://www.presbyterianacademy.org` when regenerating. After regenerating, check the file has no `Studio Starter` and no `example.com`.
+
 After DNS cutover, submit `sitemap-index.xml` to Google Search Console. Verify the property via DNS TXT record (preferred -- survives redeploys) or HTML file upload.
 
 ### Title and description rules

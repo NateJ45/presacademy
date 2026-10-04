@@ -7,6 +7,7 @@ paths:
   - 'scripts/generate-llms-full.mjs'
   - 'scripts/lib/loadEnv.mjs'
   - 'scripts/lib/sanity-lib.mjs'
+  - 'scripts/lib/site-identity.mjs'
   - 'scripts/propose-drift.mjs'
   - 'scripts/public-data-audit.mjs'
   - 'scripts/publish-due.mjs'
@@ -74,7 +75,7 @@ which. Files the starter owns carry a first-line marker:
 // PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 ```
 
-`node scripts/sync-check.mjs` lists every marked file (61 as of 2026-10-03; 42 when this rule was first written 2026-08-28). Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
+`node scripts/sync-check.mjs` lists every marked file (62 as of 2026-10-03; 42 when this rule was first written 2026-08-28). Among them: `scripts/free-dist.mjs`, `scripts/with-workerd.mjs`,
 `scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
 `src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
 `src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
@@ -83,6 +84,7 @@ which. Files the starter owns carry a first-line marker:
 `astro.config.mjs` as `fixSanityDedupeAlias()`; never delete it, see stack-and-config.md).
 Since 2026-10-03 (card 71) two Claude setup files are marked too: `.claude/settings.json` (JSON, marker is the top-level `"_portable"` key; deny rules for `git reset --hard` and force pushes) and `docs/claude/family-conventions.md` (the code conventions and working-with-Claude text, imported from CLAUDE.md with `@docs/claude/family-conventions.md`). Edit neither here. `.claude/settings.local.json` stays git-ignored and personal.
 `scripts/lib/loadEnv.mjs` ships alongside sanity-lib as its one non-npm dependency.
+Since 2026-10-03 (card 81) `scripts/generate-llms-full.mjs` imports `scripts/lib/site-identity.mjs` (also marked): the site name and URL for `public/llms-full.txt` come from env (`SITE_NAME`, `PUBLIC_SITE_URL`), then `brand/brand.config.json` (`name`, `domain`), then the old `Studio Starter` / `example.com` placeholders. Never copy the script without the lib. The starter's `site-identity.test.mjs` is not carried here (no `test:scripts` script).
 
 **The in-canvas control layer joined them 2026-08-28** (PORTS.md cards 28 and 28b):
 `src/lib/sanity-path.ts`, `src/lib/inline-rich.ts`, `src/lib/inline-rich-write.ts`,
