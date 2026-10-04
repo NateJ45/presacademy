@@ -3,6 +3,8 @@
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
+_2026-10-03: Removed `public/llms-full.txt`. The live file was the starter's interior-design placeholder text (`# Studio Starter`, example.com links), and the site content is still seed data, so a regenerated file would be just as untrue. `llms.txt` (a link map of page names) stays. To be generated at launch, when the content is real; see `docs/agent/seo.md`._
+
 _2026-10-03: Re-synced `scripts/generate-llms-full.mjs` and added `scripts/lib/site-identity.mjs` (starter PORTS.md card 81, byte-identical to the starter). The live `llms-full.txt` opened with `# Studio Starter` and had six `example.com` lines because the script fell back to placeholders when `SITE_NAME` / `PUBLIC_SITE_URL` were not in the environment; it now reads `brand/brand.config.json` (new here: `name` The Presbyterian Academy, `domain` presbyterianacademy.org, from `src/data/site.ts`) before falling back. `site-identity.test.mjs` not carried (no `test:scripts`). `public/llms-full.txt` is regenerated separately with the Sanity read token. `sync-check` 60 same, 1 drifted before; 62 same, 0 drifted after._
 
 _2026-10-03: Re-synced `scripts/sync-check.mjs` with starter PORTS.md card 80 (byte-identical to starter PR #75): the walker now skips `_worktrees/` folders as well as `.claude/worktrees`, so a local `sync-check` in a checkout with live worktrees no longer counts every worktree copy as MISSING-IN-STARTER (here the main checkout read 120 marked files, 61 missing, before; it reads 61 after). No change to CI, which starts from a fresh checkout. `sync-check` 61 same, 0 drifted._
