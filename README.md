@@ -1,21 +1,59 @@
 # The Presbyterian Academy
 
-The website for **The Presbyterian Academy**, a Reformed lay-formation school
-funded by the Presbytery of Cincinnati. Live at
-[presbyterianacademy.org](https://www.presbyterianacademy.org).
+A statically built, CMS-driven school website: Astro, Sanity and Cloudflare Workers, with an embedded Studio, a gated CI pipeline and a tested design system.
 
-**Stack:** Astro + Sanity + Cloudflare Workers, by
-[Nixon Creative Studio](https://nixoncreativestudio.com).
+[![CI](https://github.com/NateJ45/presacademy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/NateJ45/presacademy/actions/workflows/ci.yml)
+[![Live site](https://img.shields.io/website?url=https%3A%2F%2Fpresbyterianacademy.org&label=live%20site)](https://presbyterianacademy.org)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white)
+![Sanity](https://img.shields.io/badge/Sanity-F03E2F?logo=sanity&logoColor=white)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?logo=cloudflareworkers&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)
 
-The repo began life as a fork of the NCS church starter and was cut loose from
-it on 2026-08-25: the rebrand machinery, opt-in church modules, and starter
-seed are gone. What remains is a single-purpose school site: a course catalog
-(courses, faculty, terms, pricing tiers, teaching areas, testimonials, events),
-a 19-block page builder for custom pages, a "Direction A" green-anchored
-bookish design system with light + dark themes, and a themed Sanity Studio
-with an in-Studio help center where every visible string is editable.
+<p align="center">
+  <img src="docs/screenshots/home-hero-desktop.png" alt="Home page hero at 1440 by 900" width="720">
+  <img src="docs/screenshots/home-hero-mobile.png" alt="Home page hero at 390 by 844" width="200">
+</p>
 
-## Working on it
+Screenshots are the live home hero, taken above the fold. Site content is seed
+text and stock photography until the real material arrives.
+
+## What it is
+
+The second site on the studio's Astro + Sanity + Cloudflare Workers stack,
+live since 2026-09-04. Pages are prerendered, content lives in Sanity, and the
+Studio is embedded in the site at `/studio`, so it ships and rebuilds with
+every deploy. Draft edits preview through SSR routes with click-to-edit, while
+visitors get static output.
+
+## Engineering highlights
+
+- **Embedded Sanity Studio** at `/studio`, with a Presentation-tool live
+  preview over SSR `/preview/**` routes. There is no separately hosted Studio
+  to drift out of date.
+- **Pinned Sanity stack.** The Sanity packages are exact-pinned and move by
+  hand as a set, never one at a time.
+- **Layered quality gates.** `build` and `test` are required checks on a
+  protected `main`. Playwright covers smoke, axe accessibility in both themes
+  and reflow; visual regression runs on the style guide; unit tests check
+  theme-token contrast.
+- **Lighthouse gate** with metric-matched fallback fonts, so web-font swaps do
+  not move layout or LCP.
+- **Stale-types CI guard.** CI regenerates the Sanity types and fails if the
+  committed ones are out of date.
+- **Weekly encrypted Sanity backup** via a scheduled workflow, with a
+  documented restore drill (`docs/RESTORE-DRILL.md`).
+- **Design system** with light and dark themes, tokens in Tailwind 4 `@theme`
+  blocks, and a block-based page builder.
+
+**Stack:** Astro, Sanity, Cloudflare Workers, React islands, Tailwind 4,
+TypeScript, Playwright, GitHub Actions.
+
+Links: [live site](https://presbyterianacademy.org) and
+[Nixon Creative Studio](https://nixoncreativestudio.com), who built it.
+Security reports: see [SECURITY.md](SECURITY.md).
+
+## Developing
 
 ```bash
 # one package, one install (the Studio folded into the root on 2026-08-26)
@@ -32,7 +70,7 @@ npm run deploy         # build + wrangler deploy -c dist/server/wrangler.json
 
 Content lives in Sanity (project `uz2sl3zp`), edited in the Studio embedded
 at **`/studio`**. The public site is statically built, so a publish reaches
-visitors after a rebuild (push to `main`, or the publish webhook) — but
+visitors after a rebuild (push to `main`, or the publish webhook), but
 editors see unpublished drafts immediately in the Studio's Presentation tool,
 which previews the SSR `/preview/**` routes with click-to-edit. Work lands on
 short-lived branches and merges to `main` by PR (`main` is the only branch).
