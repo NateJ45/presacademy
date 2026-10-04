@@ -32,7 +32,7 @@ export default function FacultyFilter({ areas }: Props) {
 
   return (
     <div
-      className="flex flex-wrap items-center gap-2"
+      className="flex flex-wrap items-center gap-x-2 gap-y-3"
       role="group"
       aria-label="Filter by teaching area"
     >
@@ -40,7 +40,7 @@ export default function FacultyFilter({ areas }: Props) {
         type="button"
         onClick={() => setActive(new Set())}
         aria-pressed={active.size === 0}
-        className={`rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
+        className={`hit-44 relative rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
           active.size === 0
             ? 'border-primary bg-primary text-primary-foreground'
             : 'border-border text-foreground/70 hover:border-foreground'
@@ -56,7 +56,7 @@ export default function FacultyFilter({ areas }: Props) {
             type="button"
             onClick={() => toggle(a.slug)}
             aria-pressed={on}
-            className={`rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
+            className={`hit-44 relative rounded-[2px] border px-3 py-1 text-xs tracking-[0.1em] uppercase transition-colors ${
               on
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border text-foreground/70 hover:border-foreground'

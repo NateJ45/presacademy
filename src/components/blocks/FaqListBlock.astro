@@ -52,7 +52,7 @@ const items: any[] = await getFaqItems({ category: categoryFilter, limit }).catc
       <div class="divide-y divide-current/15 border-t border-b border-current/15">
         {items.map((f: any) => (
           <details class="group py-m">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg">
+            <summary class="-my-2 flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-m py-2 text-lg">
               {f.question}
               <span
                 class="shrink-0 text-gold transition-transform group-open:rotate-45"

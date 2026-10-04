@@ -197,6 +197,11 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
   in Direction A; treat them as a soft rounding, not an arch.
 - Section heading pattern: rubric eyebrow (`.eyebrow`) + serif headline (optional
   green keyword span) + optional lede. Use `SectionHeading.astro`.
+- **Touch targets.** Every link, button and form control is at least 44 by 44px
+  at phone width. `.hit-44` (invisible area, add `relative`) for standalone links
+  and buttons, `.tap-44` (real box, label in a `.link-underline` span) for stacked
+  lists like the footer, `.check-44` for checkboxes. Never put `.hit-44` on a
+  `.link-underline` element (both draw on `::after`). Scan: `scripts/measure-tap-targets.mjs`.
 - **Footer colophon.** The footer is composed as a printed-book _colophon_ page
   (oversized Fraunces wordmark masthead, a brass-ruled imprint row, a monogram
   seal, and a typeface credit), not a generic link grid. It is a current brand

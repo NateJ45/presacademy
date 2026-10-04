@@ -7,6 +7,7 @@ paths:
   - 'scripts/generate-llms-full.mjs'
   - 'scripts/lib/loadEnv.mjs'
   - 'scripts/lib/sanity-lib.mjs'
+  - 'scripts/measure-tap-targets.mjs'
   - 'scripts/lib/site-identity.mjs'
   - 'scripts/propose-drift.mjs'
   - 'scripts/public-data-audit.mjs'

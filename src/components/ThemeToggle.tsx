@@ -67,7 +67,7 @@ export default function ThemeToggle() {
       onClick={cycle}
       aria-label={label}
       title={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
+      className="hit-44 relative inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
     >
       {theme === 'light' && <Sun size={18} />}
       {theme === 'dark' && <Moon size={18} />}
