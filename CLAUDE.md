@@ -65,23 +65,11 @@ A change is not done until the documentation that describes the changed behavior
 
 Stale docs in this repo have already shipped real bugs (the 2026-06-14 stale-types incident traced to a doc claiming typegen ran in the build when it did not). Doc drift is a defect, not a chore.
 
-## Code conventions
+## Code conventions and Working with Claude
 
-- TypeScript strict mode. No `any`.
-- Comment generously, especially in components a future maintainer might edit by hand.
-- At the top of each component file, a header comment marks it `// Safe to edit by hand` or `// Foundation, edit with care`.
-- Astro components for static content. React islands only where interactivity is required.
-- Prefer Astro's `<Image />` / `<Picture />` for locally-bundled assets; the `<SanityImage />` wrapper for Sanity-hosted images.
-- Tailwind utility classes inline. Pull into `@apply` only when a pattern repeats four or more times.
-- `clsx` / `class-variance-authority` for conditional classes once components get state-dependent styling.
+Shared by every site repo in the family, so they live in one PORTABLE file imported here (it is expanded into context at launch, so this saves lines in this file, not tokens): the code conventions (strict TypeScript, header comments, Astro and React islands, images, Tailwind) and the working-with-Claude habits (desktop app, Plan Mode, confirm before installing, describe design in plain language, verify in a real browser). This site ships light AND dark, so "every theme" in the shared verification bullet means both (gotcha #4); the loop is `.claude/rules/ui-and-verification.md`.
 
-## Working with Claude
-
-- Use Claude Code from the desktop app. Show diffs clearly so they read well in that UI.
-- Prefer Plan Mode for any multi-file change, especially when touching Sanity schemas (schema changes propagate to live content).
-- Pause for confirmation before installing new dependencies.
-- When proposing design changes, describe the visual outcome in plain language, not just the code.
-- Don't report a UI change as done without screenshots in both themes and both viewports.
+@docs/claude/family-conventions.md
 
 ## Communication style
 
@@ -110,8 +98,11 @@ Path-scoped rules (load automatically when you touch matching files):
 - `.claude/rules/site-copy-voice.md`: voice for live-site copy.
 - `.claude/rules/portable-files.md`: PORTABLE-marked files and the shared-file sync system.
 
+Tracked Claude setup: `.claude/settings.json` (PORTABLE, deny rules for `git reset --hard` and force pushes; never edit here) and `docs/claude/family-conventions.md` (PORTABLE, imported above). `.claude/settings.local.json` stays git-ignored for personal allow rules.
+
 Read on demand:
 
+- `docs/claude/family-conventions.md`: PORTABLE, imported above; the code conventions and working-with-Claude text shared by every site repo.
 - `docs/claude/project-state.md`: current state, stack-pin history, brand direction. Read for background.
 - `docs/claude/file-ownership.md`: safe-to-edit vs foundation file lists. Read before touching foundation files.
 - `docs/claude/topic-index.md`: index of every `docs/agent/*` deep dive, research and checklists. Read when a task touches those areas.
