@@ -1036,6 +1036,73 @@
   }
 }
 
+/* ---- 44px touch targets (PORTS.md cards 82 and 83; WCAG 2.5.5 / 2.5.8).
+   Three tools, pick by what the element is:
+
+   .hit-44  An invisible 44px hit area for a small STANDALONE link or button
+     (utility bar, logo, theme toggle, underlined contact links). It grows the
+     tappable box, not the visible one, so nothing moves. The element must be
+     positioned: put `relative` beside the class. This class owns the
+     element's ::after, so do NOT combine it with .link-underline (which also
+     draws on ::after); use .tap-44 for those. Not for links inside a sentence
+     (WCAG 2.5.8 exempt) and not for rows stacked closer than 44px.
+
+   .tap-44  A real 44px box (min-height and min-width) for stacked link lists
+     such as the footer, where an invisible area would overlap its neighbours.
+     The visible label goes in a child .link-underline span so the animated
+     underline hugs the text instead of dropping to the bottom of the tall
+     box; hovering or focusing the whole row still wipes it in.
+
+   .check-44  A native-looking checkbox whose input box is 44px square but whose
+     drawn box stays 20px (negative margin keeps the layout footprint). ---- */
+.hit-44::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+.tap-44 {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.tap-44:hover > .link-underline::after,
+.tap-44:focus-visible > .link-underline::after {
+  transform: scaleX(1);
+}
+.check-44 {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: -12px;
+  cursor: pointer;
+  background: transparent;
+}
+.check-44::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: var(--background) center / 14px no-repeat;
+}
+.check-44:checked::before {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 7.5l3 3 6-7'/%3E%3C/svg%3E");
+}
+.check-44:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -8px;
+  border-radius: 8px;
+}
+
 /* ---- Drop cap -- float cap on the first paragraph of every journal post.
    JournalPortableText.tsx adds .prose-drop-cap to the first <p> only. ---- */
 .prose-drop-cap::first-letter {

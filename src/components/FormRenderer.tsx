@@ -343,14 +343,14 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
             const span = f.width === 'half' ? 'sm:col-span-1' : 'sm:col-span-2';
             if (f.type === 'checkbox') {
               return (
-                <div key={f.name} className={`${span} flex items-start gap-s`}>
+                <div key={f.name} className={`${span} flex min-h-[44px] items-center gap-s`}>
                   <input
                     id={id}
                     name={f.name}
                     type="checkbox"
                     checked={!!values[f.name]}
                     onChange={(e) => setField(f.name, e.target.checked)}
-                    className="mt-1 h-5 w-5"
+                    className="check-44"
                   />
                   <label htmlFor={id} className="text-sm text-foreground">
                     {f.label}

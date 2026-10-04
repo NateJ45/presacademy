@@ -82,7 +82,7 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
           <button
             type="button"
             onClick={reset}
-            className="text-xs tracking-[0.12em] text-link uppercase underline underline-offset-2 hover:text-primary-dark"
+            className="hit-44 relative text-xs tracking-[0.12em] text-link uppercase underline underline-offset-2 hover:text-primary-dark"
           >
             Reset
           </button>
@@ -92,17 +92,17 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
       {topics.length > 0 && (
         <fieldset className="mt-6 border-0 p-0">
           <legend className="text-xs tracking-eyebrow text-foreground/80 uppercase">Topic</legend>
-          <div className="mt-3 flex flex-col gap-2">
+          <div className="mt-3 flex flex-col">
             {topics.map((o) => (
               <label
                 key={o.slug}
-                className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80"
+                className="flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-foreground/80"
               >
                 <input
                   type="checkbox"
                   checked={activeTopics.has(o.slug)}
                   onChange={() => toggle(activeTopics, o.slug, setActiveTopics)}
-                  className="accent-[#33503F]"
+                  className="check-44"
                 />
                 <span>{o.label}</span>
                 {/* muted-foreground, NOT text-secondary: Cloister Stone (#B7A99B)
@@ -119,17 +119,17 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
       {teachers.length > 0 && (
         <fieldset className="mt-6 border-0 border-t border-border-soft p-0 pt-6">
           <legend className="text-xs tracking-eyebrow text-foreground/80 uppercase">Teacher</legend>
-          <div className="mt-3 flex flex-col gap-2">
+          <div className="mt-3 flex flex-col">
             {teachers.map((o) => (
               <label
                 key={o.slug}
-                className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80"
+                className="flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-foreground/80"
               >
                 <input
                   type="checkbox"
                   checked={activeTeachers.has(o.slug)}
                   onChange={() => toggle(activeTeachers, o.slug, setActiveTeachers)}
-                  className="accent-[#33503F]"
+                  className="check-44"
                 />
                 <span>{o.label}</span>
                 {/* muted-foreground, NOT text-secondary: Cloister Stone (#B7A99B)
@@ -155,7 +155,7 @@ export default function CourseFilters({ topics, teachers, terms }: Props) {
             id="term-filter"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            className="mt-3 w-full rounded-[2px] border border-border bg-card px-3 py-2 text-sm text-foreground"
+            className="mt-3 min-h-[44px] w-full rounded-[2px] border border-border bg-card px-3 py-2 text-sm text-foreground"
           >
             <option value="">All upcoming terms</option>
             {terms.map((t) => (

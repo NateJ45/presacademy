@@ -166,7 +166,7 @@ function isGroupActive(items: { href: string }[]) {
         nextTerm ? (
           <a
             href="/courses"
-            class="flex min-w-0 items-center gap-2 transition-colors hover:text-white"
+            class="hit-44 relative flex min-w-0 items-center gap-2 transition-colors hover:text-white"
             aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
           >
             <span class="enroll-dot" aria-hidden="true" />
@@ -203,7 +203,7 @@ function isGroupActive(items: { href: string }[]) {
           phone && (
             <a
               href={telHref(phone)}
-              class="inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 transition-colors hover:text-white"
+              class="hit-44 relative inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 transition-colors hover:text-white"
               aria-label={`Call ${phone}`}
             >
               <Phone size={13} strokeWidth={1.75} aria-hidden="true" />
@@ -225,7 +225,7 @@ function isGroupActive(items: { href: string }[]) {
               />
               <a
                 href={headerCta.href}
-                class="font-semibold tracking-eyebrow text-chapel-foreground/90 uppercase transition-colors hover:text-white lg:hidden"
+                class="hit-44 relative font-semibold tracking-eyebrow text-chapel-foreground/90 uppercase transition-colors hover:text-white lg:hidden"
               >
                 {headerCta.label}
               </a>
@@ -263,7 +263,7 @@ function isGroupActive(items: { href: string }[]) {
     }
     <a
       href="/"
-      class="inline-flex flex-col leading-none transition-opacity hover:opacity-80"
+      class="hit-44 relative inline-flex flex-col leading-none transition-opacity hover:opacity-80"
       aria-label={`${brandName} home`}
     >
       {

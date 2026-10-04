@@ -114,8 +114,8 @@ const FOOTER_COLUMNS = settings.footerColumns;
 const LEGAL_LINKS = settings.legalNav;
 
 // Shared link class for the footer columns (cream on green, animated underline).
-const footerLink =
-  'link-underline inline-block text-chapel-foreground/80 hover:text-white transition-colors';
+// .tap-44 gives each row a real 44px box; the label sits in a .link-underline span (see globals.css).
+const footerLink = 'tap-44 text-chapel-foreground/80 hover:text-white transition-colors';
 ---
 
 <footer
@@ -174,13 +174,13 @@ const footerLink =
         <div class="mt-l flex flex-wrap gap-s">
           <a
             href="/get-started"
-            class="press-tactile inline-flex items-center rounded-full bg-chapel-foreground px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-deep uppercase transition-opacity hover:opacity-90"
+            class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-chapel-foreground px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-deep uppercase transition-opacity hover:opacity-90"
           >
             Request information
           </a>
           <a
             href="/get-started"
-            class="press-tactile inline-flex items-center rounded-full border border-chapel-foreground/35 px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-foreground uppercase transition-colors hover:bg-white/10"
+            class="press-tactile inline-flex min-h-[44px] items-center rounded-full border border-chapel-foreground/35 px-l py-2.5 text-xs font-semibold tracking-eyebrow text-chapel-foreground uppercase transition-colors hover:bg-white/10"
           >
             Book a free intro
           </a>
@@ -210,12 +210,9 @@ const footerLink =
         {
           email && (
             <p>
-              <a
-                href={`mailto:${email}`}
-                class="link-underline inline-flex items-center gap-2 transition-colors hover:text-white"
-              >
+              <a href={`mailto:${email}`} class="tap-44 gap-2 transition-colors hover:text-white">
                 <Mail size={14} aria-hidden="true" />
-                {email}
+                <span class="link-underline">{email}</span>
               </a>
             </p>
           )
@@ -223,12 +220,9 @@ const footerLink =
         {
           phone && (
             <p>
-              <a
-                href={telHref(phone)}
-                class="link-underline inline-flex items-center gap-2 transition-colors hover:text-white"
-              >
+              <a href={telHref(phone)} class="tap-44 gap-2 transition-colors hover:text-white">
                 <Phone size={14} aria-hidden="true" />
-                {phone}
+                <span class="link-underline">{phone}</span>
               </a>
             </p>
           )
@@ -239,9 +233,9 @@ const footerLink =
         href={mapHref}
         target="_blank"
         rel="noopener noreferrer"
-        class="link-underline mt-s inline-block text-sm font-semibold text-chapel-foreground transition-colors hover:text-white"
+        class="tap-44 mt-s text-sm font-semibold text-chapel-foreground transition-colors hover:text-white"
       >
-        Get directions
+        <span class="link-underline">Get directions</span>
       </a>
     </div>
 
@@ -257,7 +251,7 @@ const footerLink =
               <span class="h-px w-5 bg-gold/70" aria-hidden="true" />
               {col.title}
             </p>
-            <ul class="mt-m list-none space-y-2.5 p-0 text-sm">
+            <ul class="mt-m list-none p-0 text-sm">
               {col.links.map((l) => (
                 <li>
                   <a
@@ -267,7 +261,7 @@ const footerLink =
                       ? { target: '_blank', rel: 'noopener noreferrer' }
                       : {})}
                   >
-                    {l.label}
+                    <span class="link-underline">{l.label}</span>
                   </a>
                 </li>
               ))}
@@ -295,7 +289,7 @@ const footerLink =
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
                 >
                   <IconBrandInstagram size={20} stroke={1.5} />
                 </a>
@@ -308,7 +302,7 @@ const footerLink =
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
                 >
                   <IconBrandFacebook size={20} stroke={1.5} />
                 </a>
@@ -321,7 +315,7 @@ const footerLink =
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-chapel-foreground/25 text-chapel-foreground transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
                 >
                   <IconBrandYoutube size={20} stroke={1.5} />
                 </a>
@@ -331,9 +325,9 @@ const footerLink =
         ) : (
           <a
             href="/contact"
-            class="link-underline mt-m inline-block text-sm text-chapel-foreground/80 transition-colors hover:text-white"
+            class="tap-44 mt-m text-sm text-chapel-foreground/80 transition-colors hover:text-white"
           >
-            Get in touch
+            <span class="link-underline">Get in touch</span>
           </a>
         )
       }
@@ -380,8 +374,8 @@ const footerLink =
           <span>© {currentYear} {brandName}</span>
           {
             LEGAL_LINKS.map((l) => (
-              <a href={l.href} class="link-underline transition-colors hover:text-white">
-                {l.label}
+              <a href={l.href} class="tap-44 transition-colors hover:text-white">
+                <span class="link-underline">{l.label}</span>
               </a>
             ))
           }
@@ -391,9 +385,9 @@ const footerLink =
                 href={creditUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="link-underline text-chapel-foreground/80 transition-colors hover:text-white"
+                class="tap-44 text-chapel-foreground/80 transition-colors hover:text-white"
               >
-                {creditLabel}
+                <span class="link-underline">{creditLabel}</span>
               </a>
             ) : (
               <span class="text-chapel-foreground/80">{creditLabel}</span>

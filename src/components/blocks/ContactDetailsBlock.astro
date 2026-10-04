@@ -69,7 +69,7 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
               <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
               <a
                 href={telHref(settings.phone)}
-                class="text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+                class="hit-44 relative text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
               >
                 {settings.phone}
               </a>
@@ -82,7 +82,7 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
               <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
               <a
                 href={`mailto:${settings.email}`}
-                class="break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+                class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
               >
                 {settings.email}
               </a>
@@ -106,7 +106,7 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
                 <span class="text-foreground">{r.label}</span>
                 <a
                   href={r.href}
-                  class="break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+                  class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
                 >
                   {r.value}
                 </a>

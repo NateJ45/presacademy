@@ -58,7 +58,7 @@ const grouped = groupFaqs(faqs, categoryOrder);
             <div class="divide-y divide-border-soft border-t border-b border-border-soft">
               {group.items.map((f: any) => (
                 <details class="group py-m">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-m text-lg text-foreground">
+                  <summary class="-my-2 flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-m py-2 text-lg text-foreground">
                     {f.question}
                     <span
                       class="shrink-0 text-link transition-transform group-open:rotate-45"
