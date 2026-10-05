@@ -29,6 +29,7 @@
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { site } from '@/data/site';
 import { telHref } from '@/lib/phone';
+import { hasGa } from '@/lib/analytics-config';
 
 interface Props {
   block: any;
@@ -95,13 +96,38 @@ const linkClass = 'text-link underline underline-offset-2 hover:text-primary tra
             <h2 class="mb-s font-display text-h3 text-foreground">What doesn't happen</h2>
             <ul class="list-disc space-y-1 pl-l text-foreground/80">
               <li>Your information is never sold.</li>
-              <li>There is no ad targeting or tracking pixels on this site.</li>
-              <li>
-                Traffic is measured with Cloudflare Web Analytics, which counts page visits without
-                setting cookies or identifying individual visitors.
-              </li>
+              {hasGa ? (
+                <li>There is no ad targeting on this site.</li>
+              ) : (
+                <li>There is no ad targeting or tracking pixels on this site.</li>
+              )}
+              {!hasGa && (
+                <li>
+                  Traffic is measured with Cloudflare Web Analytics, which counts page visits
+                  without setting cookies or identifying individual visitors.
+                </li>
+              )}
             </ul>
           </div>
+
+          {hasGa && (
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">
+                Cookies and how visits are measured
+              </h2>
+              <p class="text-foreground/80">
+                Page visits are measured with Google Analytics, which sets cookies on your device
+                (named <code>_ga</code> and <code>_ga_</code> followed by a stream id) so returning
+                visits are recognised. It records which pages are opened, roughly where in the world
+                the visit came from, and what kind of device was used. It is not used for
+                advertising. You can block these cookies in your browser settings, or with Google's{' '}
+                <a href="https://tools.google.com/dlpage/gaoptout" class={linkClass}>
+                  Analytics opt-out add-on
+                </a>
+                , and the site works the same.
+              </p>
+            </div>
+          )}
 
           <div>
             <h2 class="mb-s font-display text-h3 text-foreground">

@@ -57,6 +57,7 @@ Set in Cloudflare -> **Workers & Pages -> your-project -> Settings -> Variables*
 - `SANITY_API_READ_TOKEN` -- only if any page needs to read draft content (typically not, since published content is publicly readable). Mark as Secret.
 - `PUBLIC_WEB3FORMS_KEY` -- contact form access key from [web3forms.com](https://web3forms.com/). Without it the contact form falls back to a no-op action and shows an inline notice.
 - `PUBLIC_CF_ANALYTICS_TOKEN` -- Cloudflare Web Analytics token. Without it the analytics beacon doesn't render.
+- `PUBLIC_GA_ID` -- Google Analytics 4 Measurement ID (`G-XXXXXXXXXX`, not the numeric property id). GA4 is wired but INACTIVE until this is set. It must be a **Build** variable in Cloudflare Workers Builds (it is inlined at build time, so a runtime variable does nothing), and the site must be rebuilt after setting it. The tag fires only on the production hostname. Empty or malformed renders nothing. Setting it makes the site set `_ga` cookies: update the Privacy Policy page in Studio at the same time.
 - `PUBLIC_CALENDLY_URL` -- optional. Booking link for the discovery call CTA.
 - `PUBLIC_NEWSLETTER_FORM_ACTION` -- optional. Build-time override for the ESP form-action endpoint.
 
@@ -74,14 +75,14 @@ When you change a Sanity schema (`src/sanity/schemaTypes/**`), run `npm run type
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Cross-Origin-Opener-Policy: same-origin`
 
-Content-Security-Policy is intentionally not included; doing it right requires testing against all third-party scripts in use (Sanity CDN, Web3Forms, Cloudflare Analytics, any embed). See `stack-and-config.md` for why the meta-CSP approach was abandoned.
+The Content-Security-Policy is hand-maintained in `public/_headers` (CLAUDE.md gotcha #10). It allows Cloudflare Analytics and, since 2026-10-04, the Google Analytics origins (`www.googletagmanager.com` for scripts, `*.google-analytics.com`, `*.analytics.google.com` and `stats.g.doubleclick.net` for beacons).
 
 ### Privacy and analytics
 
 The starter ships in an effectively zero-cookie posture. The current baseline:
 
 - **Cloudflare Web Analytics** uses no cookies and stores no personal data.
-- **No Google Analytics, no Facebook/Meta Pixel.** No ad-tracking or retargeting pixels by default. If you add one, design a full consent management platform in BEFORE adding the tracker -- don't bolt it on.
+- **Google Analytics 4 is wired but off.** It renders only when `PUBLIC_GA_ID` is set (see Environment variables), and when on it sets `_ga` cookies. Until then the site is cookieless. No Facebook/Meta Pixel and no ad-tracking or retargeting pixels. Before setting `PUBLIC_GA_ID`: update the Privacy Policy page in Studio (the stored body is not derived from the config; only the built-in fallback is), and confirm the GA4 property has Google signals, ads personalisation and data sharing off, because the fallback text says analytics is not used for advertising.
 - **Sanity client** reads public published content, no auth cookies.
 - **Web3Forms** contact-form submissions go server-side via `fetch`; no cookies set.
 
