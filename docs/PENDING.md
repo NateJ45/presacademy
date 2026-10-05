@@ -10,13 +10,10 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
-- **Turn on Google Analytics 4 when a property exists** (2026-10-04). The wiring is
-  merged but inactive. Steps: create a GA4 property and web data stream, copy the
-  `G-` Measurement ID, update the Privacy Policy page in Studio to disclose GA4 and
-  its `_ga` cookies (the built-in fallback text switches itself, the stored Sanity
-  body does not), turn Google signals, ads personalisation and data sharing OFF on
-  the property, then set `PUBLIC_GA_ID` as a BUILD variable in Cloudflare Workers
-  Builds and rebuild. Verify with the GA Realtime report from the live hostname.
+- **Check the GA4 property settings** (2026-10-04). GA4 is live. In the Presbyterian
+  Academy property, confirm Google signals and ads personalisation are off (Admin,
+  Data collection). The privacy text makes no advertising claim either way, so this
+  is about keeping a school site free of ad profiling, not about fixing copy.
 
 - **Sign in to the Studio after the Sanity phase-1 bump**
   (2026-09-06). The stack moved to `sanity` 6.9.1 / `@sanity/ui` 3.5.4 /
