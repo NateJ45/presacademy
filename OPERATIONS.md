@@ -241,6 +241,7 @@ The items below apply to any project built on this starter. Replace the angle-br
 - [ ] Web3Forms: create a form, set the access key in the contact form component
 - [ ] Calendly: set `PUBLIC_CALENDLY_URL` env var to the real booking URL
 - [ ] Cloudflare Web Analytics: create a site, add the token to `wrangler.jsonc`
+- [x] Google Analytics 4: live since 2026-10-04 (`PUBLIC_GA_ID` = `G-1S5Z7MGZ9J`, GA4 property 557366198), set as a BUILD variable in Cloudflare Workers Builds. The privacy fallback text names Google Analytics; if the Privacy Policy body is ever written in Studio, it must say the same.
 
 **Seed + populate content:**
 

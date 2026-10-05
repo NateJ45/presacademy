@@ -1,5 +1,9 @@
 ---
 paths:
+  - 'src/components/Analytics.astro'
+  - 'src/components/analytics/CloudflareBeacon.astro'
+  - 'src/components/analytics/GoogleAnalytics.astro'
+  - 'src/lib/analytics-config.ts'
   - '.claude/settings.json'
   - 'docs/RESTORE-DRILL.md'
   - 'docs/claude/family-conventions.md'

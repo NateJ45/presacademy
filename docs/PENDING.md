@@ -10,6 +10,11 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Check the GA4 property settings** (2026-10-04). GA4 is live. In the Presbyterian
+  Academy property, confirm Google signals and ads personalisation are off (Admin,
+  Data collection). The privacy text makes no advertising claim either way, so this
+  is about keeping a school site free of ad profiling, not about fixing copy.
+
 - **Sign in to the Studio after the Sanity phase-1 bump**
   (2026-09-06). The stack moved to `sanity` 6.9.1 / `@sanity/ui` 3.5.4 /
   `@sanity/client` 7.26.2 / `@sanity/visual-editing` 5.7.3 /

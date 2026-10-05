@@ -29,6 +29,7 @@
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { site } from '@/data/site';
 import { telHref } from '@/lib/phone';
+import { hasGa } from '@/lib/analytics-config';
 
 interface Props {
   block: any;
@@ -95,13 +96,32 @@ const linkClass = 'text-link underline underline-offset-2 hover:text-primary tra
             <h2 class="mb-s font-display text-h3 text-foreground">What doesn't happen</h2>
             <ul class="list-disc space-y-1 pl-l text-foreground/80">
               <li>Your information is never sold.</li>
-              <li>There is no ad targeting or tracking pixels on this site.</li>
-              <li>
-                Traffic is measured with Cloudflare Web Analytics, which counts page visits without
-                setting cookies or identifying individual visitors.
-              </li>
+              {hasGa ? (
+                <li>There is no ad targeting on this site.</li>
+              ) : (
+                <li>There is no ad targeting or tracking pixels on this site.</li>
+              )}
+              {!hasGa && (
+                <li>
+                  Traffic is measured with Cloudflare Web Analytics, which counts page visits
+                  without setting cookies or identifying individual visitors.
+                </li>
+              )}
             </ul>
           </div>
+
+          {hasGa && (
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">
+                Cookies and how visits are measured
+              </h2>
+              <p class="text-foreground/80">
+                We use Google Analytics to understand which pages are visited. It sets cookies and
+                collects usage information such as pages viewed, device type and approximate
+                location. It does not tell us who you are.
+              </p>
+            </div>
+          )}
 
           <div>
             <h2 class="mb-s font-display text-h3 text-foreground">
