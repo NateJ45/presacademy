@@ -20,6 +20,8 @@
 //
 // Both variants share generous padding, uppercase tracking, and a 44×44 minimum tap target.
 
+import { withTrailingSlash } from '@/lib/href';
+
 interface CtaBlock {
   label?: string;
   linkType?: 'internal' | 'external' | 'email' | 'phone';
@@ -46,7 +48,7 @@ const {
   cta,
   variant = 'primary',
   onDark = false,
-  fallbackHref = '/contact',
+  fallbackHref = '/contact/',
   fallbackLabel = 'Get in touch',
   class: extraClass = '',
 } = Astro.props as Props;
@@ -61,17 +63,17 @@ const {
 const TYPE_TO_PATH: Record<string, string> = {
   // Core singletons
   homePage: '/',
-  aboutPage: '/about',
-  faqPage: '/faq',
-  contactPage: '/contact',
-  eventsPage: '/events',
-  resourcesPage: '/resources',
+  aboutPage: '/about/',
+  faqPage: '/faq/',
+  contactPage: '/contact/',
+  eventsPage: '/events/',
+  resourcesPage: '/resources/',
   // School page singletons
-  coursesPage: '/courses',
-  facultyPage: '/faculty',
-  pricingPage: '/pricing',
-  getStartedPage: '/get-started',
-  forYouPage: '/for-you',
+  coursesPage: '/courses/',
+  facultyPage: '/faculty/',
+  pricingPage: '/pricing/',
+  getStartedPage: '/get-started/',
+  forYouPage: '/for-you/',
 };
 
 function resolveHref(c?: CtaBlock | null): string {
@@ -83,15 +85,15 @@ function resolveHref(c?: CtaBlock | null): string {
       // Slug-based types need the slug appended. Singletons use the fixed path
       // table above. The generic `page` type resolves to /[slug].
       if (t === 'journalEntry' && c.internalLink?.slug) {
-        return `/journal/${c.internalLink.slug}`;
+        return `/journal/${c.internalLink.slug}/`;
       }
       if (t === 'page' && c.internalLink?.slug) {
-        return `/${c.internalLink.slug}`;
+        return `/${c.internalLink.slug}/`;
       }
       return TYPE_TO_PATH[t] ?? fallbackHref;
     }
     case 'external':
-      return c.externalUrl ?? fallbackHref;
+      return withTrailingSlash(c.externalUrl ?? fallbackHref);
     case 'email':
       return c.emailAddress ? `mailto:${c.emailAddress}` : fallbackHref;
     case 'phone':

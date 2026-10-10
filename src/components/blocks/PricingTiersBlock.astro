@@ -28,7 +28,7 @@ import { getPricingTiers } from '@/lib/queries';
 const { block } = Astro.props as { block: any };
 const tiers = await getPricingTiers().catch(() => []);
 const ctaLabel = block?.ctaLabel || 'Express interest';
-const ctaUrl = block?.ctaUrl || '/get-started';
+const ctaUrl = block?.ctaUrl || '/get-started/';
 
 const ledger = block?.surface === 'ledger';
 // h3 unless the editor says this section IS the page body. Anything other than

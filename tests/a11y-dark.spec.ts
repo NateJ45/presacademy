@@ -67,7 +67,7 @@ test.describe('Accessibility (dark mode) — no axe violations', () => {
 // resting state); its CONTRAST is pinned separately, and far more cheaply, by
 // src/lib/theme-tokens.test.ts (the --ring pairs).
 
-const FOCUS_ROUTES = ['/contact', '/get-started'];
+const FOCUS_ROUTES = ['/contact/', '/get-started/'];
 
 test.describe('Focus indicators are visible in dark mode', () => {
   for (const route of FOCUS_ROUTES) {

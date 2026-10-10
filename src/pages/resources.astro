@@ -38,7 +38,7 @@ const hasSections = (page?.flexibleSections?.length ?? 0) > 0;
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Resources', url: `${site.url}/resources` },
+    { name: 'Resources', url: `${site.url}/resources/` },
   ]),
 ];
 ---
@@ -63,7 +63,7 @@ const schemas = [
       eyebrow: 'Go deeper',
       headline: 'Learn with the faculty',
       subhead: 'Every essay starts as something the faculty teach. Take the course.',
-      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' },
+      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses/' },
     }}
   >
     {
@@ -82,7 +82,7 @@ const schemas = [
                 <p class="max-w-2xl text-foreground/80 italic">
                   New essays are on the way. In the meantime, the best way to learn from our faculty
                   is{' '}
-                  <a href="/courses" class="text-link underline underline-offset-2">
+                  <a href="/courses/" class="text-link underline underline-offset-2">
                     in a course
                   </a>
                   .

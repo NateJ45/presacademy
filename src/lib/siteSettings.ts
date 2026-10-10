@@ -76,11 +76,11 @@ export interface RawFooterColumn {
  * so a fresh clone of the template still has a sensible header.
  */
 export const FALLBACK_NAV_ITEMS: NavItem[] = [
-  { kind: 'flat', label: 'Courses', href: '/courses' },
-  { kind: 'flat', label: 'Faculty', href: '/faculty' },
-  { kind: 'flat', label: 'About', href: '/about' },
-  { kind: 'flat', label: 'Events', href: '/events' },
-  { kind: 'flat', label: 'Resources', href: '/resources' },
+  { kind: 'flat', label: 'Courses', href: '/courses/' },
+  { kind: 'flat', label: 'Faculty', href: '/faculty/' },
+  { kind: 'flat', label: 'About', href: '/about/' },
+  { kind: 'flat', label: 'Events', href: '/events/' },
+  { kind: 'flat', label: 'Resources', href: '/resources/' },
 ];
 
 /** Built-in footer index, grouped to mirror the header IA. */
@@ -88,44 +88,44 @@ export const FALLBACK_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: 'Explore',
     links: [
-      { label: 'Courses', href: '/courses' },
-      { label: 'Faculty', href: '/faculty' },
-      { label: 'Events', href: '/events' },
-      { label: 'Resources', href: '/resources' },
+      { label: 'Courses', href: '/courses/' },
+      { label: 'Faculty', href: '/faculty/' },
+      { label: 'Events', href: '/events/' },
+      { label: 'Resources', href: '/resources/' },
     ],
   },
   {
     title: 'About',
     links: [
-      { label: 'About', href: '/about' },
-      { label: 'For You', href: '/for-you' },
-      { label: 'Pricing & Scholarships', href: '/pricing' },
-      { label: 'FAQ', href: '/faq' },
+      { label: 'About', href: '/about/' },
+      { label: 'For You', href: '/for-you/' },
+      { label: 'Pricing & Scholarships', href: '/pricing/' },
+      { label: 'FAQ', href: '/faq/' },
     ],
   },
   {
     title: 'Get started',
     links: [
-      { label: 'Get started', href: '/get-started' },
-      { label: 'Request information', href: '/get-started' },
-      { label: 'Book a free intro', href: '/get-started' },
-      { label: 'Contact', href: '/contact' },
+      { label: 'Get started', href: '/get-started/' },
+      { label: 'Request information', href: '/get-started/' },
+      { label: 'Book a free intro', href: '/get-started/' },
+      { label: 'Contact', href: '/contact/' },
     ],
   },
 ];
 
 /** Built-in small-print row at the very bottom of the footer. */
 export const FALLBACK_LEGAL_NAV: ResolvedNavLink[] = [
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Privacy', href: '/privacy' },
-  { label: 'Accessibility', href: '/accessibility' },
+  { label: 'Pricing', href: '/pricing/' },
+  { label: 'Privacy', href: '/privacy/' },
+  { label: 'Accessibility', href: '/accessibility/' },
 ];
 
 /** Built-in header button. One unambiguous ask. */
 export const FALLBACK_HEADER_CTA: HeaderCta = {
   show: true,
   label: 'Request info',
-  href: '/get-started',
+  href: '/get-started/',
 };
 
 /** The raw siteSettings fields this resolver consumes (from getSiteSettings()). */

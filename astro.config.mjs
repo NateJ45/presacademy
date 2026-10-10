@@ -30,6 +30,9 @@ export default defineConfig({
   // REPLACE before launch (rebrand.mjs stamps this): the canonical production URL.
   site: 'https://www.presbyterianacademy.org',
   output: 'static',
+  // Canonical URLs and the sitemap end in a slash; every internal link must too,
+  // or Cloudflare answers it with a redirect (src/lib/href.ts).
+  trailingSlash: 'always',
   // No sessions anywhere on this site (there is no gated area or login), so
   // opt out. Left on, @astrojs/cloudflare auto-declares a "SESSION" KV binding
   // in the generated dist/server/wrangler.json, and a KV binding with no

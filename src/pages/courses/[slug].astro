@@ -77,8 +77,8 @@ const ledger = [
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Courses', url: `${site.url}/courses` },
-    { name: course.title ?? (slug as string), url: `${site.url}/courses/${slug}` },
+    { name: 'Courses', url: `${site.url}/courses/` },
+    { name: course.title ?? (slug as string), url: `${site.url}/courses/${slug}/` },
   ]),
   JSON.stringify({
     '@context': 'https://schema.org',
@@ -99,7 +99,7 @@ const pillGhost =
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-section-lg">
       <p class="mb-l text-xs tracking-[0.12em] text-foreground/70 uppercase">
-        <a href="/courses" class="hit-44 relative transition-colors hover:text-primary-dark"
+        <a href="/courses/" class="hit-44 relative transition-colors hover:text-primary-dark"
           >Courses</a
         >
         {area && <span class="mx-2">/</span>}
@@ -120,7 +120,7 @@ const pillGhost =
                   <>
                     {idx > 0 && (idx === course.instructors.length - 1 ? ' and ' : ', ')}
                     <a
-                      href={`/faculty/${i.slug}`}
+                      href={`/faculty/${i.slug}/`}
                       class="hit-44 relative text-link underline underline-offset-2 hover:text-primary-dark"
                     >
                       {i.honorific ? `${i.honorific} ` : ''}
@@ -207,10 +207,10 @@ const pillGhost =
             </div>
 
             <div class="mt-l flex flex-col gap-3">
-              <a href="/get-started" class={pillPrimary}
+              <a href="/get-started/" class={pillPrimary}
                 >{coursesPage?.detailExpressLabel ?? 'Express interest'}</a
               >
-              <a href="/get-started" class={pillGhost}
+              <a href="/get-started/" class={pillGhost}
                 >{coursesPage?.detailRequestLabel ?? 'Request information'}</a
               >
             </div>
@@ -242,7 +242,7 @@ const pillGhost =
                   <div class="mt-3 flex flex-col gap-4">
                     {course.instructors.map((i: any) => (
                       <a
-                        href={`/faculty/${i.slug}`}
+                        href={`/faculty/${i.slug}/`}
                         class="group grid grid-cols-[56px_1fr] items-center gap-3 no-underline"
                       >
                         <div class="image-well aspect-square overflow-hidden">
@@ -284,6 +284,6 @@ const pillGhost =
     headline={coursesPage?.finalCtaHeadline ?? 'Tell us what you want to learn'}
     subhead={coursesPage?.finalCtaSubhead ??
       'Request information or book a free intro. No application fee, no pressure.'}
-    cta={{ label: 'Request information', linkType: 'external', externalUrl: '/get-started' }}
+    cta={{ label: 'Request information', linkType: 'external', externalUrl: '/get-started/' }}
   />
 </BaseLayout>

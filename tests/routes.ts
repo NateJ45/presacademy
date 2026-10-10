@@ -14,19 +14,19 @@
 // Add a route here when a new fixed page ships in src/pages/.
 export const routes = [
   '/',
-  '/about',
-  '/courses',
-  '/faculty',
-  '/events',
-  '/pricing',
-  '/for-you',
-  '/get-started',
-  '/resources',
-  '/faq',
-  '/contact',
-  '/privacy',
-  '/accessibility',
-  '/style-guide',
+  '/about/',
+  '/courses/',
+  '/faculty/',
+  '/events/',
+  '/pricing/',
+  '/for-you/',
+  '/get-started/',
+  '/resources/',
+  '/faq/',
+  '/contact/',
+  '/privacy/',
+  '/accessibility/',
+  '/style-guide/',
   // The 404 page builds to a top-level 404.html file, not 404/index.html.
   // http-server has no not-found rewrite, so the file is addressed directly;
   // this also means the smoke test gets a genuine 200 for it.

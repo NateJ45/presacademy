@@ -45,8 +45,8 @@ const FALLBACK_REASONS = [
   ...(settings.email
     ? [{ label: 'General questions', value: settings.email, href: `mailto:${settings.email}` }]
     : []),
-  { label: 'Courses and enrollment', value: 'Request information', href: '/get-started' },
-  { label: 'Pricing and scholarships', value: 'See pricing', href: '/pricing' },
+  { label: 'Courses and enrollment', value: 'Request information', href: '/get-started/' },
+  { label: 'Pricing and scholarships', value: 'See pricing', href: '/pricing/' },
 ];
 
 const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;

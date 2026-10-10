@@ -102,7 +102,7 @@ const mobileNavSettings = {
 // built-in button. An island's props are serialized into the page, so passing
 // the default every time would rewrite the markup of every page for no change.
 const mobileCtaProps =
-  headerCta.show && headerCta.label === 'Request info' && headerCta.href === '/get-started'
+  headerCta.show && headerCta.label === 'Request info' && headerCta.href === '/get-started/'
     ? {}
     : { cta: headerCta };
 
@@ -165,7 +165,7 @@ function isGroupActive(items: { href: string }[]) {
       {
         nextTerm ? (
           <a
-            href="/courses"
+            href="/courses/"
             class="hit-44 relative flex min-w-0 items-center gap-2 transition-colors hover:text-white"
             aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
           >

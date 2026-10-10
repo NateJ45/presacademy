@@ -13,25 +13,28 @@
 //      document type + slug, never from the reference itself.
 //   3. the pasted web address (linkType "external").
 //
+
 // A link that resolves to nothing (a reference to a deleted page, an empty
 // address) returns undefined and the caller DROPS it. A dead <a> in a menu is
 // worse than a missing one.
 
+import { withTrailingSlash } from './href.ts';
+
 /** Live route per path-mapped singleton. Mirrors SINGLETON_PREVIEW_PATHS. */
 export const SINGLETON_LIVE_PATHS: Record<string, string> = {
   homePage: '/',
-  aboutPage: '/about',
-  faqPage: '/faq',
-  contactPage: '/contact',
-  privacyPage: '/privacy',
-  accessibilityPage: '/accessibility',
-  eventsPage: '/events',
-  coursesPage: '/courses',
-  facultyPage: '/faculty',
-  pricingPage: '/pricing',
-  getStartedPage: '/get-started',
-  forYouPage: '/for-you',
-  resourcesPage: '/resources',
+  aboutPage: '/about/',
+  faqPage: '/faq/',
+  contactPage: '/contact/',
+  privacyPage: '/privacy/',
+  accessibilityPage: '/accessibility/',
+  eventsPage: '/events/',
+  coursesPage: '/courses/',
+  facultyPage: '/faculty/',
+  pricingPage: '/pricing/',
+  getStartedPage: '/get-started/',
+  forYouPage: '/for-you/',
+  resourcesPage: '/resources/',
   notFoundPage: '/404',
 };
 
@@ -69,6 +72,10 @@ export function plain(value?: string | null): string {
 
 /** Work out where one link points, or undefined when it points nowhere. */
 export function navHref(link?: RawNavLink | null): string | undefined {
+  return withTrailingSlash(navHrefRaw(link));
+}
+
+function navHrefRaw(link?: RawNavLink | null): string | undefined {
   if (!link) return undefined;
 
   const typed = plain(link.href);
@@ -82,7 +89,7 @@ export function navHref(link?: RawNavLink | null): string | undefined {
   if (!docType) return undefined;
   if (docType === 'page') {
     const slug = plain(link.slug);
-    return slug ? `/${slug}` : undefined;
+    return slug ? `/${slug}/` : undefined;
   }
   return SINGLETON_LIVE_PATHS[docType];
 }

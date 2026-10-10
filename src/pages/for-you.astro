@@ -33,7 +33,7 @@ const description =
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'For You', url: `${site.url}/for-you` },
+    { name: 'For You', url: `${site.url}/for-you/` },
   ]),
 ];
 ---
@@ -58,7 +58,7 @@ const schemas = [
       eyebrow: 'Still deciding?',
       headline: 'Talk to a real person',
       subhead: 'Tell us where you are and we will help you find the right place to begin.',
-      cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started' },
+      cta: { label: 'Request information', linkType: 'external', externalUrl: '/get-started/' },
     }}
   />
 </BaseLayout>

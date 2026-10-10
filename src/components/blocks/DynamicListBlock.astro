@@ -34,7 +34,7 @@ if (source === 'featuredCourses') {
     title: x.title,
     meta: x.instructors?.[0]?.name,
     summary: x.summary,
-    href: x.slug ? `/courses/${x.slug}` : null,
+    href: x.slug ? `/courses/${x.slug}/` : null,
   }));
 } else if (source === 'upcomingEvents') {
   const e = await getUpcomingEvents().catch(() => []);
@@ -42,7 +42,7 @@ if (source === 'featuredCourses') {
     title: x.title,
     meta: x.scheduleLabel || (x.start ? fmt(x.start) : ''),
     summary: x.summary,
-    href: x.slug?.current ? `/events/${x.slug.current}` : null,
+    href: x.slug?.current ? `/events/${x.slug.current}/` : null,
   }));
 } else if (source === 'faculty') {
   const f = await getFaculty().catch(() => []);
@@ -50,7 +50,7 @@ if (source === 'featuredCourses') {
     title: `${x.honorific ? x.honorific + ' ' : ''}${x.name}`,
     meta: x.title,
     summary: x.topDegree ? `${x.topDegree.degree}, ${x.topDegree.institution}` : '',
-    href: x.slug ? `/faculty/${x.slug}` : null,
+    href: x.slug ? `/faculty/${x.slug}/` : null,
   }));
 } else if (source === 'testimonials') {
   const t = await getTestimonials().catch(() => []);

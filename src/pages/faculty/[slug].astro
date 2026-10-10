@@ -57,8 +57,8 @@ const credential = [person.denomination, person.ordination].filter(Boolean).join
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Faculty', url: `${site.url}/faculty` },
-    { name: name, url: `${site.url}/faculty/${slug}` },
+    { name: 'Faculty', url: `${site.url}/faculty/` },
+    { name: name, url: `${site.url}/faculty/${slug}/` },
   ]),
   JSON.stringify({
     '@context': 'https://schema.org',
@@ -74,7 +74,7 @@ const schemas = [
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-section-lg">
       <p class="mb-l text-xs tracking-[0.12em] text-foreground/70 uppercase">
-        <a href="/faculty" class="hit-44 relative transition-colors hover:text-primary-dark"
+        <a href="/faculty/" class="hit-44 relative transition-colors hover:text-primary-dark"
           >Faculty</a
         >
         <span class="mx-2">/</span><span>{person.name}</span>
@@ -261,7 +261,7 @@ const schemas = [
                 <div class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2" data-stagger-grid>
                   {person.coursesTaught.map((c: any) => (
                     <a
-                      href={`/courses/${c.slug}`}
+                      href={`/courses/${c.slug}/`}
                       class="card-lift group block border border-t-2 border-border-soft border-t-gold p-4 no-underline"
                     >
                       {c.teachingArea && (
@@ -287,6 +287,6 @@ const schemas = [
     eyebrow={facultyPage?.finalCtaEyebrow ?? 'Learn with us'}
     headline={facultyPage?.finalCtaHeadline ?? 'Take a course with our faculty'}
     subhead={facultyPage?.finalCtaSubhead ?? 'Browse the catalog and find a place to begin.'}
-    cta={{ label: 'Browse courses', linkType: 'external', externalUrl: '/courses' }}
+    cta={{ label: 'Browse courses', linkType: 'external', externalUrl: '/courses/' }}
   />
 </BaseLayout>

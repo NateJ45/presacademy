@@ -54,7 +54,7 @@ const {
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 
 // Per-page OG image: convention is /og/<route-slug>.png generated at build time.
-// `/` → /og/home.png, `/contact` → /og/contact.png, `/portfolio/foo` → /og/portfolio-foo.png.
+// `/` → /og/home.png, `/contact/` → /og/contact.png, `/portfolio/foo` → /og/portfolio-foo.png.
 // Falls back to og-default.png if the slug-specific file isn't there.
 function ogPathForRoute(pathname: string): string {
   const trimmed = pathname.replace(/^\/|\/$/g, '');

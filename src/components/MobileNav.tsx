@@ -67,7 +67,7 @@ interface Props {
 
 // ---- Component --------------------------------------------------------------
 
-const DEFAULT_CTA = { show: true, label: 'Request info', href: '/get-started' };
+const DEFAULT_CTA = { show: true, label: 'Request info', href: '/get-started/' };
 
 export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Props) {
   const [open, setOpen] = useState(false);
