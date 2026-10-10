@@ -347,7 +347,7 @@ function checkEmptySections(units: PageUnit[], config: PageCheckConfig): CheckGr
 // Check 3 - links to addresses no page owns
 // ---------------------------------------------------------------------------
 
-/** Trim a written link down to the path we can compare: `/about?x=1#top` -> `/about/`. */
+/** Trim a written link down to the path we can compare: `/about?x=1#top` -> `/about`. */
 export function normalizePath(href: string): string | null {
   const raw = href.trim();
   // Only same-site paths. Full URLs, mailto:, tel:, and bare anchors are
