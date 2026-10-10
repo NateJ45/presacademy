@@ -30,6 +30,7 @@
 import { createClient, type SanityClient } from '@sanity/client';
 import { createImageUrlBuilder } from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url';
+import { slashInternalLinks } from './href.ts';
 
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID;
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET ?? 'production';
@@ -110,7 +111,7 @@ export async function sanityFetch<T = any>(
     return fallback;
   }
   try {
-    return await fetchWithRetry<T>(query, params);
+    return slashInternalLinks(await fetchWithRetry<T>(query, params));
   } catch (err) {
     // A production build must not quietly ship placeholder content: if Sanity
     // is unreachable or refusing requests (a quota block, an outage), fail the

@@ -203,7 +203,7 @@ one-attribute change is caught with a unified diff.
 
   Never blanket-kill `node.exe`: the editor/agent session is itself node.
 
-- **Static-server trailing slashes.** `http-server` (the e2e server) serves
+- **Static-server trailing slashes.** The site builds with `trailingSlash: 'always'` and every internal link ends in `/` (helper: `src/lib/href.ts`, applied to all Sanity reads in `sanityFetch`), so a no-slash href is a regression: Google reports it as "Page with redirect". `tests/routes.ts` lists slash paths. `http-server` (the e2e server) serves
   `/about` via a redirect to `/about/` — tests follow it and assert the final 200. It has NO clean-URL mapping, so the 404 page is addressed as
   `/404.html` in `tests/routes.ts`. Lighthouse serves `dist/client` itself
   (`staticDistDir`) and addresses files directly, so `lighthouserc.json`

@@ -57,7 +57,7 @@ const emptyCopy =
           {upcoming.map((ev: any) => (
             <li>
               <a
-                href={`/events/${ev.slug?.current ?? ''}`}
+                href={`/events/${ev.slug?.current ?? ''}/`}
                 class="card-lift group block h-full no-underline"
               >
                 <div class="h-0.5 w-full bg-gold transition-colors group-hover:bg-primary" />
@@ -82,7 +82,7 @@ const emptyCopy =
       ) : (
         <p class="mt-l text-foreground/80 italic">
           {emptyCopy}{' '}
-          <a href="/courses" class="text-link underline underline-offset-2">
+          <a href="/courses/" class="text-link underline underline-offset-2">
             course
           </a>
           .

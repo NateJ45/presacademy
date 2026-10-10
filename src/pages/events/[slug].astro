@@ -63,8 +63,8 @@ function whenLabel(ev: any): string {
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Events', url: `${site.url}/events` },
-    { name: event.title ?? (slug as string), url: `${site.url}/events/${slug}` },
+    { name: 'Events', url: `${site.url}/events/` },
+    { name: event.title ?? (slug as string), url: `${site.url}/events/${slug}/` },
   ]),
 ];
 
@@ -109,7 +109,7 @@ const pillPrimary =
     <header class="bg-background">
       <div class="mx-auto max-w-3xl px-m pt-section-lg pb-l">
         <p class="mb-s text-xs tracking-widest text-foreground/80 uppercase">
-          <a href="/events" class="hit-44 relative transition-colors hover:text-primary-dark"
+          <a href="/events/" class="hit-44 relative transition-colors hover:text-primary-dark"
             >Events</a
           >
           {event.category && <span class="mx-xs">·</span>}
@@ -200,6 +200,6 @@ const pillPrimary =
       'Request information or book a free intro. No pressure.'}
     cta={eventsPage?.detailFinalCta?.label
       ? eventsPage.detailFinalCta
-      : { label: 'Get started', linkType: 'external', externalUrl: '/get-started' }}
+      : { label: 'Get started', linkType: 'external', externalUrl: '/get-started/' }}
   />
 </BaseLayout>

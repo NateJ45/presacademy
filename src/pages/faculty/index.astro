@@ -50,7 +50,7 @@ const description =
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Faculty', url: `${site.url}/faculty` },
+    { name: 'Faculty', url: `${site.url}/faculty/` },
   ]),
 ];
 ---
@@ -76,7 +76,7 @@ const schemas = [
       eyebrow: 'Learn from them',
       headline: 'Find a course to take',
       subhead: 'Every course is taught by the people you just met.',
-      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses' },
+      cta: { label: 'Browse courses', linkType: 'external', externalUrl: '/courses/' },
     }}
   >
     <Fragment slot="pinned">

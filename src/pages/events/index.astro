@@ -35,7 +35,7 @@ const description =
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Events', url: `${site.url}/events` },
+    { name: 'Events', url: `${site.url}/events/` },
   ]),
 ];
 ---
@@ -61,7 +61,7 @@ const schemas = [
       eyebrow: 'Want a closer look?',
       headline: 'Book a free intro',
       subhead: 'A short, no-pressure conversation about where you are and what fits.',
-      cta: { label: 'Get started', linkType: 'external', externalUrl: '/get-started' },
+      cta: { label: 'Get started', linkType: 'external', externalUrl: '/get-started/' },
     }}
   />
 </BaseLayout>

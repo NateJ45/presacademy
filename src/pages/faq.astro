@@ -74,7 +74,7 @@ const faqSchema = JSON.stringify({
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'FAQ', url: `${site.url}/faq` },
+    { name: 'FAQ', url: `${site.url}/faq/` },
   ]),
   faqSchema,
 ];
@@ -97,7 +97,7 @@ const schemas = [
       eyebrow: 'Still wondering?',
       headline: 'Ask us anything',
       subhead: 'If your question is not here, send it our way and we will answer plainly.',
-      cta: { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started' },
+      cta: { label: 'Get in touch', linkType: 'external', externalUrl: '/get-started/' },
     }}
   >
     {
