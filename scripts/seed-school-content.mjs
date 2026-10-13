@@ -12,27 +12,24 @@
 // Copy follows docs/brand/voice.md: no em-dashes, warm + plainspoken, no banned
 // vocab. Placeholder only; the client replaces it in Studio later.
 
-import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@sanity/client';
+import { loadEnv } from './lib/loadEnv.mjs';
+import { guardProductionWrite } from './lib/production-guard.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const APPLY = process.argv.includes('--apply');
 
-const env = Object.fromEntries(
-  readFileSync(resolve(root, '.env'), 'utf-8')
-    .split('\n')
-    .filter((l) => l && !l.startsWith('#') && l.includes('='))
-    .map((l) => {
-      const [k, ...v] = l.split('=');
-      return [k.trim(), v.join('=').trim()];
-    }),
-);
+// The root .env under process.env (process.env wins), the shared parser.
+const env = loadEnv(root);
 
 const projectId = env.PUBLIC_SANITY_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET ?? 'production';
+// Production second factor (PORTS.md card 86): --apply on `production` also needs
+// NCS_PRODUCTION_WRITE=yes in the real process environment. Runs before any request.
+guardProductionWrite({ apply: APPLY, dataset });
 const apiVersion = env.PUBLIC_SANITY_API_VERSION ?? '2026-05-01';
 const token = env.SANITY_API_WRITE_TOKEN;
 if (!projectId || !token) {

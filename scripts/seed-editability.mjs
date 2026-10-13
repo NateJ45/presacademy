@@ -27,6 +27,7 @@
 // After running with --apply, run `npm run studio:deploy` and trigger a rebuild.
 
 import { createClient } from '@sanity/client';
+import { guardProductionWrite } from './lib/production-guard.mjs';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,6 +55,9 @@ function parseEnv(p) {
 const env = { ...parseEnv(resolve(root, '.env')), ...process.env };
 const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
+// Production second factor (PORTS.md card 86): --apply on `production` also needs
+// NCS_PRODUCTION_WRITE=yes in the real process environment. Runs before any request.
+guardProductionWrite({ apply: APPLY, dataset });
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;
 if (!projectId || !token) {
   console.error('Missing PUBLIC_SANITY_PROJECT_ID or SANITY_API_WRITE_TOKEN in .env');
@@ -453,11 +457,20 @@ function privacyDoc(email) {
       para(
         'If you subscribe to our newsletter, your email address goes to our email provider so occasional news from the Academy can reach you. It is not shared with anyone else.',
       ),
+      // GA4 is live (PUBLIC_GA_ID, a Cloudflare BUILD variable since 2026-10-04) and
+      // sets _ga cookies, so the old "no tracking pixels" and "Cloudflare Web
+      // Analytics ... without setting cookies" lines would be false. This mirrors the
+      // stored privacyBody and the hasGa branch of LegalBodyBlock.astro, with the
+      // wording Nathan approved. The seed cannot read PUBLIC_GA_ID (it is not in
+      // .env), so it states the live truth; if GA4 is ever turned off, change this
+      // copy, the stored privacyPage and the fallback together (vault gotcha
+      // turning-analytics-on-falsifies-stored-privacy-copy).
       heading("What doesn't happen"),
       bullet('Your information is never sold.'),
-      bullet('There is no ad targeting or tracking pixels on this site.'),
-      bullet(
-        'Traffic is measured with Cloudflare Web Analytics, which counts page visits without setting cookies or identifying individual visitors.',
+      bullet('There is no ad targeting on this site.'),
+      heading('Cookies and how visits are measured'),
+      para(
+        'We use Google Analytics to understand which pages are visited. It sets cookies and collects usage information such as pages viewed, device type and approximate location. It does not tell us who you are.',
       ),
       heading('Unsubscribing from the newsletter'),
       para(
