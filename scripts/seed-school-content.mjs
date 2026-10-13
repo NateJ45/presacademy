@@ -654,7 +654,6 @@ const form = {
   submitLabel: 'Send',
   successMessage: 'Thank you. We will be in touch within a few days.',
   consentNote: 'We will only use your details to answer your inquiry.',
-  provider: { service: 'web3forms', notifyEmail: 'info@presbyterianacademy.org' },
 };
 
 // ---- Page singletons ------------------------------------------------------

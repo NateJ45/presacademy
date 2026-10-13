@@ -248,7 +248,7 @@ const CHECKS: Check[] = [
         // platform type out without another edit here.
         //
         // There is no inbox/submission/trash type to exclude in this repo:
-        // forms post to Web3Forms (see schemaTypes/form.ts), and Delete is a
+        // forms post to /api/contact/ and land in D1, not Sanity (card 45), and Delete is a
         // soft-delete flag on real content (schemaTypes/archived.ts), not a
         // separate document. `sectionPreset` and `redirect` are written
         // PUBLISHED by their actions, so they never reach this list either.

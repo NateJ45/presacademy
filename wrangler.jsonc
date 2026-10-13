@@ -8,6 +8,42 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   // Cloudflare Worker name. Must match the Worker created in the Cloudflare dashboard.
   "name": "presacademy",
+
+  // ---- The forms' own endpoint (src/pages/api/contact.ts, starter card 45) ----
+  // Every Sanity-built form posts to /api/contact/, which STORES the submission
+  // in D1 first and emails the Academy second, so a failed send never loses an
+  // enquiry. Wired 2026-10-13, replacing Web3Forms + hCaptcha.
+  //
+  // presbyterianacademy.org had no mail provider at all, so this site uses
+  // Email ROUTING on the root domain (MX at Cloudflare) rather than Email
+  // Sending: the notification goes to a VERIFIED destination address, which is
+  // free on any plan. The address is the CONTACT_TO secret and is deliberately
+  // not written anywhere in this repo. CONTACT_FROM (an address on this domain)
+  // and TURNSTILE_SECRET are secrets too: `npx wrangler secret put <NAME>`.
+  //
+  // The database was created and migrated remotely on 2026-10-13. To recreate:
+  //   npx wrangler d1 create presacademy-contact
+  //   npx wrangler d1 migrations apply presacademy-contact --remote
+  // migrations/ is generated: `npm run contact:migration` rewrites it from
+  // SUBMISSIONS_DDL in src/lib/contact-submission.ts.
+  //
+  // LOCAL D1 STATE IS KEYED PER CONFIG PATH. `wrangler dev` runs against the
+  // generated dist/server/wrangler.json, so apply the migration the same way:
+  //   npx wrangler d1 migrations apply presacademy-contact --local -c dist/server/wrangler.json
+  // A migration applied with this root config lands in a different local
+  // database and the endpoint answers "no such table".
+  //
+  // Reading submissions: OPERATIONS.md, "Form submissions".
+  "d1_databases": [
+    {
+      "binding": "CONTACT_DB",
+      "database_name": "presacademy-contact",
+      "database_id": "5b332eae-956e-490c-b1b8-3160a9147e20",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "send_email": [{ "name": "EMAIL" }],
+
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     // @astrojs/cloudflare v14 splits the build into dist/client (static assets)

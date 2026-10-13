@@ -430,7 +430,7 @@ export const sectionForm = defineType({
     // All OPTIONAL, all defaulting to exactly what this block rendered before
     // they existed, so every page already using it is untouched (proven by a
     // 13-page parity run in the same commit). The form renderer itself, and its
-    // hCaptcha wiring, are not forked: both variants render the same FormBlock.
+    // Turnstile wiring, are not forked: both variants render the same FormBlock.
     defineField({
       name: 'variant',
       title: 'Section style',

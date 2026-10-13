@@ -83,28 +83,27 @@ A `-docs` file relies on the referenced assets still existing in the dataset, wh
 
 Hourly, confirms the live site's key pages return 200; a failed run notifies you through GitHub. **To activate:** set the repo variable `SITE_URL` to the live origin (e.g. `https://www.presbyterianacademy.org`). GitHub's scheduler is best-effort, so for real monitoring also point a dedicated service (UptimeRobot's free tier) at the homepage.
 
-## Form spam protection — hCaptcha (via Web3Forms)
+## Form spam protection: Cloudflare Turnstile (since 2026-10-13)
 
-`FormRenderer.tsx` renders an hCaptcha widget and requires + sends its token on the Web3Forms submit path. Web3Forms gates Cloudflare Turnstile behind a paid plan but verifies **hCaptcha for free** via its shared sitekey, so that is what we use. The widget defaults to Web3Forms' shared hCaptcha sitekey (`50b2fe65-b00b-4b9e-ad62-3ba471098be2`): zero-config, because Web3Forms verifies the token with its own secret server-side, so there is no hCaptcha account to create and no secret for us to store. Mailto / Formspree fallbacks skip the widget (only the Web3Forms path is gated).
+The forms post to the site's own `/api/contact/` endpoint (starter card 45; `OPERATIONS.md`, "Form submissions"), which runs three checks, all server-side: a hidden honeypot field, a "faster than a person could type" timing check, and **Cloudflare Turnstile**. `FormRenderer.tsx` renders the Turnstile widget (explicit render, re-rendered on a light/dark toggle, `compact` below 300px wide so a 320px phone never scrolls sideways) and sends its token; the Worker verifies it against the `TURNSTILE_SECRET` secret. If the secret is unset the Worker skips the check, and if Turnstile's own API is down it lets the message through (the honeypot and timing check still apply), so an outage never eats a real enquiry.
 
-**To activate:**
+This replaced hCaptcha-via-Web3Forms. Web3Forms gated Turnstile behind a paid plan, which is why hCaptcha was used before; owning the endpoint removes that constraint, and Turnstile's managed mode rarely asks a visitor to do anything.
 
-1. In the Web3Forms dashboard (app.web3forms.com), open the form for your access key and switch its spam protection to **hCaptcha**. This is the step that makes Web3Forms actually enforce the token. Without it the puzzle renders client-side, but a submission posted directly with a missing or bad token is still accepted.
-2. Nothing else is required: no env var, no Cloudflare build var, no secret. (To use your own hCaptcha account instead of the shared key, set `PUBLIC_HCAPTCHA_SITEKEY=<your sitekey>` in `.env` + the Cloudflare build env, and paste your hCaptcha **secret** into the Web3Forms dashboard.)
-3. Also worth doing once: a manual end-to-end submission test after launch (a synthetic test would send real submissions, so keep it manual or route it to a test inbox).
-
-Note: hCaptcha's image puzzles are more intrusive than Turnstile's checkbox; we accept that as the cost of free server-side verification. The old `PUBLIC_TURNSTILE_SITEKEY` / `CLOUDFLARE_TURNSTILE_SECRET_KEY` vars are no longer read by anything and can be deleted from `.env` and the Cloudflare build env.
+- Widget: "PresAcad Contact Form" in the Cloudflare dashboard (Turnstile), managed mode, domain `presbyterianacademy.org`. Its sitekey is public and is the default in `FormRenderer.tsx`; `PUBLIC_TURNSTILE_SITEKEY` overrides it at build time.
+- **Check the Cloudflare build variables for a stale `PUBLIC_TURNSTILE_SITEKEY`.** An older Turnstile setup in this repo used the same variable name before hCaptcha, and this page used to say "can be deleted" rather than "was deleted". A leftover value would override the new widget's key and the live widget would fail. Remove it, or set it to the new key.
+- After launch, test with one labelled live submission and read the row back (`notified = 1`), never with a synthetic job that sends real mail.
 
 ## Secrets & variables summary
 
-| Name                      | Kind                                      | Used by       | Needed for                                                                                  |
-| ------------------------- | ----------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
-| `SANITY_AUTH_TOKEN`       | secret                                    | sanity-backup | nightly dataset backups (read token)                                                        |
-| `BACKUP_PASSPHRASE`       | secret                                    | sanity-backup | encrypts the backup artifact (public repo — required, keep an off-GitHub copy)              |
-| `SITE_URL`                | variable                                  | uptime        | hourly uptime check                                                                         |
-| `PUBLIC_HCAPTCHA_SITEKEY` | build env (`.env` + Cloudflare), OPTIONAL | the forms     | only if bringing your own hCaptcha account; otherwise defaults to Web3Forms' shared sitekey |
+| Name                                             | Kind                                      | Used by         | Needed for                                                                     |
+| ------------------------------------------------ | ----------------------------------------- | --------------- | ------------------------------------------------------------------------------ |
+| `SANITY_AUTH_TOKEN`                              | secret                                    | sanity-backup   | nightly dataset backups (read token)                                           |
+| `BACKUP_PASSPHRASE`                              | secret                                    | sanity-backup   | encrypts the backup artifact (public repo — required, keep an off-GitHub copy) |
+| `SITE_URL`                                       | variable                                  | uptime          | hourly uptime check                                                            |
+| `PUBLIC_TURNSTILE_SITEKEY`                       | build env (`.env` + Cloudflare), OPTIONAL | the forms       | overrides the live Turnstile sitekey baked into `FormRenderer.tsx`             |
+| `TURNSTILE_SECRET`, `CONTACT_TO`, `CONTACT_FROM` | Worker secrets (`wrangler secret put`)    | `/api/contact/` | Turnstile verification and the notification email                              |
 
-Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. The optional `PUBLIC_HCAPTCHA_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare). The default hCaptcha protection needs no var at all.
+Repo secrets/variables live under GitHub repo Settings -> Secrets and variables -> Actions. The optional `PUBLIC_TURNSTILE_SITEKEY` is a build-time env, not a GitHub secret: set it where the site is built (locally and in Cloudflare). The form's Worker secrets live on the `presacademy` Worker, not in GitHub.
 
 ## Not done on purpose (revisit with scale)
 
