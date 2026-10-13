@@ -399,7 +399,7 @@ Every page-document form in Studio shows a help banner at the top with a deep li
 ## Backups & restore
 
 `.github/workflows/sanity-backup.yml` exports the production dataset nightly and
-keeps each export as a workflow artifact. Restore:
+keeps each export as a 14-day workflow artifact (full with assets on Mondays and manual runs, documents only on other nights; the Monday full file is also copied to R2 weekly). See `docs/agent/ci-cd-and-ops.md` for the kinds and the restore runbook. Restore:
 
 ```sh
 npx sanity dataset import <artifact>.tar.gz production --replace

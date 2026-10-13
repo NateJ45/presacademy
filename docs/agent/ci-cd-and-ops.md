@@ -49,7 +49,7 @@ The `staging` branch and `deploy-staging.yml` were removed on 2026-10-03; `main`
 
 ## Sanity backups (`.github/workflows/sanity-backup.yml`)
 
-Nightly (07:00 UTC) `sanity dataset export` of `production` (documents + assets), encrypted with `openssl`, uploaded as a GitHub artifact kept 90 days. This is the safety net for a bad mutation or an accidental "Remove field" in Studio, neither of which is undoable otherwise.
+Nightly (07:00 UTC) `sanity dataset export` of `production`, encrypted with `openssl`, uploaded as a GitHub artifact kept 14 days (day-level recovery; it was 90 until 2026-10-13, when the account-wide artifact storage quota filled). Two kinds: the Monday scheduled run and every manual run export documents + assets (`...-full.tar.gz.enc`); the other six nights export documents only (`...-docs.tar.gz.enc`, `--raw`: asset documents and references kept, files not downloaded), which is much smaller. Only the Monday full file is copied to R2 (when `BACKUP_R2_BUCKET` is set, newest 12 kept), and it covers anything older than 14 days. This is the safety net for a bad mutation or an accidental "Remove field" in Studio, neither of which is undoable otherwise.
 
 **The encryption is load-bearing.** This repo is PUBLIC, so any logged-in GitHub user can download workflow artifacts. The dataset can hold directory and family content that must never be public, so the workflow encrypts the tarball before upload and the gate refuses to export at all when `BACKUP_PASSPHRASE` is missing — skipping a backup is recoverable, publishing the dataset is not.
 
@@ -57,27 +57,27 @@ Nightly (07:00 UTC) `sanity dataset export` of `production` (documents + assets)
 
 ### Restore runbook
 
-1. Download the `sanity-backup` artifact from the relevant Actions run and unzip it to get `sanity-backup-YYYY-MM-DD.tar.gz.enc`.
+1. Download the `sanity-backup` artifact from the relevant Actions run and unzip it to get `sanity-backup-YYYY-MM-DD-full.tar.gz.enc` (or `-docs`; see the note after step 5).
 2. **Decrypt** with the stored passphrase:
    ```bash
    BACKUP_PASSPHRASE=*** openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
-     -in sanity-backup-YYYY-MM-DD.tar.gz.enc -out sanity-backup-YYYY-MM-DD.tar.gz \
+     -in sanity-backup-YYYY-MM-DD-full.tar.gz.enc -out sanity-backup-YYYY-MM-DD-full.tar.gz \
      -pass env:BACKUP_PASSPHRASE
    ```
 3. **Verify before overwriting.** Import into a throwaway dataset first:
    ```bash
    cd studio
    SANITY_AUTH_TOKEN=*** npx sanity dataset create restore-check
-   SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD.tar.gz restore-check
+   SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD-full.tar.gz restore-check
    ```
    Open the Studio against `restore-check` and confirm the content looks right.
 4. **Restore to production** once verified (this overwrites, so be deliberate):
    ```bash
-   SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD.tar.gz production --replace
+   SANITY_AUTH_TOKEN=*** npx sanity dataset import ../sanity-backup-YYYY-MM-DD-full.tar.gz production --replace
    ```
 5. Trigger a production rebuild (push to `main` or `/rebuild`) so the live site picks up the restored content.
 
-For off-site or longer-than-90-day retention, push the tarball to R2/S3 in the workflow instead of (or in addition to) the artifact upload.
+A `-docs` file relies on the referenced assets still existing in the dataset, which they do: Sanity assets survive document edits and "Remove field", and only an explicit asset delete removes one. Restore a `-docs` file into the same project and dataset only (the importer refuses asset documents that point at another dataset), so the throwaway-dataset check in step 3 needs a `-full` file. For a full restore use the latest Monday `-full` artifact, or the weekly R2 copy for anything older than 14 days (see the off-site step in the workflow).
 
 ## Uptime check (`.github/workflows/uptime.yml`)
 
