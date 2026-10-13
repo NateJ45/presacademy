@@ -420,6 +420,8 @@ test('backgroundApplies: the Rule & Ledger opt-out is per instance', () => {
   // renders a fixed band and must offer no swatches (an editor's first live
   // test hit exactly this). Standard mode keeps the control.
   assert.equal(backgroundApplies('sectionPricingTiers', { surface: 'ledger' }), false);
+  // The Term Issue rates box (2026-10-13) paints its own surface too.
+  assert.equal(backgroundApplies('sectionPricingTiers', { surface: 'rates' }), false);
   assert.equal(backgroundApplies('sectionPricingTiers', { surface: 'standard' }), true);
   assert.equal(backgroundApplies('sectionPricingTiers', {}), true);
   assert.equal(backgroundApplies('sectionCardGrid', { surface: 'ledger' }), true);

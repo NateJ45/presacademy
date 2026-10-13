@@ -66,10 +66,12 @@ const showLink = Boolean(block?.linkLabel && block?.linkHref);
               {block.eyebrow}
             </p>
           )}
-          <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
+          {/* The issue's light display heading (Term Issue PR 2), matching the
+                other home departments: contents, the courses, letters, rates. */}
+          <h2 id={headingId} class="issue-h2 mt-2 text-foreground">
             {block?.heading}
           </h2>
-          {intro && <p class="mt-3 max-w-[56ch] text-foreground/75">{intro}</p>}
+          {intro && <p class="mt-3 max-w-[56ch] text-foreground/80">{intro}</p>}
         </div>
         {showLink && (
           <a

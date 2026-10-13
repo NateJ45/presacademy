@@ -50,6 +50,9 @@ import CourseRailBlock from '@/components/blocks/CourseRailBlock.astro';
 import TickerBlock from '@/components/blocks/TickerBlock.astro';
 import FacultyRailBlock from '@/components/blocks/FacultyRailBlock.astro';
 import TestimonialRailBlock from '@/components/blocks/TestimonialRailBlock.astro';
+// The Term Issue home (2026-10-13, PR 2). Fixed surfaces, outside the shell.
+import TermContentsBlock from '@/components/blocks/TermContentsBlock.astro';
+import CourseFinderBlock from '@/components/blocks/CourseFinderBlock.astro';
 
 interface Props {
   sections?: any[] | null;
@@ -124,6 +127,8 @@ const MAP: Record<string, any> = {
   sectionTicker: TickerBlock,
   sectionFacultyRail: FacultyRailBlock,
   sectionTestimonialRail: TestimonialRailBlock,
+  sectionTermContents: TermContentsBlock,
+  sectionCourseFinder: CourseFinderBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.
@@ -162,7 +167,8 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
   // A shell-aware block can opt OUT of the shell per instance by choosing a
   // fixed Rule & Ledger surface (2026-08-26: sectionPricingTiers is the first,
   // for the Pricing page). It then paints its own <section>, exactly like the
-  // ported types below. Absent the field, nothing changes.
+  // ported types below. Absent the field, nothing changes. The Term Issue
+  // rates box (surface "rates", 2026-10-13) opts out the same way.
   const dt = DEFAULT_TONE[block._type] ?? 'default';
   // Preview-only empty-state coaching (2026-08-28). A section that holds none
   // of its own content renders as a dashed "here is what goes here" note
@@ -173,7 +179,7 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
   const coach = editDoc ? sectionCoach(block) : null;
   const rendered = coach ? (
     <SectionCoach name={coach.name} hint={coach.hint} />
-  ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
+  ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' && block.surface !== 'rates' ? (
     <SectionShell background={block.background} defaultTone={dt}>
       <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
     </SectionShell>

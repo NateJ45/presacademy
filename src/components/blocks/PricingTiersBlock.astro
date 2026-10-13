@@ -19,18 +19,55 @@
 //           names. Rendered OUTSIDE SectionShell (decision D1), which is why
 //           Sections.astro checks this field before it wraps the block.
 //
+//   rates   the Term Issue home's rates box (2026-10-13, PR 2): its own
+//           page-surface <section>, outside SectionShell like `ledger`. The
+//           tiers become dot-leader rows in a ruled box with a scholarship
+//           row and a large italic closing line; beside the box sit the
+//           free-visit coupon and the "Bring your session" group note. All
+//           of that copy is block fields with the defaults below, except the
+//           group rate, which renders nothing until an editor sets it.
+//
 // Why the Pricing page could not simply reuse the shell surface: SectionShell
 // emits `relative isolate ... py-section-lg` and the Pricing band is
 // `bg-background` with `pb-section-md` and no top padding. Close is not parity.
 import PricingTierCards from '@/components/PricingTierCards.astro';
 import { getPricingTiers } from '@/lib/queries';
 
-const { block } = Astro.props as { block: any };
-const tiers = await getPricingTiers().catch(() => []);
+const { block, fetcher } = Astro.props as { block: any; fetcher?: any };
+const tiers = (await getPricingTiers(fetcher).catch(() => [])) ?? [];
 const ctaLabel = block?.ctaLabel || 'Express interest';
 const ctaUrl = block?.ctaUrl || '/get-started/';
 
 const ledger = block?.surface === 'ledger';
+const rates = block?.surface === 'rates';
+
+// The rates box copy, each with its built-in default (Term Issue PR 2).
+const r = {
+  heading: block?.heading || 'Rates',
+  headingId: 'rates',
+  note: block?.ratesNote || 'Pay as you go',
+  scholarshipLabel: block?.scholarshipLabel || 'Scholarships',
+  scholarshipValue: block?.scholarshipValue || 'need-based, every term',
+  closing:
+    block?.ratesClosing || 'No one is turned away for cost. Ask in two lines on the interest form.',
+  couponKicker: block?.couponKicker || 'Free trial, one evening',
+  couponHeading: block?.couponHeading || 'Sit in on any class this term, free.',
+  couponBody:
+    block?.couponBody || "Pick a night, take the week's reading home, and decide afterward.",
+  couponCtaLabel: block?.couponCtaLabel || 'Claim your evening',
+  couponCtaHref: block?.couponCtaHref || '/get-started/',
+  groupKicker: block?.groupKicker || 'Group enrollment',
+  groupHeading: block?.groupHeading || 'Bring your session.',
+  groupBody:
+    block?.groupBody ||
+    'Elders, teaching teams and small groups can enroll together. One conversation, one long table.',
+  // No default on purpose: an empty rate hides its row (no invented number).
+  groupRate: (block?.groupRate ?? '').trim(),
+  groupLinkLabel: block?.groupLinkLabel || 'Plan a group',
+  groupLinkHref: block?.groupLinkHref || '/get-started/',
+};
+const money = (t: any): string =>
+  t?.amount != null ? `$${Number(t.amount).toLocaleString('en-US')}` : 'Free';
 // h3 unless the editor says this section IS the page body. Anything other than
 // the two known values falls back to the original behavior.
 const headingTag = block?.headingLevel === 'h2' ? 'h2' : 'h3';
@@ -42,7 +79,77 @@ const hasHeader = Boolean(block?.eyebrow || block?.heading || block?.intro);
 
 {block &&
   tiers.length > 0 &&
-  (ledger ? (
+  (rates ? (
+    <section class="bg-background" aria-labelledby={r.headingId}>
+      <div class="mx-auto grid max-w-content items-start gap-x-[clamp(2rem,5vw,4rem)] gap-y-10 px-m py-section-lg lg:grid-cols-[1.4fr_1fr]">
+        <div class="rates-box min-w-0">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id={r.headingId} class="issue-h2 text-foreground">
+              {r.heading}
+            </h2>
+            <p class="mono-detail text-foreground/80">{r.note}</p>
+          </div>
+          <ul class="mt-6">
+            {tiers.map((t: any) => (
+              <li class="leader-row">
+                <span class="leader-row__name">{t.name}</span>
+                {t.featured ? (
+                  <span class="text-sm font-semibold text-link">most chosen</span>
+                ) : (
+                  t.summary && <span class="text-sm text-foreground/80">{t.summary}</span>
+                )}
+                <span class="dot-leader" aria-hidden="true" />
+                <span class="leader-row__price">
+                  {money(t)}
+                  {t.unit && <span class="sr-only"> {t.unit}</span>}
+                </span>
+              </li>
+            ))}
+            <li class="leader-row leader-row--last">
+              <span class="leader-row__name">{r.scholarshipLabel}</span>
+              <span class="dot-leader" aria-hidden="true" />
+              <span class="font-semibold text-foreground">{r.scholarshipValue}</span>
+            </li>
+          </ul>
+          <p class="mt-6 font-display text-2xl leading-snug text-foreground italic">{r.closing}</p>
+        </div>
+        <div class="flex min-w-0 flex-col gap-6">
+          <div class="coupon">
+            <p class="mono-detail coupon__kicker">{r.couponKicker}</p>
+            <h3 class="font-display text-3xl leading-tight text-foreground">{r.couponHeading}</h3>
+            <p class="text-[0.9375rem] text-foreground/80">{r.couponBody}</p>
+            <a
+              href={r.couponCtaHref}
+              class="press-tactile mt-1 inline-flex min-h-[44px] items-center justify-center self-start rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-primary-dark"
+            >
+              {r.couponCtaLabel}
+            </a>
+          </div>
+          <div class="flex flex-col gap-2 border-t border-foreground pt-5">
+            <p class="mono-detail text-foreground/80">{r.groupKicker}</p>
+            <h3 class="font-display text-2xl leading-tight text-foreground">{r.groupHeading}</h3>
+            <p class="text-[0.9375rem] text-foreground/80">{r.groupBody}</p>
+            {r.groupRate && (
+              <p class="leader-row leader-row--plain">
+                <span class="text-sm text-foreground/80">Group rate</span>
+                <span class="dot-leader" aria-hidden="true" />
+                <span class="font-semibold text-foreground">{r.groupRate}</span>
+              </p>
+            )}
+            <a
+              href={r.groupLinkHref}
+              class="link-arrow hit-44 relative inline-flex items-center gap-1.5 self-start font-semibold text-link underline underline-offset-4 hover:text-primary-dark"
+            >
+              {r.groupLinkLabel}
+              <span class="link-arrow__icon" aria-hidden="true">
+                &rarr;
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  ) : ledger ? (
     <section class="bg-background">
       <div class="mx-auto max-w-content px-m pb-section-md">
         {hasHeader && (

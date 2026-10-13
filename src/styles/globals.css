@@ -714,6 +714,465 @@
   }
 }
 
+/* ---------- The Term Issue home (2026-10-13, PR 2) --------------------- */
+/* The home page as an issue from a small press: the cover hero, the contents
+   page, the cover grid, the reply-card finder, letters and the rates box.
+   Components: HomeHero.astro, TermContentsBlock.astro, CourseRailBlock
+   (covers), CourseFinder.tsx, TestimonialRailBlock (letters) and
+   PricingTiersBlock (rates). No new animations: the only motion is a hover
+   transition on the hero's lead cover, inside (hover: hover) and
+   no-preference, and the global `transition: none` in tests settle() covers
+   it. */
+
+/* The issue's display type: light Fraunces, tight, set large. */
+.issue-title {
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 15vw, 13rem);
+  font-weight: 300;
+  line-height: 0.82;
+  letter-spacing: -0.035em;
+}
+.issue-title__year {
+  font-weight: 400;
+  color: var(--chapel-ink);
+}
+.issue-deck {
+  font-family: var(--font-display);
+  font-size: clamp(1.3125rem, 2.2vw, 1.6875rem);
+  font-style: italic;
+  line-height: 1.3;
+}
+.issue-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.625rem, 5vw, 4.25rem);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+.issue-h2--xl {
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 0.95;
+}
+/* The catalog voice for small details: Plex Mono, uppercase, open tracking.
+   These issue classes set no margin on purpose: they sit unlayered, so a
+   margin here would beat the Tailwind mt-* utilities placed beside them
+   (preflight already zeroes heading and paragraph margins). */
+.mono-detail {
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* Shown only where covers turn over (the cover grid's note). */
+.only-hover {
+  display: none;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) and (min-width: 40rem) {
+  .only-hover {
+    display: block;
+  }
+}
+
+/* Dot leaders: a dotted rule that fills the gap between a name and a value. */
+.dot-leader {
+  flex: 1 1 2.5rem;
+  min-width: 1.5rem;
+  border-bottom: 1px dotted color-mix(in srgb, var(--foreground) 45%, transparent);
+  transform: translateY(-0.3em);
+}
+
+/* The hero's fanned stack of covers. */
+.hero-fan {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  margin-inline: auto;
+  aspect-ratio: 6 / 5;
+}
+@media (min-width: 40rem) {
+  .hero-fan {
+    max-width: 35rem;
+  }
+}
+.hero-fan[data-count='1'] {
+  aspect-ratio: 4 / 5;
+}
+.hero-fan__item {
+  position: absolute;
+}
+.hero-fan__item .cover__front {
+  box-shadow:
+    inset 0 0 0 1px var(--cover-hairline),
+    0 20px 34px -22px rgb(0 0 0 / 0.6);
+}
+.hero-fan__item--left {
+  left: 4%;
+  top: 10%;
+  width: 44%;
+  transform: rotate(-9deg);
+}
+.hero-fan__item--right {
+  right: 4%;
+  top: 4%;
+  width: 44%;
+  transform: rotate(8deg);
+}
+.hero-fan__item--front {
+  left: 26%;
+  top: 0;
+  width: 48%;
+  transform: rotate(-1.5deg);
+}
+.hero-fan__item--front .cover__front {
+  box-shadow:
+    inset 0 0 0 1px var(--cover-hairline),
+    0 30px 44px -24px rgb(0 0 0 / 0.7);
+}
+.hero-fan__item--pair-back {
+  left: 4%;
+  top: 8%;
+  width: 46%;
+  transform: rotate(-7deg);
+}
+.hero-fan__item--pair-front {
+  right: 4%;
+  top: 0;
+  width: 50%;
+  transform: rotate(3deg);
+}
+.hero-fan__item--solo {
+  left: 20%;
+  top: 2%;
+  width: 60%;
+  transform: rotate(-1.5deg);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero-fan__item--front {
+    transition: transform 0.35s ease;
+  }
+  .hero-fan__item--front:hover {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+/* The contents page. */
+.contents-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--foreground);
+}
+.contents-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.875rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.contents-list__code {
+  flex: none;
+  width: 4.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  letter-spacing: 0.04em;
+  color: var(--chapel-ink);
+}
+.contents-list__title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 1.3125rem;
+  line-height: 1.25;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.contents-list__title:hover {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.contents-list__meta {
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+}
+/* Phones: code, then title, each on its own line, then the leader and meta,
+   so every row breaks the same way whatever the title length. */
+@media (max-width: 39.99rem) {
+  .contents-list__code {
+    width: 100%;
+  }
+  .contents-list__title {
+    flex: 1 1 100%;
+  }
+}
+.contents-list__meta--open {
+  color: var(--chapel-ink);
+}
+.contents-list__meta--waitlist {
+  color: var(--issue-accent);
+}
+
+/* The reply card: static paper on the static green band, in both themes. */
+.reply-card {
+  display: grid;
+  gap: 2.25rem clamp(2rem, 5vw, 4rem);
+  border-radius: 4px;
+  padding: clamp(1.375rem, 4vw, 3rem);
+  background: var(--color-cover-paper);
+  color: var(--color-cover-paper-ink);
+  box-shadow: 0 30px 50px -30px rgb(0 0 0 / 0.6);
+}
+@media (min-width: 64rem) {
+  .reply-card {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+.reply-card :focus-visible {
+  outline: 2px solid var(--color-oxblood);
+  outline-offset: 3px;
+}
+.reply-card__kicker,
+.reply-q__num {
+  color: var(--color-oxblood);
+}
+.reply-card__heading {
+  margin: 0.625rem 0 0.375rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.125rem, 4vw, 3.375rem);
+  font-weight: 300;
+  line-height: 1;
+  color: inherit;
+}
+.reply-card__intro,
+.reply-card__muted {
+  margin: 0;
+  color: var(--color-cover-paper-muted);
+}
+.reply-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.375rem;
+  margin-top: 1.625rem;
+}
+.reply-q {
+  border-top: 1px dashed var(--color-cover-paper-muted);
+  padding-top: 0.875rem;
+}
+.reply-q__label {
+  margin: 0 0 0.625rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+.reply-q__num {
+  margin-right: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.reply-q__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.reply-opt {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-cover-paper-muted);
+  background: transparent;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  color: var(--color-cover-paper-ink);
+  cursor: pointer;
+  text-align: left;
+}
+.reply-opt:hover {
+  border-color: var(--color-cover-paper-ink);
+}
+.reply-opt[aria-pressed='true'] {
+  border-color: var(--color-cover-paper-ink);
+  background: var(--color-cover-paper-ink);
+  color: var(--color-cover-paper);
+  font-weight: 600;
+}
+.reply-opt__box {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.reply-card__result {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.875rem;
+  border-top: 1px dashed var(--color-cover-paper-muted);
+  padding-top: 1.5rem;
+}
+@media (min-width: 64rem) {
+  .reply-card__result {
+    border-top: 0;
+    border-left: 1px dashed var(--color-cover-paper-muted);
+    padding-top: 0;
+    padding-left: clamp(1.5rem, 3vw, 2.5rem);
+  }
+}
+.reply-card__cover {
+  /* Small on phones, where the suggestion sits under the questions and a
+     full-size cover would push the course name out of view. */
+  width: 8.5rem;
+}
+@media (min-width: 64rem) {
+  .reply-card__cover {
+    width: min(100%, 13.75rem);
+  }
+}
+.reply-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+.reply-card__title a {
+  position: relative; /* for .hit-44's 44px tap area */
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.reply-card__plan {
+  margin: 0;
+  font-size: 0.96875rem;
+}
+.reply-card__plan b {
+  font-weight: 600;
+}
+.reply-card__cta {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  border-radius: 999px;
+  background: var(--color-primary);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.reply-card__cta:hover {
+  background: var(--color-chapel-deep);
+}
+
+/* Letters: ruled columns, a salutation, a drop initial on the first. */
+.letters {
+  display: grid;
+  gap: 2rem 0;
+}
+@media (min-width: 48rem) {
+  .letters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .letters__item {
+    padding: 0 clamp(1rem, 2.5vw, 2rem);
+    border-left: 1px solid var(--border);
+  }
+  .letters__item:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .letters__item:last-child {
+    padding-right: 0;
+  }
+}
+.letters__item {
+  min-width: 0;
+  margin: 0;
+}
+.letters__salutation {
+  margin: 0 0 0.625rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+}
+.letters__body {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.3125rem;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+.letters__body p {
+  margin: 0;
+}
+.letters__body--initial p::first-letter {
+  float: left;
+  margin: 0.2em 0.35rem 0 0;
+  font-size: 3.2em;
+  font-weight: 300;
+  line-height: 0.8;
+  color: var(--issue-accent);
+}
+
+/* The rates box, its dot-leader rows and the free-visit coupon. */
+.rates-box {
+  border: 2px solid var(--foreground);
+  padding: clamp(1.375rem, 3.5vw, 2.5rem);
+}
+.leader-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0.875rem 0;
+  border-top: 1px solid var(--border);
+}
+/* The value keeps to the right edge even when a narrow row wraps it. */
+.leader-row > :last-child {
+  margin-left: auto;
+}
+.leader-row--last {
+  border-bottom: 1px solid var(--border);
+}
+.leader-row--plain {
+  border-top: 0;
+  padding: 0.25rem 0;
+}
+.leader-row__name {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+.leader-row__price {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--foreground);
+}
+.coupon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  border: 2px dashed var(--issue-accent);
+  background: var(--card);
+  padding: 1.625rem;
+}
+.coupon__kicker {
+  letter-spacing: 0.12em;
+  color: var(--issue-accent);
+}
+
 /* ---------- Light mode (overrides shadcn defaults) -------------------- */
 
 :root {
@@ -750,6 +1209,7 @@
   --gold-ink: #6e5128; /* deepened brass as TEXT on near-white (~4.8:1, AA) */
   --border-soft: #eae7df; /* faint warm divider */
   --cover-hairline: rgba(31, 27, 24, 0.16); /* edge so pale covers read on the pale page */
+  --issue-accent: #7a2a2c; /* Term Issue: oxblood drop initial, waitlist, coupon (~11:1 on white) */
 
   /* Charts (kept neutral, not used at launch) */
   --chart-1: oklch(0.87 0 0);
@@ -813,6 +1273,7 @@
   --gold-ink: #c9a06a; /* lifted brass as TEXT on dark surfaces (AA) */
   --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
   --cover-hairline: rgba(241, 234, 217, 0.2); /* edge so dark covers read on the dark page */
+  --issue-accent: #e0a49b; /* Term Issue: lifted oxblood on the dark page (~7:1 on the dark card) */
 
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
@@ -1673,50 +2134,10 @@ body::before {
    carry the modern, younger-feeling polish.
    ============================================================ */
 
-/* ---- Academic graph-paper + dot textures -------------------- */
-/* Faint notebook grid for hero / band backgrounds, painted on the
-   element background so it always sits behind content (no extra DOM,
-   no stacking surprises). Theme-aware: ink lines on near-white, soft
-   cream on the dark page. Very low alpha — atmosphere, not pattern. */
-:root {
-  --grid-rgb: 31, 27, 24;
-} /* soft near-black */
-.dark {
-  --grid-rgb: 241, 234, 217;
-} /* warm cream */
-
-.surface-grid {
-  background-image:
-    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-.surface-dots {
-  background-image: radial-gradient(rgba(var(--grid-rgb), 0.1) 1px, transparent 1.5px);
-  background-size: 22px 22px;
-}
-/* Hero atmosphere: a soft brand-green glow up top + the notebook grid
-   beneath, as one background stack so it stays behind content. */
-.hero-atmos {
-  background-image:
-    radial-gradient(58% 55% at 50% -8%, rgba(51, 80, 63, 0.1), transparent 72%),
-    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
-  background-size:
-    100% 100%,
-    32px 32px,
-    32px 32px;
-}
-.dark .hero-atmos {
-  background-image:
-    radial-gradient(58% 55% at 50% -8%, rgba(116, 169, 138, 0.12), transparent 72%),
-    linear-gradient(to right, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(var(--grid-rgb), 0.05) 1px, transparent 1px);
-  background-size:
-    100% 100%,
-    32px 32px,
-    32px 32px;
-}
+/* ---- Academic graph-paper textures: RETIRED 2026-10-13 (Term Issue PR 2).
+   .hero-atmos / .surface-grid / .surface-dots and the --grid-rgb token were
+   used only by the old home hero, which the issue cover replaced. Removed
+   after a grep found no other user; git history has them. ---- */
 
 /* ---- Choreographed reveals (extend [data-reveal]) ----------- */
 /* Directional variants: pair a class with data-reveal on any element. */

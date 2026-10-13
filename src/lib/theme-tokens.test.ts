@@ -138,6 +138,16 @@ describe('brand text colours', () => {
       assert.ok(ratio >= AA_BODY_TEXT, `--gold-ink on --card is ${ratio}:1`);
     });
 
+    // issue-accent (Term Issue PR 2): the oxblood of the waitlist status, the
+    // coupon label and the letters' drop initial. Small mono text, so 4.5:1
+    // on the page and on the card in both themes.
+    for (const surface of ['--background', '--card']) {
+      it(`issue-accent text clears AA on the ${theme} ${surface}`, () => {
+        const ratio = contrastRatio(v('--issue-accent'), v(surface));
+        assert.ok(ratio >= AA_BODY_TEXT, `--issue-accent on ${surface} is ${ratio}:1`);
+      });
+    }
+
     it(`the status-success pill text clears AA on the ${theme} page`, () => {
       const ratio = contrastRatio(v('--status-success'), v('--background'));
       assert.ok(ratio >= AA_BODY_TEXT, `--status-success on --background is ${ratio}:1`);

@@ -12,6 +12,12 @@
 //            the same markup with adaptiveColumns on (Phase 4 proves it)
 //   feature  HomeBody's catalog preview: paper surface, gold rule, "see all"
 //            link, and the dedup against the Start-here rail (Phase 4)
+//   covers   the Term Issue cover grid (2026-10-13, PR 2): a big light
+//            Fraunces heading, a mono note that only shows where covers flip
+//            (hover devices), and the course covers four across. No eyebrow.
+//
+// `source: 'all'` (same PR) is every course in display order, for the cover
+// grid; the original two sources are unchanged.
 //
 // Rendered OUTSIDE SectionShell (decision D1): fixed surfaces, no tone field.
 //
@@ -35,7 +41,7 @@
 // today, so one behavior could not have covered both. Off is the Courses form,
 // and it is the default.
 import CourseCard from '@/components/CourseCard.astro';
-import { getStartHereCourses, getFeaturedCourses } from '@/lib/queries';
+import { getStartHereCourses, getFeaturedCourses, getAllCourses } from '@/lib/queries';
 
 interface Props {
   block: any;
@@ -50,8 +56,10 @@ interface Props {
 }
 const { block, fetcher } = Astro.props as Props;
 
-const source = block?.source === 'featured' ? 'featured' : 'startHere';
-const variant = block?.variant === 'feature' ? 'feature' : 'rail';
+const source =
+  block?.source === 'featured' ? 'featured' : block?.source === 'all' ? 'all' : 'startHere';
+const variant =
+  block?.variant === 'feature' ? 'feature' : block?.variant === 'covers' ? 'covers' : 'rail';
 const limit: number | undefined =
   typeof block?.limit === 'number' && block.limit > 0 ? block.limit : undefined;
 
@@ -63,6 +71,9 @@ const limit: number | undefined =
 let courses: any[] = [];
 if (source === 'featured') {
   courses = (await getFeaturedCourses(limit ?? 6, fetcher).catch(() => [])) ?? [];
+} else if (source === 'all') {
+  const all = (await getAllCourses(fetcher).catch(() => [])) ?? [];
+  courses = limit ? all.slice(0, limit) : all;
 } else {
   const all = (await getStartHereCourses(fetcher).catch(() => [])) ?? [];
   courses = limit ? all.slice(0, limit) : all;
@@ -98,11 +109,50 @@ const gridClass = block?.adaptiveColumns
 // The "see all" link belongs to the catalog-preview header only; the quiet rail
 // has nowhere to put it. Both halves have to be present or no link renders (an
 // <a> with an empty label is an axe link-name failure).
-const showLink = variant === 'feature' && Boolean(block?.linkLabel && block?.linkHref);
+const showLink =
+  (variant === 'feature' || variant === 'covers') && Boolean(block?.linkLabel && block?.linkHref);
+// The cover grid's note only makes sense where covers turn over; the CSS class
+// `.only-hover` hides it on touch screens and under reduced motion.
+const coversNote: string = block?.note || 'Turn a cover over for week one';
 ---
 
 {courses.length > 0 &&
-  (variant === 'feature' ? (
+  (variant === 'covers' ? (
+    /* Home (Term Issue): the cover grid. Page surface, the issue's big light
+         heading with a mono note at its right, then every course as a flip
+         cover (CourseCard). */
+    <section class="bg-background" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-3" data-reveal>
+          <h2 id={headingId} class="issue-h2 text-foreground">
+            {block?.heading}
+          </h2>
+          <p class="mono-detail only-hover text-foreground/80">{coversNote}</p>
+        </div>
+        <ul
+          class="mt-l grid grid-cols-1 gap-x-7 gap-y-9 sm:grid-cols-2 lg:grid-cols-4"
+          data-stagger-grid
+        >
+          {courses.map((c: any) => (
+            <CourseCard course={c} />
+          ))}
+        </ul>
+        {showLink && (
+          <p class="mt-l">
+            <a
+              href={block.linkHref}
+              class="link-arrow hit-44 relative inline-flex items-center gap-1.5 font-semibold text-link underline underline-offset-4 hover:text-primary-dark"
+            >
+              {block.linkLabel}
+              <span class="link-arrow__icon" aria-hidden="true">
+                &rarr;
+              </span>
+            </a>
+          </p>
+        )}
+      </div>
+    </section>
+  ) : variant === 'feature' ? (
     /* Home: the catalog preview. Paper surface, large rhythm, a flex header
          whose right edge carries the link out to the full catalog, and a gold
          hairline under the whole header. */

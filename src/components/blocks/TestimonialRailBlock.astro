@@ -15,6 +15,12 @@
 //
 // The attribution line joins role and city with filter(Boolean), so a quote with
 // only one of them never renders a dangling comma.
+//
+// VARIANTS (2026-10-13, Term Issue PR 2). `cards` (or no variant at all) is the
+// original strip above, unchanged. `letters` sets each quote as a short letter
+// to the faculty on the card surface: ruled columns, an italic salutation
+// ("To the faculty,"), a drop initial on the first letter only, and a mono
+// signature line. No eyebrow in that style.
 import { getFeaturedTestimonials } from '@/lib/queries';
 
 interface Props {
@@ -30,9 +36,33 @@ const testimonials = (await getFeaturedTestimonials(limit, fetcher).catch(() => 
 // Landmark id: the band is labeled by its own h2. The seed carries the id the
 // page already used ("home-stories"), so anchors keep working.
 const headingId = block?.headingId || 'testimonial-rail';
+const letters = block?.variant === 'letters';
+const salutation: string = block?.salutation || 'To the faculty,';
+// The signature: "KAREN DOYLE · RULING ELDER · MASON, OHIO" (uppercased in CSS).
+const signature = (t: any) => [t.name, t.role, t.city].filter(Boolean).join(' · ');
 ---
 
-{testimonials.length > 0 && (
+{testimonials.length > 0 && letters && (
+  <section class="border-y border-border bg-card" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <h2 id={headingId} class="issue-h2 text-foreground" data-reveal>
+        {block?.heading}
+      </h2>
+      <div class="letters mt-l" data-stagger-grid>
+        {testimonials.map((t: any, i: number) => (
+          <figure class="letters__item">
+            <p class="letters__salutation">{salutation}</p>
+            <blockquote class:list={['letters__body', i === 0 && 'letters__body--initial']}>
+              <p>{t.quote}</p>
+            </blockquote>
+            <figcaption class="mono-detail mt-4 text-foreground/80">{signature(t)}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+{testimonials.length > 0 && !letters && (
   <section class="bg-background" aria-labelledby={headingId}>
     <div class="mx-auto max-w-content px-m py-section-lg">
       <div data-reveal>

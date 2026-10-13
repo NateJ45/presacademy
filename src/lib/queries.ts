@@ -794,6 +794,30 @@ export async function getFeaturedCourses(limit = 6, fetcher = sanityFetch) {
   );
 }
 
+// Every course in catalog order (Term Issue PR 2, 2026-10-13): the home cover
+// grid and the term contents list. Unlike getCourses(), which floats the
+// Start-here and Featured flags to the top for the catalog page, this keeps the
+// editor's display order, so the contents read like a printed contents page.
+export async function getAllCourses(fetcher = sanityFetch) {
+  return fetcher(
+    `*[_type == "course" && archived != true] | order(displayOrder asc, title asc) ${COURSE_CARD}`,
+    { today: TODAY() },
+    [],
+  );
+}
+
+// Specific courses by id, as cards (Term Issue PR 2): the course finder's
+// suggestions are references, resolved here with the full card projection so
+// the suggestion can draw the course's cover.
+export async function getCoursesByIds(ids: string[], fetcher = sanityFetch) {
+  if (ids.length === 0) return [];
+  return fetcher(
+    `*[_type == "course" && archived != true && _id in $ids] ${COURSE_CARD}`,
+    { today: TODAY(), ids },
+    [],
+  );
+}
+
 // The recommended starting courses (the "Start here" rail).
 export async function getStartHereCourses(fetcher = sanityFetch) {
   return fetcher(
@@ -993,8 +1017,10 @@ export async function getPricingPage(fetcher = sanityFetch) {
   );
 }
 
-export async function getPricingTiers() {
-  return sanityFetch(
+// The optional fetcher (Term Issue PR 2) lets the home preview read draft tiers
+// for the rates box and the course finder; every older caller passes nothing.
+export async function getPricingTiers(fetcher = sanityFetch) {
+  return fetcher(
     `*[_type == "pricingTier" && archived != true] | order(orderRank asc, displayOrder asc){ _id, name, amount, unit, summary, includes, isAudit, featured }`,
     {},
     [],

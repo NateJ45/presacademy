@@ -301,7 +301,13 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
       editDoc={editDoc}
     >
       {singletonType === 'homePage' && (
-        <HomeHero slot="hero" page={converted.page} settings={converted.settings} {nextTerm} />
+        <HomeHero
+          slot="hero"
+          page={converted.page}
+          settings={converted.settings}
+          {nextTerm}
+          fetcher={draftFetch}
+        />
       )}
       {previewImageHero && (
         <Hero

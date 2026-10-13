@@ -153,7 +153,12 @@ export function backgroundApplies(
   section?: Record<string, unknown> | null,
 ): boolean {
   if (!hasBackground(type)) return false;
-  if (type === 'sectionPricingTiers' && section && section['surface'] === 'ledger') return false;
+  if (
+    type === 'sectionPricingTiers' &&
+    section &&
+    (section['surface'] === 'ledger' || section['surface'] === 'rates')
+  )
+    return false;
   return true;
 }
 
