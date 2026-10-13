@@ -10,6 +10,33 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Finish the form cutover to `/api/contact/`** (2026-10-13, starter card 45).
+  The code, D1 database, Email Routing, Turnstile widget and Worker secrets are
+  in place. In order:
+  1. **Sarajane clicks the Cloudflare verification email** for the notification
+     address. Until she does, sends to it fail and rows land with `notified = 0`
+     (nothing is lost: every submission is stored first).
+  2. **Check the Cloudflare build variables for a stale `PUBLIC_TURNSTILE_SITEKEY`**
+     from the pre-hCaptcha Turnstile setup. A leftover value overrides the new
+     widget's key and the live widget fails. Remove it or set it to the new key.
+  3. Main session adds the **`info@presbyterianacademy.org` forwarding rule** in
+     Email Routing (the domain now has Cloudflare MX, so mail to info@ goes
+     nowhere until a rule exists).
+  4. **Apply the privacy migration** after the code PR merges:
+     `node scripts/migrate-privacy-forms.mjs` (dry run 2026-10-13: 1 change,
+     insert the `privacyForms` paragraph after `b14` in the published
+     `privacyPage`; no draft exists), then `--apply`, re-run (nothing to do),
+     `/rebuild`, fetch the live `/privacy/`.
+  5. **Live step 6**: one labelled submission on each form (contact, express
+     interest), then read the rows back (`OPERATIONS.md`, "Form submissions")
+     and confirm `notified = 1` and the email arrived with a working Reply-To.
+     A 200 is not proof. Also check the widget renders on the live domain with
+     no CSP errors in both themes.
+     Side note: `scripts/measure-tap-targets.mjs` timed out waiting for
+     `networkidle` on `/get-started/` under local `wrangler dev` with the
+     Turnstile test key. If it does the same against the live site, scan that page
+     by hand or with a shorter wait.
+
 - **Check the GA4 property settings** (2026-10-04). GA4 is live. In the Presbyterian
   Academy property, confirm Google signals and ads personalisation are off (Admin,
   Data collection). The privacy text makes no advertising claim either way, so this

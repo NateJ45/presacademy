@@ -14,11 +14,13 @@ Don't link "Search" (there isn't one). Don't dump a list of random pages.
 
 ### Form submission failure
 
-The contact form posts to Web3Forms. Three failure modes, each with a distinct user-visible message:
+Every Sanity-built form posts to the site's own `/api/contact/` endpoint (`FormRenderer.tsx` through `src/lib/contact-transport.ts`). The visitor-facing states:
 
-- **Network failure** ("Couldn't send right now. Try again, or email us directly." -- link to the contact email from `siteSettings`.)
-- **Rate limit** (rare, Web3Forms free tier is 250/month): same message, direct email is the failsafe.
-- **Validation rejection** (missing required field, bad email format): inline per-field message, focus moves to the first invalid field, and the error container has `role="alert"` so screen readers announce.
+- **Validation** (a required field empty, a bad email format): checked in the browser first. Each invalid field gets `aria-invalid`, its own message beside it (linked with `aria-describedby`), and focus moves to the first one; a short summary sits above the form in a `role="alert"` box and clears once the last field is fixed. The server repeats the checks and its field errors are shown beside the matching box.
+- **Sending**: the button reads "Sending…" and is disabled; a polite live region announces it.
+- **Spam check refused** (Turnstile token missing or bad): the endpoint's own message, "That did not pass the spam check. Please try again.", plus the Academy's email address. If the Turnstile script cannot load at all (a content blocker), a note under the widget says so before the visitor sends.
+- **Not stored and not sent** (database and email both failed) or a network failure: the endpoint's or transport's message plus the email address.
+- **Stored but the email failed**: the visitor sees success, on purpose; the row has `notified = 0` and the reason (`OPERATIONS.md`, "Form submissions").
 
 Don't show "Oops!" or "Something went wrong." Always tell the user what to do next.
 

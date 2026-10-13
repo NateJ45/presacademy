@@ -448,6 +448,9 @@ function privacyDoc(email) {
         'When you email us or send a message through this site, you share your name, email address, and whatever details you include. We use that information only to respond to you. Nothing else.',
       ),
       para(
+        "When you send a message through a form on this site, it is stored in the Academy's own database, hosted by Cloudflare, and emailed to the Academy so we can reply. Each form is checked for spam by Cloudflare Turnstile, which looks at technical details from your browser to tell a person from an automated program. Cloudflare does not use that information for advertising.",
+      ),
+      para(
         'If you subscribe to our newsletter, your email address goes to our email provider so occasional news from the Academy can reach you. It is not shared with anyone else.',
       ),
       heading("What doesn't happen"),

@@ -8,7 +8,7 @@ The starter has two parallel content sources:
 
 ### `src/data/site.ts` — static identity (rare edits)
 
-Hardcoded constants that don't change between deploys: domain name, GitHub repo URL, Web3Forms access key reference, Calendly URL template, brand asset paths, the `localStorage` key prefix for the theme system. A developer edits these in code when something structural shifts.
+Hardcoded constants that don't change between deploys: domain name, GitHub repo URL, Calendly URL template, brand asset paths, the `localStorage` key prefix for the theme system. A developer edits these in code when something structural shifts.
 
 ```ts
 // `_name` and `_domain` are set once; derived fields auto-update.

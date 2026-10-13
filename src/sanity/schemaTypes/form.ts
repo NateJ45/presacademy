@@ -1,7 +1,14 @@
-// Configurable contact/inquiry form. A church admin builds a form here (native
-// fields submitted via Web3Forms/Formspree/email) OR pastes an external embed
-// (Subsplash sign-up, Google Form, Planning Center). Referenced from pages
-// (contact, weddings, use-our-space) and, in Phase 4, droppable as a page block.
+// Configurable contact/inquiry form. An editor builds a form here (native
+// fields) OR pastes an external embed (Google Form, Jotform). Referenced from
+// pages (contact, get-started) and droppable as a page block.
+//
+// Native submissions go to the site's own endpoint, /api/contact/ (starter
+// card 45, 2026-10-13): stored in a Cloudflare D1 database, then emailed to
+// the Academy, spam-checked by Cloudflare Turnstile. Nothing here chooses
+// where they go any more. The old `provider` object (Web3Forms / Formspree /
+// mailto) is HIDDEN, not deleted: removing a field from the schema while
+// documents still hold its data makes Studio offer "Remove field", which
+// deletes that data everywhere (CLAUDE.md gotcha #1). Hidden is harmless.
 
 import { defineType, defineField, defineArrayMember, type ValidationContext } from 'sanity';
 import { archivedField } from './archived';
@@ -30,7 +37,6 @@ export const form = defineType({
     // No `default: true` → the form opens on the implicit "All fields" tab.
     { name: 'content', title: 'Heading + intro' },
     { name: 'fields', title: 'Fields' },
-    { name: 'provider', title: 'Where submissions go' },
     { name: 'embed', title: 'External embed' },
   ],
   fields: [
@@ -191,13 +197,15 @@ export const form = defineType({
       hidden: ({ parent }) => parent?.mode === 'embed',
     }),
 
-    // ---- Provider ----
+    // ---- Provider (retired 2026-10-13) ----
+    // Unused since the forms moved to /api/contact/. Hidden rather than removed
+    // so stored values are not orphaned (see the header comment). Its group was
+    // removed with it, so the "Where submissions go" tab no longer shows.
     defineField({
       name: 'provider',
-      title: 'Where submissions go',
+      title: 'Where submissions go (retired)',
       type: 'object',
-      group: 'provider',
-      hidden: ({ parent }) => parent?.mode === 'embed',
+      hidden: true,
       options: { collapsible: true, collapsed: false },
       fields: [
         defineField({

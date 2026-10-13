@@ -1526,6 +1526,48 @@ export const guides: Guide[] = [
       },
     ],
   },
+  {
+    slug: 'forms',
+    category: 'Events, notices & voices',
+    title: 'Forms & where messages go',
+    icon: '✉️',
+    lead: 'The contact form and the "Request information" form. Change their questions here; every message lands with the Academy by email.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Content', 'Forms'],
+        link: { pane: 'content;form' },
+      },
+      { kind: 'h', text: 'Change a question' },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Content**, then **Forms**, and pick the form.',
+          'Open the `Fields` tab. Add, remove, reword or reorder the questions.',
+          'Keep one **Email** field and a name box (**Name**, or **First name** and **Last name**). The site needs both to send the message and to let us reply.',
+          '`Publish`. The form on the site updates at the next rebuild.',
+        ],
+      },
+      { kind: 'h', text: 'Where a message goes' },
+      {
+        kind: 'p',
+        text: 'Every message is saved first, in the Academy’s own database, and then emailed to the Academy. The email arrives from the website with the visitor’s name in it, and hitting **Reply** answers the visitor directly. Every answer they gave appears in the email as a "Question: answer" line, in the same order as the form.',
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Nothing to set up here any more',
+        text: 'Forms used to have a **Where submissions go** tab with a service and an access key. That tab is gone because the website now handles messages itself. If an email ever seems not to arrive, the message is still saved, so ask Nathan to look it up.',
+      },
+      {
+        kind: 'callout',
+        tone: 'default',
+        title: 'The small box under the form',
+        text: 'Visitors may see a small Cloudflare check box above the Send button. It is a spam filter, and most people never have to click it.',
+      },
+    ],
+  },
 
   // ==========================================================================
   // MONEY & PRICING
