@@ -107,53 +107,51 @@ const pillGhost =
     ]}
   >
     <div class="hero-entry-stagger min-w-0">
-      {
-        hasTerm ? (
-          <h1 id="home-hero" class="issue-title text-foreground">
-            {term.lead}
-            {term.year && (
-              <>
-                <br />
-                <i class="issue-title__year">{term.year}</i>
-              </>
-            )}
-            <span class="sr-only"> term</span>
-          </h1>
-        ) : (
-          <h1
-            id="home-hero"
-            class="font-display text-h1 leading-headline-tight font-light text-foreground"
-          >
-            {heroHeadline}
-          </h1>
-        )
-      }
+      {hasTerm ? (
+        <h1 id="home-hero" class="issue-title text-foreground">
+          {term.lead}
+          {term.year && (
+            <>
+              <br />
+              <i class="issue-title__year">{term.year}</i>
+            </>
+          )}
+          <span class="sr-only"> term</span>
+        </h1>
+      ) : (
+        <h1
+          id="home-hero"
+          class="font-display text-h1 leading-headline-tight font-light text-foreground"
+        >
+          {heroHeadline}
+        </h1>
+      )}
       {hasTerm && <p class="issue-deck mt-l max-w-[30ch] text-foreground">{heroHeadline}</p>}
       <p class="mt-m max-w-[48ch] text-base leading-relaxed text-foreground/80 md:text-lg">
         {heroSubhead}
       </p>
       <div class="mt-l flex flex-wrap gap-3">
-        <a href="/courses/" class={pillPrimary}>{heroPrimaryLabel}</a>
-        <a href="/get-started/" class={pillGhost}>{heroSecondaryLabel}</a>
+        <a href="/courses/" class={pillPrimary}>
+          {heroPrimaryLabel}
+        </a>
+        <a href="/get-started/" class={pillGhost}>
+          {heroSecondaryLabel}
+        </a>
       </div>
-      {
-        nextTerm?.startDate && (
-          <p class="mono-detail mt-l text-foreground/80">
-            {nextCohortLabel} {fmtDate(nextTerm.startDate)} &middot; {cityLine}
-          </p>
-        )
-      }
+      {nextTerm?.startDate && (
+        <p class="mono-detail mt-l text-foreground/80">
+          {nextCohortLabel} {fmtDate(nextTerm.startDate)} &middot; {cityLine}
+        </p>
+      )}
     </div>
-    {
-      fanOrder.length > 0 && (
-        <div class="hero-fan" data-count={fanOrder.length}>
-          {fanOrder.map(({ course, pos }) => (
-            <div class={`hero-fan__item hero-fan__item--${pos}`}>
-              <CourseCover course={course} size="md" />
-            </div>
-          ))}
-        </div>
-      )
-    }
+    {fanOrder.length > 0 && (
+      <div class="hero-fan" data-count={fanOrder.length}>
+        {fanOrder.map(({ course, pos }) => (
+          <div class={`hero-fan__item hero-fan__item--${pos}`}>
+            <CourseCover course={course} size="md" />
+          </div>
+        ))}
+      </div>
+    )}
   </div>
 </section>

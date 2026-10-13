@@ -56,78 +56,74 @@ const headingId = block?.headingId || 'faculty-rail';
 const showLink = Boolean(block?.linkLabel && block?.linkHref);
 ---
 
-{
-  faculty.length > 0 && isContributors && (
-    <section class="bg-background" aria-labelledby={headingId}>
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div data-reveal>
-            {block?.eyebrow && (
-              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
-                {block.eyebrow}
-              </p>
-            )}
-            {/* The issue's light display heading (Term Issue PR 2), matching the
-                other home departments: contents, the courses, letters, rates. */}
-            <h2 id={headingId} class="issue-h2 mt-2 text-foreground">
-              {block?.heading}
-            </h2>
-            {intro && <p class="mt-3 max-w-[56ch] text-foreground/80">{intro}</p>}
-          </div>
-          {showLink && (
-            <a
-              href={block.linkHref}
-              class="link-arrow hit-44 relative inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
-            >
-              {block.linkLabel}
-              <span class="link-arrow__icon" aria-hidden="true">
-                &rarr;
-              </span>
-            </a>
-          )}
-        </div>
-        <ul class="mt-l grid grid-cols-1 gap-x-14 border-t border-foreground/80 p-0 md:grid-cols-2">
-          {faculty.map((f: any) => (
-            <ContributorRow person={f} />
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
-}
-{
-  faculty.length > 0 && !isContributors && (
-    <section class="surface-warm bg-muted" aria-labelledby={headingId}>
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div data-reveal>
+{faculty.length > 0 && isContributors && (
+  <section class="bg-background" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div data-reveal>
+          {block?.eyebrow && (
             <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
-              {block?.eyebrow}
+              {block.eyebrow}
             </p>
-            <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
-              {block?.heading}
-            </h2>
-            {intro && <p class="mt-3 max-w-[56ch] text-foreground/75">{intro}</p>}
-          </div>
-          {showLink && (
-            <a
-              href={block.linkHref}
-              class="link-arrow hit-44 relative inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
-            >
-              {block.linkLabel}
-              <span class="link-arrow__icon" aria-hidden="true">
-                &rarr;
-              </span>
-            </a>
           )}
+          {/* The issue's light display heading (Term Issue PR 2), matching the
+                other home departments: contents, the courses, letters, rates. */}
+          <h2 id={headingId} class="issue-h2 mt-2 text-foreground">
+            {block?.heading}
+          </h2>
+          {intro && <p class="mt-3 max-w-[56ch] text-foreground/80">{intro}</p>}
         </div>
-        <div class="mt-l h-px w-full bg-gold/50" />
-        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
-          {faculty.map((f: any) => (
-            <FacultyCard person={f} />
-          ))}
-        </ul>
+        {showLink && (
+          <a
+            href={block.linkHref}
+            class="link-arrow hit-44 relative inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
+          >
+            {block.linkLabel}
+            <span class="link-arrow__icon" aria-hidden="true">
+              &rarr;
+            </span>
+          </a>
+        )}
       </div>
-    </section>
-  )
-}
+      <ul class="mt-l grid grid-cols-1 gap-x-14 border-t border-foreground/80 p-0 md:grid-cols-2">
+        {faculty.map((f: any) => (
+          <ContributorRow person={f} />
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+{faculty.length > 0 && !isContributors && (
+  <section class="surface-warm bg-muted" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div data-reveal>
+          <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+            {block?.eyebrow}
+          </p>
+          <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
+            {block?.heading}
+          </h2>
+          {intro && <p class="mt-3 max-w-[56ch] text-foreground/75">{intro}</p>}
+        </div>
+        {showLink && (
+          <a
+            href={block.linkHref}
+            class="link-arrow hit-44 relative inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
+          >
+            {block.linkLabel}
+            <span class="link-arrow__icon" aria-hidden="true">
+              &rarr;
+            </span>
+          </a>
+        )}
+      </div>
+      <div class="mt-l h-px w-full bg-gold/50" />
+      <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+        {faculty.map((f: any) => (
+          <FacultyCard person={f} />
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

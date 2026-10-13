@@ -126,63 +126,61 @@ ${slides
     : '';
 ---
 
-{
-  n === 0 ? (
-    <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
-      <div class="image-well h-full w-full" />
-    </div>
-  ) : n === 1 ? (
-    <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
-      <picture class="block h-full w-full">
-        <source media="(min-width: 1024px)" srcset={desktopSrcset(slides[0], 65)} sizes={sizes} />
-        <SanityImage
-          source={slides[0]}
-          width={width}
-          height={mobileHeight}
-          loading={eager ? 'eager' : 'lazy'}
-          fetchpriority={eager ? 'high' : undefined}
-          sizes={sizes}
-          quality={65}
-          class="h-full w-full object-cover"
-        />
-      </picture>
-    </div>
-  ) : (
-    <div class={`${uid} relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
-      {/* The eager first slide is the page's LCP, so it takes quality 60: the
+{n === 0 ? (
+  <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+    <div class="image-well h-full w-full" />
+  </div>
+) : n === 1 ? (
+  <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+    <picture class="block h-full w-full">
+      <source media="(min-width: 1024px)" srcset={desktopSrcset(slides[0], 65)} sizes={sizes} />
+      <SanityImage
+        source={slides[0]}
+        width={width}
+        height={mobileHeight}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        sizes={sizes}
+        quality={65}
+        class="h-full w-full object-cover"
+      />
+    </picture>
+  </div>
+) : (
+  <div class={`${uid} relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
+    {/* The eager first slide is the page's LCP, so it takes quality 60: the
           campus photos are high-detail (grass, foliage) and came out as a
           160KB AVIF at 72 on a 700px phone slot, which is the single biggest
           transfer on the mobile critical path. The later slides keep 72; they
           are deferred and download after the page has loaded. */}
-      {slides.map((img, i) => (
-        <div class="s" aria-hidden={i === 0 ? undefined : 'true'}>
-          <picture class="block h-full w-full">
-            <source
-              media="(min-width: 1024px)"
-              srcset={i > 0 ? undefined : desktopSrcset(img, eager ? 60 : 72)}
-              sizes={i > 0 ? undefined : sizes}
-              data-srcset={i > 0 ? desktopSrcset(img, 72) : undefined}
-              data-sizes={i > 0 ? sizes : undefined}
-            />
-            <SanityImage
-              source={img}
-              width={width}
-              height={mobileHeight}
-              loading={eager && i === 0 ? 'eager' : 'lazy'}
-              fetchpriority={eager && i === 0 ? 'high' : undefined}
-              defer={i > 0}
-              sizes={sizes}
-              quality={eager && i === 0 ? 60 : 72}
-              alt={i === 0 ? undefined : ''}
-              class="h-full w-full object-cover"
-            />
-          </picture>
-        </div>
-      ))}
-      <style is:inline set:html={css} />
-    </div>
-  )
-}
+    {slides.map((img, i) => (
+      <div class="s" aria-hidden={i === 0 ? undefined : 'true'}>
+        <picture class="block h-full w-full">
+          <source
+            media="(min-width: 1024px)"
+            srcset={i > 0 ? undefined : desktopSrcset(img, eager ? 60 : 72)}
+            sizes={i > 0 ? undefined : sizes}
+            data-srcset={i > 0 ? desktopSrcset(img, 72) : undefined}
+            data-sizes={i > 0 ? sizes : undefined}
+          />
+          <SanityImage
+            source={img}
+            width={width}
+            height={mobileHeight}
+            loading={eager && i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={eager && i === 0 ? 'high' : undefined}
+            defer={i > 0}
+            sizes={sizes}
+            quality={eager && i === 0 ? 60 : 72}
+            alt={i === 0 ? undefined : ''}
+            class="h-full w-full object-cover"
+          />
+        </picture>
+      </div>
+    ))}
+    <style is:inline set:html={css} />
+  </div>
+)}
 
 <script>
   // Slides after the first render as blank placeholders (SanityImage `defer`)

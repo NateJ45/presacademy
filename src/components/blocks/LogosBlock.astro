@@ -9,37 +9,33 @@ const gray = block?.grayscale !== false;
 const imgCls = `max-h-16 w-auto object-contain ${gray ? 'grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' : ''}`;
 ---
 
-{
-  block && items.length > 0 && (
-    <div class="mx-auto max-w-content px-m text-center">
-      {block.heading && <h2 class="font-display text-h3">{block.heading}</h2>}
-      {block.intro && (
-        <p class="mx-auto mt-s max-w-2xl leading-relaxed opacity-80">{block.intro}</p>
-      )}
-      <ul class="mt-l flex list-none flex-wrap items-center justify-center gap-l p-0">
-        {items.map((logo: any) => {
-          const img = (
-            <SanityImage
-              source={logo}
-              width={240}
-              sizes="160px"
-              alt={logo.alt || ''}
-              class={imgCls}
-            />
-          );
-          return (
-            <li>
-              {logo.url ? (
-                <a href={logo.url} target="_blank" rel="noopener noreferrer">
-                  {img}
-                </a>
-              ) : (
-                img
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  )
-}
+{block && items.length > 0 && (
+  <div class="mx-auto max-w-content px-m text-center">
+    {block.heading && <h2 class="font-display text-h3">{block.heading}</h2>}
+    {block.intro && <p class="mx-auto mt-s max-w-2xl leading-relaxed opacity-80">{block.intro}</p>}
+    <ul class="mt-l flex list-none flex-wrap items-center justify-center gap-l p-0">
+      {items.map((logo: any) => {
+        const img = (
+          <SanityImage
+            source={logo}
+            width={240}
+            sizes="160px"
+            alt={logo.alt || ''}
+            class={imgCls}
+          />
+        );
+        return (
+          <li>
+            {logo.url ? (
+              <a href={logo.url} target="_blank" rel="noopener noreferrer">
+                {img}
+              </a>
+            ) : (
+              img
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)}

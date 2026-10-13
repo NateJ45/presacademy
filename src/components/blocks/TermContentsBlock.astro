@@ -43,37 +43,35 @@ const note: string = (block?.note ?? '').trim();
 const signature: string = block?.signature || 'The faculty';
 ---
 
-{
-  rows.length > 0 && (
-    <section class="border-y border-border bg-card" aria-labelledby={headingId}>
-      <div class="mx-auto grid max-w-content gap-x-[clamp(2.5rem,6vw,6rem)] gap-y-10 px-m py-section-lg lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
-        <div class="min-w-0 lg:max-w-[28rem]" data-reveal>
-          <h2 id={headingId} class="issue-h2 issue-h2--xl text-foreground">
-            {heading}
-          </h2>
-          {note && (
-            <>
-              <p class="mono-detail mt-8 text-foreground/80">{noteLabel}</p>
-              <p class="mt-2 font-display text-lg leading-relaxed font-light text-foreground">
-                {note}
-              </p>
-              <p class="mt-4 font-display text-foreground/80 italic">{signature}</p>
-            </>
-          )}
-        </div>
-        <ol class="contents-list min-w-0">
-          {rows.map((row) => (
-            <li class="contents-list__row">
-              {row.code && <span class="contents-list__code">{row.code}</span>}
-              <a href={`/courses/${row.slug}/`} class="contents-list__title hit-44">
-                {row.title}
-              </a>
-              <span class="dot-leader" aria-hidden="true" />
-              <span class={`contents-list__meta contents-list__meta--${row.tone}`}>{row.meta}</span>
-            </li>
-          ))}
-        </ol>
+{rows.length > 0 && (
+  <section class="border-y border-border bg-card" aria-labelledby={headingId}>
+    <div class="mx-auto grid max-w-content gap-x-[clamp(2.5rem,6vw,6rem)] gap-y-10 px-m py-section-lg lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+      <div class="min-w-0 lg:max-w-[28rem]" data-reveal>
+        <h2 id={headingId} class="issue-h2 issue-h2--xl text-foreground">
+          {heading}
+        </h2>
+        {note && (
+          <>
+            <p class="mono-detail mt-8 text-foreground/80">{noteLabel}</p>
+            <p class="mt-2 font-display text-lg leading-relaxed font-light text-foreground">
+              {note}
+            </p>
+            <p class="mt-4 font-display text-foreground/80 italic">{signature}</p>
+          </>
+        )}
       </div>
-    </section>
-  )
-}
+      <ol class="contents-list min-w-0">
+        {rows.map((row) => (
+          <li class="contents-list__row">
+            {row.code && <span class="contents-list__code">{row.code}</span>}
+            <a href={`/courses/${row.slug}/`} class="contents-list__title hit-44">
+              {row.title}
+            </a>
+            <span class="dot-leader" aria-hidden="true" />
+            <span class={`contents-list__meta contents-list__meta--${row.tone}`}>{row.meta}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}

@@ -47,32 +47,30 @@ const bgImg = hasImage
 ---
 
 <section class:list={['relative isolate', toneCls, padCls, accentCls]}>
-  {
-    hasMedia && (
-      <div class="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-        {videoUrl ? (
-          <video
-            class="h-full w-full object-cover"
-            autoplay
-            muted
-            loop
-            playsinline
-            poster={bgImg ?? undefined}
-          >
-            <source src={videoUrl} />
-          </video>
-        ) : bgImg ? (
-          <img
-            src={bgImg}
-            alt=""
-            class="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : null}
-        <div class="absolute inset-0 bg-chapel-deep" style={`opacity:${overlay}`} />
-      </div>
-    )
-  }
+  {hasMedia && (
+    <div class="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      {videoUrl ? (
+        <video
+          class="h-full w-full object-cover"
+          autoplay
+          muted
+          loop
+          playsinline
+          poster={bgImg ?? undefined}
+        >
+          <source src={videoUrl} />
+        </video>
+      ) : bgImg ? (
+        <img
+          src={bgImg}
+          alt=""
+          class="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : null}
+      <div class="absolute inset-0 bg-chapel-deep" style={`opacity:${overlay}`} />
+    </div>
+  )}
   <slot />
 </section>
