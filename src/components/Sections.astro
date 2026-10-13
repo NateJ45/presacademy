@@ -53,6 +53,9 @@ import TestimonialRailBlock from '@/components/blocks/TestimonialRailBlock.astro
 // The Term Issue home (2026-10-13, PR 2). Fixed surfaces, outside the shell.
 import TermContentsBlock from '@/components/blocks/TermContentsBlock.astro';
 import CourseFinderBlock from '@/components/blocks/CourseFinderBlock.astro';
+// The issue's back page (2026-10-13, PR 4). Fixed dark ink band, outside the shell.
+import NextIssueBlock from '@/components/blocks/NextIssueBlock.astro';
+import ForPastorsBlock from '@/components/blocks/ForPastorsBlock.astro';
 
 interface Props {
   sections?: any[] | null;
@@ -129,6 +132,8 @@ const MAP: Record<string, any> = {
   sectionTestimonialRail: TestimonialRailBlock,
   sectionTermContents: TermContentsBlock,
   sectionCourseFinder: CourseFinderBlock,
+  sectionNextIssue: NextIssueBlock,
+  sectionForPastors: ForPastorsBlock,
 };
 
 // Blocks that render inner content only and take their background from SectionShell.

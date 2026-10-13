@@ -175,6 +175,17 @@ test('every section type the resolver watches for really exists', () => {
   }
 });
 
+test('the Term Issue blocks that draw courses are watched for courses', () => {
+  // The contents page and the Next issue band fetch courses themselves (Term
+  // Issue PR 2 and PR 4), so without these entries a course shown only there
+  // would read "not shown on any page".
+  const course = LOCATIONS.match(/^ {2}course: \[([^\]]*)\]/m);
+  assert.ok(course, 'RENDERED_BY lost its course entry');
+  for (const type of ['sectionCourseRail', 'sectionTermContents', 'sectionNextIssue']) {
+    assert.ok(course[1].includes(`'${type}'`), `RENDERED_BY.course is missing ${type}`);
+  }
+});
+
 test('the dynamic-list sources match that block’s own option list', () => {
   const block = BLOCKS.match(/name: 'sectionDynamicList',[\s\S]*?name: 'count',/);
   assert.ok(block, 'sectionDynamicList not found');

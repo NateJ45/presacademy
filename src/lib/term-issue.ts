@@ -12,6 +12,11 @@
 //   contentsRow      one line of the contents page: code, title, teacher, status
 //   finderPick       the course finder's rule (question 2 wins, then 1, then
 //                    the default)
+//
+// PR 4 (2026-10-13) adds the back page and the header:
+//   issueLine        the header's issue line, "Spring 2027 term · enrolling
+//                    now · first class Tue 26 Jan"
+//   fillTermTokens   {term} / {season} in the Next issue block's editable copy
 // =============================================================================
 
 /** The hero title, split for its two lines: "Spring" over an italic "2027".
@@ -67,7 +72,8 @@ export interface ContentsRow {
 }
 
 /** The first word of a term title, lower-cased: "Summer 2027" -> "summer". */
-const season = (title?: string | null) => (title ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+export const season = (title?: string | null) =>
+  (title ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
 
 /**
  * One contents line. The status reads from the course's NEXT offering:
@@ -126,4 +132,66 @@ export function finderPick(
   defaultCourse: string | null | undefined,
 ): string | null {
   return q2Course || q1Course || defaultCourse || null;
+}
+
+/** "2027-01-26" -> "Tue 26 Jan". Read as a calendar date (UTC), so the
+    weekday never slips a day on a build machine west of Greenwich. */
+export function shortDay(iso: string | null | undefined): string {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return '';
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
+  const month = d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+  return `${weekday} ${d.getUTCDate()} ${month}`;
+}
+
+export interface IssueTerm {
+  title?: string | null;
+  startDate?: string | null;
+  registrationOpens?: string | null;
+  registrationDeadline?: string | null;
+  status?: string | null;
+}
+
+/**
+ * The header's issue line (Term Issue PR 4), from the next term's own data:
+ *
+ *   full    "Spring 2027 term · enrolling now · first class Tue 26 Jan"
+ *   short   "Spring 2027 term" (phones)
+ *   medium  "Spring 2027 term · enrolling now" (tablets)
+ *
+ * The middle part only says "enrolling now" when that is true: the term is
+ * marked "Registration open", or registration has opened by date and the
+ * apply-by date has not passed. Before registration opens it names the date
+ * ("registration opens Sun 15 Nov"); a closed term says so; with none of the
+ * dates set it is left out rather than guessed. `today` is "YYYY-MM-DD".
+ */
+export function issueLine(
+  term: IssueTerm | null | undefined,
+  today: string,
+): { short: string; medium: string; full: string } | null {
+  const title = (term?.title ?? '').trim();
+  if (!title) return null;
+  const name = /\bterm$/i.test(title) ? title : `${title} term`;
+  const opens = term?.registrationOpens ?? '';
+  const deadline = term?.registrationDeadline ?? '';
+  const status = term?.status ?? '';
+  let state = '';
+  if (status === 'closed' || (deadline && deadline < today && status !== 'open')) {
+    state = 'registration closed';
+  } else if (status === 'open' || (opens && opens <= today)) {
+    state = 'enrolling now';
+  } else if (opens && opens > today) {
+    state = `registration opens ${shortDay(opens)}`;
+  }
+  const first = shortDay(term?.startDate) ? `first class ${shortDay(term?.startDate)}` : '';
+  const medium = [name, state].filter(Boolean).join(' · ');
+  return { short: name, medium, full: [name, state, first].filter(Boolean).join(' · ') };
+}
+
+/** The Next issue block's editable copy: {term} becomes "Summer 2027" and
+    {season} becomes "summer". Unknown braces are left alone. */
+export function fillTermTokens(text: string, termTitle: string | null | undefined): string {
+  const t = (termTitle ?? '').trim();
+  return text.replace(/\{term\}/g, t).replace(/\{season\}/g, season(t) || 'next');
 }

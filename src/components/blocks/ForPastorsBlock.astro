@@ -1,0 +1,119 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// ForPastorsBlock: "Take the issue to your church" (Term Issue PR 4, 2026-10-13)
+// =============================================================================
+// The issue's back page, second half: a note for pastors, the bulletin-insert
+// PDF to download and a link to request printed catalogs, beside a small
+// drawing of the insert.
+//
+// The drawing is DECORATION (aria-hidden), drawn in CSS like the mockup: the
+// wordmark, a rule, the next term's name set like the home hero, and the eight
+// cover colours as a row of tiny covers. It is not a picture of the real
+// insert, which is a separate print job; it never shows a price or a claim.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the fixed dark ink band
+// (`.issue-band`), static in both themes.
+//
+// Hides honestly:
+//   - no PDF uploaded   the download link is left out
+//   - no catalog link   that link is left out
+//   - neither           the whole section renders NOTHING (and the preview
+//                       coaches it, src/lib/section-coach.ts)
+import { getNextTerm } from '@/lib/queries';
+import { COVER_COLORS } from '@/lib/cover';
+import { splitTermTitle } from '@/lib/term-issue';
+import { site } from '@/data/site';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const pdf = block?.insertPdf?.asset ?? null;
+const pdfUrl: string = typeof pdf?.url === 'string' ? pdf.url : '';
+const catalogHref: string = (block?.catalogHref ?? '').trim();
+const show = Boolean(pdfUrl || catalogHref);
+
+// "PDF, 240 KB": the file's own type and size, so nobody downloads blind.
+function fileFacts(asset: any): string {
+  const ext = String(asset?.extension ?? 'pdf').toUpperCase();
+  const bytes = Number(asset?.size ?? 0);
+  if (!bytes) return ext;
+  const size =
+    bytes >= 1024 * 1024
+      ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+      : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${ext}, ${size}`;
+}
+
+const nextTerm = show ? await getNextTerm(fetcher).catch(() => null) : null;
+const termTitle = splitTermTitle(nextTerm?.title);
+
+const headingId: string = block?.headingId || 'for-pastors';
+const kicker: string = block?.kicker || 'For pastors';
+const heading: string = block?.heading || 'Take the issue to your church.';
+const body: string =
+  (block?.body ?? '').trim() ||
+  'A bulletin insert for Sunday and printed catalogs for your session, in the same design as this issue.';
+const insertLabel: string = block?.insertLabel || 'Download the insert';
+const catalogLabel: string = block?.catalogLabel || 'Order printed catalogs';
+const external = /^https?:\/\//i.test(catalogHref);
+---
+
+{
+  show && (
+    <section class="issue-band" aria-labelledby={headingId}>
+      <div class="issue-band__inner">
+        <div class="issue-band__art" aria-hidden="true">
+          <div class="insert-mock">
+            <span class="insert-mock__brand">{site.name}</span>
+            <span class="insert-mock__rule" />
+            {termTitle.lead && (
+              <span class="insert-mock__title">
+                {termTitle.lead}
+                {termTitle.year && <i>{termTitle.year}</i>}
+              </span>
+            )}
+            <span class="insert-mock__covers">
+              {COVER_COLORS.map((c) => (
+                <span style={`background: var(--color-cover-${c})`} />
+              ))}
+            </span>
+            <span class="insert-mock__lines">
+              <span />
+              <span />
+              <span />
+            </span>
+          </div>
+        </div>
+        <div class="issue-band__text" data-reveal>
+          <p class="mono-detail issue-band__kicker">{kicker}</p>
+          <h2 id={headingId} class="issue-band__heading">
+            {heading}
+          </h2>
+          <p class="issue-band__body">{body}</p>
+          <div class="issue-band__links">
+            {pdfUrl && (
+              <a href={pdfUrl} class="issue-band__link" target="_blank" rel="noopener">
+                {insertLabel} <span class="issue-band__facts">({fileFacts(pdf)})</span>
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            )}
+            {catalogHref && (
+              <a
+                href={catalogHref}
+                class="issue-band__link"
+                {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                {catalogLabel} <span aria-hidden="true">&rarr;</span>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

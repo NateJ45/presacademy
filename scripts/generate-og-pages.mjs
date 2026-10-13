@@ -3,9 +3,10 @@
 // per-route convention in BaseLayout (the pathname with slashes turned into
 // dashes; falls back to og-default.png when a route has no matching file).
 //
-// Covers the core route singletons. When your project adds dynamic collections
-// (blog posts, case studies, etc.) extend COLLECTIONS below with the matching
-// Sanity _type, prefix, and field names.
+// Covers the core route singletons, plus one cover image per course (Term Issue
+// PR 4, the COLLECTIONS block at the bottom). When your project adds more
+// dynamic collections (blog posts, case studies, etc.) extend COLLECTIONS with
+// the matching Sanity _type, prefix, and field names.
 //
 // Run via `npm run og:pages` after editing seoTitle in Sanity or after adding a
 // page. Output PNGs are committed to git so Cloudflare does not need Sanity
@@ -13,10 +14,10 @@
 // without a file gracefully falls back to og-default.png.
 
 import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { createClient } from '@sanity/client';
-import { renderOg } from './lib/render-og.mjs';
+import { renderOg, renderCourseOg } from './lib/render-og.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
@@ -120,25 +121,106 @@ for (const page of SINGLETONS) {
 }
 
 // ---- Dynamic collections → /og/<prefix>-<slug>.png ----------------------
-// Mirrors BaseLayout: /journal/my-post → journal-my-post.png, etc.
-// Add an entry here for each dynamic collection your project defines.
-// Example (uncomment and adapt when you have a journal or case-study schema):
+// Mirrors BaseLayout: /journal/my-post → journal-my-post.png, etc. Add an entry
+// here for each dynamic collection your project defines, with `pick` returning
+// the card's tagline. A collection can instead supply its own `render(d)`.
 //
-// const COLLECTIONS = [
-//   {
-//     prefix: 'journal',
-//     query: `*[_type=="journalEntry" && defined(slug.current)]{ "slug": slug.current, seoTitle, title }`,
-//     pick: (d) => d.seoTitle || d.title,
-//   },
-// ];
+// COURSES (Term Issue PR 4, 2026-10-13) are the first, and they draw their own
+// card: the course's cover (renderCourseOg), at /og/course-<slug>.png, which
+// src/pages/courses/[slug].astro passes as the page's share image unless the
+// course has its own social image (seoImage).
 //
-// for (const col of COLLECTIONS) {
-//   const docs = await client.fetch(col.query).catch(() => []);
-//   for (const d of docs) {
-//     const tagline = col.pick(d);
-//     if (!d.slug || !tagline) continue;
-//     await render(`${col.prefix}-${d.slug}`, tagline);
-//   }
-// }
+// The cover's colour and ornament come from src/lib/cover.ts (the editor's
+// choice, else the same fallback the site uses) and the hex values from the
+// --color-cover-* tokens in src/styles/globals.css, so the share image is the
+// site's cover, not a copy of it. cover.ts is TypeScript: Node 22.18+ and 24
+// import it directly. An older Node cannot, and then the course images are
+// skipped with a warning (the committed PNGs ship), never a failed build.
+
+const css = readFileSync(resolve(root, 'src/styles/globals.css'), 'utf-8');
+const coverTokens = {};
+for (const m of css.matchAll(/--color-cover-([\w-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
+  coverTokens[m[1]] = m[2];
+}
+let coverLib = null;
+try {
+  coverLib = await import(pathToFileURL(resolve(root, 'src/lib/cover.ts')).href);
+} catch (e) {
+  console.warn(`  (course covers skipped: cannot load src/lib/cover.ts here: ${e?.message ?? e})`);
+}
+
+async function renderCourse(d) {
+  if (!coverLib) return;
+  const { color, ornament } = coverLib.resolveCover(d);
+  const bg = coverTokens[color];
+  const fg = coverTokens[`${color}-fg`];
+  if (!bg || !fg) {
+    console.warn(`  (skipped course-${d.slug}.png: no --color-cover-${color} tokens)`);
+    return;
+  }
+  const teacher = d.instructors?.[0];
+  const area = d.teachingAreas?.[0]?.title ?? '';
+  const code = (d.courseCode ?? '').trim();
+  const name = `course-${d.slug}`;
+  try {
+    await renderCourseOg({
+      outPath: resolve(outDir, `${name}.png`),
+      wordmark: WORDMARK,
+      title: d.title,
+      catalog: [code, area, d.nextTerm].filter(Boolean).join(' · '),
+      question: (d.centralQuestion ?? '').trim(),
+      cover: {
+        bg,
+        fg,
+        ornament,
+        code,
+        area,
+        teacher: teacher
+          ? `${teacher.honorific ? `${teacher.honorific} ` : ''}${teacher.name}`
+          : '',
+      },
+      paper: {
+        bg: coverTokens['paper'] ?? '#f8f6ef',
+        ink: coverTokens['paper-ink'] ?? '#1f231f',
+        muted: coverTokens['paper-muted'] ?? '#51564f',
+        accent: coverTokens['green'] ?? '#33503f',
+      },
+    });
+    count += 1;
+    console.log(`  ${name}.png — cover: ${color} / ${ornament}`);
+  } catch (e) {
+    console.warn(`  (skipped ${name}.png — ${e?.message ?? e})`);
+  }
+}
+
+const COLLECTIONS = [
+  {
+    prefix: 'course',
+    // The fields resolveCover and the card need, plus the next cohort's term
+    // (the soonest offering whose term starts today or later, as on the site).
+    query: `*[_type == "course" && archived != true && defined(slug.current)]{
+      "slug": slug.current, title, courseCode, coverColor, coverOrnament, centralQuestion,
+      "teachingAreas": teachingAreas[]->{ title, "slug": slug.current },
+      "instructors": instructors[]->{ name, honorific },
+      "nextTerm": (offerings[defined(term->startDate) && term->startDate >= $today]
+        | order(term->startDate asc))[0].term->title
+    }`,
+    params: { today: new Date().toISOString().slice(0, 10) },
+    render: renderCourse,
+  },
+];
+
+for (const col of COLLECTIONS) {
+  const docs = await client.fetch(col.query, col.params ?? {}).catch(() => []);
+  for (const d of docs) {
+    if (!d.slug) continue;
+    if (col.render) {
+      if (d.title) await col.render(d);
+      continue;
+    }
+    const tagline = col.pick?.(d);
+    if (tagline) await render(`${col.prefix}-${d.slug}`, tagline);
+  }
+}
 
 console.log(`\nDone. ${count} OG images written to ${outDir}`);

@@ -370,8 +370,9 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
   // THE TERM ISSUE (PR 2): the home body is the issue's departments, in this
   // order: contents, the cover grid (every course), the reply-card finder,
   // contributors (the faculty rail's contributors style), letters (the
-  // testimonials' letters style) and the rates box (the pricing tiers' rates
-  // surface). scripts/migrate-home-term-issue.mjs writes the SAME list into the
+  // testimonials' letters style), the rates box (the pricing tiers' rates
+  // surface), then the back page (PR 4): next issue and for pastors.
+  // scripts/migrate-home-term-issue.mjs writes the SAME list into the
   // Home Page document, so this fallback and the live page match. The old
   // wayfinding row, stat band and topics ticker are gone from home; their block
   // types stay registered for any page that wants them.
@@ -462,6 +463,28 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
       _type: 'sectionPricingTiers',
       surface: 'rates',
       heading: 'Rates',
+    },
+    // The back page (Term Issue PR 4). Both hide here: Next issue needs a later
+    // term from the calendar, and For pastors needs the insert PDF or the
+    // catalog link, neither of which exists without the dataset.
+    {
+      _key: 'homeNextIssue',
+      _type: 'sectionNextIssue',
+      kicker: 'Next issue',
+      heading: '{term} is taking shape.',
+      headingId: 'next-issue',
+      body: 'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.',
+      buttonLabel: 'Send it to me',
+    },
+    {
+      _key: 'homeForPastors',
+      _type: 'sectionForPastors',
+      kicker: 'For pastors',
+      heading: 'Take the issue to your church.',
+      headingId: 'for-pastors',
+      body: 'A bulletin insert for Sunday and printed catalogs for your session, in the same design as this issue.',
+      insertLabel: 'Download the insert',
+      catalogLabel: 'Order printed catalogs',
     },
   ],
 

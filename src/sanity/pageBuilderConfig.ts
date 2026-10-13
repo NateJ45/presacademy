@@ -72,6 +72,7 @@ export const SELF_FILLING_SECTIONS = [
   'sectionFaqGrouped',
   'sectionFaqList',
   'sectionForm',
+  'sectionNextIssue',
   'sectionPricingTiers',
   'sectionResources',
   'sectionRuledList',
