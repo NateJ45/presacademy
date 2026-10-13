@@ -66,3 +66,6 @@ playwright-report/
 # Claude Code local worktrees and per-machine settings
 .claude/worktrees/
 .claude/settings.local.json
+
+# Local Sanity dataset exports (encrypted); never commit them
+sanity-backup-*.tar.gz.enc
