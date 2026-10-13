@@ -25,11 +25,15 @@ const CTA_PROJECTION = `{
 
 // Configurable form (native fields or external embed). Dereferenced wherever a
 // page references a form.
+//
+// Deliberately NO `provider`: since 2026-10-13 every native form posts to the
+// site's own /api/contact/ endpoint (starter card 45), so the old Web3Forms
+// settings are unused, and projecting them would serialize a stored access key
+// into the page HTML as an island prop.
 const FORM_PROJECTION = `{
   _id, title, "slug": slug.current, heading, intro, mode,
   fields[]{ label, name, type, required, placeholder, helpText, options, width },
   submitLabel, successMessage, consentNote,
-  provider,
   embedUrl, embedHtml
 }`;
 

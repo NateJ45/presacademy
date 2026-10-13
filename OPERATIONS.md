@@ -238,7 +238,7 @@ The items below apply to any project built on this starter. Replace the angle-br
 
 **Wire external services:**
 
-- [ ] Web3Forms: create a form, set the access key in the contact form component
+- [x] Forms: since 2026-10-13 every Sanity-built form posts to the site's own `/api/contact/` endpoint (D1 `presacademy-contact`, Cloudflare Email Routing, Turnstile). See "Form submissions" below. Still open: the verified destination address and the live `notified = 1` test (`docs/PENDING.md`).
 - [ ] Calendly: set `PUBLIC_CALENDLY_URL` env var to the real booking URL
 - [ ] Cloudflare Web Analytics: create a site, add the token to `wrangler.jsonc`
 - [x] Google Analytics 4: live since 2026-10-04 (`PUBLIC_GA_ID` = `G-1S5Z7MGZ9J`, GA4 property 557366198), set as a BUILD variable in Cloudflare Workers Builds. The Privacy Policy stored in Sanity (the `privacyBody` section of `privacyPage`) names Google Analytics and its cookies; keep that true if analytics ever changes.
@@ -257,6 +257,31 @@ The items below apply to any project built on this starter. Replace the angle-br
 - [ ] Sitemap submitted to Google Search Console
 
 ---
+
+## Form submissions
+
+The contact form and the express-interest form (both built in Studio under Content, Forms) post to the site's own Worker endpoint, `/api/contact/` (`src/pages/api/contact.ts`, starter card 45). Web3Forms and hCaptcha are retired for the forms; only the newsletter fallback can still use Web3Forms.
+
+**What happens to a submission, in order:**
+
+1. The Worker drops obvious bots silently (the hidden honeypot field, and anything sent faster than a person could type), then checks the Cloudflare Turnstile token against the `TURNSTILE_SECRET` secret.
+2. It **stores** the submission in the D1 database `presacademy-contact`, table `contact_submissions`.
+3. Only then does it **email** it through the `EMAIL` binding (Cloudflare Email Routing on presbyterianacademy.org, from `CONTACT_FROM` to the verified destination in `CONTACT_TO`; both are Worker secrets and the address is never written in this repo). The email's Reply-To is the visitor.
+4. It records the outcome on the row: `notified = 1`, or `notified = 0` with the reason in `notify_error`.
+
+A visitor gets "Thank you" whenever the row was stored, even if the email failed. So **a 200 response proves nothing; the `notified` column does.**
+
+**Read the latest submissions:**
+
+```powershell
+npx wrangler d1 execute presacademy-contact --remote --command "SELECT id, received_at, name, subject, notified, notify_error FROM contact_submissions ORDER BY id DESC LIMIT 20"
+```
+
+Add `email, message` to the column list to read a whole enquiry. Any row with `notified = 0` is a message nobody was emailed about: read it, answer it, then fix whatever `notify_error` says.
+
+**How each form maps onto the row** (`src/lib/form-to-contact.ts`): `name` is the Name field, or First name and Last name joined; `email` is the form's Email field; `subject` names the form ("Contact form", "Express interest form"); `message` holds every other answer as `Label: value` lines in form order.
+
+**Secrets** (set with `npx wrangler secret put <NAME>`, never in a file): `TURNSTILE_SECRET`, `CONTACT_TO`, `CONTACT_FROM`. The Turnstile sitekey is public and defaults in `FormRenderer.tsx`; `PUBLIC_TURNSTILE_SITEKEY` overrides it at build time. Local testing: `docs/agent/deployment.md`, "Testing the forms locally".
 
 ## Audit Sanity content
 

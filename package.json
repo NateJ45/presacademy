@@ -31,7 +31,8 @@
     "test:visual": "playwright test -c playwright.visual.config.ts",
     "serve:dist": "http-server dist/client -p 4321 -s -c-1 --silent",
     "check:links": "linkinator ./dist/client --recurse --skip \"^https?://(?!127\\.0\\.0\\.1)\" --skip \"/studio\" --skip \"/preview\" --skip \"/api\"",
-    "sync-check": "node scripts/sync-check.mjs"
+    "sync-check": "node scripts/sync-check.mjs",
+    "contact:migration": "node --experimental-strip-types scripts/gen-contact-migration.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.0",

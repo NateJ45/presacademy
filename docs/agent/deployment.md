@@ -55,7 +55,8 @@ Set in Cloudflare -> **Workers & Pages -> your-project -> Settings -> Variables*
 - `PUBLIC_SANITY_DATASET` -- `production` (or your dataset name). Same graceful-empty behavior as above.
 - `PUBLIC_SANITY_API_VERSION` -- pinned ISO date like `2026-05-01`. Bump deliberately.
 - `SANITY_API_READ_TOKEN` -- only if any page needs to read draft content (typically not, since published content is publicly readable). Mark as Secret.
-- `PUBLIC_WEB3FORMS_KEY` -- contact form access key from [web3forms.com](https://web3forms.com/). Without it the contact form falls back to a no-op action and shows an inline notice.
+- `PUBLIC_TURNSTILE_SITEKEY` -- optional. Overrides the Cloudflare Turnstile sitekey baked into the forms. Unset, production uses the live widget's public key (in `FormRenderer.tsx`) and `astro dev` uses Cloudflare's always-pass test key.
+- `PUBLIC_WEB3FORMS_KEY` -- optional, used ONLY by the newsletter signup's fallback when no ESP form URL is set. The Sanity-built forms no longer use Web3Forms (see "Forms: the site's own endpoint" below).
 - `PUBLIC_CF_ANALYTICS_TOKEN` -- Cloudflare Web Analytics token. Without it the analytics beacon doesn't render.
 - `PUBLIC_GA_ID` -- Google Analytics 4 Measurement ID (`G-XXXXXXXXXX`, not the numeric property id). GA4 is live since 2026-10-04 (`PUBLIC_GA_ID` = `G-1S5Z7MGZ9J`, GA4 property 557366198). It must be a **Build** variable in Cloudflare Workers Builds (it is inlined at build time, so a runtime variable does nothing), and the site must be rebuilt after setting it. The tag fires only on the production hostname. Empty or malformed renders nothing. With it set the site sets `_ga` cookies, and the Privacy Policy in Sanity says so. To check GA4 is alive, look for the id in the live home page HTML.
 - `PUBLIC_CALENDLY_URL` -- optional. Booking link for the discovery call CTA.
@@ -75,7 +76,7 @@ When you change a Sanity schema (`src/sanity/schemaTypes/**`), run `npm run type
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Cross-Origin-Opener-Policy: same-origin`
 
-The Content-Security-Policy is hand-maintained in `public/_headers` (CLAUDE.md gotcha #10). It allows Cloudflare Analytics and, since 2026-10-04, the Google Analytics origins (`www.googletagmanager.com` for scripts, `*.google-analytics.com`, `*.analytics.google.com` and `stats.g.doubleclick.net` for beacons).
+The Content-Security-Policy is hand-maintained in `public/_headers` (CLAUDE.md gotcha #10). It allows Cloudflare Analytics, Cloudflare Turnstile (`challenges.cloudflare.com` in `script-src` and `frame-src`, since 2026-10-13, replacing the hCaptcha origins) and, since 2026-10-04, the Google Analytics origins (`www.googletagmanager.com` for scripts, `*.google-analytics.com`, `*.analytics.google.com` and `stats.g.doubleclick.net` for beacons).
 
 ### Privacy and analytics
 
@@ -84,6 +85,35 @@ The starter ships in an effectively zero-cookie posture. The current baseline:
 - **Cloudflare Web Analytics** uses no cookies and stores no personal data.
 - **Google Analytics 4 is on** (since 2026-10-04) and sets `_ga` cookies, so the site is no longer cookieless. No Facebook/Meta Pixel and no ad-tracking or retargeting pixels. The live `/privacy` text is stored in Sanity, in `privacyPage.flexibleSections[_key=="privacyBody"].body` (not a top-level `body`, which is empty and misled a check on 2026-10-04). The built-in fallback in `LegalBodyBlock.astro` renders only if that section body is empty; it switches on `hasGa`, but it is not what visitors see today. The stored text was updated on 2026-10-04 to name Google Analytics and its cookies (the "no tracking pixels" clause and the Cloudflare "no cookies" bullet were removed). Stored text is not derived from the config: if GA4 is ever turned off, edit that section in Studio. The site is prerendered, so a Studio edit reaches the live page only after the Sanity webhook's rebuild (about 2 minutes). Search Console: `presbyterianacademy.org` is a verified Domain property (DNS TXT record in Cloudflare; do not remove it).
 - **Sanity client** reads public published content, no auth cookies.
-- **Web3Forms** contact-form submissions go server-side via `fetch`; no cookies set.
+- **Form submissions** (since 2026-10-13) post to the site's own Worker, are stored in the D1 database `presacademy-contact` and emailed to the Academy; **Cloudflare Turnstile** checks them for spam. The stored privacy text says so (the `privacyForms` paragraph, added by `scripts/migrate-privacy-forms.mjs`; the code fallback and `scripts/seed-editability.mjs` carry the same sentence).
 
 **`/privacy` page:** a real privacy policy page ships, driven by the `privacyPage` singleton in Sanity with a plain-voice static fallback. Linked from the footer on every page and from every capture form's consent note. Update this page to reflect your actual data practices before going live.
+
+## Forms: the site's own endpoint (starter card 45, 2026-10-13)
+
+Every native Sanity form posts to `/api/contact/` (`src/pages/api/contact.ts`, PORTABLE). The Worker stores the submission in D1 first and emails it second, so a failed send never loses an enquiry. Where submissions live and how to read them: `OPERATIONS.md`, "Form submissions".
+
+**The setup on this site, and how it differs from the card's six steps.** presbyterianacademy.org had no mail provider at all, so it uses Cloudflare Email **Routing** on the root domain (MX at Cloudflare) rather than Email Sending: the notification goes to a **verified destination address**, which is free on any plan and needs no sending-domain onboarding. All of this was done on 2026-10-13:
+
+1. D1 `presacademy-contact` created and migrated remotely (`migrations/0001_contact_submissions.sql`, generated by `npm run contact:migration`).
+2. Email Routing enabled on the domain; the destination address added (it is live only after its owner clicks the verification email).
+3. Worker secrets `TURNSTILE_SECRET`, `CONTACT_TO`, `CONTACT_FROM` set.
+4. Turnstile widget "PresAcad Contact Form" (managed mode, domain presbyterianacademy.org); its public sitekey is the default in `FormRenderer.tsx`.
+5. Bindings `CONTACT_DB` and `EMAIL` in `wrangler.jsonc`.
+6. **Still to do:** one labelled live submission, then read the row back and confirm `notified = 1`. A 200 is not proof: the endpoint answers 200 for a stored-but-not-sent message on purpose. Tracked in `docs/PENDING.md`.
+
+### Testing the forms locally
+
+Never point a test at the remote database or a real inbox. The local path:
+
+```powershell
+$env:PUBLIC_TURNSTILE_SITEKEY = "1x00000000000000000000AA"   # always-pass test sitekey
+npm run build
+npx wrangler d1 migrations apply presacademy-contact --local -c dist/server/wrangler.json
+npx wrangler dev -c dist/server/wrangler.json --port 8799 --var TURNSTILE_SECRET:1x0000000000000000000000000000000AA
+```
+
+- Apply the migration with `-c dist/server/wrangler.json`, the config `wrangler dev` runs. Local D1 state is keyed per config path, so the root config migrates a different database and the endpoint answers "no such table". The local state lives under `dist/server/.wrangler`, so **every rebuild wipes it**: re-apply the migration after each build.
+- The production build bakes in the LIVE sitekey, which only works on presbyterianacademy.org; on localhost the widget errors. Hence the test sitekey at build time. `--var TURNSTILE_SECRET:2x0000000000000000000000000000000AA` (always fails) exercises the "did not pass the spam check" path.
+- Locally there is no `CONTACT_TO`/`CONTACT_FROM`, so a submission lands with `notified = 0` and `notify_error = "no notification transport configured"`. That is the expected local result and proves the store-first path. Read rows back with `npx wrangler d1 execute presacademy-contact --local -c dist/server/wrangler.json --command "SELECT * FROM contact_submissions"`.
+- The Playwright suite serves `dist/client` statically, so `/api/contact/` does not exist there and the forms answer "This form is not connected yet". It checks rendering and accessibility, not delivery.

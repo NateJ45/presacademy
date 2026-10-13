@@ -21,7 +21,7 @@ cutover.
 - [ ] Site Settings fully populated (identity, socials, give/watch URLs, worship time, nav, footer)
 - [ ] Geo coordinates set in Site Settings (Latitude + Longitude): right-click the building in Google Maps and copy the coordinates from the context menu. These power the `geo` block in the Church structured-data schema (JSON-LD). Leave blank to omit the geo block rather than shipping wrong coordinates.
 - [ ] Real page copy in (home, visit, believe, staff bios, ministries)
-- [ ] Forms: Web3Forms key set; contact + connect card + prayer request tested end-to-end
+- [ ] Forms: `/api/contact/` bindings, secrets and Turnstile widget in place (`docs/agent/deployment.md`, "Forms: the site's own endpoint"); each form tested end-to-end with the row read back (`notified = 1`)
 - [ ] Studio deployed (`npm run studio:deploy`); appId pinned in `sanity.cli.ts`
 - [ ] Editor accounts invited; help-center guides walked through
 - [ ] `node scripts/sanity-audit.mjs --fields` reviewed: no unexpected empty fields, zero stray drafts
