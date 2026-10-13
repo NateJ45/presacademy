@@ -1,9 +1,11 @@
 ---
 // Safe to edit by hand for copy + structure changes.
 // Course detail. Built for each course slug in Sanity. The signature Rule &
-// Ledger components live here: the "At a glance" facts ledger (term, begins,
-// schedule, sessions, format, venue, tuition, apply by) and the numbered session
-// list. Dual CTA (express interest / request info) routes to /get-started.
+// Ledger components live here: the "At a glance" facts ledger (code, term,
+// begins, schedule, sessions, format, venue, tuition, apply by) and the numbered
+// session list. The course cover (CourseCover.astro, front only) heads the aside
+// beside the title (Term Issue, 2026-10-13); on phones it sits between the
+// summary and the ledger. Dual CTA (express interest / request info) routes to /get-started.
 // Without a Sanity project there are no slugs, so no detail pages are generated.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -13,6 +15,7 @@ import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import SanityImage from '@/components/SanityImage.astro';
 import FinalCta from '@/components/FinalCta.astro';
+import CourseCover from '@/components/CourseCover.astro';
 
 export async function getStaticPaths() {
   const slugs = await getAllCourseSlugs();
@@ -63,6 +66,7 @@ const price =
 
 // At-a-glance ledger rows, empties dropped.
 const ledger = [
+  ['Course code', course.courseCode],
   ['Term', no?.term?.title],
   ['Begins', fmtDate(no?.term?.startDate)],
   ['Schedule', no?.schedule],
@@ -106,9 +110,20 @@ const pillGhost =
         {area && <span>{area}</span>}
       </p>
 
-      <div class="grid grid-cols-1 gap-x-12 gap-y-l lg:grid-cols-[1.15fr_.85fr]">
-        {/* Main column */}
-        <div>
+      {
+        /* Three grid items so the cover can sit beside the title on desktop and
+        still come early on a phone: the header (row 1, left), the aside (right,
+        spanning both rows; cover first, then the sticky ledger), and the rest of
+        the main column (row 2, left). In that DOM order, so a phone reads title,
+        cover, facts and the call to action before the session list. The 1fr
+        second row soaks up the aside's extra height so no gap opens under the
+        summary. */
+      }
+      <div
+        class="grid grid-cols-1 gap-x-12 gap-y-l lg:grid-cols-[1.15fr_.85fr] lg:grid-rows-[auto_1fr]"
+      >
+        {/* Main column, header */}
+        <div class="lg:col-start-1 lg:row-start-1">
           <h1 class="font-display text-h1 leading-headline-tight text-foreground">
             {course.title}
           </h1>
@@ -138,48 +153,11 @@ const pillGhost =
               </p>
             )
           }
-
-          {
-            course.whoFor?.length > 0 && (
-              <div class="mt-l">
-                <h2 class="eyebrow font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
-                  Who this is for
-                </h2>
-                <ul class="mt-3 list-disc space-y-1.5 pl-5 text-foreground/80">
-                  {course.whoFor.map((w: string) => (
-                    <li>{w}</li>
-                  ))}
-                </ul>
-              </div>
-            )
-          }
-
-          {
-            course.sessionOutline?.length > 0 && (
-              <div class="mt-l">
-                <h2 class="eyebrow font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
-                  The sessions
-                </h2>
-                <div class="mt-3 border-t border-border-soft">
-                  {course.sessionOutline.map((s: any, idx: number) => (
-                    <div class="grid grid-cols-[3rem_1fr] gap-4 border-b border-border-soft py-4">
-                      <span class="font-display text-lg text-gold-ink tabular-nums">
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
-                      <div>
-                        <h3 class="font-display text-h5 text-foreground">{s.title}</h3>
-                        {s.focus && <p class="mt-1 text-sm text-foreground/70">{s.focus}</p>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
         </div>
 
-        {/* Aside: facts ledger + CTA + teacher */}
-        <aside>
+        {/* Aside: cover, then facts ledger + CTA + teacher */}
+        <aside class="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <CourseCover course={course} size="lg" class="mb-l w-48 sm:w-56 lg:w-72" />
           <div class="lg:sticky lg:top-28">
             <div class="h-0.5 w-full bg-gold"></div>
             <div class="border border-t-0 border-border-soft bg-card">
@@ -275,6 +253,47 @@ const pillGhost =
             }
           </div>
         </aside>
+
+        {/* Main column, the rest */}
+        <div class="lg:col-start-1 lg:row-start-2 [&>:first-child]:mt-0">
+          {
+            course.whoFor?.length > 0 && (
+              <div class="mt-l">
+                <h2 class="eyebrow font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
+                  Who this is for
+                </h2>
+                <ul class="mt-3 list-disc space-y-1.5 pl-5 text-foreground/80">
+                  {course.whoFor.map((w: string) => (
+                    <li>{w}</li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            course.sessionOutline?.length > 0 && (
+              <div class="mt-l">
+                <h2 class="eyebrow font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
+                  The sessions
+                </h2>
+                <div class="mt-3 border-t border-border-soft">
+                  {course.sessionOutline.map((s: any, idx: number) => (
+                    <div class="grid grid-cols-[3rem_1fr] gap-4 border-b border-border-soft py-4">
+                      <span class="font-display text-lg text-gold-ink tabular-nums">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <div>
+                        <h3 class="font-display text-h5 text-foreground">{s.title}</h3>
+                        {s.focus && <p class="mt-1 text-sm text-foreground/70">{s.focus}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+        </div>
       </div>
     </div>
   </section>

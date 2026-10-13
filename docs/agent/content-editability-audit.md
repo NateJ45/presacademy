@@ -42,7 +42,7 @@ Church orphans in `aboutPage.ts`: `building*`, `who*`, `muralCaption`, `featureI
 
 ### Course detail — `src/pages/courses/[slug].astro`
 
-Hardcoded section labels (no field): "Who this is for", "The sessions", "At a glance", the 8 ledger row labels (Term/Begins/Schedule/Sessions/Format/Venue/Tuition/Apply by), "Express interest" / "Request information" aside CTAs, the "visit the first session free" trust line, "Your teacher(s)". FinalCta button label is hardcoded here (the index binds it).
+Hardcoded section labels (no field): "Who this is for", "The sessions", "At a glance", the 9 ledger row labels (Course code/Term/Begins/Schedule/Sessions/Format/Venue/Tuition/Apply by; Course code added 2026-10-13), "Express interest" / "Request information" aside CTAs, the "visit the first session free" trust line, "Your teacher(s)". FinalCta button label is hardcoded here (the index binds it).
 Silent data-loss orphans (fetched, never rendered): `course.offerings[].seatsNote`, `course.syllabusFile` (→ `syllabusUrl`), `priceTier.summary`/`unit`.
 **Fix:** add a shared "section labels" object to `coursesPage` (or accept structural labels as hardcoded + document it); render the syllabus download + seats note; bind the aside trust line + CTAs to fields.
 
@@ -55,7 +55,7 @@ Silent data-loss orphans: `facultyMember.specializations`, `yearsTeaching`, `ema
 
 ### Courses index / Faculty index
 
-Hardcoded: filter legends in `CourseFilters.tsx` ("Topic", "Teacher", "Term", "All upcoming terms", "Reset") + `FacultyFilter.tsx` ("All"); the pre-seed empty states; CourseCard "New dates coming"; the filtered empty-state tail ("ask us what is coming next").
+Hardcoded: filter legends in `CourseFilters.tsx` ("Topic", "Teacher", "Term", "All upcoming terms", "Reset") + `FacultyFilter.tsx` ("All"); the pre-seed empty states; CourseCard / CourseCover "New dates coming", and since 2026-10-13 the cover labels "The question", "In brief", "Week one" and the "Read the syllabus" cue (structural labels, deliberately hardcoded; the cover CONTENT is all Sanity: `courseCode`, `coverColor`, `coverOrnament`, `centralQuestion`, the first `sessionOutline` item); the filtered empty-state tail ("ask us what is coming next").
 Orphans: `coursesPage.catalogIntro` and `facultyPage.directoryIntro` (defined, queried, never rendered — both pages use `heroSubhead`). `facultyPage` lacks an `emptyState` field that `coursesPage` has.
 **Fix:** decide filter labels = structural (document) or add fields; render or remove `catalogIntro`/`directoryIntro`; add `facultyPage.emptyState`; fold the empty-state tail into the field.
 

@@ -1,0 +1,157 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// CourseCover: a course drawn as a small-press book cover (Term Issue, PR 1,
+// 2026-10-13)
+// =============================================================================
+// The front: catalog code and subject in Plex Mono, a CSS-only ornament, a
+// status tag, the Fraunces title and the teacher. The back (flip only): the
+// course's one question, week one (the first session), the facts line and a
+// "Read the syllabus" cue. All the styling lives in the "Course covers" block of
+// src/styles/globals.css, including the rule that only flips under
+// (hover: hover) with no reduced-motion preference; everywhere else the back's
+// content renders as plain text beside or below the cover, so nothing is
+// hover-only.
+//
+// Colour and ornament come from src/lib/cover.ts: the editor's choice, else a
+// deterministic fallback from the teaching area and slug, so every course has a
+// cover even with the Cover tab untouched.
+//
+// Props:
+//   course   a COURSE_CARD-shaped object (src/lib/queries.ts)
+//   size     'sm' | 'md' | 'lg'. md fills its column; sm and lg cap the width
+//   flip     true = a link with a back (the catalog card). false = the front
+//            only, not a link, hidden from assistive tech because the page
+//            already carries the same words (the course detail header)
+//   href     where a flip cover links (defaults to the course page)
+//   headingLevel  the title's heading level on a flip cover (default 3)
+
+import { coverStyle, resolveCover } from '@/lib/cover';
+
+interface Props {
+  course: any;
+  size?: 'sm' | 'md' | 'lg';
+  flip?: boolean;
+  href?: string;
+  headingLevel?: 2 | 3 | 4;
+  class?: string;
+}
+const {
+  course,
+  size = 'md',
+  flip = false,
+  href,
+  headingLevel = 3,
+  class: extraClass,
+} = Astro.props as Props;
+
+const { color, ornament } = resolveCover(course);
+
+const area: string = course?.teachingAreas?.[0]?.title ?? '';
+const code: string = (course?.courseCode ?? '').trim();
+const instructor = course?.instructors?.[0];
+const teacher = instructor
+  ? `${instructor.honorific ? instructor.honorific + ' ' : ''}${instructor.name}`
+  : '';
+
+// The status tag: "Open · Spring 2027", "Waitlist", "Closed". No tag when the
+// course has no upcoming cohort (the facts line says "New dates coming").
+const next = course?.nextOffering;
+const status = next?.status as string | undefined;
+const tag =
+  status === 'open'
+    ? ['Open', next?.term?.title].filter(Boolean).join(' · ')
+    : status === 'waitlist'
+      ? 'Waitlist'
+      : status === 'closed'
+        ? 'Closed'
+        : null;
+
+const price =
+  course?.priceNote ?? (course?.priceTier?.amount != null ? `$${course.priceTier.amount}` : null);
+const facts: string[] = next
+  ? [next.term?.title, next.sessions ? `${next.sessions} sessions` : null, price].filter(Boolean)
+  : ['New dates coming', price].filter(Boolean);
+
+const question: string = (course?.centralQuestion ?? '').trim();
+const weekOne: string = (course?.weekOne?.title ?? '').trim();
+// No question set yet: the summary stands in, under a quieter label, so the
+// back never shows an empty heading.
+const summary: string = !question ? (course?.summary ?? '').trim() : '';
+
+const sizeClass = size === 'sm' ? 'max-w-[10rem]' : size === 'lg' ? 'max-w-[20rem]' : '';
+const rootClass = ['cover', flip && 'cover--flip', sizeClass, extraClass].filter(Boolean).join(' ');
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+const link = href ?? (course?.slug ? `/courses/${course.slug}/` : '#');
+---
+
+{
+  flip ? (
+    <a href={link} class={rootClass} style={coverStyle(color)} data-cover={color}>
+      <div class="cover__book">
+        <div class="cover__face cover__front">
+          <div class="cover__front-inner">
+            <span class="cover__line">
+              {code && <span>{code}</span>}
+              {area && <span class="cover__topic">{area}</span>}
+            </span>
+            <span class="cover__orn" data-ornament={ornament} aria-hidden="true" />
+            <div>
+              {tag && <span class="cover__tag">{tag}</span>}
+              <Heading class="cover__title">{course?.title}</Heading>
+              {teacher && <span class="cover__teacher">{teacher}</span>}
+            </div>
+          </div>
+        </div>
+        <div class="cover__face cover__back">
+          <div class="cover__back-inner">
+            {question && (
+              <>
+                <span class="cover__label">The question</span>
+                <span class="cover__question">{question}</span>
+              </>
+            )}
+            {summary && (
+              <>
+                <span class="cover__label">In brief</span>
+                <span class="cover__week cover__summary">{summary}</span>
+              </>
+            )}
+            {weekOne && (
+              <>
+                <span class="cover__label">Week one</span>
+                <span class="cover__week">{weekOne}</span>
+              </>
+            )}
+            <span class="cover__facts">{facts.join(' · ')}</span>
+            <span class="cover__cta">
+              Read the syllabus <span aria-hidden="true">&rarr;</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <span class="cover__meta cover__facts" aria-hidden="true">
+        {facts.join(' · ')}
+      </span>
+    </a>
+  ) : (
+    <div class={rootClass} style={coverStyle(color)} data-cover={color} aria-hidden="true">
+      <div class="cover__book">
+        <div class="cover__face cover__front">
+          <div class="cover__front-inner">
+            <span class="cover__line">
+              {code && <span>{code}</span>}
+              {area && <span class="cover__topic">{area}</span>}
+            </span>
+            <span class="cover__orn" data-ornament={ornament} />
+            <div>
+              {tag && <span class="cover__tag">{tag}</span>}
+              <span class="cover__title">{course?.title}</span>
+              {teacher && <span class="cover__teacher">{teacher}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -744,9 +744,17 @@ const NEXT_OFFERING = `"nextOffering": (
   offerings[defined(term->startDate) && term->startDate >= $today]
   | order(term->startDate asc))[0]${OFFERING_PROJECTION}`;
 
+// The cover fields (Term Issue, 2026-10-13) ride on every card: the code,
+// colour, ornament and question are drawn by CourseCover.astro, and week one is
+// simply the first session. An empty colour or ornament is derived in
+// src/lib/cover.ts, so none of these have to be set.
+const COVER_FIELDS = `courseCode, coverColor, coverOrnament, centralQuestion,
+  "weekOne": sessionOutline[0]{ title, focus }`;
+
 const COURSE_CARD = `{
   _id, title, "slug": slug.current, summary, level, format, startHere, featured, displayOrder,
   coverImage${IMAGE_PROJECTION},
+  ${COVER_FIELDS},
   "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
   "instructors": instructors[]->{ _id, name, honorific, title, "slug": slug.current },
   priceNote, "priceTier": priceTier->{ name, amount, unit, isAudit },
@@ -800,6 +808,7 @@ export async function getCourseBySlug(slug: string) {
     `*[_type == "course" && archived != true && slug.current == $slug][0]{
       _id, title, "slug": slug.current, summary, level, format, location, whoFor,
       coverImage${IMAGE_PROJECTION},
+      ${COVER_FIELDS},
       seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
       "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
       "instructors": instructors[]->{

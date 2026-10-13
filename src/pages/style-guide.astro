@@ -15,6 +15,7 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import CourseCover from '@/components/CourseCover.astro';
 
 // ---- Color tokens, grouped. light/dark are the literal values in globals.css.
 const colorGroups = [
@@ -236,6 +237,143 @@ const typeScale = [
   },
 ];
 
+// ---- Course covers (Term Issue, 2026-10-13). Fixtures, not Sanity, so the
+// visual baseline moves only when the cover system moves. One cover per colour
+// and ornament, using the mockup's eight courses. Values mirror the
+// --color-cover-* tokens in globals.css.
+const coverPalette = [
+  { name: 'green', bg: '#33503F', fg: '#EDE4CF' },
+  { name: 'ink', bg: '#222A25', fg: '#D9C79F' },
+  { name: 'cream', bg: '#F7F1E1', fg: '#33503F' },
+  { name: 'oxblood', bg: '#7A2A2C', fg: '#F2E6D6' },
+  { name: 'brass', bg: '#C9A46A', fg: '#2A2116' },
+  { name: 'sage', bg: '#A9B9A7', fg: '#1F2B23' },
+  { name: 'slate', bg: '#3E4F5C', fg: '#E8E2D2' },
+  { name: 'parchment', bg: '#E4D3B4', fg: '#7A2A2C' },
+];
+const offer = (status: string, term = 'Spring 2027', sessions = 8) => ({
+  status,
+  sessions,
+  term: { title: term, slug: term.toLowerCase().replace(' ', '-') },
+});
+const sampleCourses = [
+  [
+    'SCR 101',
+    'Scripture',
+    'Reading the Bible as One Story',
+    'The Rev. Dr. Miriam Hale',
+    'green',
+    'circle',
+    'Is the Bible one book or sixty-six?',
+    'Creation and covenant',
+    null,
+  ],
+  [
+    'LDR 110',
+    'Leading a Group',
+    'Leading a Small Group with Depth',
+    'The Rev. Carla Jiménez',
+    'ink',
+    'dots',
+    'How do you lead a study past the easy answers?',
+    'The question behind the question',
+    offer('waitlist'),
+  ],
+  [
+    'THE 120',
+    'Reformed Theology',
+    'The Reformed Confessions, Plainly',
+    'Dr. Samuel Okonkwo',
+    'cream',
+    'stripes',
+    'What do Presbyterians actually believe, and why write it down?',
+    'Why churches write confessions at all',
+    null,
+  ],
+  [
+    'SPF 130',
+    'Prayer',
+    'Prayer and the Psalms',
+    'The Rev. Carla Jiménez',
+    'oxblood',
+    'half-moon',
+    'What do you say to God when you don’t know what to say?',
+    'Psalm 1 and the shape of a praying life',
+    null,
+  ],
+  [
+    'THE 140',
+    'Reformed Theology',
+    'Calvin for Everyday Faith',
+    'The Rev. Dr. Miriam Hale',
+    'brass',
+    'cross',
+    'Was Calvin as grim as his reputation?',
+    'Knowing God and knowing ourselves',
+    null,
+  ],
+  [
+    'HIS 150',
+    'Church History',
+    'The Early Church and the Creeds',
+    'The Rev. Dr. Thomas Reese',
+    'sage',
+    'ring',
+    'Why did the first Christians fight so hard over a few words?',
+    'Acts 15 and the first church council',
+    null,
+  ],
+  [
+    'PRE 160',
+    'Preaching',
+    'Preaching the Gospel Texts',
+    'Dr. Naomi Whitfield',
+    'slate',
+    'diagonal',
+    'How do you preach a story everyone thinks they already know?',
+    'Mark 4 and the sower',
+    offer('open'),
+  ],
+  [
+    'HIS 170',
+    'Church History',
+    'The Story of the Reformation',
+    'Dr. Samuel Okonkwo',
+    'parchment',
+    'steps',
+    'What were the Reformers trying to recover?',
+    'Wittenberg, 1517',
+    offer('open', 'Summer 2027', 6),
+  ],
+].map(
+  (
+    [
+      courseCode,
+      area,
+      title,
+      teacher,
+      coverColor,
+      coverOrnament,
+      centralQuestion,
+      weekOne,
+      nextOffering,
+    ],
+    i,
+  ) => ({
+    slug: `sample-${i + 1}`,
+    courseCode,
+    title,
+    coverColor,
+    coverOrnament,
+    centralQuestion,
+    weekOne: { title: weekOne },
+    teachingAreas: [{ title: area }],
+    instructors: [{ name: teacher }],
+    priceNote: '$195',
+    nextOffering,
+  }),
+);
+
 // ---- Spacing / radius / motion reference.
 const spacing = [
   { token: '--spacing-xs', value: 'clamp(.25–.5rem)' },
@@ -338,6 +476,17 @@ const motion = [
           <p class="mt-2 text-4xl text-foreground">Source Sans 3</p>
           <p class="mt-1 text-sm text-muted-foreground">Humanist sans. Body, UI, eyebrows, meta.</p>
           <p class="mt-3 text-2xl text-foreground">Aa Bb Cc · 0123456789 · &amp; ?!</p>
+        </div>
+        <div class="rounded-lg border border-border-soft bg-card p-l sm:col-span-2">
+          <p class="text-xs tracking-eyebrow text-muted-foreground uppercase">Mono</p>
+          <p class="mt-2 font-mono text-3xl text-foreground">IBM Plex Mono</p>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Regular 400 only. The catalog voice: course codes, subjects and status tags on the
+            covers, in small uppercase with open tracking.
+          </p>
+          <p class="mt-3 font-mono text-lg tracking-[0.06em] text-foreground uppercase">
+            SCR 101 · Scripture · Open · Spring 2027
+          </p>
         </div>
       </div>
 
@@ -480,6 +629,52 @@ const motion = [
           </div>
         </div>
       </div>
+    </section>
+
+    {/* ---- COURSE COVERS (Term Issue) ---- */}
+    <section id="covers" class="mt-section-lg" aria-label="Course covers">
+      <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">Signature</p>
+      <h2 class="mt-2 font-display text-h2 text-foreground">Course covers</h2>
+      <p class="mt-s max-w-2xl leading-relaxed text-foreground/80">
+        Every course is drawn as a small-press book cover: eight fixed colours and eight CSS
+        ornaments, the same in both themes. With a mouse, a cover turns over to show its question
+        and week one. On touch, or with reduced motion, that side sits beside or below the cover
+        instead. An empty colour or ornament is picked from the subject and the course.
+      </p>
+
+      <h3 class="mt-l font-display text-h5 text-foreground">Cover palette (static)</h3>
+      <ul class="mt-m grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-4">
+        {
+          coverPalette.map((c) => (
+            <li class="flex items-center gap-3">
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center border border-foreground/15 font-display text-lg"
+                style={`background:${c.bg};color:${c.fg}`}
+                aria-hidden="true"
+              >
+                Aa
+              </span>
+              <span class="min-w-0">
+                <span class="block text-sm font-medium text-foreground">{c.name}</span>
+                <span class="block font-mono text-xs text-muted-foreground">
+                  {c.bg} / {c.fg}
+                </span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h3 class="mt-l font-display text-h5 text-foreground">The eight covers</h3>
+      <ul class="mt-m grid list-none grid-cols-1 gap-l p-0 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          sampleCourses.map((c) => (
+            <li>
+              <CourseCover course={c} size="md" flip href="#covers" />
+            </li>
+          ))
+        }
+      </ul>
     </section>
 
     {/* ---- TOKENS: spacing / motion ---- */}

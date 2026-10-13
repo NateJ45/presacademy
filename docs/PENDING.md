@@ -183,19 +183,29 @@ that section when it gets long.
   are for). Decide per field: delete with a dry-run unset, or wire one up.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
-  (`.impeccable/critique/`): several course cards render empty image
-  wells, and the faculty strip is text-only, which makes a polished page
-  look half-loaded. Placeholder art or a layout that tolerates missing
-  images would close it. Second finding: CTA wording drift ("Request
-  info" vs "Request information", "Free intro" vs "Book a free intro");
-  pick one form of each and sweep.
-  2026-10-13 (Term Issue PR 3): the faculty half now has a fix in code but is
-  NOT closed. `sectionFacultyRail` gained a `contributors` style (portrait or
-  an initials well, credential line, next-term courses, reading line, audio),
-  and it only reaches the home page once the home faculty section is switched
-  to it: the Term Issue PR 2 migration (`migrate-home-term-issue.mjs`) or an
-  editor picking "Contributors" under Style. Close this half after that is
-  live and checked; the course-card half is Term Issue PR 1.
+  (`.impeccable/critique/`): the faculty strip is text-only, which makes a
+  polished page look half-loaded (Term Issue PR 3 added the `contributors` faculty-rail style; this half closes once the PR 2 migration switches the home faculty section to it and it is checked live).
+  The empty course-card image wells half closed 2026-10-13 (see Recently
+  closed). Second finding: CTA wording drift ("Request info" vs "Request
+  information", "Free intro" vs "Book a free intro"); pick one form of each
+  and sweep.
+- **Run the course-cover seed after the Term Issue PR 1 merge** (2026-10-13).
+  `scripts/seed-course-covers.mjs` fills `courseCode`, `coverColor`,
+  `coverOrnament` and `centralQuestion` on the eight seed courses (fill-empty
+  only). Dry run on 2026-10-13: 9 changes, the 8 published courses plus the
+  existing draft `drafts.course.calvin-everyday`. Routine: backup, dry run,
+  `--apply`, re-run (0 changes), `scripts/sanity-audit.mjs`, `/rebuild`, check
+  the live covers. Until then the covers use the derived fallback, which
+  repeats colours (five of the eight courses came out parchment).
+- **The cover questions are placeholders** (2026-10-13). The eight
+  `centralQuestion` values in `seed-course-covers.mjs` were written for the
+  Term Issue mockup, not by the faculty. Each teacher should supply (or
+  approve) the one question their course asks, in Studio, Cover tab.
+- **Course photography still wanted for course pages** (2026-10-13). The
+  course card no longer shows `coverImage` (the typographic cover replaced
+  it), and the course page never did, so course photos currently render
+  nowhere. The field stays (never "Remove field"). Decide whether the course
+  page gets a photo band once real photography exists.
 - **Faculty "On my desk" lines and spoken introductions** (opened 2026-10-13,
   Term Issue PR 3). The fields exist on `facultyMember` ("This term" tab:
   `currentlyReading`, `introAudio`, `introAudioTranscript`,
@@ -215,6 +225,12 @@ that section when it gets long.
   edit there.
 
 ## Recently closed
+
+- 2026-10-13: **Empty course-card image wells** (half of the Home P1 above).
+  Term Issue PR 1: every course card is now a typographic cover
+  (`CourseCover.astro`) with a derived colour and ornament when the Cover tab
+  is empty, so no course renders an empty well any more, with or without a
+  photo.
 
 - 2026-08-27 — **MARKER SYNC SESSION: this repo joined the shared-file sync system.**
   `ncs-astro-sanity-starter` is the library of record (`PORTS.md` there is the registry).
