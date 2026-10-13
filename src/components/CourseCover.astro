@@ -85,73 +85,71 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 const link = href ?? (course?.slug ? `/courses/${course.slug}/` : '#');
 ---
 
-{
-  flip ? (
-    <a href={link} class={rootClass} style={coverStyle(color)} data-cover={color}>
-      <div class="cover__book">
-        <div class="cover__face cover__front">
-          <div class="cover__front-inner">
-            <span class="cover__line">
-              {code && <span>{code}</span>}
-              {area && <span class="cover__topic">{area}</span>}
-            </span>
-            <span class="cover__orn" data-ornament={ornament} aria-hidden="true" />
-            <div>
-              {tag && <span class="cover__tag">{tag}</span>}
-              <Heading class="cover__title">{course?.title}</Heading>
-              {teacher && <span class="cover__teacher">{teacher}</span>}
-            </div>
-          </div>
-        </div>
-        <div class="cover__face cover__back">
-          <div class="cover__back-inner">
-            {question && (
-              <>
-                <span class="cover__label">The question</span>
-                <span class="cover__question">{question}</span>
-              </>
-            )}
-            {summary && (
-              <>
-                <span class="cover__label">In brief</span>
-                <span class="cover__week cover__summary">{summary}</span>
-              </>
-            )}
-            {weekOne && (
-              <>
-                <span class="cover__label">Week one</span>
-                <span class="cover__week">{weekOne}</span>
-              </>
-            )}
-            <span class="cover__facts">{facts.join(' · ')}</span>
-            <span class="cover__cta">
-              Read the syllabus <span aria-hidden="true">&rarr;</span>
-            </span>
+{flip ? (
+  <a href={link} class={rootClass} style={coverStyle(color)} data-cover={color}>
+    <div class="cover__book">
+      <div class="cover__face cover__front">
+        <div class="cover__front-inner">
+          <span class="cover__line">
+            {code && <span>{code}</span>}
+            {area && <span class="cover__topic">{area}</span>}
+          </span>
+          <span class="cover__orn" data-ornament={ornament} aria-hidden="true" />
+          <div>
+            {tag && <span class="cover__tag">{tag}</span>}
+            <Heading class="cover__title">{course?.title}</Heading>
+            {teacher && <span class="cover__teacher">{teacher}</span>}
           </div>
         </div>
       </div>
-      <span class="cover__meta cover__facts" aria-hidden="true">
-        {facts.join(' · ')}
-      </span>
-    </a>
-  ) : (
-    <div class={rootClass} style={coverStyle(color)} data-cover={color} aria-hidden="true">
-      <div class="cover__book">
-        <div class="cover__face cover__front">
-          <div class="cover__front-inner">
-            <span class="cover__line">
-              {code && <span>{code}</span>}
-              {area && <span class="cover__topic">{area}</span>}
-            </span>
-            <span class="cover__orn" data-ornament={ornament} />
-            <div>
-              {tag && <span class="cover__tag">{tag}</span>}
-              <span class="cover__title">{course?.title}</span>
-              {teacher && <span class="cover__teacher">{teacher}</span>}
-            </div>
+      <div class="cover__face cover__back">
+        <div class="cover__back-inner">
+          {question && (
+            <>
+              <span class="cover__label">The question</span>
+              <span class="cover__question">{question}</span>
+            </>
+          )}
+          {summary && (
+            <>
+              <span class="cover__label">In brief</span>
+              <span class="cover__week cover__summary">{summary}</span>
+            </>
+          )}
+          {weekOne && (
+            <>
+              <span class="cover__label">Week one</span>
+              <span class="cover__week">{weekOne}</span>
+            </>
+          )}
+          <span class="cover__facts">{facts.join(' · ')}</span>
+          <span class="cover__cta">
+            Read the syllabus <span aria-hidden="true">&rarr;</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <span class="cover__meta cover__facts" aria-hidden="true">
+      {facts.join(' · ')}
+    </span>
+  </a>
+) : (
+  <div class={rootClass} style={coverStyle(color)} data-cover={color} aria-hidden="true">
+    <div class="cover__book">
+      <div class="cover__face cover__front">
+        <div class="cover__front-inner">
+          <span class="cover__line">
+            {code && <span>{code}</span>}
+            {area && <span class="cover__topic">{area}</span>}
+          </span>
+          <span class="cover__orn" data-ornament={ornament} />
+          <div>
+            {tag && <span class="cover__tag">{tag}</span>}
+            <span class="cover__title">{course?.title}</span>
+            {teacher && <span class="cover__teacher">{teacher}</span>}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  </div>
+)}

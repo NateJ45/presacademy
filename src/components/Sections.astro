@@ -156,85 +156,83 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
 };
 ---
 
-{
-  (sections ?? []).map((block: any) => {
-    const Cmp = MAP[block?._type];
-    if (!Cmp) return null;
-    // A shell-aware block can opt OUT of the shell per instance by choosing a
-    // fixed Rule & Ledger surface (2026-08-26: sectionPricingTiers is the first,
-    // for the Pricing page). It then paints its own <section>, exactly like the
-    // ported types below. Absent the field, nothing changes.
-    const dt = DEFAULT_TONE[block._type] ?? 'default';
-    // Preview-only empty-state coaching (2026-08-28). A section that holds none
-    // of its own content renders as a dashed "here is what goes here" note
-    // instead of the band of empty padding an editor used to get right after
-    // inserting it. Gated on `editDoc`, which ONLY the /preview routes pass, so
-    // the live static build takes the identical path it always did.
-    // See src/lib/section-coach.ts for the per-type emptiness tests.
-    const coach = editDoc ? sectionCoach(block) : null;
-    const rendered = coach ? (
-      <SectionCoach name={coach.name} hint={coach.hint} />
-    ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
-      <SectionShell background={block.background} defaultTone={dt}>
-        <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
-      </SectionShell>
-    ) : (
-      // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
-      // above are all editor-authored content, with nothing to fetch.
-      <Cmp
-        block={block}
-        fallbackEmail={fallbackEmail}
-        fallbackPhone={fallbackPhone}
-        fetcher={fetcher}
-      />
-    );
-    // Preview only (2026-08-27): the section-level edit target. The wrapper is a
-    // plain unstyled div on purpose. It must be a REAL block box, because the
-    // overlay outlines the element's rect, and a `display: contents` element has
-    // no rect to outline. With no `editDoc` there is no wrapper at all, so the
-    // live HTML does not change.
-    const editAttr = editDoc && block._key ? sectionEditAttr(editDoc, block._key) : undefined;
-    // ---------------------------------------------------------------------
-    // The surface handle (2026-08-28) — PREVIEW ONLY, same `editDoc` gate
-    // ---------------------------------------------------------------------
-    // The in-canvas swatch row needs a node the Studio schema resolves to a
-    // FIELD; the wrapper above names a bare array item, which resolves to none,
-    // so a custom overlay component can never mount on it (verified in a
-    // deployed Studio, see sectionFieldEditAttr). This little square is that
-    // node: it points at the section's `background` object, so clicking it
-    // selects that field and the overlay answers with the swatch row.
-    //
-    // Exactly one per section, and only for section types that HAVE a
-    // background — the Rule & Ledger sections come styled to match the page
-    // they belong to and get no handle at all.
-    //
-    // TOP-RIGHT, INSIDE the band, not the bottom-right corner the controls
-    // were first specced for. A section is usually taller than the viewport, so
-    // its bottom-right corner is below the fold exactly when the editor is
-    // looking at the section; its top-right is on screen the moment the band
-    // is. It renders after the content so it paints above it, and it carries
-    // its styles inline because this shell loads no preview-only stylesheet.
-    const handleAttr =
-      editAttr && editDoc && block._key && backgroundApplies(block._type, block)
-        ? sectionFieldEditAttr(editDoc, block._key, 'background')
-        : undefined;
-    return editAttr ? (
-      <div data-sanity={editAttr} style="position:relative">
-        {rendered}
-        {handleAttr && (
-          <div
-            data-sanity={handleAttr}
-            data-surface-handle
-            title="Section colours"
-            aria-hidden="true"
-            style="position:absolute;top:12px;right:12px;z-index:5;width:28px;height:28px;border-radius:999px;background:#FFFFFF;border:1px solid rgba(31,27,24,0.18);box-shadow:0 2px 8px rgba(31,27,24,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;"
-          >
-            🎨
-          </div>
-        )}
-      </div>
-    ) : (
-      rendered
-    );
-  })
-}
+{(sections ?? []).map((block: any) => {
+  const Cmp = MAP[block?._type];
+  if (!Cmp) return null;
+  // A shell-aware block can opt OUT of the shell per instance by choosing a
+  // fixed Rule & Ledger surface (2026-08-26: sectionPricingTiers is the first,
+  // for the Pricing page). It then paints its own <section>, exactly like the
+  // ported types below. Absent the field, nothing changes.
+  const dt = DEFAULT_TONE[block._type] ?? 'default';
+  // Preview-only empty-state coaching (2026-08-28). A section that holds none
+  // of its own content renders as a dashed "here is what goes here" note
+  // instead of the band of empty padding an editor used to get right after
+  // inserting it. Gated on `editDoc`, which ONLY the /preview routes pass, so
+  // the live static build takes the identical path it always did.
+  // See src/lib/section-coach.ts for the per-type emptiness tests.
+  const coach = editDoc ? sectionCoach(block) : null;
+  const rendered = coach ? (
+    <SectionCoach name={coach.name} hint={coach.hint} />
+  ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' ? (
+    <SectionShell background={block.background} defaultTone={dt}>
+      <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
+    </SectionShell>
+  ) : (
+    // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
+    // above are all editor-authored content, with nothing to fetch.
+    <Cmp
+      block={block}
+      fallbackEmail={fallbackEmail}
+      fallbackPhone={fallbackPhone}
+      fetcher={fetcher}
+    />
+  );
+  // Preview only (2026-08-27): the section-level edit target. The wrapper is a
+  // plain unstyled div on purpose. It must be a REAL block box, because the
+  // overlay outlines the element's rect, and a `display: contents` element has
+  // no rect to outline. With no `editDoc` there is no wrapper at all, so the
+  // live HTML does not change.
+  const editAttr = editDoc && block._key ? sectionEditAttr(editDoc, block._key) : undefined;
+  // ---------------------------------------------------------------------
+  // The surface handle (2026-08-28) — PREVIEW ONLY, same `editDoc` gate
+  // ---------------------------------------------------------------------
+  // The in-canvas swatch row needs a node the Studio schema resolves to a
+  // FIELD; the wrapper above names a bare array item, which resolves to none,
+  // so a custom overlay component can never mount on it (verified in a
+  // deployed Studio, see sectionFieldEditAttr). This little square is that
+  // node: it points at the section's `background` object, so clicking it
+  // selects that field and the overlay answers with the swatch row.
+  //
+  // Exactly one per section, and only for section types that HAVE a
+  // background — the Rule & Ledger sections come styled to match the page
+  // they belong to and get no handle at all.
+  //
+  // TOP-RIGHT, INSIDE the band, not the bottom-right corner the controls
+  // were first specced for. A section is usually taller than the viewport, so
+  // its bottom-right corner is below the fold exactly when the editor is
+  // looking at the section; its top-right is on screen the moment the band
+  // is. It renders after the content so it paints above it, and it carries
+  // its styles inline because this shell loads no preview-only stylesheet.
+  const handleAttr =
+    editAttr && editDoc && block._key && backgroundApplies(block._type, block)
+      ? sectionFieldEditAttr(editDoc, block._key, 'background')
+      : undefined;
+  return editAttr ? (
+    <div data-sanity={editAttr} style="position:relative">
+      {rendered}
+      {handleAttr && (
+        <div
+          data-sanity={handleAttr}
+          data-surface-handle
+          title="Section colours"
+          aria-hidden="true"
+          style="position:absolute;top:12px;right:12px;z-index:5;width:28px;height:28px;border-radius:999px;background:#FFFFFF;border:1px solid rgba(31,27,24,0.18);box-shadow:0 2px 8px rgba(31,27,24,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;"
+        >
+          🎨
+        </div>
+      )}
+    </div>
+  ) : (
+    rendered
+  );
+})}

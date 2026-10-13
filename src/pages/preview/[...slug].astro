@@ -292,83 +292,75 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
 ---
 
 <PreviewLayout {title} {draftMode} {pageId}>
-  {
-    converted && (
-      <SingletonPage
-        pageType={singletonType}
-        page={converted.page}
-        settings={converted.settings}
-        fetcher={singletonType === 'homePage' ? draftFetch : undefined}
-        editDoc={editDoc}
-      >
-        {singletonType === 'homePage' && (
-          <HomeHero slot="hero" page={converted.page} settings={converted.settings} {nextTerm} />
-        )}
-        {previewImageHero && (
-          <Hero
-            slot="hero"
-            eyebrow={converted.page?.heroEyebrow ?? ''}
-            headline={converted.page?.heroHeadline ?? ''}
-            subhead={converted.page?.heroSubhead ?? ''}
-            backgroundImage={converted.page?.heroImage ?? null}
-            headingId="preview-hero"
-            size="short"
-          />
-        )}
-        {pinned && singletonType === 'coursesPage' && (
-          <CoursesCatalog
-            slot="pinned"
-            courses={pinned.courses}
-            areas={pinned.areas}
-            faculty={pinned.faculty}
-            terms={pinned.terms}
-            emptyState={converted.page?.emptyState}
-          />
-        )}
-        {pinned && singletonType === 'facultyPage' && (
-          <FacultyRoster
-            slot="pinned"
-            faculty={pinned.faculty}
-            areas={pinned.areas}
-            emptyState={converted.page?.emptyState}
-          />
-        )}
-      </SingletonPage>
-    )
-  }
-  {
-    heroHeadline && (
-      <Hero
-        eyebrow={doc!.heroEyebrow ?? ''}
-        headline={heroHeadline}
-        subhead={doc!.heroSubhead ?? ''}
-        backgroundImage={(doc!.heroImage as never) ?? null}
-        backgroundImages={(doc!.heroImages as never) ?? null}
-        headingId="preview-hero"
-        size="short"
-      />
-    )
-  }
-  {
-    generic && singletonType && (
-      <div class="mx-auto max-w-3xl px-4 py-6">
-        <p class="text-ink/80 rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm">
-          This page has not moved to the page builder yet, so it previews as its editable surface
-          only: the hero above, any page sections below, and the closing call to action. Parts of it
-          that are drawn in code render on the live site.
-        </p>
-      </div>
-    )
-  }
+  {converted && (
+    <SingletonPage
+      pageType={singletonType}
+      page={converted.page}
+      settings={converted.settings}
+      fetcher={singletonType === 'homePage' ? draftFetch : undefined}
+      editDoc={editDoc}
+    >
+      {singletonType === 'homePage' && (
+        <HomeHero slot="hero" page={converted.page} settings={converted.settings} {nextTerm} />
+      )}
+      {previewImageHero && (
+        <Hero
+          slot="hero"
+          eyebrow={converted.page?.heroEyebrow ?? ''}
+          headline={converted.page?.heroHeadline ?? ''}
+          subhead={converted.page?.heroSubhead ?? ''}
+          backgroundImage={converted.page?.heroImage ?? null}
+          headingId="preview-hero"
+          size="short"
+        />
+      )}
+      {pinned && singletonType === 'coursesPage' && (
+        <CoursesCatalog
+          slot="pinned"
+          courses={pinned.courses}
+          areas={pinned.areas}
+          faculty={pinned.faculty}
+          terms={pinned.terms}
+          emptyState={converted.page?.emptyState}
+        />
+      )}
+      {pinned && singletonType === 'facultyPage' && (
+        <FacultyRoster
+          slot="pinned"
+          faculty={pinned.faculty}
+          areas={pinned.areas}
+          emptyState={converted.page?.emptyState}
+        />
+      )}
+    </SingletonPage>
+  )}
+  {heroHeadline && (
+    <Hero
+      eyebrow={doc!.heroEyebrow ?? ''}
+      headline={heroHeadline}
+      subhead={doc!.heroSubhead ?? ''}
+      backgroundImage={(doc!.heroImage as never) ?? null}
+      backgroundImages={(doc!.heroImages as never) ?? null}
+      headingId="preview-hero"
+      size="short"
+    />
+  )}
+  {generic && singletonType && (
+    <div class="mx-auto max-w-3xl px-4 py-6">
+      <p class="text-ink/80 rounded-md border border-secondary/50 bg-secondary/10 px-4 py-3 text-sm">
+        This page has not moved to the page builder yet, so it previews as its editable surface
+        only: the hero above, any page sections below, and the closing call to action. Parts of it
+        that are drawn in code render on the live site.
+      </p>
+    </div>
+  )}
   {generic && <Sections sections={builderSections} editDoc={editDoc} />}
-  {
-    hasFinalCta && (
-      <FinalCta
-        eyebrow={doc!.finalCtaEyebrow}
-        headline={doc!.finalCtaHeadline}
-        subhead={doc!.finalCtaSubhead}
-        cta={doc!.finalCta ?? null}
-      />
-    )
-  }
+  {hasFinalCta && (
+    <FinalCta
+      eyebrow={doc!.finalCtaEyebrow}
+      headline={doc!.finalCtaHeadline}
+      subhead={doc!.finalCtaSubhead}
+      cta={doc!.finalCta ?? null}
+    />
+  )}
 </PreviewLayout>

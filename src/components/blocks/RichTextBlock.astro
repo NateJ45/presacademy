@@ -22,30 +22,26 @@ const ptDark = onDark
   : '';
 ---
 
-{
-  block && (
-    <div class={`mx-auto max-w-3xl px-m ${centered ? 'text-center' : ''}`}>
-      {block.eyebrow && (
-        <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
-      )}
-      {block.heading && (
-        <h2 class="mt-s font-display text-h2">
-          {ha.found ? (
-            <Fragment>
-              {ha.before}
-              <span class="heading-accent">{ha.word}</span>
-              {ha.after}
-            </Fragment>
-          ) : (
-            block.heading
-          )}
-        </h2>
-      )}
-      {block.body && (
-        <div class={`mt-m leading-relaxed ${centered ? 'text-left' : ''} ${ptDark}`}>
-          <PortableText value={block.body} />
-        </div>
-      )}
-    </div>
-  )
-}
+{block && (
+  <div class={`mx-auto max-w-3xl px-m ${centered ? 'text-center' : ''}`}>
+    {block.eyebrow && <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>}
+    {block.heading && (
+      <h2 class="mt-s font-display text-h2">
+        {ha.found ? (
+          <Fragment>
+            {ha.before}
+            <span class="heading-accent">{ha.word}</span>
+            {ha.after}
+          </Fragment>
+        ) : (
+          block.heading
+        )}
+      </h2>
+    )}
+    {block.body && (
+      <div class={`mt-m leading-relaxed ${centered ? 'text-left' : ''} ${ptDark}`}>
+        <PortableText value={block.body} />
+      </div>
+    )}
+  </div>
+)}

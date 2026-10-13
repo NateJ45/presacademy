@@ -60,47 +60,41 @@ const initials = String(person.name ?? '')
 ---
 
 <li class="flex min-w-0 list-none gap-5 border-b border-border-soft py-6">
-  <div
-    class="image-well relative aspect-[4/5] w-[88px] flex-none self-start overflow-hidden sm:w-[104px]"
-  >
-    {
-      person.photo?.asset ? (
-        <SanityImage
-          source={person.photo}
-          width={260}
-          sizes="104px"
-          class="h-full w-full object-cover"
-        />
-      ) : (
-        <span
-          class="absolute inset-0 flex items-center justify-center font-display text-h4 text-foreground/60"
-          aria-hidden="true"
-        >
-          {initials}
-        </span>
-      )
-    }
+  <div class="image-well relative aspect-[4/5] w-[88px] flex-none self-start overflow-hidden sm:w-[104px]">
+    {person.photo?.asset ? (
+      <SanityImage
+        source={person.photo}
+        width={260}
+        sizes="104px"
+        class="h-full w-full object-cover"
+      />
+    ) : (
+      <span
+        class="absolute inset-0 flex items-center justify-center font-display text-h4 text-foreground/60"
+        aria-hidden="true"
+      >
+        {initials}
+      </span>
+    )}
   </div>
   <div class="flex min-w-0 flex-col gap-1.5">
     <h3 class="font-display text-h5 leading-tight text-foreground">
       <a
         href={`/faculty/${person.slug}/`}
-        class="hit-44 relative no-underline transition-colors hover:text-link">{name}</a
+        class="hit-44 relative no-underline transition-colors hover:text-link"
       >
+        {name}
+      </a>
     </h3>
     {subLine && <p class="text-sm text-foreground/75">{subLine}</p>}
-    {
-      issueLabels.length > 0 && (
-        <p class="font-mono text-xs tracking-[0.04em] text-link">
-          <span class="uppercase">In this issue:</span> {issueLabels.join(' · ')}
-        </p>
-      )
-    }
-    {
-      reading && (
-        <p class="mt-0.5 font-display text-base text-foreground/85 italic">On my desk: {reading}</p>
-      )
-    }
+    {issueLabels.length > 0 && (
+      <p class="font-mono text-xs tracking-[0.04em] text-link">
+        <span class="uppercase">In this issue:</span> {issueLabels.join(' · ')}
+      </p>
+    )}
+    {reading && (
+      <p class="mt-0.5 font-display text-base text-foreground/85 italic">On my desk: {reading}</p>
+    )}
     {audio && <IntroAudio client:visible {...audio} name={name} />}
   </div>
 </li>

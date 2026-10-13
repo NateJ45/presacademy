@@ -417,44 +417,42 @@ const motion = [
       <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">Color</p>
       <h2 class="mt-2 font-display text-h2 text-foreground">Palette &amp; tokens</h2>
       <p class="mt-s text-sm text-muted-foreground">
-        Each chip shows the literal value: <strong>L</strong> = light mode, <strong>D</strong> = dark
-        mode.
+        Each chip shows the literal value: <strong>L</strong> = light mode, <strong>D</strong> =
+        dark mode.
       </p>
 
       <div class="mt-l grid gap-l sm:grid-cols-2">
-        {
-          colorGroups.map((group) => (
-            <div class="rounded-lg border border-border-soft bg-card p-l">
-              <h3 class="font-display text-h5 text-foreground">{group.title}</h3>
-              <p class="mt-1 text-xs leading-relaxed text-muted-foreground">{group.note}</p>
-              <ul class="mt-m list-none space-y-3 p-0">
-                {group.rows.map((row) => (
-                  <li class="flex items-start gap-3">
-                    <div class="flex shrink-0 gap-1" aria-hidden="true">
-                      <span
-                        class="block h-9 w-9 rounded-md border border-foreground/15"
-                        style={`background:${row.light}`}
-                        title={`Light ${row.light}`}
-                      />
-                      <span
-                        class="block h-9 w-9 rounded-md border border-foreground/15"
-                        style={`background:${row.dark}`}
-                        title={`Dark ${row.dark}`}
-                      />
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-sm leading-tight font-medium text-foreground">{row.name}</p>
-                      <p class="font-mono text-xs text-muted-foreground">
-                        <code>{row.token}</code> · L {row.light} · D {row.dark}
-                      </p>
-                      <p class="mt-0.5 text-xs leading-snug text-foreground/70">{row.role}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
+        {colorGroups.map((group) => (
+          <div class="rounded-lg border border-border-soft bg-card p-l">
+            <h3 class="font-display text-h5 text-foreground">{group.title}</h3>
+            <p class="mt-1 text-xs leading-relaxed text-muted-foreground">{group.note}</p>
+            <ul class="mt-m list-none space-y-3 p-0">
+              {group.rows.map((row) => (
+                <li class="flex items-start gap-3">
+                  <div class="flex shrink-0 gap-1" aria-hidden="true">
+                    <span
+                      class="block h-9 w-9 rounded-md border border-foreground/15"
+                      style={`background:${row.light}`}
+                      title={`Light ${row.light}`}
+                    />
+                    <span
+                      class="block h-9 w-9 rounded-md border border-foreground/15"
+                      style={`background:${row.dark}`}
+                      title={`Dark ${row.dark}`}
+                    />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm leading-tight font-medium text-foreground">{row.name}</p>
+                    <p class="font-mono text-xs text-muted-foreground">
+                      <code>{row.token}</code> · L {row.light} · D {row.dark}
+                    </p>
+                    <p class="mt-0.5 text-xs leading-snug text-foreground/70">{row.role}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
 
@@ -491,14 +489,12 @@ const motion = [
       </div>
 
       <div class="mt-l space-y-l rounded-lg border border-border-soft bg-card p-l">
-        {
-          typeScale.map((t) => (
-            <div class="grid gap-1 sm:grid-cols-[1fr_auto] sm:items-baseline">
-              <div class={t.cls}>{t.sample}</div>
-              <p class="font-mono text-xs text-muted-foreground sm:text-right">{t.meta}</p>
-            </div>
-          ))
-        }
+        {typeScale.map((t) => (
+          <div class="grid gap-1 sm:grid-cols-[1fr_auto] sm:items-baseline">
+            <div class={t.cls}>{t.sample}</div>
+            <p class="font-mono text-xs text-muted-foreground sm:text-right">{t.meta}</p>
+          </div>
+        ))}
       </div>
     </section>
 
@@ -517,9 +513,7 @@ const motion = [
           <p class="mt-2 font-mono text-xs text-muted-foreground">.eyebrow · green rule</p>
         </div>
         <div class="surface-chapel rounded-lg p-l">
-          <p
-            class="eyebrow eyebrow-inverse text-xs tracking-eyebrow text-chapel-foreground/85 uppercase"
-          >
+          <p class="eyebrow eyebrow-inverse text-xs tracking-eyebrow text-chapel-foreground/85 uppercase">
             On the green band
           </p>
           <p class="mt-2 font-mono text-xs text-chapel-foreground/70">
@@ -540,35 +534,35 @@ const motion = [
         <button
           type="button"
           class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold tracking-eyebrow text-primary-foreground uppercase transition-colors hover:bg-primary-dark"
-          >Browse courses</button
         >
+          Browse courses
+        </button>
         <button
           type="button"
           class="press-tactile inline-flex min-h-[44px] items-center rounded-full border border-foreground px-l py-s text-xs font-semibold tracking-eyebrow text-foreground uppercase transition-colors hover:bg-accent"
-          >Book a free intro</button
         >
+          Book a free intro
+        </button>
         <a
           href="/style-guide/"
           class="hit-44 relative text-sm text-link underline underline-offset-4 hover:text-primary-dark"
-          >A text link</a
         >
+          A text link
+        </a>
       </div>
 
       {/* Pills / badges */}
       <h3 class="mt-l font-display text-h5 text-foreground">Pills &amp; badges</h3>
       <div class="mt-m flex flex-wrap items-center gap-3">
-        <span
-          class="inline-flex items-center rounded-full border border-status-success/40 px-3 py-1 text-xs font-semibold tracking-eyebrow text-status-success uppercase"
-          >Open</span
-        >
-        <span
-          class="inline-flex items-center rounded-full bg-gold/15 px-3 py-1 text-[0.65rem] font-semibold tracking-eyebrow text-gold-ink uppercase"
-          >Scripture</span
-        >
-        <span
-          class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs tracking-eyebrow text-muted-foreground uppercase"
-          >Fall 2026</span
-        >
+        <span class="inline-flex items-center rounded-full border border-status-success/40 px-3 py-1 text-xs font-semibold tracking-eyebrow text-status-success uppercase">
+          Open
+        </span>
+        <span class="inline-flex items-center rounded-full bg-gold/15 px-3 py-1 text-[0.65rem] font-semibold tracking-eyebrow text-gold-ink uppercase">
+          Scripture
+        </span>
+        <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs tracking-eyebrow text-muted-foreground uppercase">
+          Fall 2026
+        </span>
       </div>
 
       {/* Cards */}
@@ -577,10 +571,9 @@ const motion = [
         <article class="card-lift rounded-lg border border-border-soft bg-card p-l">
           <div class="flex items-center justify-between">
             <span class="text-xs tracking-eyebrow text-gold-ink uppercase">Scripture</span>
-            <span
-              class="inline-flex items-center rounded-full border border-status-success/40 px-2.5 py-0.5 text-xs font-semibold tracking-eyebrow text-status-success uppercase"
-              >Open</span
-            >
+            <span class="inline-flex items-center rounded-full border border-status-success/40 px-2.5 py-0.5 text-xs font-semibold tracking-eyebrow text-status-success uppercase">
+              Open
+            </span>
           </div>
           <h4 class="mt-3 font-display text-h4 text-foreground">Reading the Bible as One Story</h4>
           <p class="mt-1 text-sm text-foreground/70">The Rev. Dr. Miriam Hale</p>
@@ -612,9 +605,7 @@ const motion = [
       <h3 class="mt-l font-display text-h5 text-foreground">Structural green band</h3>
       <div class="mt-m overflow-hidden rounded-lg">
         <div class="surface-chapel px-l py-section-md text-center">
-          <p
-            class="eyebrow eyebrow-inverse mx-auto inline-flex text-xs tracking-eyebrow text-chapel-foreground/80 uppercase"
-          >
+          <p class="eyebrow eyebrow-inverse mx-auto inline-flex text-xs tracking-eyebrow text-chapel-foreground/80 uppercase">
             Begin your formation
           </p>
           <p class="mt-3 font-display text-h3 text-chapel-foreground">
@@ -624,8 +615,9 @@ const motion = [
             <button
               type="button"
               class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-chapel-foreground px-l py-s text-xs font-semibold tracking-eyebrow text-chapel uppercase transition-opacity hover:opacity-90"
-              >Request information</button
             >
+              Request information
+            </button>
           </div>
         </div>
       </div>
@@ -644,36 +636,32 @@ const motion = [
 
       <h3 class="mt-l font-display text-h5 text-foreground">Cover palette (static)</h3>
       <ul class="mt-m grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-4">
-        {
-          coverPalette.map((c) => (
-            <li class="flex items-center gap-3">
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center border border-foreground/15 font-display text-lg"
-                style={`background:${c.bg};color:${c.fg}`}
-                aria-hidden="true"
-              >
-                Aa
+        {coverPalette.map((c) => (
+          <li class="flex items-center gap-3">
+            <span
+              class="grid h-10 w-10 shrink-0 place-items-center border border-foreground/15 font-display text-lg"
+              style={`background:${c.bg};color:${c.fg}`}
+              aria-hidden="true"
+            >
+              Aa
+            </span>
+            <span class="min-w-0">
+              <span class="block text-sm font-medium text-foreground">{c.name}</span>
+              <span class="block font-mono text-xs text-muted-foreground">
+                {c.bg} / {c.fg}
               </span>
-              <span class="min-w-0">
-                <span class="block text-sm font-medium text-foreground">{c.name}</span>
-                <span class="block font-mono text-xs text-muted-foreground">
-                  {c.bg} / {c.fg}
-                </span>
-              </span>
-            </li>
-          ))
-        }
+            </span>
+          </li>
+        ))}
       </ul>
 
       <h3 class="mt-l font-display text-h5 text-foreground">The eight covers</h3>
       <ul class="mt-m grid list-none grid-cols-1 gap-l p-0 sm:grid-cols-2 lg:grid-cols-4">
-        {
-          sampleCourses.map((c) => (
-            <li>
-              <CourseCover course={c} size="md" flip href="#covers" />
-            </li>
-          ))
-        }
+        {sampleCourses.map((c) => (
+          <li>
+            <CourseCover course={c} size="md" flip href="#covers" />
+          </li>
+        ))}
       </ul>
     </section>
 
@@ -687,14 +675,12 @@ const motion = [
             Spacing &amp; layout
           </p>
           <dl class="mt-3 space-y-2">
-            {
-              spacing.map((s) => (
-                <div class="flex items-baseline justify-between gap-4">
-                  <dt class="font-mono text-xs text-foreground">{s.token}</dt>
-                  <dd class="font-mono text-xs text-muted-foreground">{s.value}</dd>
-                </div>
-              ))
-            }
+            {spacing.map((s) => (
+              <div class="flex items-baseline justify-between gap-4">
+                <dt class="font-mono text-xs text-foreground">{s.token}</dt>
+                <dd class="font-mono text-xs text-muted-foreground">{s.value}</dd>
+              </div>
+            ))}
           </dl>
         </div>
         <div class="rounded-lg border border-border-soft bg-card p-l">
@@ -702,14 +688,12 @@ const motion = [
             Radius &amp; motion
           </p>
           <dl class="mt-3 space-y-2">
-            {
-              motion.map((m) => (
-                <div class="flex items-baseline justify-between gap-4">
-                  <dt class="font-mono text-xs text-foreground">{m.token}</dt>
-                  <dd class="font-mono text-xs text-muted-foreground">{m.value}</dd>
-                </div>
-              ))
-            }
+            {motion.map((m) => (
+              <div class="flex items-baseline justify-between gap-4">
+                <dt class="font-mono text-xs text-foreground">{m.token}</dt>
+                <dd class="font-mono text-xs text-muted-foreground">{m.value}</dd>
+              </div>
+            ))}
           </dl>
         </div>
       </div>
@@ -721,22 +705,30 @@ const motion = [
       <h2 class="mt-2 font-display text-h2 text-foreground">Retired in Direction A</h2>
       <ul class="mt-m max-w-2xl space-y-2 text-foreground/80">
         <li class="flex gap-2">
-          <span class="text-gold-ink" aria-hidden="true">&times;</span> The Romanesque arch crop (<code
-            class="font-mono text-sm">--arch-radius</code
-          > neutralized to a quiet rounding).
+          <span class="text-gold-ink" aria-hidden="true">
+            &times;
+          </span>{' '}
+          The Romanesque arch crop (<code class="font-mono text-sm">--arch-radius</code> neutralized
+          to a quiet rounding).
         </li>
         <li class="flex gap-2">
-          <span class="text-gold-ink" aria-hidden="true">&times;</span> The 4% paper-grain texture (<code
-            class="font-mono text-sm">body::before</code
-          > opacity 0).
+          <span class="text-gold-ink" aria-hidden="true">
+            &times;
+          </span>{' '}
+          The 4% paper-grain texture (<code class="font-mono text-sm">body::before</code> opacity
+          0).
         </li>
         <li class="flex gap-2">
-          <span class="text-gold-ink" aria-hidden="true">&times;</span> Oxblood as a structural field
-          / band color (demoted to a sparing accent).
+          <span class="text-gold-ink" aria-hidden="true">
+            &times;
+          </span>{' '}
+          Oxblood as a structural field / band color (demoted to a sparing accent).
         </li>
         <li class="flex gap-2">
-          <span class="text-gold-ink" aria-hidden="true">&times;</span> The calligraphic script accent
-          (off by default; no script font loads).
+          <span class="text-gold-ink" aria-hidden="true">
+            &times;
+          </span>{' '}
+          The calligraphic script accent (off by default; no script font loads).
         </li>
       </ul>
     </section>

@@ -134,52 +134,42 @@ const announcement = await getActiveAnnouncement().catch(() => null);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {
-      /* Every hero photo comes from Sanity's CDN, and the home hero image is the
+    {/* Every hero photo comes from Sanity's CDN, and the home hero image is the
         LCP. Without this hint the browser only opens that connection once the
         parser reaches the <img>, so DNS + TCP + TLS (three round trips) sit on
         the LCP path. Measured 2026-09-04: ~2.9s of simulated "load delay" on
-        the mobile Lighthouse run. */
-    }
+        the mobile Lighthouse run. */}
     <link rel="preconnect" href="https://cdn.sanity.io" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {
-      /* An editor's "Hide this page from search engines" wins over the built-in
+    {/* An editor's "Hide this page from search engines" wins over the built-in
         noindex: it is the stronger of the two (nofollow as well), and only one
         robots line may be emitted. Neither renders on an ordinary page, so the
-        markup is unchanged everywhere the switch is off. */
-    }
-    {
-      hideFromSearch ? (
-        <meta name="robots" content="noindex, nofollow" />
-      ) : (
-        noindex && <meta name="robots" content="noindex, follow" />
-      )
-    }
+        markup is unchanged everywhere the switch is off. */}
+    {hideFromSearch ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      noindex && <meta name="robots" content="noindex, follow" />
+    )}
 
-    {
-      /* Mobile browser UI chrome color. Light by default (matching the default
+    {/* Mobile browser UI chrome color. Light by default (matching the default
         theme); the bootstrap below flips it to the dark value when the visitor
-        has chosen dark, so the browser bar follows the APP theme, not the OS. */
-    }
+        has chosen dark, so the browser bar follows the APP theme, not the OS. */}
     <meta name="theme-color" content="#ECE4DA" id="theme-color-meta" />
 
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={appleTouchHref} />
-    {
-      /* Web fonts (Fraunces + Source Sans 3) come from the @fontsource imports
+    {/* Web fonts (Fraunces + Source Sans 3) come from the @fontsource imports
         in globals.css with font-display: swap. They are deliberately NOT
         preloaded: the metric-matched "Fallback" @font-face rules at the top
         of globals.css make the swap shift-free (CLS ~0), and a preload only
         puts ~100KB of font on the LCP critical path (measured 2026-09-06:
         home LCP 1.5s to 2.6s in the mobile Lighthouse run for no CLS gain).
         If a preload is ever wanted, import the file with a `?url` suffix so
-        the hashed /_astro/ path matches the one the CSS references. */
-    }
+        the hashed /_astro/ path matches the one the CSS references. */}
 
     {/* Open Graph */}
     <meta property="og:type" content="website" />
@@ -200,17 +190,17 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     <meta name="twitter:image" content={absOg} />
 
     {/* JSON-LD (LocalBusiness auto-injected from siteSettings + per-page schemas) */}
-    {allSchemas.map((json) => <script type="application/ld+json" set:html={json} />)}
+    {allSchemas.map((json) => (
+      <script type="application/ld+json" set:html={json} />
+    ))}
 
-    {
-      /* Anti-FOUC theme bootstrap — must run inline before first paint.
+    {/* Anti-FOUC theme bootstrap — must run inline before first paint.
         Also re-applies the theme + theme-aware images (header logo) after
         every Astro View Transitions navigation: the transition swap
         replaces <html>'s className with the new page's (empty), so without
         this listener a user who set dark mode would see the next page
         render in light. The listener registers exactly once via the
-        __themeBootstrapBound flag. */
-    }
+        __themeBootstrapBound flag. */}
     <script is:inline define:vars={{ key: site.themeStorageKey }}>
       (function () {
         function applyTheme() {
@@ -262,17 +252,16 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         }
       })();
     </script>
-
-    {
-      /* Analytics: GA4 (PUBLIC_GA_ID) and the Cloudflare beacon (PUBLIC_CF_ANALYTICS_TOKEN),
-        each rendered only when its variable is set. Gating lives in Analytics.astro. */
-    }
+    {/* Analytics: GA4 (PUBLIC_GA_ID) and the Cloudflare beacon (PUBLIC_CF_ANALYTICS_TOKEN),
+        each rendered only when its variable is set. Gating lives in Analytics.astro. */}
     <Analytics />
 
     <ClientRouter />
   </head>
   <body class="flex min-h-screen flex-col">
-    <a href="#main" class="skip-link">Skip to main content</a>
+    <a href="#main" class="skip-link">
+      Skip to main content
+    </a>
 
     {/* Optional site-wide announcement banner (Announcement collection in Sanity). */}
     <AnnouncementBar announcement={announcement} />
@@ -285,8 +274,7 @@ const announcement = await getActiveAnnouncement().catch(() => null);
 
     <Footer siteSettings={siteSettings} />
 
-    {
-      /*
+    {/*
       Both islands were previously `client:load` which forced the JS to
       execute before the first paint completed. Neither is interactive
       until later in the page lifecycle (BackToTop only appears after the
@@ -294,25 +282,20 @@ const announcement = await getActiveAnnouncement().catch(() => null);
       sites import it on demand). Hydrating with `client:idle` lets the
       browser settle the main thread first and shifts ~10–20ms of TBT off
       the critical path on mobile.
-    */
-    }
+    */}
     <BackToTop client:idle />
 
-    {
-      /* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */
-    }
+    {/* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */}
     <Toaster client:idle position="bottom-right" />
 
-    {
-      /* Lenis smooth scroll. The reduced-motion guard in globals.css already
+    {/* Lenis smooth scroll. The reduced-motion guard in globals.css already
         kills smooth-scroll behavior; we also bail out here so we don't pay
         for the Lenis runtime when the user prefers reduced motion.
 
         Wrapped in requestIdleCallback so the ~10KB Lenis chunk isn't
         fetched until the browser is genuinely idle — keeps it out of the
         critical-path race with hero LCP. setTimeout fallback for browsers
-        without rIC support. */
-    }
+        without rIC support. */}
     <script>
       function startLenis() {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -370,12 +353,9 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         setTimeout(startLenis, 1500);
       }
     </script>
-
-    {
-      /* Polish layer: scroll-triggered reveal observer + sticky-header
+    {/* Polish layer: scroll-triggered reveal observer + sticky-header
         hide-on-scroll-down behavior. Both honor prefers-reduced-motion.
-        Re-init on astro:page-load so they survive View Transitions. */
-    }
+        Re-init on astro:page-load so they survive View Transitions. */}
     <script>
       function initPolish() {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
