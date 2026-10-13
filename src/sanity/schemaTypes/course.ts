@@ -1,5 +1,9 @@
-// Course — the spine of the school. A human-readable course (no course codes),
-// taught in person, in cohorts. Dates live on the referenced `term` (via
+// Course: the spine of the school. A human-readable course, taught in person,
+// in cohorts. The title stays plain words; an OPTIONAL catalog code ("SCR 101")
+// sits beside it on the cover. Codes were deliberately kept out until
+// 2026-10-13, when the Term Issue redesign reversed that rule on purpose: the
+// code is a typographic detail of the cover and the term contents, never a
+// replacement for the title. Dates live on the referenced `term` (via
 // offerings), never duplicated here. The course-detail "At a glance" ledger and
 // the catalog card both read from the derived "next offering" (the offering
 // whose term.startDate is the soonest future date).
@@ -11,6 +15,13 @@
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { archivedField } from './archived';
+import {
+  COURSE_CODE_PATTERN,
+  COVER_COLORS,
+  COVER_COLOR_TITLES,
+  COVER_ORNAMENTS,
+  COVER_ORNAMENT_TITLES,
+} from '../../lib/cover';
 
 export const course = defineType({
   name: 'course',
@@ -24,6 +35,7 @@ export const course = defineType({
   type: 'document',
   groups: [
     { name: 'details', title: 'Details', default: true },
+    { name: 'cover', title: 'Cover' },
     { name: 'schedule', title: 'Schedule & cohorts' },
     { name: 'pricing', title: 'Pricing' },
     { name: 'seo', title: 'SEO' },
@@ -35,7 +47,8 @@ export const course = defineType({
       name: 'title',
       title: 'Course title',
       type: 'string',
-      description: 'Plain and human. No course codes.',
+      description:
+        'Plain and human. Keep any catalog code (SCR 101) out of the title: it has its own field in the Cover tab.',
       group: 'details',
       validation: (Rule) => Rule.required(),
     }),
@@ -61,9 +74,66 @@ export const course = defineType({
       name: 'coverImage',
       title: 'Cover image',
       type: 'image',
+      description:
+        'Optional photo. Not shown on the site at the moment: course cards draw a typographic cover from the Cover tab instead. Kept for a future course-page photo.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
       group: 'details',
+    }),
+    // ---- Cover (Term Issue, 2026-10-13) --------------------------------------
+    // Every course is drawn as a small-press book cover. All four fields are
+    // optional: an empty colour or ornament is derived from the teaching area
+    // and the slug (src/lib/cover.ts), so a new course has a cover from day one.
+    defineField({
+      name: 'courseCode',
+      title: 'Course code',
+      type: 'string',
+      description:
+        'Optional catalog code shown on the cover, like "SCR 101": a few capital letters, a space, three digits.',
+      group: 'cover',
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          if (!value) return true;
+          return COURSE_CODE_PATTERN.test(String(value))
+            ? true
+            : 'Codes usually look like "SCR 101": two to four capital letters, a space, three digits.';
+        }).warning(),
+    }),
+    defineField({
+      name: 'coverColor',
+      title: 'Cover colour',
+      type: 'string',
+      description:
+        'The colour of the cover. Leave empty and one is picked from the teaching area, so courses in the same subject match.',
+      options: {
+        list: COVER_COLORS.map((value) => ({ title: COVER_COLOR_TITLES[value], value })),
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      group: 'cover',
+    }),
+    defineField({
+      name: 'coverOrnament',
+      title: 'Cover ornament',
+      type: 'string',
+      description:
+        'The simple shape printed in the middle of the cover. Leave empty and one is picked for you.',
+      options: {
+        list: COVER_ORNAMENTS.map((value) => ({ title: COVER_ORNAMENT_TITLES[value], value })),
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      group: 'cover',
+    }),
+    defineField({
+      name: 'centralQuestion',
+      title: 'The question',
+      type: 'string',
+      description:
+        'The one question this course asks, in plain words. Shown on the back of the cover. Example: "Is the Bible one book or sixty-six?"',
+      group: 'cover',
+      validation: (Rule) =>
+        Rule.max(90).warning('Best kept under 90 characters so it fits the cover.'),
     }),
     defineField({
       name: 'level',
@@ -131,7 +201,8 @@ export const course = defineType({
       name: 'sessionOutline',
       title: 'Sessions',
       type: 'array',
-      description: 'The week-by-week arc. Each item is one session.',
+      description:
+        'The week-by-week arc. Each item is one session. The first one also appears on the back of the cover as "Week one".',
       of: [
         defineArrayMember({
           type: 'object',
@@ -277,10 +348,15 @@ export const course = defineType({
     }),
   ],
   preview: {
-    select: { title: 'title', media: 'coverImage', area: 'teachingAreas.0.title' },
-    prepare: ({ title, media, area }) => ({
+    select: {
+      title: 'title',
+      media: 'coverImage',
+      area: 'teachingAreas.0.title',
+      code: 'courseCode',
+    },
+    prepare: ({ title, media, area, code }) => ({
       title: title ?? 'Untitled course',
-      subtitle: area,
+      subtitle: [code, area].filter(Boolean).join(' · '),
       media,
     }),
   },

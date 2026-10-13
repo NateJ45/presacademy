@@ -18,6 +18,9 @@
 @import '@fontsource-variable/fraunces/standard-italic.css';
 @import '@fontsource-variable/source-sans-3/index.css';
 @import '@fontsource-variable/source-sans-3/wght-italic.css';
+/* IBM Plex Mono, regular 400 only (2026-10-13, Term Issue): the catalog voice
+   on the course covers (codes, subjects, status tags). One weight, no italic. */
+@import '@fontsource/ibm-plex-mono/400.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -104,6 +107,24 @@
   line-gap-override: 0%;
 }
 
+/* IBM Plex Mono Fallback (2026-10-13). Same method as the two families above:
+   Courier New on Windows and macOS, its metric twin Liberation Mono on the
+   Linux CI runner. Both faces are monospaced at 0.6 em per glyph. Measured
+   2026-10-13 in Chrome on a line of cover text at 40px: Plex Mono / Courier
+   New width ratio 0.9998, so size-adjust stays 100%. The vertical overrides
+   are Plex Mono's hhea ascent and descent (1025 and 275 on 1000) divided by
+   size-adjust; with them the fallback's font box (103 / 28 at 100px) and its
+   normal line box (131px) match the web font exactly. */
+@font-face {
+  font-family: 'IBM Plex Mono Fallback';
+  font-style: normal;
+  src: local('Courier New'), local('CourierNewPSMT'), local('Liberation Mono'), local('Cousine');
+  size-adjust: 100%;
+  ascent-override: 102.5%;
+  descent-override: 27.5%;
+  line-gap-override: 0%;
+}
+
 /* ---------- Brand tokens ---------------------------------- */
 /* Reachable as utility classes: bg-bg, text-accent, border-secondary,
    font-display, text-h1, p-l, max-w-content. */
@@ -157,7 +178,8 @@
   --font-body:
     'Source Sans 3 Variable', 'Source Sans 3 Fallback', system-ui, -apple-system, 'Segoe UI',
     sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
+  --font-mono:
+    'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'SF Mono', Consolas, monospace;
   --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;
 
   /* Fluid heading sizes */
@@ -203,6 +225,38 @@
 }
 
 /* ---------- shadcn semantic token map (added by CLI, preserved) ------- */
+
+@theme static {
+  /* Course cover palette (Term Issue, 2026-10-13). Eight fixed bg / fg pairs,
+     one per cover colour in src/lib/cover.ts. STATIC in both themes, like the
+     chapel bands: a cover is a printed object and keeps its colours on a light
+     or a dark page; only the hairline around it (--cover-hairline, below) is
+     theme-aware. cover.test.ts pins every pair at 4.5:1 or better.
+     `@theme static` because nothing uses them as utilities (the cover reads
+     them through var() set in src/lib/cover.ts), and a plain @theme block is
+     tree-shaken down to the variables utilities use: they would not exist. */
+  --color-cover-green: #33503f;
+  --color-cover-green-fg: #ede4cf;
+  --color-cover-ink: #222a25;
+  --color-cover-ink-fg: #d9c79f;
+  --color-cover-cream: #f7f1e1;
+  --color-cover-cream-fg: #33503f;
+  --color-cover-oxblood: #7a2a2c;
+  --color-cover-oxblood-fg: #f2e6d6;
+  --color-cover-brass: #c9a46a;
+  --color-cover-brass-fg: #2a2116;
+  --color-cover-sage: #a9b9a7;
+  --color-cover-sage-fg: #1f2b23;
+  --color-cover-sage-rule: #7e937c; /* deeper sage for the rule on the paper back */
+  --color-cover-slate: #3e4f5c;
+  --color-cover-slate-fg: #e8e2d2;
+  --color-cover-parchment: #e4d3b4;
+  --color-cover-parchment-fg: #7a2a2c;
+  /* The paper back of a flipped cover (static too). */
+  --color-cover-paper: #f8f6ef;
+  --color-cover-paper-ink: #1f231f;
+  --color-cover-paper-muted: #51564f;
+}
 
 @theme inline {
   --font-heading: var(--font-display);
@@ -402,6 +456,264 @@
   );
 }
 
+/* ---------- Course covers (Term Issue, 2026-10-13) --------------------- */
+/* CourseCover.astro draws every course as a small-press book cover: a 2:3
+   front in one of eight fixed colours (the --color-cover-* tokens, carried in
+   as --cover-bg / --cover-fg / --cover-rule by src/lib/cover.ts) with a
+   CSS-only ornament, and a paper back with the course's question, week one
+   and facts. No images, so no LCP cost and nothing to load.
+
+   Two layouts, chosen by CSS alone, so nothing is ever hover-only:
+   - STACKED (the default, and always on touch or with reduced motion): the
+     back's content renders as ordinary page text, beside the cover on phones
+     (a compact row) and below it from sm up.
+   - FLIP (only under hover: hover, no reduced-motion preference, and sm up):
+     the back becomes a paper face behind the front and the card turns over on
+     hover or keyboard focus.
+
+   Type is sized in container query units (cqi) against each face, so one set
+   of rules serves a 9rem phone thumbnail and a 20rem detail-page cover. */
+.cover {
+  display: grid;
+  gap: 1rem;
+  color: inherit;
+  text-decoration: none;
+}
+/* Phone: thumbnail beside its back content. From sm up: back below. */
+.cover--flip {
+  grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 40rem) {
+  .cover--flip {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.875rem;
+  }
+}
+.cover__book {
+  display: contents;
+}
+.cover__front {
+  container-type: inline-size;
+  aspect-ratio: 2 / 3;
+  background: var(--cover-bg);
+  color: var(--cover-fg);
+  /* The hairline is theme-aware so a pale cover still has an edge on the pale
+     page, and a dark cover on the dark page. The drop shadow lifts it off the
+     page like a book on a table. */
+  box-shadow:
+    inset 0 0 0 1px var(--cover-hairline),
+    0 1px 0 rgb(0 0 0 / 0.08),
+    0 18px 30px -22px rgb(0 0 0 / 0.55);
+}
+.cover__front-inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4cqi;
+  padding: 6.5cqi;
+}
+.cover__line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4cqi;
+  font-family: var(--font-mono);
+  font-size: clamp(0.5625rem, 4.1cqi, 0.8125rem);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cover__topic {
+  max-width: 62%;
+  text-align: right;
+}
+.cover__line > :only-child {
+  max-width: none;
+  text-align: left;
+}
+.cover__tag {
+  display: inline-block;
+  margin-bottom: 3.5cqi;
+  border: 1px solid currentColor;
+  padding: 0.7cqi 2.5cqi;
+  font-family: var(--font-mono);
+  font-size: clamp(0.5625rem, 3.75cqi, 0.75rem);
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cover__title {
+  display: block;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.9375rem, 9.3cqi, 2.25rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: inherit;
+  text-wrap: balance;
+}
+.cover__teacher {
+  display: block;
+  margin-top: 2.8cqi;
+  font-size: clamp(0.6875rem, 4.8cqi, 1rem);
+  line-height: 1.3;
+}
+
+/* The ornaments: one element, painted with currentColor (the cover's fg). */
+.cover__orn {
+  align-self: center;
+  flex: none;
+  width: 58%;
+  aspect-ratio: 1;
+}
+.cover__orn[data-ornament='circle'] {
+  border-radius: 50%;
+  background: currentColor;
+}
+.cover__orn[data-ornament='stripes'] {
+  background: repeating-linear-gradient(90deg, currentColor 0 1.45cqi, transparent 1.45cqi 3.95cqi);
+}
+.cover__orn[data-ornament='half-moon'] {
+  width: 66%;
+  aspect-ratio: 2 / 1;
+  border-radius: 999px 999px 0 0;
+  background: currentColor;
+}
+.cover__orn[data-ornament='cross'] {
+  width: 56%;
+  background:
+    linear-gradient(currentColor, currentColor) center / 16% 100% no-repeat,
+    linear-gradient(currentColor, currentColor) 50% 36% / 100% 16% no-repeat;
+}
+.cover__orn[data-ornament='dots'] {
+  background: radial-gradient(currentColor 26%, transparent 29%) 0 0 / 20% 20%;
+}
+.cover__orn[data-ornament='ring'] {
+  border: 5cqi solid currentColor;
+  border-radius: 50%;
+}
+.cover__orn[data-ornament='diagonal'] {
+  background: linear-gradient(135deg, currentColor 50%, transparent 50%);
+}
+.cover__orn[data-ornament='steps'] {
+  background:
+    linear-gradient(currentColor, currentColor) 0 100% / 100% 22% no-repeat,
+    linear-gradient(currentColor, currentColor) 0 61% / 74% 22% no-repeat,
+    linear-gradient(currentColor, currentColor) 0 22% / 48% 22% no-repeat;
+}
+
+/* The back. STACKED: page text, theme-aware. FLIP overrides the three
+   variables with the static paper palette below. */
+.cover__back {
+  --back-ink: var(--foreground);
+  --back-muted: color-mix(in srgb, var(--foreground) 75%, transparent);
+  --back-link: var(--link);
+  container-type: inline-size;
+  min-width: 0;
+  color: var(--back-ink);
+}
+.cover__back-inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cover__label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--back-muted);
+}
+.cover__label + .cover__label,
+.cover__question + .cover__label {
+  margin-top: 0.25rem;
+}
+.cover__question {
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 7.6cqi, 1.375rem);
+  font-style: italic;
+  line-height: 1.18;
+}
+.cover__week {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+/* The summary standing in for an unset question: four lines at most. */
+.cover__summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+.cover__facts {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--back-muted);
+}
+.cover__cta {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--back-link);
+}
+/* The one-line facts under a flipping cover. Only shown in FLIP, where the
+   back is out of sight until hover; in STACKED the back already carries them. */
+.cover__meta {
+  display: none;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) and (min-width: 40rem) {
+  .cover--flip {
+    perspective: 1400px;
+  }
+  .cover--flip .cover__book {
+    position: relative;
+    display: block;
+    aspect-ratio: 2 / 3;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .cover--flip .cover__front,
+  .cover--flip .cover__back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  .cover--flip .cover__back {
+    --back-ink: var(--color-cover-paper-ink);
+    --back-muted: var(--color-cover-paper-muted);
+    --back-link: var(--color-primary);
+    overflow: hidden;
+    transform: rotateY(180deg);
+    border-top: 8px solid var(--cover-rule);
+    background: var(--color-cover-paper);
+    box-shadow:
+      inset 0 0 0 1px var(--cover-hairline),
+      0 1px 0 rgb(0 0 0 / 0.08),
+      0 18px 30px -22px rgb(0 0 0 / 0.55);
+  }
+  .cover--flip .cover__back-inner {
+    gap: 3.4cqi;
+    padding: 6.5cqi;
+  }
+  .cover--flip .cover__facts {
+    margin-top: auto;
+  }
+  .cover--flip:hover .cover__book,
+  .cover--flip:focus-visible .cover__book {
+    transform: rotateY(180deg);
+  }
+  .cover--flip .cover__meta {
+    display: block;
+  }
+}
+
 /* ---------- Light mode (overrides shadcn defaults) -------------------- */
 
 :root {
@@ -437,6 +749,7 @@
   --chapel-ink: #33503f; /* green keyword emphasis on near-white (~8:1) */
   --gold-ink: #6e5128; /* deepened brass as TEXT on near-white (~4.8:1, AA) */
   --border-soft: #eae7df; /* faint warm divider */
+  --cover-hairline: rgba(31, 27, 24, 0.16); /* edge so pale covers read on the pale page */
 
   /* Charts (kept neutral, not used at launch) */
   --chart-1: oklch(0.87 0 0);
@@ -499,6 +812,7 @@
   --chapel-ink: #9cc6ac; /* lifted green keyword emphasis on dark */
   --gold-ink: #c9a06a; /* lifted brass as TEXT on dark surfaces (AA) */
   --border-soft: oklch(1 0 0 / 14%); /* hairlines recede in dark instead of glowing */
+  --cover-hairline: rgba(241, 234, 217, 0.2); /* edge so dark covers read on the dark page */
 
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);

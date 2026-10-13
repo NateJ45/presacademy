@@ -672,6 +672,11 @@ export type Course = {
     alt?: string;
     _type: 'image';
   };
+  courseCode?: string;
+  coverColor?: 'green' | 'ink' | 'cream' | 'oxblood' | 'brass' | 'sage' | 'slate' | 'parchment';
+  coverOrnament?:
+    'circle' | 'stripes' | 'half-moon' | 'cross' | 'dots' | 'ring' | 'diagonal' | 'steps';
+  centralQuestion?: string;
   level?: 'Intro' | 'Foundational' | 'Advanced';
   teachingAreas?: Array<
     {

@@ -60,6 +60,25 @@ this direction; never swap it mid-project.
 5. **Green + brass pairing** — Aged Brass (`#A87C3E`) survives as the hairline
    accent against the green anchor (rules, small badges, the inverse rubric).
    Use it scarce, as a hairline, so it stays a signature.
+6. **Course covers** (Term Issue, 2026-10-13; `CourseCover.astro`, the "Course
+   covers" block in `globals.css`, `src/lib/cover.ts`). Every course is drawn
+   as a small-press book cover: a 2:3 front in one of eight fixed colours with a
+   CSS-only ornament (circle, stripes, half-moon, cross, dots, ring, diagonal,
+   steps), the catalog code and subject in Plex Mono, a status tag, the
+   Fraunces title and the teacher. The back is a paper face with the course's
+   one question, week one and the facts. Covers are STATIC in both themes like
+   the chapel bands; only a theme-aware hairline (`--cover-hairline`) changes,
+   so a pale cover keeps an edge on the pale page and a dark one on the dark
+   page. The flip happens only under `(hover: hover)`, no reduced-motion
+   preference and `sm` up, on hover or keyboard focus; everywhere else the back
+   renders as page text beside the cover (phones) or below it, so nothing is
+   hover-only. An empty colour or ornament is derived from the teaching area and
+   slug, so every course has a cover without a photo. This replaced the photo
+   well on the course card.
+7. **Mono catalog details.** IBM Plex Mono 400 (`font-mono`) is the catalog
+   voice: small uppercase with open tracking (0.06 to 0.08em) for codes,
+   subjects, status tags and the "The question" / "Week one" labels. It is a
+   detail face, never body or headings.
 
 The italic display "moment" (epigraphs, blockquotes) is now quieted to true
 epigraphs only, and the calligraphic script accent stays OFF by default.
@@ -96,6 +115,25 @@ The `chapel` token names are kept but now carry green.
 | `--color-oxblood`                | `#7A2A2C` Oxblood               | same                                  | demoted; sparing secondary accent only        |
 | `border-border-soft`             | `#EAE7DF`                       | —                                     | faint warm dividers                           |
 
+**Cover palette** (`--color-cover-<name>` / `-fg`, in an `@theme static` block,
+the same in both themes; every pair is at least 4.5:1, pinned by
+`src/lib/cover.test.ts`):
+
+| Cover     | Background | Text      |
+| --------- | ---------- | --------- |
+| green     | `#33503F`  | `#EDE4CF` |
+| ink       | `#222A25`  | `#D9C79F` |
+| cream     | `#F7F1E1`  | `#33503F` |
+| oxblood   | `#7A2A2C`  | `#F2E6D6` |
+| brass     | `#C9A46A`  | `#2A2116` |
+| sage      | `#A9B9A7`  | `#1F2B23` |
+| slate     | `#3E4F5C`  | `#E8E2D2` |
+| parchment | `#E4D3B4`  | `#7A2A2C` |
+
+The cover back is paper `#F8F6EF` with ink `#1F231F`, muted `#51564F` and a
+rule in the cover colour (sage uses the deeper `#7E937C`; cream and parchment
+use their text colour).
+
 Anchor deepens to `#2A4233` (Green Deep) for a deeper green where needed.
 Dark mode lifts the primary to green `#74A98A` and link/keyword green to
 `#9CC6AC`; the warm near-black surfaces are unchanged.
@@ -110,6 +148,10 @@ semibold-small or large text; cream-on-chapel (green) is ~9:1+, always safe.
   weight 400, `letter-spacing: -0.01em`, `line-height: 1.1` (heroes:
   `leading-headline-tight` = 1.05).
 - Body: **Source Sans 3 Variable** via the default `font-body` on `html`.
+- Mono: **IBM Plex Mono**, regular 400 only, via `font-mono` (added 2026-10-13
+  for the course covers). Like the other two it has a measured "IBM Plex Mono
+  Fallback" face (Courier New / Liberation Mono), so the swap does not shift
+  layout.
 - Fluid scale tokens: `text-h1` clamp(2.5–5rem) … `text-h6` 1rem. Hero h1 uses
   `text-h1`; section headlines `text-h2`; card titles `text-h4`/`h5`.
 - Eyebrows: uppercase, `tracking-eyebrow` (0.18em), small size, muted color
@@ -136,7 +178,8 @@ semibold-small or large text; cream-on-chapel (green) is ~9:1+, always safe.
   the 404 photo `aspect-[3/2] md:aspect-[5/6]` + text-first) or a capped, centered
   width (the faculty-detail portrait is `max-w-[240px]` centered on mobile).
   Cover-on-top cards compact to a thumbnail + text row on mobile so card lists
-  scroll fast (CourseCard goes cover-on-top only from `sm` up). And `overflow-x: clip`
+  scroll fast (CourseCard: the cover sits beside its back content on phones and above it
+  from `sm` up). And `overflow-x: clip`
   on `html` / `body` guards against the scroll-reveal animations' horizontal
   overflow (see Motion below).
 
@@ -218,7 +261,9 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
    (`/visual-verify`; remember the `[data-reveal]` blank-screenshot gotcha).
    LIGHT is the default theme (the site no longer follows the OS preference);
    light is primary, but dark must still read as the brand.
-2. No new fonts, no new dependencies, no client-side JS for decoration.
+2. No new fonts, no new dependencies, no client-side JS for decoration. (The
+   one deliberate exception so far: IBM Plex Mono 400, approved 2026-10-13 for
+   the Term Issue covers.)
 3. Desktop nav stays server-rendered; Lenis + reveal observers stay.
 4. No em-dashes in visitor-facing copy. Voice rules: `docs/brand/voice.md`.
 5. Defend Lighthouse 100/100/100/100 and zero CLS (animate transform/opacity

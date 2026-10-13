@@ -35,10 +35,11 @@ const SEO_PAGE_TYPES = new Set<string>([
   'privacyPage',
 ]);
 
-// Doc types with a cover/portrait/image worth flagging when empty, and the field
-// name to check on each (course cover, faculty portrait, event image).
+// Doc types with a portrait/image worth flagging when empty, and the field name
+// to check on each (faculty portrait, event image). Courses left this list on
+// 2026-10-13: the site draws every course as a typographic cover, so an empty
+// course photo is no longer a gap.
 const PHOTO_FIELD: Record<string, string> = {
-  course: 'coverImage',
   facultyMember: 'photo',
   event: 'image',
 };

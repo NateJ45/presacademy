@@ -40,19 +40,21 @@ function names(list: { label?: string }[], max = 6): string {
 
 const CHECKS: Check[] = [
   {
-    // Courses missing the fields the catalog card leans on.
+    // Courses missing the fields the catalog card leans on. Since the Term
+    // Issue covers (2026-10-13) the card draws its own cover, so a missing
+    // cover photo is no longer flagged.
     id: 'course-basics',
     run: async (c) => {
       const rows = await c.fetch<{ label?: string }[]>(
         `*[_type == "course" && ${LIVE} && (
-          !defined(coverImage) || !defined(summary) || count(instructors) == 0
+          !defined(summary) || count(instructors) == 0
         )]{ "label": title }`,
       );
       return rows.length
         ? {
             severity: 'warn',
-            label: `${rows.length} course${rows.length === 1 ? '' : 's'} missing a cover image, summary, or instructor`,
-            detail: `The catalog card leans on all three. Fill in the gaps: ${names(rows)}.`,
+            label: `${rows.length} course${rows.length === 1 ? '' : 's'} missing a summary or instructor`,
+            detail: `The catalog card leans on both. Fill in the gaps: ${names(rows)}.`,
           }
         : null;
     },
