@@ -246,11 +246,17 @@ that section when it gets long.
   Also decide whether printed catalogs exist and where a request should go
   (a page such as /contact/ or a mailto: address) before filling
   `catalogHref`; nothing was invented for either.
-- **"One Question a week" is a promise** (2026-10-13, Term Issue PR 4). The
-  Next issue copy (from the approved mockup) offers a weekly question by
-  email beside the summer issue. Today's newsletter blurb says "occasional
-  notes". Either start the weekly email or edit the line in Studio (Home
-  page, Next issue section, Text).
+- **No newsletter is switched on, so "Next issue" has no sign-up** (2026-10-13,
+  updated the same evening). Live, the newsletter has no provider (no
+  `formActionUrl`, no `PUBLIC_WEB3FORMS_KEY` build variable), so
+  NewsletterSignup renders nothing. The Next issue band now notices that and
+  says "The summer courses are being planned now..." with a link to the
+  interest form, instead of promising "get the summer issue first, plus One
+  Question a week" above an empty space. The stored `body` on the home block
+  was unset so the code picks the copy. Once a newsletter provider exists (and
+  only if the weekly One Question email is real), the band switches back to
+  the sign-up by itself; an editor can also set the Text field, which always
+  wins.
 - **Group rate for "Bring your session"** (2026-10-13, Term Issue PR 2). The
   rates box has a `groupRate` field, left EMPTY on purpose: the row hides
   until Nathan has a number. Set it in Studio, Home page, the Rates section.

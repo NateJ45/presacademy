@@ -43,15 +43,27 @@ const termTitle: string = term?.title ?? '';
 const headingId: string = block?.headingId || 'next-issue';
 const kicker: string = block?.kicker || 'Next issue';
 const heading = fillTermTokens(block?.heading || '{term} is taking shape.', termTitle);
-const body = fillTermTokens(
-  (block?.body ?? '').trim() ||
-    'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.',
-  termTitle,
-);
 // The newsletter's own settings, with the band's button label on top.
 const newsletter = siteSettings?.newsletter
   ? { ...siteSettings.newsletter, buttonLabel: block?.buttonLabel || 'Send it to me' }
   : null;
+// Whether NewsletterSignup will actually render. Mirrors its own two "render
+// nothing" checks, so the copy never promises a sign-up the band cannot show
+// (live 2026-10-13: no newsletter provider set, and the default line said
+// "Get the summer issue first" above an empty space).
+const canSignUp = Boolean(
+  newsletter?.enabled && (newsletter.formActionUrl || import.meta.env.PUBLIC_WEB3FORMS_KEY),
+);
+const body = fillTermTokens(
+  (block?.body ?? '').trim() ||
+    (canSignUp
+      ? 'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.'
+      : 'The {season} courses are being planned now. Tell us what you would like to take and we will send you the dates first.'),
+  termTitle,
+);
+// With no sign-up to offer, the band points at the interest form instead.
+const interestHref = '/get-started/';
+const interestLabel = 'Tell us what you would like to take';
 ---
 
 {term && (
@@ -68,7 +80,7 @@ const newsletter = siteSettings?.newsletter
           {heading}
         </h2>
         <p class="issue-band__body">{body}</p>
-        {newsletter && (
+        {canSignUp && newsletter ? (
           <NewsletterSignup
             client:visible
             newsletter={newsletter}
@@ -76,6 +88,12 @@ const newsletter = siteSettings?.newsletter
             variant="band"
             inputId={`${headingId}-email`}
           />
+        ) : (
+          <div class="issue-band__links">
+            <a href={interestHref} class="issue-band__link">
+              {interestLabel} <span aria-hidden="true">→</span>
+            </a>
+          </div>
         )}
       </div>
     </div>
