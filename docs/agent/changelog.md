@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-13: Live-site audit fixes on the home page. (1) `HeroSlideshow.astro` is now art-directed: a `<picture>` with a 4:5 `<source>` from lg up and a 3:2 `<img>` below, so phones stop downloading the portrait crop (hero bytes about 379 KB to 184 KB, LCP image 66 KB to 36 KB; desktop requests unchanged). The first slide was already eager with `fetchpriority="high"`. (2) Header: removed the `aria-label` from the "Now enrolling" strip link and from the text wordmark link (the link is now named by its visible text, plus a screen-reader-only " home"), clearing Lighthouse's label-content-name-mismatch. The logo-image case keeps its label.
+
 > Running change log, moved out of CLAUDE.md so it does not load on every task.
 > Each client project starts its own history from the extraction entry below.
 
