@@ -18,6 +18,7 @@
 // image as a still, with no fade and no zoom.
 
 import SanityImage from '@/components/SanityImage.astro';
+import { urlFor } from '@/lib/sanity';
 
 interface Props {
   images?: any[];
@@ -29,6 +30,13 @@ interface Props {
   eager?: boolean;
   /** Max width requested from Sanity for each slide. */
   width?: number;
+  /**
+   * Height / width of the frame BELOW the lg breakpoint (the default
+   * `aspect-[3/2]` frame is 2/3). The <img> is cropped to this ratio so a phone
+   * downloads the pixels it shows; from lg up a <source> serves the 4:5 crop.
+   * Keep it in step with the mobile half of `aspectClass`.
+   */
+  mobileRatio?: number;
   /** Unique id so multiple slideshows on one page don't share a keyframe name. */
   id?: string;
   class?: string;
@@ -40,6 +48,7 @@ const {
   sizes = '(min-width: 1024px) 520px, 90vw',
   eager = false,
   width = 1400,
+  mobileRatio = 2 / 3,
   id = 'hero',
   class: extra = '',
 } = Astro.props;
@@ -48,11 +57,35 @@ const slides = (images ?? []).filter((im) => im?.asset);
 const n = slides.length;
 const uid = `hkb-${id}`;
 
-// Serve images already cropped to the desktop 4:5 aspect (height = width * 1.25).
-// Otherwise Sanity serves wide variants whose HEIGHT is too small for the tall
-// portrait crop, and object-cover upscales them so they look soft even from a
-// high-res source. The shorter 3:2 mobile box simply crops the 4:5 image's middle.
+// Art direction (2026-10-13). The frame is 3:2 on phones and 4:5 from lg up, and
+// each needs its own crop:
+//   - lg and up: a <source> serves images already cropped to 4:5 (height =
+//     width * 1.25). Otherwise Sanity serves wide variants whose HEIGHT is too
+//     small for the tall portrait crop, and object-cover upscales them so they
+//     look soft even from a high-res source.
+//   - below lg: the <img> (SanityImage) is cropped to the 3:2 box. It used to
+//     get the 4:5 crop too and object-cover trimmed it, so a 380px phone slot
+//     downloaded 700x875 pixels to show 700x466 of them (Lighthouse flagged
+//     167 KiB of that on the home page). The 3:2 crop frames from the hotspot
+//     (or the centre) of the whole photo, so the phone view is a little wider
+//     than the old middle-band-of-a-portrait crop.
 const cropHeight = Math.round(width * 1.25);
+const mobileHeight = Math.round(width * mobileRatio);
+
+// Same width ladder as SanityImage (capped at `width`), at the 4:5 crop.
+const DESKTOP_WIDTHS = [400, 600, 700, 800, 900, 1200, 1600, 2400].filter((w) => w <= width);
+if (DESKTOP_WIDTHS[DESKTOP_WIDTHS.length - 1] !== width) DESKTOP_WIDTHS.push(width);
+function desktopSrcset(img: any, quality: number): string {
+  return DESKTOP_WIDTHS.map((w) => {
+    const url = urlFor(img)
+      .width(w)
+      .height(Math.round(cropHeight * (w / width)))
+      .quality(quality)
+      .auto('format')
+      .url();
+    return `${url} ${w}w`;
+  }).join(', ');
+}
 
 // Each image is the "front" image for ~7s; the loop is n * 7s long. Every image
 // owns 100/n% of the timeline, with a short cross-fade overlapping into the next.
@@ -100,16 +133,19 @@ ${slides
     </div>
   ) : n === 1 ? (
     <div class={`relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
-      <SanityImage
-        source={slides[0]}
-        width={width}
-        height={cropHeight}
-        loading={eager ? 'eager' : 'lazy'}
-        fetchpriority={eager ? 'high' : undefined}
-        sizes={sizes}
-        quality={65}
-        class="h-full w-full object-cover"
-      />
+      <picture class="block h-full w-full">
+        <source media="(min-width: 1024px)" srcset={desktopSrcset(slides[0], 65)} sizes={sizes} />
+        <SanityImage
+          source={slides[0]}
+          width={width}
+          height={mobileHeight}
+          loading={eager ? 'eager' : 'lazy'}
+          fetchpriority={eager ? 'high' : undefined}
+          sizes={sizes}
+          quality={65}
+          class="h-full w-full object-cover"
+        />
+      </picture>
     </div>
   ) : (
     <div class={`${uid} relative ${aspectClass} overflow-hidden bg-muted ${extra}`}>
@@ -120,18 +156,27 @@ ${slides
           are deferred and download after the page has loaded. */}
       {slides.map((img, i) => (
         <div class="s" aria-hidden={i === 0 ? undefined : 'true'}>
-          <SanityImage
-            source={img}
-            width={width}
-            height={cropHeight}
-            loading={eager && i === 0 ? 'eager' : 'lazy'}
-            fetchpriority={eager && i === 0 ? 'high' : undefined}
-            defer={i > 0}
-            sizes={sizes}
-            quality={eager && i === 0 ? 60 : 72}
-            alt={i === 0 ? undefined : ''}
-            class="h-full w-full object-cover"
-          />
+          <picture class="block h-full w-full">
+            <source
+              media="(min-width: 1024px)"
+              srcset={i > 0 ? undefined : desktopSrcset(img, eager ? 60 : 72)}
+              sizes={i > 0 ? undefined : sizes}
+              data-srcset={i > 0 ? desktopSrcset(img, 72) : undefined}
+              data-sizes={i > 0 ? sizes : undefined}
+            />
+            <SanityImage
+              source={img}
+              width={width}
+              height={mobileHeight}
+              loading={eager && i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={eager && i === 0 ? 'high' : undefined}
+              defer={i > 0}
+              sizes={sizes}
+              quality={eager && i === 0 ? 60 : 72}
+              alt={i === 0 ? undefined : ''}
+              class="h-full w-full object-cover"
+            />
+          </picture>
         </div>
       ))}
       <style is:inline set:html={css} />
@@ -149,6 +194,14 @@ ${slides
   // Astro bundles this once per page however many slideshows render, and the
   // astro:page-load hook covers View Transitions navigations.
   function hydrateSlides(): void {
+    // The lg-and-up <source> goes first, so the <img> swap below picks it up.
+    document.querySelectorAll<HTMLSourceElement>('source[data-srcset]').forEach((source) => {
+      const { srcset, sizes } = source.dataset;
+      if (sizes) source.sizes = sizes;
+      if (srcset) source.srcset = srcset;
+      delete source.dataset.srcset;
+      delete source.dataset.sizes;
+    });
     const imgs = document.querySelectorAll<HTMLImageElement>('img[data-srcset]');
     imgs.forEach((img) => {
       const { src, srcset, sizes } = img.dataset;

@@ -5,6 +5,10 @@
 // a scholarly-but-warm bio with one human line, ruled Degrees / Publications /
 // Affiliations ledgers, and the courses-taught tiles (derived by GROQ from
 // course.instructors). Built for each faculty slug in Sanity.
+//
+// 2026-10-13 (Term Issue PR 3): the "On my desk" reading line and the spoken
+// introduction (IntroAudio island, transcript in a <details>) sit under the
+// human line. Both hide when empty; the player needs the file AND a transcript.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
@@ -19,6 +23,8 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 import SanityImage from '@/components/SanityImage.astro';
 import PortableText from '@/components/PortableText';
 import FinalCta from '@/components/FinalCta.astro';
+import IntroAudio from '@/components/IntroAudio';
+import { introAudioFor } from '@/lib/intro-audio';
 
 export async function getStaticPaths() {
   const slugs = await getAllFacultySlugs();
@@ -53,6 +59,9 @@ function degLabel(d: any): string {
 }
 const degreeLine = (person.degrees ?? []).map(degLabel).join(' · ');
 const credential = [person.denomination, person.ordination].filter(Boolean).join(' · ');
+const reading = typeof person.currentlyReading === 'string' ? person.currentlyReading.trim() : '';
+// Null unless there is BOTH a file and a transcript (src/lib/intro-audio.ts).
+const audio = introAudioFor(person);
 
 const schemas = [
   breadcrumbSchema([
@@ -177,6 +186,25 @@ const schemas = [
               <p class="mt-m max-w-prose font-display text-xl text-foreground/85 italic">
                 {person.humanLine}
               </p>
+            )
+          }
+          {
+            reading && (
+              <p class="mt-m max-w-prose font-display text-lg text-foreground/85 italic">
+                On my desk: {reading}
+              </p>
+            )
+          }
+          {
+            audio && (
+              <div class="mt-m max-w-prose">
+                <p class="text-xs tracking-eyebrow text-foreground/80 uppercase">
+                  In their own voice
+                </p>
+                <div class="mt-1">
+                  <IntroAudio client:visible {...audio} name={name} />
+                </div>
+              </div>
             )
           }
 

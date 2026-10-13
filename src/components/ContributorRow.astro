@@ -1,0 +1,106 @@
+---
+// Safe to edit by hand.
+// =============================================================================
+// ContributorRow: one teacher in the faculty strip's "contributors" variant
+// (2026-10-13, Term Issue PR 3)
+// =============================================================================
+// A ruled row, like a contributors page in a small press issue: a 4:5 portrait,
+// the name (linking to the profile), the credential line, "In this issue:" in
+// the mono catalog face listing their courses in the next term, the "On my
+// desk" reading line, and the spoken-introduction player.
+//
+// Everything below the credential line is optional and hides when its field is
+// empty: no courses next term means no "In this issue" line, no reading line
+// means no "On my desk", and the player needs BOTH a file and a transcript
+// (WCAG 1.2.1), so a recording uploaded without its transcript never renders.
+//
+// No photo: the portrait well shows the teacher's initials in the display face
+// rather than an empty box, so a row never looks half-loaded.
+
+import SanityImage from '@/components/SanityImage.astro';
+import IntroAudio from '@/components/IntroAudio';
+import { introAudioFor } from '@/lib/intro-audio';
+
+interface Props {
+  person: any;
+}
+const { person } = Astro.props;
+
+const name = `${person.honorific ? person.honorific + ' ' : ''}${person.name}`;
+const deg = person.topDegree;
+const degLine = deg
+  ? `${deg.degree}${deg.field ? ` ${deg.field}` : ''}${deg.institution ? `, ${deg.institution}` : ''}`
+  : '';
+const ordained = [person.denomination, person.ordination ? 'ordained' : null]
+  .filter(Boolean)
+  .join(', ');
+// "PhD New Testament, Princeton Theological Seminary. PC(USA), ordained."
+// Falls back to the teaching role when there is no degree or credential.
+const credentialLine =
+  [degLine, ordained].filter(Boolean).join('. ') + (degLine || ordained ? '.' : '');
+const subLine = credentialLine || person.title || '';
+
+const issueLabels: string[] = (person.inThisIssue ?? [])
+  .map((c: any) => (typeof c?.label === 'string' ? c.label.trim() : ''))
+  .filter(Boolean);
+
+const reading = typeof person.currentlyReading === 'string' ? person.currentlyReading.trim() : '';
+
+// Null unless there is BOTH a file and a transcript (src/lib/intro-audio.ts).
+const audio = introAudioFor(person);
+
+const initials = String(person.name ?? '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w) => w[0])
+  .filter((ch) => /\p{L}/u.test(ch))
+  .slice(0, 2)
+  .join('')
+  .toUpperCase();
+---
+
+<li class="flex min-w-0 list-none gap-5 border-b border-border-soft py-6">
+  <div
+    class="image-well relative aspect-[4/5] w-[88px] flex-none self-start overflow-hidden sm:w-[104px]"
+  >
+    {
+      person.photo?.asset ? (
+        <SanityImage
+          source={person.photo}
+          width={260}
+          sizes="104px"
+          class="h-full w-full object-cover"
+        />
+      ) : (
+        <span
+          class="absolute inset-0 flex items-center justify-center font-display text-h4 text-foreground/60"
+          aria-hidden="true"
+        >
+          {initials}
+        </span>
+      )
+    }
+  </div>
+  <div class="flex min-w-0 flex-col gap-1.5">
+    <h3 class="font-display text-h5 leading-tight text-foreground">
+      <a
+        href={`/faculty/${person.slug}/`}
+        class="hit-44 relative no-underline transition-colors hover:text-link">{name}</a
+      >
+    </h3>
+    {subLine && <p class="text-sm text-foreground/75">{subLine}</p>}
+    {
+      issueLabels.length > 0 && (
+        <p class="font-mono text-xs tracking-[0.04em] text-link">
+          <span class="uppercase">In this issue:</span> {issueLabels.join(' · ')}
+        </p>
+      )
+    }
+    {
+      reading && (
+        <p class="mt-0.5 font-display text-base text-foreground/85 italic">On my desk: {reading}</p>
+      )
+    }
+    {audio && <IntroAudio client:visible {...audio} name={name} />}
+  </div>
+</li>

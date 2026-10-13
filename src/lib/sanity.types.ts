@@ -623,6 +623,14 @@ export type FacultyMember = {
     _key: string;
   }>;
   humanLine?: string;
+  currentlyReading?: string;
+  introAudio?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  introAudioTranscript?: string;
+  introAudioLength?: string;
   email?: string;
   displayOrder?: number;
 };
@@ -1176,8 +1184,10 @@ export type SectionTestimonialRail = {
 
 export type SectionFacultyRail = {
   _type: 'sectionFacultyRail';
+  variant?: 'cards' | 'contributors';
   eyebrow?: string;
   heading?: string;
+  intro?: string;
   headingId?: string;
   limit?: number;
   linkLabel?: string;

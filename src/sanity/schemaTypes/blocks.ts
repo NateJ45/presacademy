@@ -2117,20 +2117,48 @@ export const sectionTicker = defineType({
  * Auto-updating: it pulls the faculty roster itself, in the roster's own order,
  * so adding a teacher to the catalog puts them on the home page. What this
  * section owns is the copy around the cards and the link out to the full roster.
+ *
+ * `variant` (2026-10-13, Term Issue PR 3): "cards" is the original strip and
+ * stays the default, so every existing section (which has no variant set)
+ * renders exactly as before. "contributors" sets each teacher as a row: portrait,
+ * credential line, "In this issue" (their courses with an offering in the next
+ * term), the "On my desk" reading line and the spoken-introduction player.
  */
 export const sectionFacultyRail = defineType({
   name: 'sectionFacultyRail',
   title: 'Faculty strip (from the roster)',
   type: 'object',
   description:
-    'A row of teacher cards pulled straight from the faculty roster, on the warm surface, with a link out to the full roster.',
+    'Teachers pulled straight from the faculty roster, with a link out to the full roster. Pick cards (a row on the warm surface) or contributors (rows with what each one teaches this term and what they are reading).',
   fields: [
+    defineField({
+      name: 'variant',
+      title: 'Style',
+      type: 'string',
+      description:
+        'Contributors rows show the courses each teacher has in the next term, their "On my desk" line and their spoken introduction, when those are filled in on the faculty member.',
+      options: {
+        list: [
+          { title: 'Cards: a row of teacher cards on the warm surface', value: 'cards' },
+          { title: 'Contributors: rows with courses this term and reading', value: 'contributors' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'cards',
+    }),
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
       name: 'heading',
       title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'intro',
+      title: 'Short intro (optional)',
+      type: 'text',
+      rows: 2,
+      description: 'One or two sentences under the heading. Leave empty for none.',
     }),
     defineField({
       name: 'headingId',
@@ -2143,7 +2171,8 @@ export const sectionFacultyRail = defineType({
       title: 'How many teachers',
       type: 'number',
       initialValue: 3,
-      description: 'Leave empty for three, which fills the row.',
+      description:
+        'Leave empty for three cards, which fills the row, or four contributors, which fills two columns.',
       validation: (R) => R.min(1).integer(),
     }),
     defineField({
@@ -2160,8 +2189,13 @@ export const sectionFacultyRail = defineType({
     }),
   ],
   preview: {
-    select: { title: 'heading', subtitle: 'eyebrow' },
-    prepare: ({ title, subtitle }) => ({ title: title || 'Faculty strip', subtitle }),
+    select: { title: 'heading', subtitle: 'eyebrow', variant: 'variant' },
+    prepare: ({ title, subtitle, variant }) => ({
+      title: title || 'Faculty strip',
+      subtitle: [variant === 'contributors' ? 'Contributors' : null, subtitle]
+        .filter(Boolean)
+        .join(' · '),
+    }),
   },
 });
 

@@ -5,10 +5,18 @@
 // shared taxonomy), selected publications, and a scholarly-but-warm bio with one
 // disarming human line. "Courses taught" is derived from course.instructors by
 // GROQ, so it is intentionally not a field here.
+//
+// "This term" group (2026-10-13, Term Issue PR 3): the contributor fields. A
+// short "On my desk" reading line and an optional spoken introduction with a
+// required transcript (WCAG 1.2.1: prerecorded audio needs a text alternative).
+// All optional and all left EMPTY in the dataset on purpose: faculty supply
+// their own lines and recordings (docs/PENDING.md). Every surface that reads
+// them hides cleanly when they are empty.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { archivedField } from './archived';
 import { orderRankField } from '@sanity/orderable-document-list';
+import { INTRO_LENGTH_PATTERN, transcriptRule } from '../../lib/intro-audio';
 
 export const facultyMember = defineType({
   name: 'facultyMember',
@@ -21,6 +29,7 @@ export const facultyMember = defineType({
     { name: 'identity', title: 'Identity', default: true },
     { name: 'credentials', title: 'Credentials' },
     { name: 'writing', title: 'Bio & writing' },
+    { name: 'thisTerm', title: 'This term' },
   ],
   fields: [
     // Drag-to-reorder rank (managed by the orderable desk list; hidden).
@@ -254,6 +263,46 @@ export const facultyMember = defineType({
       description:
         'A single disarming sentence so the depth reads inviting. Shown in italic. Example: "She makes the hardest passages feel like an open door."',
       group: 'writing',
+    }),
+    defineField({
+      name: 'currentlyReading',
+      title: 'On my desk (optional)',
+      type: 'string',
+      description:
+        'What this teacher is reading right now, in their own words. Shown after "On my desk:" in italic. Example: "The Heidelberg Catechism, one question a week." Leave empty to hide the line.',
+      group: 'thisTerm',
+      validation: (Rule) => Rule.max(100),
+    }),
+    defineField({
+      name: 'introAudio',
+      title: 'Spoken introduction (optional)',
+      type: 'file',
+      description:
+        'A short recording of this teacher opening a class, one or two minutes. MP3 or M4A. Visitors press play; nothing downloads until they do. Needs a transcript below.',
+      options: { accept: 'audio/*' },
+      group: 'thisTerm',
+    }),
+    defineField({
+      name: 'introAudioTranscript',
+      title: 'Transcript of the introduction',
+      type: 'text',
+      rows: 6,
+      description:
+        'Every word of the recording, so people who cannot hear it can read it. Required whenever a recording is uploaded. Leave a blank line between paragraphs.',
+      group: 'thisTerm',
+      validation: (Rule) =>
+        Rule.custom((value, context) => transcriptRule(value, context.document?.introAudio)),
+    }),
+    defineField({
+      name: 'introAudioLength',
+      title: 'Length of the introduction',
+      type: 'string',
+      description: 'Minutes and seconds, shown beside the play button. Example: "1:32".',
+      group: 'thisTerm',
+      validation: (Rule) =>
+        Rule.regex(INTRO_LENGTH_PATTERN, { name: 'minutes:seconds' }).warning(
+          'Write it as minutes:seconds, like "1:32".',
+        ),
     }),
     defineField({
       name: 'email',

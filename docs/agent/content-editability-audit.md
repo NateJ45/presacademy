@@ -51,6 +51,7 @@ Silent data-loss orphans (fetched, never rendered): `course.offerings[].seatsNot
 Hardcoded labels: "Teaching areas", "Faculty" eyebrow, "Degrees", "Selected publications", "Affiliations", "Courses taught". FinalCta button hardcoded.
 Silent data-loss orphans: `facultyMember.specializations`, `yearsTeaching`, `email` (all fetched, none rendered — a bio's email vanishes).
 **Fix:** render specializations / years / email; add label fields or document the structural labels.
+2026-10-13 (Term Issue PR 3): the new `currentlyReading`, `introAudio`, `introAudioTranscript` and `introAudioLength` fields ARE rendered (here and in the faculty strip's `contributors` rows). Their structural labels are code, like the ones above: "On my desk:", "In their own voice", "In this issue:", the "Listen" / "Pause" button and "Read the transcript".
 
 ### Courses index / Faculty index
 

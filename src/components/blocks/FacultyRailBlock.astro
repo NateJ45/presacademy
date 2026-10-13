@@ -16,8 +16,16 @@
 // from SingletonPage: home's preview has always shown DRAFT faculty (the old
 // HomeBody special case passed the draft fetcher into the same query function),
 // and the conversion had to keep that rather than quietly downgrade it.
+//
+// VARIANTS (2026-10-13, Term Issue PR 3). `variant` is "cards" (the original
+// strip, and the default for every section saved before the field existed) or
+// "contributors": ruled two-column rows on the page background, one
+// ContributorRow per teacher, fed by getContributors (adds the next-term
+// courses, the reading line and the spoken introduction). Stega never touches
+// the comparison below because "variant" is already on cms-preview's skip list.
 import FacultyCard from '@/components/FacultyCard.astro';
-import { getFeaturedFaculty } from '@/lib/queries';
+import ContributorRow from '@/components/ContributorRow.astro';
+import { getContributors, getFeaturedFaculty } from '@/lib/queries';
 
 interface Props {
   block: any;
@@ -26,10 +34,17 @@ interface Props {
 }
 const { block, fetcher } = Astro.props as Props;
 
-const limit: number = typeof block?.limit === 'number' && block.limit > 0 ? block.limit : 3;
+const isContributors = block?.variant === 'contributors';
+// Three cards fill a row; four contributors fill two columns.
+const limit: number =
+  typeof block?.limit === 'number' && block.limit > 0 ? block.limit : isContributors ? 4 : 3;
 // Passing `undefined` through hits the query's own `= sanityFetch` default, so
 // the live build reads published data exactly as before.
-const faculty = (await getFeaturedFaculty(limit, fetcher).catch(() => [])) ?? [];
+const faculty =
+  (await (
+    isContributors ? getContributors(limit, fetcher) : getFeaturedFaculty(limit, fetcher)
+  ).catch(() => [])) ?? [];
+const intro = typeof block?.intro === 'string' ? block.intro.trim() : '';
 
 // Landmark id: the band is labeled by its own h2. Deterministic fallback so the
 // label never dangles. The seed carries the id the page already used
@@ -42,7 +57,44 @@ const showLink = Boolean(block?.linkLabel && block?.linkHref);
 ---
 
 {
-  faculty.length > 0 && (
+  faculty.length > 0 && isContributors && (
+    <section class="bg-background" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div data-reveal>
+            {block?.eyebrow && (
+              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+                {block.eyebrow}
+              </p>
+            )}
+            <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
+              {block?.heading}
+            </h2>
+            {intro && <p class="mt-3 max-w-[56ch] text-foreground/75">{intro}</p>}
+          </div>
+          {showLink && (
+            <a
+              href={block.linkHref}
+              class="link-arrow hit-44 relative inline-flex items-center gap-1.5 text-sm tracking-[0.12em] text-link uppercase underline underline-offset-4 hover:text-primary-dark"
+            >
+              {block.linkLabel}
+              <span class="link-arrow__icon" aria-hidden="true">
+                &rarr;
+              </span>
+            </a>
+          )}
+        </div>
+        <ul class="mt-l grid grid-cols-1 gap-x-14 border-t border-foreground/80 p-0 md:grid-cols-2">
+          {faculty.map((f: any) => (
+            <ContributorRow person={f} />
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+{
+  faculty.length > 0 && !isContributors && (
     <section class="surface-warm bg-muted" aria-labelledby={headingId}>
       <div class="mx-auto max-w-content px-m py-section-lg">
         <div class="flex flex-wrap items-end justify-between gap-4">
@@ -53,6 +105,7 @@ const showLink = Boolean(block?.linkLabel && block?.linkHref);
             <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
               {block?.heading}
             </h2>
+            {intro && <p class="mt-3 max-w-[56ch] text-foreground/75">{intro}</p>}
           </div>
           {showLink && (
             <a

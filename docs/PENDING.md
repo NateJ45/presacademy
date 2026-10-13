@@ -184,7 +184,7 @@ that section when it gets long.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): the faculty strip is text-only, which makes a
-  polished page look half-loaded (Term Issue PR 3, contributors, closes it).
+  polished page look half-loaded (Term Issue PR 3 added the `contributors` faculty-rail style; this half closes once the PR 2 migration switches the home faculty section to it and it is checked live).
   The empty course-card image wells half closed 2026-10-13 (see Recently
   closed). Second finding: CTA wording drift ("Request info" vs "Request
   information", "Free intro" vs "Book a free intro"); pick one form of each
@@ -206,6 +206,15 @@ that section when it gets long.
   it), and the course page never did, so course photos currently render
   nowhere. The field stays (never "Remove field"). Decide whether the course
   page gets a photo band once real photography exists.
+- **Faculty "On my desk" lines and spoken introductions** (opened 2026-10-13,
+  Term Issue PR 3). The fields exist on `facultyMember` ("This term" tab:
+  `currentlyReading`, `introAudio`, `introAudioTranscript`,
+  `introAudioLength`) and every surface hides them when empty, so nothing
+  shows yet. Waiting on the faculty: each teacher supplies their own reading
+  line (up to 100 characters) and, optionally, a one-to-two-minute recording
+  WITH a full transcript (the Studio will not publish audio without one). Do
+  not invent lines or quotes for them. Once a few are in, check the player on
+  the live site (CSP already allows `media-src https:`).
 - **Re-record `acad-*` photo credits.** The per-photo Pexels source URLs
   for the academic placeholder set live only in gitignored curation
   scratch (`scripts/_stock*`). `MANIFEST.md` currently records the set

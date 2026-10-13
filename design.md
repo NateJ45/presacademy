@@ -252,6 +252,13 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
 - **Rule & Ledger frame** (404, framed media). Framed photos now use a brass top
   rule above a clean rectangular crop, not a Romanesque arch. The arch was
   retired in Direction A; treat `.arch-top` as a soft rounding only.
+- **Contributors rows** (Term Issue, 2026-10-13). The faculty strip's
+  `contributors` style reads like the contributors page of a small press issue:
+  ruled two-column rows under a dark top rule, a 104px 4:5 portrait (initials in
+  Fraunces when there is no photo), the credential line, an "In this issue:"
+  line in the mono catalog face (`font-mono`, `text-link`), the "On my desk"
+  line in Fraunces italic, and a quiet play button (ringed glyph, 44px tall,
+  length in mono) with the transcript in a `<details>` under it. No motion.
 - No paper grain. `body::before` is set to `opacity: 0` in Direction A; large
   flat near-white fills are intentional and read clean, not dead.
 
