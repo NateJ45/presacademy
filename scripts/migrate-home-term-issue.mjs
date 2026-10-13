@@ -161,7 +161,6 @@ const NEW = {
     kicker: 'Next issue',
     heading: '{term} is taking shape.',
     headingId: 'next-issue',
-    body: 'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.',
     buttonLabel: 'Send it to me',
   },
   pastors: {
