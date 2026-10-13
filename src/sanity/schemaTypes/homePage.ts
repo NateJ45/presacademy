@@ -16,6 +16,11 @@
 // The church-era fields (Sunday worship band, weekly rhythms, "The Record",
 // Welcome section, seasonal hero, etc.) were removed in the 2026-06 editability
 // pass — the home document held no data in them, so removal was clean.
+//
+// 2026-10-13 (Term Issue PR 2): the hero is the issue's cover now (the next
+// term's name over a fanned stack of course covers, HomeHero.astro). The
+// eyebrow and the hero photos are no longer shown, but both fields STAY (never
+// "Remove field", gotcha #1); their descriptions say so.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import {
@@ -46,14 +51,16 @@ export const homePage = defineType({
       title: 'Hero eyebrow',
       type: 'string',
       group: 'hero',
-      description: 'Small label above the headline. Leave empty for the default.',
+      description:
+        'Not shown since the Term Issue redesign (2026-10-13): the home page opens on the term name instead. Kept so nothing is lost.',
     }),
     defineField({
       name: 'heroHeadline',
       title: 'Hero headline',
       type: 'string',
       group: 'hero',
-      description: 'The big opening line. Leave empty for the default.',
+      description:
+        'The italic line under the big term name (for example "Spring 2027", which comes from the next Term). When no term is coming up, this becomes the big headline itself.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -62,7 +69,7 @@ export const homePage = defineType({
       type: 'text',
       rows: 3,
       group: 'hero',
-      description: 'One or two sentences under the headline.',
+      description: 'One or two sentences under the italic line.',
     }),
     defineField({
       name: 'heroImages',
@@ -70,7 +77,7 @@ export const homePage = defineType({
       type: 'array',
       group: 'hero',
       description:
-        'The photo beside the hero text. Add one for a static image, or two or more for a slow cross-fading slideshow. Drag to set the order.',
+        'Not shown since the Term Issue redesign (2026-10-13): the home page shows three course covers beside the term name instead (the courses marked "Start here", then "Featured"). The photos are kept here so nothing is lost.',
       of: [
         defineArrayMember({
           type: 'image',

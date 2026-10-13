@@ -366,129 +366,102 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
     },
   ],
 
-  // ---- home (converted 2026-08-26, Phase 4) --------------------------------
-  // The eight bands HomeBody.astro used to render inline, in the same order:
-  // wayfinding, the Start-here rail, the stat band, the topics ticker, the
-  // catalog preview, the faculty strip, the testimonials. (The split hero is NOT
-  // here: heroes stay page-level fields, per decision D2, and home's renders
-  // through SingletonPage's "hero" slot as src/components/home/HomeHero.astro.)
+  // ---- home (converted 2026-08-26, Phase 4; the Term Issue 2026-10-13) -----
+  // THE TERM ISSUE (PR 2): the home body is the issue's departments, in this
+  // order: contents, the cover grid (every course), the reply-card finder,
+  // contributors (the faculty rail's contributors style), letters (the
+  // testimonials' letters style) and the rates box (the pricing tiers' rates
+  // surface). scripts/migrate-home-term-issue.mjs writes the SAME list into the
+  // Home Page document, so this fallback and the live page match. The old
+  // wayfinding row, stat band and topics ticker are gone from home; their block
+  // types stay registered for any page that wants them.
   //
-  // The three rails and the faculty/testimonial strips carry no cards of their
-  // own: each block fetches its slice of the catalog itself, and with no Sanity
-  // credentials there is nothing to fetch, so each renders nothing. That is
-  // exactly what the old page's `startHere.length > 0` / `featuredCourses.length
-  // > 0` / `featuredFaculty.length > 0` / `testimonials.length > 0` guards did,
-  // and what the credential-less CI build has always shown.
+  // No eyebrows anywhere: the issue's sections open on their big light heading.
+  // (The hero is NOT here: heroes stay page-level fields, per decision D2, and
+  // home's renders through SingletonPage's "hero" slot as HomeHero.astro.)
   //
-  // The headingIds are the ones the page's landmarks already used, so anchors
-  // and aria-labelledby keep working.
+  // Every one of these fills itself from the catalog (courses, faculty,
+  // testimonials, pricing tiers), so with no Sanity credentials each renders
+  // nothing, which is what the credential-less CI build has always shown for
+  // home's rails. The finder carries its question copy but no course
+  // references (those are dataset ids), so it stays hidden here too.
   homePage: [
     {
-      _key: 'homeWayfinding',
-      _type: 'sectionNumberedCards',
-      variant: 'wayfinding',
-      landmarkLabel: 'Where to begin',
-      cards: [
-        {
-          _key: 'wayfindingStep1',
-          title: 'Take a course',
-          body: 'Browse the catalog by topic or teacher.',
-          href: '/courses/',
-        },
-        {
-          _key: 'wayfindingStep2',
-          title: 'Meet the teachers',
-          body: 'Ordained ministers and Reformed scholars.',
-          href: '/faculty/',
-        },
-        {
-          _key: 'wayfindingStep3',
-          title: 'Find your path',
-          body: 'A starting point for where you are now.',
-          href: '/for-you/',
-        },
-        {
-          _key: 'wayfindingStep4',
-          title: 'Start free',
-          body: 'Sit in on a class, no commitment.',
-          href: '/get-started/',
-        },
-      ],
+      _key: 'homeContents',
+      _type: 'sectionTermContents',
+      heading: 'Contents',
+      headingId: 'contents',
+      scope: 'all',
+      noteLabel: 'A note before you browse',
+      note: 'Every course in this issue meets in person, in the evening, around a table. You will read real books, ask real questions, and go home with more to think about than you came with. You do not need a theology degree. You need a Bible, a free evening, and some curiosity. If cost is in the way, tell us. We would rather have you in the room.',
+      signature: 'The faculty',
     },
     {
-      _key: 'homeStartHere',
+      _key: 'homeCovers',
       _type: 'sectionCourseRail',
-      source: 'startHere',
-      variant: 'rail',
-      eyebrow: 'Start here',
-      heading: 'A few courses to begin with',
-      headingId: 'home-start',
-      limit: 3,
-      // Home narrows its grid below three courses; the Courses page never does.
-      // See CourseRailBlock's header for why that is a field and not a rule.
-      adaptiveColumns: true,
-    },
-    {
-      _key: 'homeStats',
-      _type: 'sectionLedgerStats',
-      variant: 'quad',
-      landmarkLabel: 'The Academy at a glance',
-      // Stats for a NEW (2026) school: structure + standards, not a track record
-      // (no founding year, no alumni counts). Only number values animate.
-      items: [
-        { _key: 'stat1', value: '100%', label: 'Ordained or credentialed faculty', count: true },
-        { _key: 'stat2', value: 'In person', label: 'Taught in cohorts' },
-        { _key: 'stat3', value: 'Need-based', label: 'Scholarships every term' },
-        { _key: 'stat4', value: 'Reformed', label: 'Rooted in the Westminster Standards' },
-      ],
-    },
-    {
-      _key: 'homeTicker',
-      _type: 'sectionTicker',
-      topics: [
-        'Old Testament',
-        'Systematic Theology',
-        'Church History',
-        'Reformed Worship',
-        'Biblical Greek',
-        'Christian Ethics',
-        'Apologetics',
-        'Pastoral Care',
-        'The Confessions',
-        'Spiritual Formation',
-      ],
-    },
-    {
-      _key: 'homeCourses',
-      _type: 'sectionCourseRail',
-      source: 'featured',
-      variant: 'feature',
-      eyebrow: 'Courses',
-      heading: 'Learn something worth knowing',
-      headingId: 'home-courses',
-      limit: 6,
-      linkLabel: 'See all courses',
+      source: 'all',
+      variant: 'covers',
+      heading: 'The courses',
+      headingId: 'courses',
+      note: 'Turn a cover over for week one',
+      linkLabel: 'See the full catalog',
       linkHref: '/courses/',
-      // Drop any Start-here course so the page never shows the same card twice.
-      dedupeAgainstStartHere: true,
+    },
+    {
+      _key: 'homeFinder',
+      _type: 'sectionCourseFinder',
+      kicker: 'Reply card',
+      heading: 'Three questions, one course',
+      headingId: 'finder',
+      intro: 'Tick one answer for each. We will suggest a single place to start.',
+      question1: {
+        question: 'What do you do at church?',
+        options: [
+          { _key: 'q1a', label: 'Lead a study or group' },
+          { _key: 'q1b', label: 'Teach or preach' },
+          { _key: 'q1c', label: 'Serve as an elder' },
+          { _key: 'q1d', label: 'Just curious' },
+        ],
+      },
+      question2: {
+        question: 'What do you want most right now?',
+        options: [
+          { _key: 'q2a', label: 'Know the Bible better' },
+          { _key: 'q2b', label: 'Understand what we believe' },
+          { _key: 'q2c', label: 'Learn to pray' },
+          { _key: 'q2d', label: 'Know our history' },
+        ],
+      },
+      question3: 'How much can you take on this term?',
+      resultLabel: 'We suggest',
+      ctaLabel: 'Express interest',
+      ctaHref: '/get-started/',
     },
     {
       _key: 'homeFaculty',
       _type: 'sectionFacultyRail',
-      eyebrow: 'The faculty',
-      heading: 'Taught by ministers and scholars',
-      headingId: 'home-faculty',
-      limit: 3,
+      variant: 'contributors',
+      heading: 'Contributors',
+      headingId: 'contributors',
+      intro: 'Ordained ministers and Reformed scholars teaching in this issue.',
+      limit: 4,
       linkLabel: 'Meet the faculty',
       linkHref: '/faculty/',
     },
     {
       _key: 'homeTestimonials',
       _type: 'sectionTestimonialRail',
-      eyebrow: 'In their words',
-      heading: 'From the people we serve',
-      headingId: 'home-stories',
+      variant: 'letters',
+      heading: 'Letters',
+      headingId: 'letters',
+      salutation: 'To the faculty,',
       limit: 3,
+    },
+    {
+      _key: 'homeRates',
+      _type: 'sectionPricingTiers',
+      surface: 'rates',
+      heading: 'Rates',
     },
   ],
 

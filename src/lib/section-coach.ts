@@ -176,6 +176,17 @@ const COACH: Record<string, CoachEntry> = {
     hint: 'Add the short topic words that scroll across the band.',
     isEmpty: (s) => noItems(s.topics),
   },
+  // Term Issue PR 2 (2026-10-13). The finder suggests courses the editor
+  // points it at, so with no default course and no answers it has nothing to
+  // show (and the live renderer hides it).
+  sectionCourseFinder: {
+    name: 'Course finder',
+    hint: 'Pick a default course, then point each answer at the course it suggests.',
+    isEmpty: (s) => {
+      const q = (v: unknown) => (v as { options?: unknown } | undefined)?.options;
+      return noPick(s.defaultCourse) && noItems(q(s.question1)) && noItems(q(s.question2));
+    },
+  },
 };
 
 /**

@@ -103,11 +103,12 @@ const PAGE_LABELS: Record<string, string> = {
  * it. Keep in step with src/components/blocks/.
  */
 const RENDERED_BY: Record<string, string[]> = {
-  course: ['sectionCourseRail'],
+  course: ['sectionCourseRail', 'sectionTermContents'],
   facultyMember: ['sectionFacultyRail'],
   testimonial: ['sectionTestimonialRail'],
   event: ['sectionEventGrid', 'sectionRuledList'],
-  pricingTier: ['sectionPricingTiers'],
+  // The course finder lists the tiers as its third question (Term Issue PR 2).
+  pricingTier: ['sectionPricingTiers', 'sectionCourseFinder'],
   faqItem: ['sectionFaqList', 'sectionFaqGrouped'],
   faqCategory: ['sectionFaqList', 'sectionFaqGrouped'],
 };

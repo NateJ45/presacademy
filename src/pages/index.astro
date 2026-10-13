@@ -15,6 +15,13 @@
 // HeroSlideshow carries scoped styles that would otherwise be injected into all
 // thirteen pages (the CSS-module-graph note in SingletonPage.astro).
 //
+// THE TERM ISSUE (2026-10-13, PR 2): the hero is now the issue's cover (the
+// next term's name, a fanned stack of course covers; HomeHero.astro's header),
+// and the body sections are the issue's departments: contents, the cover grid,
+// the reply-card finder, contributors, letters and rates. The body order lives
+// in the Home Page document (scripts/migrate-home-term-issue.mjs set it) and,
+// for the credential-less build, in src/lib/default-sections.ts.
+//
 // The old wayfinding / stats / tickerTopics / strip-copy fields are deliberately
 // left in place and populated (decision D4, additive migration): reverting this
 // file brings the old page back with its content intact. They get unset in the
@@ -29,7 +36,7 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 // The catalog collections the body used to need are fetched by the section
 // blocks themselves now (the course rails, the faculty strip, the testimonials).
 // What is left here is the page document, the settings, and the next term, which
-// the hero's ledger line reads.
+// the hero's title and "next cohort" line read.
 const [page, siteSettings, nextTerm] = await Promise.all([
   getHomePage(),
   getSiteSettings(),

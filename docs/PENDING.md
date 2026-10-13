@@ -184,11 +184,37 @@ that section when it gets long.
 
 - **Home page P1s from the 2026-06-20 Impeccable critique**
   (`.impeccable/critique/`): the faculty strip is text-only, which makes a
-  polished page look half-loaded (Term Issue PR 3 added the `contributors` faculty-rail style; this half closes once the PR 2 migration switches the home faculty section to it and it is checked live).
+  polished page look half-loaded (Term Issue PR 3 added the `contributors` faculty-rail style; PR 2's migration, below, switches the home faculty section to it; this half closes once that is applied and checked live).
   The empty course-card image wells half closed 2026-10-13 (see Recently
   closed). Second finding: CTA wording drift ("Request info" vs "Request
   information", "Free intro" vs "Book a free intro"); pick one form of each
   and sweep.
+- **Run the home migration after the Term Issue PR 2 merge** (2026-10-13).
+  `scripts/migrate-home-term-issue.mjs` rewrites `homePage.flexibleSections`
+  into the issue's six sections (contents, cover grid, course finder,
+  contributors, letters, rates), removes the wayfinding row, stat band,
+  ticker and the two old course rails, and clears the eyebrows. Dry run on
+  2026-10-13: 2 changes, `homePage` and an EXISTING `drafts.homePage` (same
+  plan for both: 5 removed, 4 added, faculty and testimonials kept and
+  restyled). Ask whose draft that is before applying, because the script
+  rewrites the draft's sections too. Routine: backup
+  (`backups/pre-term-issue-2-<date>.tar.gz`), dry run, `--apply`, re-run
+  (nothing to do), `scripts/sanity-audit.mjs`, `/rebuild`, check the live
+  home in both themes at 375 and 1280. Run the course-cover seed first so the
+  contents list and finder show codes.
+- **Group rate for "Bring your session"** (2026-10-13, Term Issue PR 2). The
+  rates box has a `groupRate` field, left EMPTY on purpose: the row hides
+  until Nathan has a number. Set it in Studio, Home page, the Rates section.
+- **The finder's answers and the faculty note are draft copy** (2026-10-13).
+  The two finder questions, their answer-to-course mapping and the contents
+  note ("Every course in this issue meets in person...") come from the
+  approved mockup, not from the faculty. Worth a read by the director before
+  or after the migration; all of it is editable in Studio.
+- **CourseFinder has no CI coverage** (2026-10-13). The credential-less CI
+  build has no courses, so the finder (like the other catalog rails) renders
+  nothing there and the axe / reflow suites never see it. It was checked by
+  hand (every answer path, both themes, 320 to 1280). If it grows, add a
+  fixture to `/style-guide` (which moves the visual baselines).
 - **Run the course-cover seed after the Term Issue PR 1 merge** (2026-10-13).
   `scripts/seed-course-covers.mjs` fills `courseCode`, `coverColor`,
   `coverOrnament` and `centralQuestion` on the eight seed courses (fill-empty
@@ -225,6 +251,11 @@ that section when it gets long.
   edit there.
 
 ## Recently closed
+
+- 2026-10-13: **The home stats row, topics ticker and step strip** are off the
+  home page in code (Term Issue PR 2: `default-sections.ts` and the migration);
+  the dataset follows when the migration is applied (open item above). The
+  block types stay registered.
 
 - 2026-10-13: **Empty course-card image wells** (half of the Home P1 above).
   Term Issue PR 1: every course card is now a typographic cover

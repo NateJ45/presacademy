@@ -1090,6 +1090,68 @@ export const sectionKeyDates = defineType({
   },
 });
 
+/**
+ * The rates-box fields of sectionPricingTiers (Term Issue PR 2, 2026-10-13).
+ * Kept in a helper so the block's own field list stays readable. All are
+ * optional and hidden unless the surface is "rates".
+ */
+function ratesFields() {
+  const onlyRates = ({ parent }: { parent?: { surface?: string } }) => parent?.surface !== 'rates';
+  const str = (name: string, title: string, description: string) =>
+    defineField({ name, title, type: 'string', description, hidden: onlyRates });
+  const txt = (name: string, title: string, description: string) =>
+    defineField({ name, title, type: 'text', rows: 2, description, hidden: onlyRates });
+  return [
+    str(
+      'ratesNote',
+      'Rates: note beside the heading',
+      'The small catalog line at the top right of the box. Leave empty for "Pay as you go".',
+    ),
+    str(
+      'scholarshipLabel',
+      'Rates: scholarship row label',
+      'The last row of the box. Leave empty for "Scholarships".',
+    ),
+    str(
+      'scholarshipValue',
+      'Rates: scholarship row value',
+      'What the scholarship row says on the right. Leave empty for "need-based, every term".',
+    ),
+    txt(
+      'ratesClosing',
+      'Rates: closing sentence',
+      'The large italic line under the rows. Leave empty for "No one is turned away for cost. Ask in two lines on the interest form."',
+    ),
+    str('couponKicker', 'Coupon: small label', 'Leave empty for "Free trial, one evening".'),
+    str(
+      'couponHeading',
+      'Coupon: heading',
+      'Leave empty for "Sit in on any class this term, free."',
+    ),
+    txt(
+      'couponBody',
+      'Coupon: text',
+      'Leave empty for "Pick a night, take the week\'s reading home, and decide afterward."',
+    ),
+    str('couponCtaLabel', 'Coupon: button label', 'Leave empty for "Claim your evening".'),
+    str('couponCtaHref', 'Coupon: button link', 'Leave empty for "/get-started/".'),
+    str('groupKicker', 'Group note: small label', 'Leave empty for "Group enrollment".'),
+    str('groupHeading', 'Group note: heading', 'Leave empty for "Bring your session."'),
+    txt(
+      'groupBody',
+      'Group note: text',
+      'Leave empty for "Elders, teaching teams and small groups can enroll together. One conversation, one long table."',
+    ),
+    str(
+      'groupRate',
+      'Group note: group rate',
+      'The price for a group, for example "$150 a person for four or more". Leave EMPTY until the rate is set: an empty rate hides its row.',
+    ),
+    str('groupLinkLabel', 'Group note: link label', 'Leave empty for "Plan a group".'),
+    str('groupLinkHref', 'Group note: link', 'Leave empty for "/get-started/".'),
+  ];
+}
+
 export const sectionPricingTiers = defineType({
   name: 'sectionPricingTiers',
   title: 'Tuition tiers',
@@ -1143,11 +1205,24 @@ export const sectionPricingTiers = defineType({
         list: [
           { title: 'Standard section (background above applies)', value: 'shell' },
           { title: 'Rule & Ledger (fixed surface)', value: 'ledger' },
+          {
+            title: 'Rates box with the free-visit coupon (Home, Term Issue)',
+            value: 'rates',
+          },
         ],
         layout: 'radio',
       },
       initialValue: 'shell',
     }),
+    // -------------------------------------------------------------------------
+    // The rates box (2026-10-13, Term Issue PR 2). Only shown when the surface
+    // is "rates": the tiers as dot-leader rows inside a ruled box, a scholarship
+    // line, a closing sentence, then beside it the free-visit coupon and the
+    // "Bring your session" group note. Every field has a built-in default in
+    // PricingTiersBlock.astro, so an empty field still renders sensible copy,
+    // EXCEPT the group rate, which hides when empty (no invented number).
+    // -------------------------------------------------------------------------
+    ...ratesFields(),
     bgField(),
   ],
   preview: {
@@ -1994,6 +2069,7 @@ export const sectionCourseRail = defineType({
         list: [
           { title: 'Courses marked "Start here"', value: 'startHere' },
           { title: 'Courses marked "Featured"', value: 'featured' },
+          { title: 'Every course in the catalog', value: 'all' },
         ],
         layout: 'radio',
       },
@@ -2009,18 +2085,32 @@ export const sectionCourseRail = defineType({
         list: [
           { title: 'Quiet rail on the card surface (Courses, Home "Start here")', value: 'rail' },
           { title: 'Catalog preview with a rule and a "see all" link (Home)', value: 'feature' },
+          { title: 'Cover grid: every course as a book cover (Home, Term Issue)', value: 'covers' },
         ],
         layout: 'radio',
       },
       initialValue: 'rail',
       validation: (R) => R.required(),
     }),
-    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Eyebrow',
+      type: 'string',
+      description: 'Not shown in the cover grid style.',
+    }),
     defineField({
       name: 'heading',
       title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'note',
+      title: 'Note beside the heading',
+      type: 'string',
+      description:
+        'The small catalog line at the right of the heading, shown only on computers with a mouse, where the covers turn over. Leave empty for "Turn a cover over for week one".',
+      hidden: ({ parent }) => parent?.variant !== 'covers',
     }),
     defineField({
       name: 'headingId',
@@ -2040,15 +2130,15 @@ export const sectionCourseRail = defineType({
       title: '"See all" link text',
       type: 'string',
       description:
-        'Shown in the header of the catalog-preview style only. Leave empty for no link.',
-      hidden: ({ parent }) => parent?.variant !== 'feature',
+        'Shown in the header of the catalog-preview style, and under the cover grid. Leave empty for no link.',
+      hidden: ({ parent }) => parent?.variant !== 'feature' && parent?.variant !== 'covers',
     }),
     defineField({
       name: 'linkHref',
       title: '"See all" link',
       type: 'string',
       description: 'Where that link goes, usually "/courses".',
-      hidden: ({ parent }) => parent?.variant !== 'feature',
+      hidden: ({ parent }) => parent?.variant !== 'feature' && parent?.variant !== 'covers',
     }),
     defineField({
       name: 'adaptiveColumns',
@@ -2071,7 +2161,14 @@ export const sectionCourseRail = defineType({
     select: { title: 'heading', subtitle: 'eyebrow', source: 'source' },
     prepare: ({ title, subtitle, source }) => ({
       title: title || 'Course rail',
-      subtitle: [subtitle, source === 'featured' ? 'Featured courses' : 'Start here']
+      subtitle: [
+        subtitle,
+        source === 'featured'
+          ? 'Featured courses'
+          : source === 'all'
+            ? 'Every course'
+            : 'Start here',
+      ]
         .filter(Boolean)
         .join(' - '),
     }),
@@ -2211,9 +2308,40 @@ export const sectionTestimonialRail = defineType({
   title: 'Testimonials (from the collection)',
   type: 'object',
   description:
-    'The quotes marked "Featured", set three across under a gold rule. Edit the quotes themselves in the Testimonials collection.',
+    'The quotes marked "Featured", set three across. Pick quote cards under a gold rule, or letters (ruled columns that open "To the faculty,"). Edit the quotes themselves in the Testimonials collection.',
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    // `variant` (2026-10-13, Term Issue PR 2): "cards" is the original strip
+    // and stays the default, so a section with no variant set renders exactly
+    // as before. "letters" sets each quote as a short letter to the faculty.
+    defineField({
+      name: 'variant',
+      title: 'Style',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Quote cards under a gold rule', value: 'cards' },
+          {
+            title: 'Letters: ruled columns, "To the faculty," (Home, Term Issue)',
+            value: 'letters',
+          },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'cards',
+    }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Eyebrow',
+      type: 'string',
+      description: 'Not shown in the letters style.',
+    }),
+    defineField({
+      name: 'salutation',
+      title: 'Letter opening',
+      type: 'string',
+      description: 'The line each letter opens with. Leave empty for "To the faculty,".',
+      hidden: ({ parent }) => parent?.variant !== 'letters',
+    }),
     defineField({
       name: 'heading',
       title: 'Heading',
@@ -2237,8 +2365,218 @@ export const sectionTestimonialRail = defineType({
     }),
   ],
   preview: {
-    select: { title: 'heading', subtitle: 'eyebrow' },
-    prepare: ({ title, subtitle }) => ({ title: title || 'Testimonials', subtitle }),
+    select: { title: 'heading', subtitle: 'eyebrow', variant: 'variant' },
+    prepare: ({ title, subtitle, variant }) => ({
+      title: title || 'Testimonials',
+      subtitle: [variant === 'letters' ? 'Letters' : null, subtitle].filter(Boolean).join(' · '),
+    }),
+  },
+});
+
+// =============================================================================
+// The Term Issue home (2026-10-13, PR 2)
+// =============================================================================
+// Two new home sections for the "each term is an issue" redesign. Both render
+// their own fixed surfaces OUTSIDE SectionShell (decision D1), like every
+// Rule & Ledger section, and live in that insert-menu band.
+
+/**
+ * The issue's contents page: a big "Contents" heading with a short note from
+ * the faculty beside it, and a ruled list of courses, one row each: catalog
+ * code, title, a dot leader, the teacher and the next cohort's status.
+ *
+ * AUTO BLOCK: the list fills itself from the catalog. `scope` picks every
+ * course (each with its own next dates) or only courses with a cohort in the
+ * next term (the term the header's "next cohort" cue reads).
+ */
+export const sectionTermContents = defineType({
+  name: 'sectionTermContents',
+  title: 'Term contents (from the catalog)',
+  type: 'object',
+  description:
+    'A contents page for the term: each course on one ruled line with its code, teacher and status, plus a short note from the faculty. The list fills itself from the catalog.',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      description: 'Leave empty for "Contents".',
+    }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "contents".',
+    }),
+    defineField({
+      name: 'scope',
+      title: 'Which courses',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Every course in the catalog, each with its next dates', value: 'all' },
+          { title: 'Only courses with a cohort in the next term', value: 'nextTerm' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'all',
+    }),
+    defineField({
+      name: 'noteLabel',
+      title: 'Note label',
+      type: 'string',
+      description: 'The small line above the note. Leave empty for "A note before you browse".',
+    }),
+    defineField({
+      name: 'note',
+      title: 'Note from the faculty',
+      type: 'text',
+      rows: 5,
+      description:
+        'A short paragraph in the faculty voice, beside the list. Leave empty to show the list on its own.',
+    }),
+    defineField({
+      name: 'signature',
+      title: 'Signed',
+      type: 'string',
+      description: 'Under the note, in italics. Leave empty for "The faculty".',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', scope: 'scope' },
+    prepare: ({ title, scope }) => ({
+      title: title || 'Contents',
+      subtitle:
+        scope === 'nextTerm' ? 'Term contents: next term only' : 'Term contents: every course',
+    }),
+  },
+});
+
+/** One answer on the course finder's reply card: a label, and the course it suggests. */
+const finderOption = defineArrayMember({
+  type: 'object',
+  name: 'finderOption',
+  title: 'Answer',
+  fields: [
+    defineField({
+      name: 'label',
+      title: 'Answer',
+      type: 'string',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'course',
+      title: 'Suggests this course',
+      type: 'reference',
+      to: [{ type: 'course' }],
+      description: 'Leave empty to fall back to the other question, then the default course.',
+    }),
+  ],
+  preview: {
+    select: { title: 'label', subtitle: 'course.title' },
+  },
+});
+
+/** One of the two editor-built questions. */
+const finderQuestion = (name: string, title: string) =>
+  defineField({
+    name,
+    title,
+    type: 'object',
+    fields: [
+      defineField({ name: 'question', title: 'Question', type: 'string' }),
+      defineField({
+        name: 'options',
+        title: 'Answers',
+        type: 'array',
+        of: [finderOption],
+        validation: (R) => R.max(6),
+      }),
+    ],
+  });
+
+/**
+ * The course finder, styled as a reply card: two questions the editor writes
+ * (each answer points at a course), a third that lists the pricing tiers by
+ * itself, and a suggestion that updates as people tick answers.
+ *
+ * The rule, in one line: an answer to question 2 wins, else an answer to
+ * question 1, else the default course. Question 3 only changes the price line.
+ * The island is src/components/CourseFinder.tsx.
+ */
+export const sectionCourseFinder = defineType({
+  name: 'sectionCourseFinder',
+  title: 'Course finder (reply card)',
+  type: 'object',
+  description:
+    'Three quick questions and one suggested course, styled as a reply card. You write the first two questions and point each answer at a course; the third lists your pricing tiers by itself.',
+  fields: [
+    defineField({
+      name: 'kicker',
+      title: 'Small label',
+      type: 'string',
+      description: 'The catalog line above the heading. Leave empty for "Reply card".',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      description: 'Leave empty for "Three questions, one course".',
+    }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "finder".',
+    }),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'string',
+      description:
+        'One line under the heading. Leave empty for "Tick one answer for each. We will suggest a single place to start."',
+    }),
+    finderQuestion('question1', 'Question 1'),
+    finderQuestion('question2', 'Question 2 (wins when both are answered)'),
+    defineField({
+      name: 'question3',
+      title: 'Question 3 (the answers are your pricing tiers)',
+      type: 'string',
+      description: 'Leave empty for "How much can you take on this term?"',
+    }),
+    defineField({
+      name: 'defaultCourse',
+      title: 'Default course',
+      type: 'reference',
+      to: [{ type: 'course' }],
+      description:
+        'Suggested before anyone ticks an answer, and when an answer points nowhere. The section hides if neither this nor any answer points at a course.',
+    }),
+    defineField({
+      name: 'resultLabel',
+      title: 'Suggestion label',
+      type: 'string',
+      description: 'Above the suggested course. Leave empty for "We suggest".',
+    }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Button label',
+      type: 'string',
+      description: 'Leave empty for "Express interest".',
+    }),
+    defineField({
+      name: 'ctaHref',
+      title: 'Button link',
+      type: 'string',
+      description: 'Leave empty for "/get-started/".',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', course: 'defaultCourse.title' },
+    prepare: ({ title, course }) => ({
+      title: title || 'Course finder',
+      subtitle: course ? `Default: ${course}` : 'No default course yet',
+    }),
   },
 });
 
@@ -2287,6 +2625,9 @@ export const sectionBlocks = [
   sectionTicker,
   sectionFacultyRail,
   sectionTestimonialRail,
+  // Term Issue PR 2, 2026-10-13 (home).
+  sectionTermContents,
+  sectionCourseFinder,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -2336,6 +2677,9 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionTicker' },
   { type: 'sectionFacultyRail' },
   { type: 'sectionTestimonialRail' },
+  // Term Issue PR 2, 2026-10-13 (home).
+  { type: 'sectionTermContents' },
+  { type: 'sectionCourseFinder' },
 ];
 
 // =============================================================================
@@ -2414,6 +2758,8 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
       'sectionTicker',
       'sectionFacultyRail',
       'sectionTestimonialRail',
+      'sectionTermContents',
+      'sectionCourseFinder',
     ],
   },
 ];
