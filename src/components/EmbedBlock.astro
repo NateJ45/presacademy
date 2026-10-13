@@ -20,18 +20,16 @@ const data: EmbedData = block ?? { title, mode, url, html, aspect };
 const hasContent = !!(data?.mode && (data.url || data.html));
 ---
 
-{
-  hasContent && (
-    <div class="my-l">
-      {data.title && <h3 class="mb-s font-display text-h4 text-foreground">{data.title}</h3>}
-      <Embed
-        client:visible
-        mode={data.mode!}
-        url={data.url ?? undefined}
-        html={data.html ?? undefined}
-        title={data.title}
-        aspect={data.aspect ?? undefined}
-      />
-    </div>
-  )
-}
+{hasContent && (
+  <div class="my-l">
+    {data.title && <h3 class="mb-s font-display text-h4 text-foreground">{data.title}</h3>}
+    <Embed
+      client:visible
+      mode={data.mode!}
+      url={data.url ?? undefined}
+      html={data.html ?? undefined}
+      title={data.title}
+      aspect={data.aspect ?? undefined}
+    />
+  </div>
+)}

@@ -73,45 +73,99 @@ const cardClass = BORDERS[variant] ?? BORDERS.top2;
 const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
-{
-  cards.length > 0 &&
-    (variant === 'wayfinding' ? (
-      /* Home: "where to begin". Four linked cells across a ruled band, each one
+{cards.length > 0 &&
+  (variant === 'wayfinding' ? (
+    /* Home: "where to begin". Four linked cells across a ruled band, each one
          a number over a title and a line of copy. The whole cell is the link,
          which is why the title's hover color is driven by the group. */
-      <section
-        class="border-y border-border-soft bg-background"
-        aria-label={block?.landmarkLabel || undefined}
+    <section
+      class="border-y border-border-soft bg-background"
+      aria-label={block?.landmarkLabel || undefined}
+    >
+      <div
+        class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        data-stagger-grid
       >
-        <div
-          class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-          data-stagger-grid
-        >
+        {cards.map((c: any, i: number) => (
+          <a
+            href={c.href}
+            class:list={[
+              'group block px-m py-l no-underline',
+              i < cards.length - 1 && 'border-border-soft lg:border-r',
+            ]}
+          >
+            <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+              {num(i)}
+            </span>
+            <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">
+              {c.title}
+            </h2>
+            <p class="mt-1 text-sm text-foreground/70">{c.body}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  ) : variant === 'ledger' ? (
+    /* About: "What we believe". Warm surface, a gold rule under the header,
+         two columns of unboxed cards, a quiet footnote. */
+    <section class="surface-warm bg-muted" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <div data-reveal>
+          {block.eyebrow && (
+            <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+              {block.eyebrow}
+            </p>
+          )}
+          {heading && (
+            <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">
+              {heading}
+            </h2>
+          )}
+        </div>
+        <div class="mt-l h-px w-full bg-gold/50" />
+        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
           {cards.map((c: any, i: number) => (
-            <a
-              href={c.href}
-              class:list={[
-                'group block px-m py-l no-underline',
-                i < cards.length - 1 && 'border-border-soft lg:border-r',
-              ]}
-            >
+            <div class="border-t-2 border-gold pt-4">
               <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
                 {num(i)}
               </span>
-              <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">
-                {c.title}
-              </h2>
-              <p class="mt-1 text-sm text-foreground/70">{c.body}</p>
-            </a>
+              <h3 class="mt-2 font-display text-h4 text-foreground">{c.title}</h3>
+              <p class="mt-2 leading-relaxed text-foreground/80">{c.body}</p>
+            </div>
           ))}
         </div>
-      </section>
-    ) : variant === 'ledger' ? (
-      /* About: "What we believe". Warm surface, a gold rule under the header,
-         two columns of unboxed cards, a quiet footnote. */
-      <section class="surface-warm bg-muted" aria-labelledby={headingId}>
-        <div class="mx-auto max-w-content px-m py-section-lg">
-          <div data-reveal>
+        {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
+      </div>
+    </section>
+  ) : variant === 'steps' ? (
+    /* Get Started: "What happens next". The same warm surface, one step
+         quieter: eyebrow only, three columns, smaller type throughout. */
+    <section class="surface-warm bg-muted">
+      <div class="mx-auto max-w-content px-m py-section-md">
+        <div data-reveal>
+          {block.eyebrow && (
+            <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+              {block.eyebrow}
+            </p>
+          )}
+        </div>
+        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+          {cards.map((c: any, i: number) => (
+            <div class="border-t-2 border-gold pt-4">
+              <span class="font-display text-lg text-gold-ink tabular-nums">{num(i)}</span>
+              <h3 class="mt-2 font-display text-h5 text-foreground">{c.title}</h3>
+              {c.body && <p class="mt-1 text-sm text-foreground/75">{c.body}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : (
+    /* For You: boxed cards on paper, each with an optional button. */
+    <section class="bg-background" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m pb-section-lg">
+        {hasHeader && (
+          <div class="mb-l" data-reveal>
             {block.eyebrow && (
               <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
                 {block.eyebrow}
@@ -122,89 +176,31 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
                 {heading}
               </h2>
             )}
+            {block.intro && <p class="mt-m max-w-2xl text-foreground/80">{block.intro}</p>}
           </div>
-          <div class="mt-l h-px w-full bg-gold/50" />
-          <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
-            {cards.map((c: any, i: number) => (
-              <div class="border-t-2 border-gold pt-4">
-                <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
-                  {num(i)}
-                </span>
-                <h3 class="mt-2 font-display text-h4 text-foreground">{c.title}</h3>
-                <p class="mt-2 leading-relaxed text-foreground/80">{c.body}</p>
-              </div>
-            ))}
-          </div>
-          {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
-        </div>
-      </section>
-    ) : variant === 'steps' ? (
-      /* Get Started: "What happens next". The same warm surface, one step
-         quieter: eyebrow only, three columns, smaller type throughout. */
-      <section class="surface-warm bg-muted">
-        <div class="mx-auto max-w-content px-m py-section-md">
-          <div data-reveal>
-            {block.eyebrow && (
-              <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
-                {block.eyebrow}
-              </p>
-            )}
-          </div>
-          <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
-            {cards.map((c: any, i: number) => (
-              <div class="border-t-2 border-gold pt-4">
-                <span class="font-display text-lg text-gold-ink tabular-nums">{num(i)}</span>
-                <h3 class="mt-2 font-display text-h5 text-foreground">{c.title}</h3>
-                {c.body && <p class="mt-1 text-sm text-foreground/75">{c.body}</p>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    ) : (
-      /* For You: boxed cards on paper, each with an optional button. */
-      <section class="bg-background" aria-labelledby={headingId}>
-        <div class="mx-auto max-w-content px-m pb-section-lg">
-          {hasHeader && (
-            <div class="mb-l" data-reveal>
-              {block.eyebrow && (
-                <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
-                  {block.eyebrow}
-                </p>
+        )}
+        <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+          {cards.map((c: any, i: number) => (
+            <li class={cardClass}>
+              <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+                {num(i)}
+              </span>
+              <CardHeading class="mt-2 font-display text-h3 text-foreground">{c.title}</CardHeading>
+              {c.body && <p class="mt-2 text-foreground/80">{c.body}</p>}
+              {c.cta && (
+                <div class="mt-m">
+                  <CtaLink
+                    cta={c.cta}
+                    variant="secondary"
+                    fallbackHref="/get-started/"
+                    fallbackLabel="Learn more"
+                  />
+                </div>
               )}
-              {heading && (
-                <h2 id={headingId} class="mt-2 max-w-3xl font-display text-h2 text-foreground">
-                  {heading}
-                </h2>
-              )}
-              {block.intro && <p class="mt-m max-w-2xl text-foreground/80">{block.intro}</p>}
-            </div>
-          )}
-          <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
-            {cards.map((c: any, i: number) => (
-              <li class={cardClass}>
-                <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
-                  {num(i)}
-                </span>
-                <CardHeading class="mt-2 font-display text-h3 text-foreground">
-                  {c.title}
-                </CardHeading>
-                {c.body && <p class="mt-2 text-foreground/80">{c.body}</p>}
-                {c.cta && (
-                  <div class="mt-m">
-                    <CtaLink
-                      cta={c.cta}
-                      variant="secondary"
-                      fallbackHref="/get-started/"
-                      fallbackLabel="Learn more"
-                    />
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-          {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
-        </div>
-      </section>
-    ))
-}
+            </li>
+          ))}
+        </ul>
+        {block?.footnote && <p class="mt-l max-w-2xl text-foreground/70">{block.footnote}</p>}
+      </div>
+    </section>
+  ))}

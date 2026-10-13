@@ -42,58 +42,54 @@ const salutation: string = block?.salutation || 'To the faculty,';
 const signature = (t: any) => [t.name, t.role, t.city].filter(Boolean).join(' · ');
 ---
 
-{
-  testimonials.length > 0 && letters && (
-    <section class="border-y border-border bg-card" aria-labelledby={headingId}>
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <h2 id={headingId} class="issue-h2 text-foreground" data-reveal>
+{testimonials.length > 0 && letters && (
+  <section class="border-y border-border bg-card" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <h2 id={headingId} class="issue-h2 text-foreground" data-reveal>
+        {block?.heading}
+      </h2>
+      <div class="letters mt-l" data-stagger-grid>
+        {testimonials.map((t: any, i: number) => (
+          <figure class="letters__item">
+            <p class="letters__salutation">{salutation}</p>
+            <blockquote class:list={['letters__body', i === 0 && 'letters__body--initial']}>
+              <p>{t.quote}</p>
+            </blockquote>
+            <figcaption class="mono-detail mt-4 text-foreground/80">{signature(t)}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+{testimonials.length > 0 && !letters && (
+  <section class="bg-background" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div data-reveal>
+        <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
+          {block?.eyebrow}
+        </p>
+        <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
           {block?.heading}
         </h2>
-        <div class="letters mt-l" data-stagger-grid>
-          {testimonials.map((t: any, i: number) => (
-            <figure class="letters__item">
-              <p class="letters__salutation">{salutation}</p>
-              <blockquote class:list={['letters__body', i === 0 && 'letters__body--initial']}>
-                <p>{t.quote}</p>
-              </blockquote>
-              <figcaption class="mono-detail mt-4 text-foreground/80">{signature(t)}</figcaption>
-            </figure>
-          ))}
-        </div>
       </div>
-    </section>
-  )
-}
-{
-  testimonials.length > 0 && !letters && (
-    <section class="bg-background" aria-labelledby={headingId}>
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <div data-reveal>
-          <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">
-            {block?.eyebrow}
-          </p>
-          <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
-            {block?.heading}
-          </h2>
-        </div>
-        <div class="mt-l h-px w-full bg-gold/50" />
-        <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
-          {testimonials.map((t: any) => (
-            <figure class="flex h-full flex-col">
-              <blockquote class="font-display text-xl leading-relaxed text-foreground/90 italic">
-                {t.quote}
-              </blockquote>
-              <figcaption class="mt-auto pt-l">
-                <div class="h-px w-full bg-border-soft" />
-                <p class="mt-3 text-sm font-medium text-foreground">{t.name}</p>
-                <p class="text-sm text-foreground/70">
-                  {[t.role, t.city].filter(Boolean).join(', ')}
-                </p>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+      <div class="mt-l h-px w-full bg-gold/50" />
+      <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
+        {testimonials.map((t: any) => (
+          <figure class="flex h-full flex-col">
+            <blockquote class="font-display text-xl leading-relaxed text-foreground/90 italic">
+              {t.quote}
+            </blockquote>
+            <figcaption class="mt-auto pt-l">
+              <div class="h-px w-full bg-border-soft" />
+              <p class="mt-3 text-sm font-medium text-foreground">{t.name}</p>
+              <p class="text-sm text-foreground/70">
+                {[t.role, t.city].filter(Boolean).join(', ')}
+              </p>
+            </figcaption>
+          </figure>
+        ))}
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)}

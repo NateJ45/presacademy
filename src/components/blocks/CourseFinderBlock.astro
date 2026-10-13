@@ -100,30 +100,26 @@ const anyCourse = defaultCourseId || questions.some((q) => q.options.some((o) =>
 const headingId = block?.headingId || 'finder';
 ---
 
-{
-  anyCourse && (
-    <section class="bg-chapel" aria-labelledby={headingId}>
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <CourseFinder
-          client:visible
-          idPrefix={`${headingId}-${block?._key ?? 'f'}`}
-          kicker={block?.kicker || 'Reply card'}
-          heading={block?.heading || 'Three questions, one course'}
-          headingId={headingId}
-          intro={
-            block?.intro || 'Tick one answer for each. We will suggest a single place to start.'
-          }
-          questions={questions}
-          question3={block?.question3 || 'How much can you take on this term?'}
-          plans={plans}
-          defaultPlan={featuredPlan >= 0 ? featuredPlan : 0}
-          defaultCourseId={defaultCourseId}
-          courses={courses}
-          resultLabel={block?.resultLabel || 'We suggest'}
-          ctaLabel={block?.ctaLabel || 'Express interest'}
-          ctaHref={block?.ctaHref || '/get-started/'}
-        />
-      </div>
-    </section>
-  )
-}
+{anyCourse && (
+  <section class="bg-chapel" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <CourseFinder
+        client:visible
+        idPrefix={`${headingId}-${block?._key ?? 'f'}`}
+        kicker={block?.kicker || 'Reply card'}
+        heading={block?.heading || 'Three questions, one course'}
+        headingId={headingId}
+        intro={block?.intro || 'Tick one answer for each. We will suggest a single place to start.'}
+        questions={questions}
+        question3={block?.question3 || 'How much can you take on this term?'}
+        plans={plans}
+        defaultPlan={featuredPlan >= 0 ? featuredPlan : 0}
+        defaultCourseId={defaultCourseId}
+        courses={courses}
+        resultLabel={block?.resultLabel || 'We suggest'}
+        ctaLabel={block?.ctaLabel || 'Express interest'}
+        ctaHref={block?.ctaHref || '/get-started/'}
+      />
+    </div>
+  </section>
+)}

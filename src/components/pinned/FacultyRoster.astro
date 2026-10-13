@@ -45,21 +45,21 @@ const areaChips = (areas ?? [])
 
 <section class="bg-background" aria-labelledby="faculty-list">
   <div class="mx-auto max-w-content px-m pb-section-lg">
-    <h2 id="faculty-list" class="sr-only">Faculty members</h2>
+    <h2 id="faculty-list" class="sr-only">
+      Faculty members
+    </h2>
     {areaChips.length > 0 && <FacultyFilter client:idle areas={areaChips} />}
-    {
-      faculty.length > 0 ? (
-        <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
-          {faculty.map((f: any) => (
-            <FacultyCard person={f} />
-          ))}
-        </ul>
-      ) : (
-        <p class="mt-l text-foreground/80 italic">
-          {emptyState ??
-            'The faculty roster is being prepared. To ask about teaching with us, get in touch.'}
-        </p>
-      )
-    }
+    {faculty.length > 0 ? (
+      <ul class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
+        {faculty.map((f: any) => (
+          <FacultyCard person={f} />
+        ))}
+      </ul>
+    ) : (
+      <p class="mt-l text-foreground/80 italic">
+        {emptyState ??
+          'The faculty roster is being prepared. To ask about teaching with us, get in touch.'}
+      </p>
+    )}
   </div>
 </section>

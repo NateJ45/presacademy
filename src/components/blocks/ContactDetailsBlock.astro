@@ -53,42 +53,40 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
 ---
 
 <section class="bg-background" aria-label={block?.landmarkLabel ?? 'Contact details'}>
-  <div
-    class="mx-auto grid max-w-content grid-cols-1 items-start gap-l px-m py-section-lg lg:grid-cols-2 lg:gap-section-md"
-  >
+  <div class="mx-auto grid max-w-content grid-cols-1 items-start gap-l px-m py-section-lg lg:grid-cols-2 lg:gap-section-md">
     {/* Details */}
     <div class="space-y-l">
       <ul class="list-none space-y-m p-0 text-lg">
         <li class="flex items-start gap-s">
           <MapPin size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-          <span>{addressLine}<br />{cityStateZip}</span>
+          <span>
+            {addressLine}
+            <br />
+            {cityStateZip}
+          </span>
         </li>
-        {
-          settings.phone && (
-            <li class="flex items-start gap-s">
-              <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-              <a
-                href={telHref(settings.phone)}
-                class="hit-44 relative text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
-              >
-                {settings.phone}
-              </a>
-            </li>
-          )
-        }
-        {
-          settings.email && (
-            <li class="flex items-start gap-s">
-              <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-              <a
-                href={`mailto:${settings.email}`}
-                class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
-              >
-                {settings.email}
-              </a>
-            </li>
-          )
-        }
+        {settings.phone && (
+          <li class="flex items-start gap-s">
+            <Phone size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <a
+              href={telHref(settings.phone)}
+              class="hit-44 relative text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+            >
+              {settings.phone}
+            </a>
+          </li>
+        )}
+        {settings.email && (
+          <li class="flex items-start gap-s">
+            <Mail size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
+            <a
+              href={`mailto:${settings.email}`}
+              class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+            >
+              {settings.email}
+            </a>
+          </li>
+        )}
         <li class="flex items-start gap-s">
           <Clock size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
           <span>Office hours: {settings.officeHours}</span>
@@ -100,19 +98,17 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
           {block?.whoToReachLabel ?? 'Who to reach'}
         </p>
         <ul class="list-none space-y-2 p-0">
-          {
-            reasons.map((r: any) => (
-              <li class="flex flex-wrap justify-between gap-m border-b border-border-soft pb-2 last:border-b-0">
-                <span class="text-foreground">{r.label}</span>
-                <a
-                  href={r.href}
-                  class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
-                >
-                  {r.value}
-                </a>
-              </li>
-            ))
-          }
+          {reasons.map((r: any) => (
+            <li class="flex flex-wrap justify-between gap-m border-b border-border-soft pb-2 last:border-b-0">
+              <span class="text-foreground">{r.label}</span>
+              <a
+                href={r.href}
+                class="hit-44 relative break-all text-link underline underline-offset-2 transition-colors hover:text-primary-dark"
+              >
+                {r.value}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -121,10 +117,8 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
           {block?.gettingHereLabel ?? 'Getting here'}
         </p>
         <p>
-          {
-            block?.gettingHereBody ??
-              'Courses meet in person on the West Chester campus, with free on-site parking. The building is a short drive from the interstate.'
-          }
+          {block?.gettingHereBody ??
+            'Courses meet in person on the West Chester campus, with free on-site parking. The building is a short drive from the interstate.'}
         </p>
       </div>
     </div>
@@ -138,7 +132,8 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
         height="100%"
         style="min-height: 360px; border: 0;"
         loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"></iframe>
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
     </div>
   </div>
 </section>

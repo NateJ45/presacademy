@@ -383,7 +383,8 @@ const line1Lead = line1Words.join(' ');
 
 ```astro
 <span class="font-display text-xl leading-none text-foreground sm:text-2xl">
-  {line1Lead && <>{line1Lead} </>}<span class="text-chapel-ink">{line1Key}</span>
+  {line1Lead && <>{line1Lead} </>}
+  <span class="text-chapel-ink">{line1Key}</span>
 </span>
 ```
 

@@ -45,12 +45,10 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
     class="mx-auto grid max-w-content grid-cols-1 items-center gap-section-md px-m py-section-lg md:grid-cols-[1fr_1.1fr]"
     aria-labelledby="not-found-heading"
   >
-    {
-      /* Text column. Two clear paths back — no search (there isn't one).
+    {/* Text column. Two clear paths back — no search (there isn't one).
         Centered on mobile so the lone-element page reads as a sympathetic
         "you're off-path" moment; left-aligned on desktop where the
-        two-column layout needs the text anchored beside the photo column. */
-    }
+        two-column layout needs the text anchored beside the photo column. */}
     <div class="text-center md:text-left">
       <p class="eyebrow mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
       <h1
@@ -59,9 +57,7 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
       >
         {headline}
       </h1>
-      <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-foreground/80 md:mx-0">
-        {body}
-      </p>
+      <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-foreground/80 md:mx-0">{body}</p>
 
       <div class="mt-l flex flex-wrap justify-center gap-m md:justify-start">
         <a
@@ -85,39 +81,33 @@ const caption = notFoundPage?.heroImage?.caption ?? 'The Presbyterian Academy';
       </div>
     </div>
 
-    {
-      /* Photo column. Stacks above the text on mobile (md:order-2 swaps it on
-        desktop so the eye lands on text first, photo balances right). */
-    }
+    {/* Photo column. Stacks above the text on mobile (md:order-2 swaps it on
+        desktop so the eye lands on text first, photo balances right). */}
     <figure class="md:order-2">
-      {
-        /* Brass top rule + rectangular crop — the current "Rule & Ledger" frame.
+      {/* Brass top rule + rectangular crop — the current "Rule & Ledger" frame.
           The Romanesque arch was retired in the brand evolution. On mobile the
           text comes first and the photo is a shorter landscape crop, so a lost
-          visitor lands on the message + links, not a screen-filling image. */
-      }
+          visitor lands on the message + links, not a screen-filling image. */}
       <div class="h-0.5 w-full bg-gold"></div>
       <div class="aspect-[3/2] overflow-hidden bg-muted md:aspect-[5/6]">
-        {
-          sanityPhoto ? (
-            <SanityImage
-              source={sanityPhoto}
-              width={1000}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              quality={75}
-              alt={sanityPhoto.alt || 'The Presbyterian Academy'}
-              class="h-full w-full object-cover"
-            />
-          ) : (
-            <Image
-              src={notFoundPhoto}
-              alt="A student reading at a table"
-              widths={[480, 768, 1000]}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              class="h-full w-full object-cover"
-            />
-          )
-        }
+        {sanityPhoto ? (
+          <SanityImage
+            source={sanityPhoto}
+            width={1000}
+            sizes="(min-width: 768px) 50vw, 100vw"
+            quality={75}
+            alt={sanityPhoto.alt || 'The Presbyterian Academy'}
+            class="h-full w-full object-cover"
+          />
+        ) : (
+          <Image
+            src={notFoundPhoto}
+            alt="A student reading at a table"
+            widths={[480, 768, 1000]}
+            sizes="(min-width: 768px) 50vw, 100vw"
+            class="h-full w-full object-cover"
+          />
+        )}
       </div>
       <figcaption class="mt-s text-right text-xs tracking-eyebrow text-foreground/80 uppercase">
         {caption}

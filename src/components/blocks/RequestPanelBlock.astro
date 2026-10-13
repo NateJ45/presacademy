@@ -37,9 +37,7 @@ const pillPrimary =
 ---
 
 <section class="bg-background">
-  <div
-    class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-lg lg:grid-cols-[1.1fr_.9fr]"
-  >
+  <div class="mx-auto grid max-w-content grid-cols-1 gap-x-12 gap-y-l px-m pb-section-lg lg:grid-cols-[1.1fr_.9fr]">
     {/* Express-interest form */}
     <div>
       <div data-reveal>
@@ -63,22 +61,20 @@ const pillPrimary =
         </p>
         <h3 class="mt-2 font-display text-h4 text-foreground">{block?.calendlyHeadline}</h3>
         <p class="mt-2 text-sm text-foreground/75">{block?.calendlyBody}</p>
-        {
-          calendlyUrl ? (
-            <a
-              href={calendlyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class={`${pillPrimary} mt-m`}
-            >
-              Book a free intro
-            </a>
-          ) : (
-            <a href={`mailto:${fallbackEmail}`} class={`${pillPrimary} mt-m`}>
-              Email to set up an intro
-            </a>
-          )
-        }
+        {calendlyUrl ? (
+          <a
+            href={calendlyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={`${pillPrimary} mt-m`}
+          >
+            Book a free intro
+          </a>
+        ) : (
+          <a href={`mailto:${fallbackEmail}`} class={`${pillPrimary} mt-m`}>
+            Email to set up an intro
+          </a>
+        )}
 
         <div class="mt-l border-t border-border-soft pt-l">
           <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">Visit a class</p>
@@ -93,8 +89,9 @@ const pillPrimary =
           <a
             href="/courses/"
             class="hit-44 relative mt-2 inline-block text-sm text-link underline underline-offset-2 hover:text-primary-dark"
-            >Browse courses</a
           >
+            Browse courses
+          </a>
         </div>
       </div>
     </aside>
