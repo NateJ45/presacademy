@@ -167,7 +167,6 @@ function isGroupActive(items: { href: string }[]) {
           <a
             href="/courses/"
             class="hit-44 relative flex min-w-0 items-center gap-2 transition-colors hover:text-white"
-            aria-label={`Now enrolling: ${nextTerm.title}. Browse courses.`}
           >
             <span class="enroll-dot" aria-hidden="true" />
             <span class="font-semibold tracking-eyebrow whitespace-nowrap uppercase">
@@ -264,7 +263,7 @@ function isGroupActive(items: { href: string }[]) {
     <a
       href="/"
       class="hit-44 relative inline-flex flex-col leading-none transition-opacity hover:opacity-80"
-      aria-label={`${brandName} home`}
+      aria-label={logo ? `${brandName} home` : undefined}
     >
       {
         logo ? (
@@ -286,6 +285,10 @@ function isGroupActive(items: { href: string }[]) {
                 {site.wordmark.line2}
               </span>
             )}
+            {/* No aria-label on the text wordmark: the link is named by its own
+                text (WCAG 2.5.3, Lighthouse label-content-name-mismatch), and
+                this keeps "home" in the name for screen readers. */}
+            <span class="sr-only"> home</span>
           </>
         )
       }
