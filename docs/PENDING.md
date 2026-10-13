@@ -189,6 +189,22 @@ that section when it gets long.
   images would close it. Second finding: CTA wording drift ("Request
   info" vs "Request information", "Free intro" vs "Book a free intro");
   pick one form of each and sweep.
+  2026-10-13 (Term Issue PR 3): the faculty half now has a fix in code but is
+  NOT closed. `sectionFacultyRail` gained a `contributors` style (portrait or
+  an initials well, credential line, next-term courses, reading line, audio),
+  and it only reaches the home page once the home faculty section is switched
+  to it: the Term Issue PR 2 migration (`migrate-home-term-issue.mjs`) or an
+  editor picking "Contributors" under Style. Close this half after that is
+  live and checked; the course-card half is Term Issue PR 1.
+- **Faculty "On my desk" lines and spoken introductions** (opened 2026-10-13,
+  Term Issue PR 3). The fields exist on `facultyMember` ("This term" tab:
+  `currentlyReading`, `introAudio`, `introAudioTranscript`,
+  `introAudioLength`) and every surface hides them when empty, so nothing
+  shows yet. Waiting on the faculty: each teacher supplies their own reading
+  line (up to 100 characters) and, optionally, a one-to-two-minute recording
+  WITH a full transcript (the Studio will not publish audio without one). Do
+  not invent lines or quotes for them. Once a few are in, check the player on
+  the live site (CSP already allows `media-src https:`).
 - **Re-record `acad-*` photo credits.** The per-photo Pexels source URLs
   for the academic placeholder set live only in gitignored curation
   scratch (`scripts/_stock*`). `MANIFEST.md` currently records the set
