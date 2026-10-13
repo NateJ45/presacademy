@@ -229,6 +229,28 @@ that section when it gets long.
   (nothing to do), `scripts/sanity-audit.mjs`, `/rebuild`, check the live
   home in both themes at 375 and 1280. Run the course-cover seed first so the
   contents list and finder show codes.
+- **Run the home migration again after the Term Issue PR 4 merge**
+  (2026-10-13). The PR 2 run is applied (homePage and drafts.homePage have
+  the six sections). `scripts/migrate-home-term-issue.mjs` now writes eight:
+  the dry run against that dataset appends `sectionNextIssue` and
+  `sectionForPastors` after the rates box, on both documents, and changes
+  nothing else. Routine: backup (`backups/pre-term-issue-4-<date>.tar.gz`),
+  dry run, `--apply`, re-run (nothing to do), `scripts/sanity-audit.mjs`,
+  `/rebuild`, then check the live home in both themes at 375 and 1280. The
+  Next issue band shows straight away (Summer 2027 is in the calendar); For
+  pastors stays hidden until the next item.
+- **Bulletin insert PDF wanted** (2026-10-13, Term Issue PR 4). The home
+  page's "For pastors" band hides until it has the insert PDF or the
+  printed-catalog request link. The insert's design is a separate print job.
+  When it exists: Studio, Home page, the For pastors section, upload the PDF.
+  Also decide whether printed catalogs exist and where a request should go
+  (a page such as /contact/ or a mailto: address) before filling
+  `catalogHref`; nothing was invented for either.
+- **"One Question a week" is a promise** (2026-10-13, Term Issue PR 4). The
+  Next issue copy (from the approved mockup) offers a weekly question by
+  email beside the summer issue. Today's newsletter blurb says "occasional
+  notes". Either start the weekly email or edit the line in Studio (Home
+  page, Next issue section, Text).
 - **Group rate for "Bring your session"** (2026-10-13, Term Issue PR 2). The
   rates box has a `groupRate` field, left EMPTY on purpose: the row hides
   until Nathan has a number. Set it in Studio, Home page, the Rates section.

@@ -65,6 +65,11 @@ export const SECTION_MEMBERS = `{
   // CtaLink.astro cannot map the document type to a route.
   _type == "sectionNumberedCards" => {
     cards[]{ ..., cta${CTA_PROJECTION} }
+  },
+  // The Term Issue's "For pastors" band (PR 4, 2026-10-13): the bulletin
+  // insert PDF, resolved so the block can print its link with type and size.
+  _type == "sectionForPastors" => {
+    insertPdf{ asset->{ url, originalFilename, size, extension, mimeType } }
   }
 }`;
 
@@ -984,14 +989,40 @@ export async function getTeachingAreas() {
 
 // The soonest term that begins today or later — the global "next cohort begins"
 // cue (derived, not stored on siteSettings).
+// `status` and `registrationOpens` (added for the Term Issue PR 4 issue line in
+// the header, 2026-10-13) say whether the bar can honestly read "enrolling now".
 export async function getNextTerm(fetcher = sanityFetch) {
   return fetcher(
     `*[_type == "term" && archived != true && startDate >= $today] | order(startDate asc)[0]{
-      _id, title, startDate, registrationDeadline, note
+      _id, title, startDate, registrationOpens, registrationDeadline, status, note
     }`,
     { today: TODAY() },
     null,
   );
+}
+
+// "Next issue" (Term Issue PR 4, 2026-10-13): the term AFTER the next one (the
+// same filter as getNextTerm, one place further along), plus one course with a
+// cohort in it, as a full card so the block can draw its cover. `term` is null
+// when the calendar holds no later term, and the block then hides; `course` is
+// null when the later term has no courses on it yet, and the block shows
+// without a cover.
+export async function getNextIssue(fetcher = sanityFetch) {
+  const term = await fetcher(
+    `*[_type == "term" && archived != true && startDate >= $today] | order(startDate asc)[1]{
+      _id, title, startDate
+    }`,
+    { today: TODAY() },
+    null,
+  );
+  if (!term?._id) return { term: null, course: null };
+  const course = await fetcher(
+    `*[_type == "course" && archived != true && count(offerings[term._ref == $termId]) > 0]
+      | order(displayOrder asc, title asc)[0] ${COURSE_CARD}`,
+    { today: TODAY(), termId: term._id },
+    null,
+  );
+  return { term, course: course ?? null };
 }
 
 export async function getTerms() {

@@ -527,6 +527,12 @@ export type SectionPreset = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   note?: string;
 };
@@ -1067,6 +1073,31 @@ export type NavLink = {
     | PageReference;
   externalUrl?: string;
   href?: string;
+};
+
+export type SectionForPastors = {
+  _type: 'sectionForPastors';
+  kicker?: string;
+  heading?: string;
+  headingId?: string;
+  body?: string;
+  insertPdf?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  insertLabel?: string;
+  catalogHref?: string;
+  catalogLabel?: string;
+};
+
+export type SectionNextIssue = {
+  _type: 'sectionNextIssue';
+  kicker?: string;
+  heading?: string;
+  headingId?: string;
+  body?: string;
+  buttonLabel?: string;
 };
 
 export type SectionCourseFinder = {
@@ -1922,6 +1953,12 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   publishAt?: string;
 };
@@ -2067,6 +2104,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   publishAt?: string;
 };
@@ -2235,6 +2278,12 @@ export type Page = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -2391,6 +2440,12 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2542,6 +2597,12 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2692,6 +2753,12 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2841,6 +2908,12 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2991,6 +3064,12 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3143,6 +3222,12 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3307,6 +3392,12 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
 };
 
@@ -3457,6 +3548,12 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   publishAt?: string;
 };
@@ -3617,6 +3714,12 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   publishAt?: string;
 };
@@ -3742,6 +3845,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3902,6 +4011,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -4240,6 +4355,8 @@ export type AllSanitySchemaTypes =
   | ResourcesPageReference
   | PageReference
   | NavLink
+  | SectionForPastors
+  | SectionNextIssue
   | SectionCourseFinder
   | SectionTermContents
   | SectionTestimonialRail

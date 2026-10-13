@@ -30,6 +30,13 @@ The goal state: every visitor-facing string is `{page?.field ?? 'inline fallback
 
 ### Home — `src/pages/index.astro` (worst)
 
+2026-10-13 (Term Issue PR 4): the back page and the running head, newest first:
+
+- **Next issue** (`sectionNextIssue`): `kicker`, `heading` (takes `{term}`), `body` (takes `{season}` / `{term}`), `buttonLabel`, all with inline fallbacks. The term and the cover are data (the term after next, its first course by display order); the sign-up reuses `siteSettings.newsletter` (consent note, success message) with the band's button label on top, and hides when the newsletter is off.
+- **For pastors** (`sectionForPastors`): `kicker`, `heading`, `body`, `insertPdf` (file), `insertLabel`, `catalogHref`, `catalogLabel`. The file type and size after the download label are read from the asset. The insert drawing is decoration (site name, the next term, the cover colours), not a field.
+- **Header issue line**: data only (the next term's `title`, `startDate`, `registrationOpens`, `registrationDeadline`, `status`); the words "term", "enrolling now", "registration opens", "registration closed" and "first class" are structural labels in `src/lib/term-issue.ts`. Replaces the hardcoded "Now enrolling".
+- **Footer type credit**: "Set in Fraunces, Source Sans and IBM Plex Mono." stays in code on purpose: it names the fonts the code loads.
+
 2026-10-13 (Term Issue PR 2): the home page is now the issue. Current state, newest first:
 
 - **Hero** (`HomeHero.astro`): the big title is the next Term's `title` (data, not a field); `heroHeadline` is the italic line under it (and the h1 itself when no term is coming); `heroSubhead`, `heroPrimaryLabel`, `heroSecondaryLabel` and `nextCohortLabel` render with inline fallbacks. `heroEyebrow` and `heroImages` are no longer rendered but stay in the schema (descriptions say so). The fanned covers come from the courses marked Start here, then Featured.

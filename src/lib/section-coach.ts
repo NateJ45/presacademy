@@ -187,6 +187,13 @@ const COACH: Record<string, CoachEntry> = {
       return noPick(s.defaultCourse) && noItems(q(s.question1)) && noItems(q(s.question2));
     },
   },
+  // Term Issue PR 4 (2026-10-13). The pastors band hides on the live site until
+  // it has something to hand over: the insert PDF or the catalog link.
+  sectionForPastors: {
+    name: 'For pastors',
+    hint: 'Upload the bulletin insert PDF or add the printed catalog link.',
+    isEmpty: (s) => noPick(s.insertPdf) && noText(s.catalogHref),
+  },
 };
 
 /**

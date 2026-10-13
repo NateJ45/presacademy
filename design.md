@@ -93,6 +93,21 @@ this direction; never swap it mid-project.
    `--issue-accent` on the first) and a **rates box** (2px ruled box,
    dot-leader rows) beside a dashed oxblood **coupon**. `--issue-accent` is
    oxblood `#7A2A2C` on the light page and a lifted `#E0A49B` in dark.
+9. **The issue's back page and running head** (Term Issue PR 4,
+   2026-10-13). Home closes on the dark ink band (`.issue-band`,
+   `--color-cover-ink`, static in both themes like the chapel bands, cream
+   text, lifted brass `#C7A875` mono kicker): **Next issue** (the term after
+   next, one of its courses as a cover tilted -3deg, the sign-up form on the
+   band) and **For pastors** (a small CSS drawing of the bulletin insert on
+   cover paper, with the eight cover colours as tiny covers; decoration only,
+   aria-hidden). Two bands in a row share a hairline and, from 64rem, the
+   second mirrors the first. The header utility bar is the issue's running
+   head in Plex Mono ("Spring 2027 term · registration opens Sun 15 Nov ·
+   first class Tue 26 Jan"; it says "enrolling now" only when the term's
+   dates or status make it true). The footer colophon credits the type: "Set
+   in Fraunces, Source Sans and IBM Plex Mono." Every course also gets a
+   share image drawn as its cover (`scripts/lib/render-og.mjs`
+   `renderCourseOg`).
 
 The italic display "moment" (epigraphs, blockquotes) is now quieted to true
 epigraphs only, and the calligraphic script accent stays OFF by default.
@@ -104,7 +119,8 @@ epigraphs only, and the calligraphic script accent stays OFF by default.
   `.surface-dots` siblings were deleted, nothing else used them), the 01 to
   04 wayfinding strip, the stat row, the topics ticker and the eyebrow on
   every section. The ticker, stat and numbered-card blocks (and their CSS)
-  stay available to other pages.
+  stay available to other pages. PR 4 also retired the header's pulsing
+  `.enroll-dot` and its "Now enrolling" label (the issue line replaced them).
 
 - **The Romanesque arch.** `--arch-radius` is neutralized to a quiet modern
   rounding (`clamp(0.5rem, 1vw, 0.85rem)`); `.arch-top` / `.arch-top-sm` now

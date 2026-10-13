@@ -110,6 +110,12 @@ const NON_STEGA_FIELDS = new Set([
   // ride entries above: sectionCourseRail's `covers` / `all` (variant, source),
   // sectionTestimonialRail's `letters` (variant), sectionPricingTiers' `rates`
   // (surface).
+  //
+  // Term Issue PR 4, 2026-10-13 (home). Audited, nothing added:
+  // sectionNextIssue and sectionForPastors carry no enum. Their {term} and
+  // {season} tokens are replaced with String.replace, which works on an encoded
+  // string too (the invisible stega characters sit around the text, not inside
+  // the braces).
   'scope',
 ]);
 

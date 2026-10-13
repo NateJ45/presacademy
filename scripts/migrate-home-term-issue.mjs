@@ -6,7 +6,7 @@
 //   node scripts/migrate-home-term-issue.mjs --apply    (writes to the dataset)
 //
 // Rewrites `homePage.flexibleSections` (and the draft's, when a draft exists)
-// into the issue's six departments, in this order:
+// into the issue's departments, in this order:
 //
 //   1. contents   sectionTermContents (new)
 //   2. covers     sectionCourseRail, variant "covers", source "all" (new)
@@ -14,6 +14,14 @@
 //   4. faculty    the existing faculty strip, set to the "contributors" style
 //   5. letters    the existing testimonials, set to the "letters" style
 //   6. rates      sectionPricingTiers, surface "rates" (new)
+//   7. next       sectionNextIssue (new, PR 4): the term after next + sign-up
+//   8. pastors    sectionForPastors (new, PR 4): copy only. The insert PDF and
+//                 the catalog link are left EMPTY (nothing invented), so the
+//                 band stays hidden on the live site until Nathan adds one.
+//
+// PR 4 (2026-10-13) extended this script rather than adding a second one, so
+// a re-run of the PR 2 shape can never strip the back page off again. On a
+// home page already migrated by the PR 2 version, it only appends 7 and 8.
 //
 // and REMOVES everything else from the home body: the wayfinding row
 // (homeWayfinding), the stat band (homeStats), the topics ticker (homeTicker)
@@ -146,6 +154,26 @@ const NEW = {
     surface: 'rates',
     heading: 'Rates',
   },
+  // PR 4: the issue's back page. Same copy as src/lib/default-sections.ts.
+  next: {
+    _key: 'homeNextIssue',
+    _type: 'sectionNextIssue',
+    kicker: 'Next issue',
+    heading: '{term} is taking shape.',
+    headingId: 'next-issue',
+    body: 'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.',
+    buttonLabel: 'Send it to me',
+  },
+  pastors: {
+    _key: 'homeForPastors',
+    _type: 'sectionForPastors',
+    kicker: 'For pastors',
+    heading: 'Take the issue to your church.',
+    headingId: 'for-pastors',
+    body: 'A bulletin insert for Sunday and printed catalogs for your session, in the same design as this issue.',
+    insertLabel: 'Download the insert',
+    catalogLabel: 'Order printed catalogs',
+  },
 };
 
 /** Drop `eyebrow` (the issue retires eyebrow-everywhere). */
@@ -186,7 +214,9 @@ function plan(current) {
   const letters = lettersNow ? toLetters(lettersNow) : NEW.letters;
   const rates =
     find((s) => s._type === 'sectionPricingTiers' && s.surface === 'rates') ?? NEW.rates;
-  return [contents, covers, finder, faculty, letters, rates].map(withoutEyebrow);
+  const next = find((s) => s._type === 'sectionNextIssue') ?? NEW.next;
+  const pastors = find((s) => s._type === 'sectionForPastors') ?? NEW.pastors;
+  return [contents, covers, finder, faculty, letters, rates, next, pastors].map(withoutEyebrow);
 }
 
 const label = (s) => `${s._key} (${s._type}${s.variant ? `/${s.variant}` : ''})`;
@@ -254,7 +284,7 @@ for (const doc of docs) {
     for (const d of diff) console.log(`              ${d}`);
   });
 
-  await apply(`${doc._id}: write the six-section Term Issue body`, () =>
+  await apply(`${doc._id}: write the eight-section Term Issue body`, () =>
     raw
       .patch(doc._id)
       .ifRevisionId(doc._rev)

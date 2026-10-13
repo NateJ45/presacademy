@@ -46,6 +46,12 @@ if (!course) {
 const title = course.seoTitle ?? `${course.title} · ${site.name}`;
 const description = course.seoDescription ?? course.summary ?? `A course at ${site.name}.`;
 
+// The share image (Term Issue PR 4, 2026-10-13). A social image set on the
+// course (seoImage) wins. Otherwise the course's own cover, drawn at build time
+// by scripts/generate-og-pages.mjs into public/og/course-<slug>.png, which
+// beats the site-wide default share image because it names the course.
+const ogImage = course.seoImage?.asset ? undefined : `/og/course-${slug}.png`;
+
 const area = course.teachingAreas?.[0]?.title;
 const no = course.nextOffering;
 
@@ -99,7 +105,7 @@ const pillGhost =
   'press-tactile inline-flex w-full items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-foreground text-foreground hover:bg-accent transition-colors';
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings}>
+<BaseLayout {title} {description} {schemas} {siteSettings} {ogImage} seoImage={course.seoImage}>
   <section class="bg-background">
     <div class="mx-auto max-w-content px-m pt-section-lg pb-section-lg">
       <p class="mb-l text-xs tracking-[0.12em] text-foreground/70 uppercase">
