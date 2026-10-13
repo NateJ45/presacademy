@@ -30,6 +30,14 @@ The goal state: every visitor-facing string is `{page?.field ?? 'inline fallback
 
 ### Home — `src/pages/index.astro` (worst)
 
+2026-10-13 (Term Issue PR 2): the home page is now the issue. Current state, newest first:
+
+- **Hero** (`HomeHero.astro`): the big title is the next Term's `title` (data, not a field); `heroHeadline` is the italic line under it (and the h1 itself when no term is coming); `heroSubhead`, `heroPrimaryLabel`, `heroSecondaryLabel` and `nextCohortLabel` render with inline fallbacks. `heroEyebrow` and `heroImages` are no longer rendered but stay in the schema (descriptions say so). The fanned covers come from the courses marked Start here, then Featured.
+- **Body** (`flexibleSections`, set by `scripts/migrate-home-term-issue.mjs`): Term contents (`heading`, `scope`, `noteLabel`, `note`, `signature`), the cover grid (`sectionCourseRail` `covers`: `heading`, `note`, link), the course finder (`sectionCourseFinder`: kicker, heading, intro, two questions with answers pointing at courses, question 3 label, default course, suggestion label, button), contributors (`sectionFacultyRail` `contributors`), letters (`sectionTestimonialRail` `letters`: `heading`, `salutation`), rates (`sectionPricingTiers` surface `rates`: every line of the box, the coupon and the group note is a field with a built-in default; the group rate is empty until set and hides its row).
+- Structural labels kept in code: the finder's question numbers, the "most chosen" tier tag, "Group rate", and the contents status words (`open`, `waitlist`, `new dates soon`, the term season).
+
+Before the Term Issue (kept for history):
+
 Hardcoded (no field): the `wayfinding` array (4 items), the `stats` array (4), the `topics` ticker (10), the hero buttons ("Browse courses" / "Book a free intro" — should wire to `heroPrimaryCta`/`heroSecondaryCta` which already exist + are fetched), "Next cohort begins" label, and the eyebrow+heading pairs for Start-here / Courses / Faculty / Testimonials strips.
 Church orphans in `homePage.ts` (fetched, never render): `serviceBand`, `weeklyRhythms`, `thisSunday`, `seasonalHero`, `welcome*` (+ image), `events*`, `inclusive*`, `involved*`, `record*` ("The Record"), `welcomeCtaPrimary/Secondary`, `serviceBandVisitCta/WatchCta`, `eventsCalendarCta`, plus `heroVideo*`, `heroRotatingWords`, `heroKeyword`, `heroScriptAccent` (none wired to the kinetic hero).
 **Fix:** re-schema `homePage.ts` — add `wayfinding[]`, `stats[]`, `tickerTopics[]`, the 4 strip eyebrow/heading pairs, `nextCohortLabel`, `startHere*`; wire the hero buttons to the existing CTA fields; `hidden: true` the church orphans (keep data, drop from UI). Update `getHomePage` projection + `index.astro` to read the new fields with the current literals as fallbacks.

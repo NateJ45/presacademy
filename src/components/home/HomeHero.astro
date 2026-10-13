@@ -1,31 +1,41 @@
 ---
 /* ============================================================================
-   HomeHero — the home page's split hero (2026-08-26, Phase 4)
+   HomeHero: the home page's cover (Term Issue, 2026-10-13, PR 2)
    ============================================================================
-   Cut VERBATIM out of src/components/home/HomeBody.astro when home converted to
-   the page builder. Everything below is the markup that file carried: the
-   kinetic-words h1, the two pill CTAs, the gold hairline, the next-cohort ledger
-   line with its timezone-safe date formatter, and the Ken Burns HeroSlideshow.
+   The home page opens like the cover of a small-press issue: the next term's
+   name set huge ("Spring" over an italic green "2027"), an italic deck line,
+   the subhead, the two pill CTAs and a mono "next cohort" line, beside a
+   fanned stack of three course covers.
 
-   WHY IT IS A COMPONENT AND NOT A SECTION (decision D2)
-   Heroes stay PAGE-LEVEL fields. An editor edits the same hero fields on the
-   Home Page document as before, and there is no way to delete the page's h1 by
-   removing a section. SingletonPage's hero map records that home wears the
-   `split` hero; the markup renders through its "hero" slot.
+   What changed from the split hero it replaced (2026-08-26 to 2026-10-13):
+   - No photo, so no slideshow, no image LCP and no Ken Burns. The
+     `homePage.heroImages` field STAYS in the schema (and its photos in the
+     dataset), unused, so nothing is lost and the old hero can come back.
+   - No graph-paper `hero-atmos` background and no eyebrow. `heroEyebrow` also
+     stays in the schema, unused.
+   - The h1 is the term title, from getNextTerm(). The editor's `heroHeadline`
+     becomes the italic deck under it. With no upcoming term (and in the
+     credential-less CI build) the h1 falls back to `heroHeadline` itself at
+     the ordinary display size, so the page always has a real h1.
+   - The covers are the first three distinct courses marked "Start here", then
+     "Featured" (src/lib/term-issue.ts heroCourses). They are decoration here:
+     CourseCover's front-only mode is aria-hidden, because every one of these
+     courses is listed, as text and links, further down the page. With no
+     courses the column simply does not render and the text takes the width.
 
-   WHY IT IS RENDERED BY THE PAGE AND NOT BY SingletonPage
-   The same CSS-module-graph reason the photo heroes are (see SingletonPage's
-   header): HeroSlideshow carries scoped styles, and importing it into the shared
-   renderer would inject them into all thirteen pages. index.astro and the
-   preview route each render this into the slot.
+   WHY IT IS A COMPONENT AND NOT A SECTION (decision D2, unchanged)
+   Heroes stay PAGE-LEVEL fields: an editor cannot delete the page's h1 by
+   removing a section. index.astro and the preview route each render this into
+   SingletonPage's "hero" slot. The `??` fallbacks stay HERE so both surfaces
+   share one copy.
 
-   The `??` fallbacks stay HERE rather than being passed in, because both
-   surfaces need the identical set: index.astro renders it with build-time
-   published data (and with no data at all in the credential-less CI build), and
-   the preview route renders it with drafts. Keeping one copy is what stops the
-   two from drifting, which is the whole point of the shared-template contract.
+   The `fetcher` prop is the preview route's draft-aware fetcher, so the
+   Presentation tool shows draft courses in the fan. Undefined at build time,
+   where each query falls through to its own published default.
    ========================================================================== */
-import HeroSlideshow from '@/components/HeroSlideshow.astro';
+import CourseCover from '@/components/CourseCover.astro';
+import { getStartHereCourses, getFeaturedCourses } from '@/lib/queries';
+import { splitTermTitle, heroCourses } from '@/lib/term-issue';
 
 interface Props {
   /* The homePage singleton (or its draft). */
@@ -34,23 +44,18 @@ interface Props {
   settings: any;
   /* getNextTerm() output, or null. */
   nextTerm: any;
+  /* Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
 }
-const { page, settings, nextTerm } = Astro.props as Props;
+const { page, settings, nextTerm, fetcher } = Astro.props as Props;
 
-const heroEyebrow = page?.heroEyebrow ?? 'The Presbyterian Academy';
 const heroHeadline = page?.heroHeadline ?? 'Theological depth, taught for ordinary believers.';
 const heroSubhead =
   page?.heroSubhead ??
   'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
-// The hero accepts one image (static) or several (a slow Ken Burns slideshow).
-// homePage.heroImages is the source; the legacy single `heroImage` field was
-// dropped from the schema in the home re-schema (and its stale doc value unset
-// by seed-editability.mjs), so there is no single-image fallback to read.
-const heroImages = page?.heroImages?.length ? page.heroImages : [];
 
 // Timezone-safe: a bare "2026-09-08" parses as UTC midnight and renders as the
 // day before in every US timezone, so the T00:00:00 suffix pins it to local.
-// One of the site's three date formatters, kept separate on purpose (they differ).
 function fmtDate(d?: string): string {
   if (!d) return '';
   return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', {
@@ -65,59 +70,90 @@ const heroPrimaryLabel = page?.heroPrimaryLabel ?? 'Browse courses';
 const heroSecondaryLabel = page?.heroSecondaryLabel ?? 'Book a free intro';
 const nextCohortLabel = page?.nextCohortLabel ?? 'Next cohort begins';
 
+const term = splitTermTitle(nextTerm?.title);
+const hasTerm = term.lead.length > 0;
+
+const [startHere, featured] = await Promise.all([
+  getStartHereCourses(fetcher).catch(() => []),
+  getFeaturedCourses(6, fetcher).catch(() => []),
+]);
+const fan = heroCourses(startHere ?? [], featured ?? [], 3);
+// Draw order: the back covers first, the lead course last (on top).
+const fanOrder =
+  fan.length === 3
+    ? [
+        { course: fan[1], pos: 'left' },
+        { course: fan[2], pos: 'right' },
+        { course: fan[0], pos: 'front' },
+      ]
+    : fan.length === 2
+      ? [
+          { course: fan[1], pos: 'pair-back' },
+          { course: fan[0], pos: 'pair-front' },
+        ]
+      : fan.map((course) => ({ course, pos: 'solo' }));
+
 const pillPrimary =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
 const pillGhost =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] border border-foreground text-foreground hover:bg-accent transition-colors';
 ---
 
-{/* Split hero */}
-<section class="hero-atmos overflow-hidden bg-background" aria-labelledby="home-hero">
+<section class="overflow-hidden bg-background" aria-labelledby="home-hero">
   <div
-    class="mx-auto grid max-w-content items-center gap-x-12 gap-y-l px-m py-section-lg lg:grid-cols-[1.05fr_.95fr]"
+    class:list={[
+      'gap-y-xl mx-auto grid max-w-content items-center gap-x-[clamp(2rem,5vw,4.5rem)] px-m pt-[clamp(2.5rem,6vw,5rem)] pb-[clamp(3.5rem,8vw,6.5rem)]',
+      fanOrder.length > 0 && 'lg:grid-cols-[1.1fr_1fr]',
+    ]}
   >
-    <div class="hero-entry-stagger">
-      <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">{heroEyebrow}</p>
-      <h1 id="home-hero" class="mt-4 font-display text-h1 leading-headline-tight text-foreground">
-        <span class="kinetic-words"
-          >{
-            heroHeadline.split(' ').map((word: string, i: number) => (
+    <div class="hero-entry-stagger min-w-0">
+      {
+        hasTerm ? (
+          <h1 id="home-hero" class="issue-title text-foreground">
+            {term.lead}
+            {term.year && (
               <>
-                <span class="w" style={`--i:${i}`}>
-                  <span>{word}</span>
-                </span>{' '}
+                <br />
+                <i class="issue-title__year">{term.year}</i>
               </>
-            ))
-          }</span
-        >
-      </h1>
-      <p class="mt-m max-w-xl text-lg leading-relaxed text-foreground/80">{heroSubhead}</p>
+            )}
+            <span class="sr-only"> term</span>
+          </h1>
+        ) : (
+          <h1
+            id="home-hero"
+            class="font-display text-h1 leading-headline-tight font-light text-foreground"
+          >
+            {heroHeadline}
+          </h1>
+        )
+      }
+      {hasTerm && <p class="issue-deck mt-l max-w-[30ch] text-foreground">{heroHeadline}</p>}
+      <p class="mt-m max-w-[48ch] text-base leading-relaxed text-foreground/80 md:text-lg">
+        {heroSubhead}
+      </p>
       <div class="mt-l flex flex-wrap gap-3">
         <a href="/courses/" class={pillPrimary}>{heroPrimaryLabel}</a>
         <a href="/get-started/" class={pillGhost}>{heroSecondaryLabel}</a>
       </div>
-      <div class="mt-l h-px w-full bg-gold/50"></div>
       {
-        nextTerm && (
-          <p class="mt-4 text-sm text-foreground/75">
-            <span class="font-display tracking-[0.12em] text-gold-ink uppercase tabular-nums">
-              {nextCohortLabel}
-            </span>
-            &nbsp; {fmtDate(nextTerm.startDate)} &nbsp;·&nbsp; {nextTerm.title} &nbsp;·&nbsp;{' '}
-            {cityLine}
+        nextTerm?.startDate && (
+          <p class="mono-detail mt-l text-foreground/80">
+            {nextCohortLabel} {fmtDate(nextTerm.startDate)} &middot; {cityLine}
           </p>
         )
       }
     </div>
-    <div>
-      <div class="h-0.5 w-full bg-gold"></div>
-      <HeroSlideshow
-        images={heroImages}
-        eager
-        id="home"
-        aspectClass="aspect-[3/2] lg:aspect-[4/5]"
-        sizes="(min-width: 1024px) 600px, 90vw"
-      />
-    </div>
+    {
+      fanOrder.length > 0 && (
+        <div class="hero-fan" data-count={fanOrder.length}>
+          {fanOrder.map(({ course, pos }) => (
+            <div class={`hero-fan__item hero-fan__item--${pos}`}>
+              <CourseCover course={course} size="md" />
+            </div>
+          ))}
+        </div>
+      )
+    }
   </div>
 </section>

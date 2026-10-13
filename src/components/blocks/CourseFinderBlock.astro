@@ -1,0 +1,129 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// CourseFinderBlock: the reply-card course finder (Term Issue PR 2, 2026-10-13)
+// =============================================================================
+// Resolves everything the CourseFinder island needs into plain data and mounts
+// it on the static green chapel band:
+//   - every course the card can suggest (each answer's course plus the
+//     default), fetched as full course cards so each gets its cover colour,
+//     ornament, code and a "who and when" line
+//   - the pricing tiers, which ARE question 3's answers (the tier marked
+//     Featured starts ticked)
+//
+// Rendered OUTSIDE SectionShell (decision D1): a fixed surface, no tone field.
+//
+// Renders NOTHING when no answer and no default point at a course that exists
+// (an empty block, or the credential-less CI build), because a reply card with
+// no suggestion is a form that goes nowhere. The preview coaches the empty
+// block instead (src/lib/section-coach.ts).
+//
+// Draft-aware through `fetcher` in the preview, like the other auto blocks.
+import CourseFinder, { type FinderCourse, type FinderQuestion } from '@/components/CourseFinder';
+import { getCoursesByIds, getPricingTiers } from '@/lib/queries';
+import { coverStyle, resolveCover } from '@/lib/cover';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const refOf = (v: any): string | null => (typeof v?._ref === 'string' ? v._ref : null);
+
+// The two editor-built questions, without answers that have no label.
+const rawQuestions = [block?.question1, block?.question2];
+const ids = new Set<string>();
+const defaultRef = refOf(block?.defaultCourse);
+if (defaultRef) ids.add(defaultRef);
+for (const q of rawQuestions) {
+  for (const o of q?.options ?? []) {
+    const id = refOf(o?.course);
+    if (id) ids.add(id);
+  }
+}
+
+const [courseDocs, tiers] = await Promise.all([
+  getCoursesByIds([...ids], fetcher).catch(() => []),
+  getPricingTiers(fetcher).catch(() => []),
+]);
+
+function who(c: any): string {
+  const i = c?.instructors?.[0];
+  const teacher = i ? `${i.honorific ? i.honorific + ' ' : ''}${i.name}` : '';
+  const next = c?.nextOffering;
+  const when = next
+    ? [next.term?.title, next.status === 'waitlist' ? 'waitlist' : null].filter(Boolean).join(' · ')
+    : 'new dates soon';
+  return [teacher, when].filter(Boolean).join(' · ');
+}
+
+const courses: Record<string, FinderCourse> = {};
+for (const c of courseDocs ?? []) {
+  if (!c?._id) continue;
+  const { color, ornament } = resolveCover(c);
+  courses[c._id] = {
+    title: c.title ?? '',
+    href: c.slug ? `/courses/${c.slug}/` : '/courses/',
+    code: (c.courseCode ?? '').trim(),
+    area: c.teachingAreas?.[0]?.title ?? '',
+    who: who(c),
+    style: coverStyle(color),
+    ornament,
+    color,
+  };
+}
+
+const questions: FinderQuestion[] = rawQuestions
+  .map((q: any) => ({
+    question: (q?.question ?? '').trim(),
+    options: (q?.options ?? [])
+      .filter((o: any) => (o?.label ?? '').trim())
+      .map((o: any) => {
+        const id = refOf(o?.course);
+        return { label: o.label.trim(), courseId: id && courses[id] ? id : null };
+      }),
+  }))
+  .filter((q: FinderQuestion) => q.question && q.options.length > 0);
+
+const plans = (tiers ?? []).map((t: any) => ({
+  name: t.name ?? '',
+  price: t.amount != null ? `$${Number(t.amount).toLocaleString('en-US')}` : 'Free',
+  note: (t.summary ?? '').trim().replace(/\.$/, ''),
+}));
+const featuredPlan = (tiers ?? []).findIndex((t: any) => t?.featured);
+
+const defaultCourseId = defaultRef && courses[defaultRef] ? defaultRef : null;
+const anyCourse = defaultCourseId || questions.some((q) => q.options.some((o) => o.courseId));
+
+const headingId = block?.headingId || 'finder';
+---
+
+{
+  anyCourse && (
+    <section class="bg-chapel" aria-labelledby={headingId}>
+      <div class="mx-auto max-w-content px-m py-section-lg">
+        <CourseFinder
+          client:visible
+          idPrefix={`${headingId}-${block?._key ?? 'f'}`}
+          kicker={block?.kicker || 'Reply card'}
+          heading={block?.heading || 'Three questions, one course'}
+          headingId={headingId}
+          intro={
+            block?.intro || 'Tick one answer for each. We will suggest a single place to start.'
+          }
+          questions={questions}
+          question3={block?.question3 || 'How much can you take on this term?'}
+          plans={plans}
+          defaultPlan={featuredPlan >= 0 ? featuredPlan : 0}
+          defaultCourseId={defaultCourseId}
+          courses={courses}
+          resultLabel={block?.resultLabel || 'We suggest'}
+          ctaLabel={block?.ctaLabel || 'Express interest'}
+          ctaHref={block?.ctaHref || '/get-started/'}
+        />
+      </div>
+    </section>
+  )
+}

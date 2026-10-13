@@ -1,0 +1,79 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// TermContentsBlock: the issue's contents page (Term Issue PR 2, 2026-10-13)
+// =============================================================================
+// A big light "Contents" heading with an optional note from the faculty under
+// it, beside a ruled list: one line per course with its catalog code, title
+// (a link to the course), a dot leader, the teacher's surname and the next
+// cohort's status. The row logic is src/lib/term-issue.ts `contentsRow`.
+//
+// Rendered OUTSIDE SectionShell (decision D1): a fixed card-surface band with
+// hairlines top and bottom.
+//
+// AUTO BLOCK. The list fills itself from the catalog (getAllCourses, in the
+// editor's display order). `scope: 'nextTerm'` keeps only the courses whose
+// next cohort is in the next term (the same term getNextTerm picks). With no
+// courses to list (the credential-less CI build) the section renders nothing,
+// like the other catalog rails. Draft-aware through `fetcher` in the preview.
+import { getAllCourses, getNextTerm } from '@/lib/queries';
+import { contentsRow, type ContentsRow } from '@/lib/term-issue';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const [courses, nextTerm] = await Promise.all([
+  getAllCourses(fetcher).catch(() => []),
+  getNextTerm(fetcher).catch(() => null),
+]);
+const termId: string | null = nextTerm?._id ?? null;
+const scoped = (courses ?? []).filter(
+  (c: any) => block?.scope !== 'nextTerm' || (termId && c?.nextOffering?.term?._id === termId),
+);
+const rows: ContentsRow[] = scoped.map((c: any) => contentsRow(c, termId));
+
+const headingId = block?.headingId || 'contents';
+const heading: string = block?.heading || 'Contents';
+const noteLabel: string = block?.noteLabel || 'A note before you browse';
+const note: string = (block?.note ?? '').trim();
+const signature: string = block?.signature || 'The faculty';
+---
+
+{
+  rows.length > 0 && (
+    <section class="border-y border-border bg-card" aria-labelledby={headingId}>
+      <div class="mx-auto grid max-w-content gap-x-[clamp(2.5rem,6vw,6rem)] gap-y-10 px-m py-section-lg lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+        <div class="min-w-0 lg:max-w-[28rem]" data-reveal>
+          <h2 id={headingId} class="issue-h2 issue-h2--xl text-foreground">
+            {heading}
+          </h2>
+          {note && (
+            <>
+              <p class="mono-detail mt-8 text-foreground/80">{noteLabel}</p>
+              <p class="mt-2 font-display text-lg leading-relaxed font-light text-foreground">
+                {note}
+              </p>
+              <p class="mt-4 font-display text-foreground/80 italic">{signature}</p>
+            </>
+          )}
+        </div>
+        <ol class="contents-list min-w-0">
+          {rows.map((row) => (
+            <li class="contents-list__row">
+              {row.code && <span class="contents-list__code">{row.code}</span>}
+              <a href={`/courses/${row.slug}/`} class="contents-list__title hit-44">
+                {row.title}
+              </a>
+              <span class="dot-leader" aria-hidden="true" />
+              <span class={`contents-list__meta contents-list__meta--${row.tone}`}>{row.meta}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}

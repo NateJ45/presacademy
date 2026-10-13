@@ -78,12 +78,33 @@ this direction; never swap it mid-project.
 7. **Mono catalog details.** IBM Plex Mono 400 (`font-mono`) is the catalog
    voice: small uppercase with open tracking (0.06 to 0.08em) for codes,
    subjects, status tags and the "The question" / "Week one" labels. It is a
-   detail face, never body or headings.
+   detail face, never body or headings. On home the `.mono-detail` class
+   carries it (the next-cohort line, notes beside headings, signatures).
+8. **The home page is an issue** (Term Issue PR 2, 2026-10-13; the "Term
+   Issue home" block in `globals.css`). The hero is a cover: the next term's
+   name in light Fraunces at up to 13rem (`.issue-title`, the year italic in
+   `chapel-ink`) beside a fanned stack of three course covers. Sections open
+   on a big light Fraunces heading (`.issue-h2`), never an eyebrow. The
+   departments: a **contents page** with dot leaders (`.dot-leader`, a
+   dotted rule that fills the gap between a name and a value), the cover
+   grid, a **reply card** finder (static paper on the static green band, like
+   the cover backs; oxblood question numbers and focus ring), contributors,
+   **letters** (ruled columns, an italic "To the faculty,", a drop initial in
+   `--issue-accent` on the first) and a **rates box** (2px ruled box,
+   dot-leader rows) beside a dashed oxblood **coupon**. `--issue-accent` is
+   oxblood `#7A2A2C` on the light page and a lifted `#E0A49B` in dark.
 
 The italic display "moment" (epigraphs, blockquotes) is now quieted to true
 epigraphs only, and the calligraphic script accent stays OFF by default.
 
 **Retired in Direction A** (don't reintroduce without a deliberate decision):
+
+- **Retired on home by the Term Issue (2026-10-13):** the photo hero and its
+  slideshow, the graph-paper hero (`.hero-atmos` and its `.surface-grid` /
+  `.surface-dots` siblings were deleted, nothing else used them), the 01 to
+  04 wayfinding strip, the stat row, the topics ticker and the eyebrow on
+  every section. The ticker, stat and numbered-card blocks (and their CSS)
+  stay available to other pages.
 
 - **The Romanesque arch.** `--arch-radius` is neutralized to a quiet modern
   rounding (`clamp(0.5rem, 1vw, 0.85rem)`); `.arch-top` / `.arch-top-sm` now
@@ -114,6 +135,7 @@ The `chapel` token names are kept but now carry green.
 | `text-gold` / `bg-gold` (static) | `#A87C3E` Aged Brass            | (dark ref `#C9A06A` via `--gold-ink`) | hairline rules, small accents, inverse rubric |
 | `--color-oxblood`                | `#7A2A2C` Oxblood               | same                                  | demoted; sparing secondary accent only        |
 | `border-border-soft`             | `#EAE7DF`                       | —                                     | faint warm dividers                           |
+| `--issue-accent` (var only)      | `#7A2A2C` oxblood               | `#E0A49B`                             | Term Issue: waitlist, coupon, drop initial    |
 
 **Cover palette** (`--color-cover-<name>` / `-fg`, in an `@theme static` block,
 the same in both themes; every pair is at least 4.5:1, pinned by
@@ -201,11 +223,9 @@ layer):
 - **Kinetic hero headline** (`.kinetic-words`) — each word sits in an
   overflow-hidden box and rises into place on load, lightly staggered by a
   `--i` index. Transform-only, so it stays LCP-safe.
-- **Graph-paper atmosphere** (`.hero-atmos` / `.surface-grid` / `.surface-dots`)
-  — a faint academic notebook grid (and dotted variant) plus a soft green hero
-  glow, theme-aware via the `--grid-rgb` token (ink lines on near-white, cream
-  on dark). This is the distinctive academic-notebook texture, painted on the
-  element background so it sits behind content with no extra DOM.
+- **Graph-paper atmosphere**: RETIRED 2026-10-13 (Term Issue PR 2). The
+  `.hero-atmos` / `.surface-grid` / `.surface-dots` classes and the
+  `--grid-rgb` token were deleted with the old home hero, their only user.
 - **Choreographed reveals + eyebrow draw** — `[data-reveal]` gains directional
   variants (`.reveal-l` / `.reveal-r`) and a headline clip-wipe (`.reveal-rise`,
   a display line wiping up from its own baseline via clip-path + transform), and

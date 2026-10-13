@@ -75,6 +75,7 @@ export const SELF_FILLING_SECTIONS = [
   'sectionPricingTiers',
   'sectionResources',
   'sectionRuledList',
+  'sectionTermContents',
   'sectionTestimonialRail',
 ];
 

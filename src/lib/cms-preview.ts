@@ -103,6 +103,14 @@ const NON_STEGA_FIELDS = new Set([
   // miss the map and silently render the DEFAULT layout in the preview while
   // the live page showed the chosen one. Recorded because "no change needed" is
   // only trustworthy when someone actually looked.
+  //
+  // Term Issue PR 2, 2026-10-13 (home). sectionTermContents' `scope` picks
+  // which courses the contents list queries; encoded, it would never equal
+  // "nextTerm" and the preview would list every course. The other new enums
+  // ride entries above: sectionCourseRail's `covers` / `all` (variant, source),
+  // sectionTestimonialRail's `letters` (variant), sectionPricingTiers' `rates`
+  // (surface).
+  'scope',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

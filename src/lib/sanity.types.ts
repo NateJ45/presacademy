@@ -368,6 +368,33 @@ export type SectionPricingTiersBackgroundImage = {
   _type: 'image';
 };
 
+export type CourseReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'course';
+};
+
+export type Question1 = {
+  question?: string;
+  options?: Array<{
+    label?: string;
+    course?: CourseReference;
+    _type: 'finderOption';
+    _key: string;
+  }>;
+};
+
+export type Question2 = {
+  question?: string;
+  options?: Array<{
+    label?: string;
+    course?: CourseReference;
+    _type: 'finderOption';
+    _key: string;
+  }>;
+};
+
 export type Redirect = {
   _id: string;
   _type: 'redirect';
@@ -494,15 +521,14 @@ export type SectionPreset = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   note?: string;
-};
-
-export type CourseReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'course';
 };
 
 export type Testimonial = {
@@ -639,137 +665,6 @@ export type Slug = {
   _type: 'slug';
   current?: string;
   source?: string;
-};
-
-export type FacultyMemberReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'facultyMember';
-};
-
-export type TermReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'term';
-};
-
-export type PricingTierReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'pricingTier';
-};
-
-export type Course = {
-  _id: string;
-  _type: 'course';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  archived?: boolean;
-  title?: string;
-  slug?: Slug;
-  summary?: string;
-  coverImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  courseCode?: string;
-  coverColor?: 'green' | 'ink' | 'cream' | 'oxblood' | 'brass' | 'sage' | 'slate' | 'parchment';
-  coverOrnament?:
-    'circle' | 'stripes' | 'half-moon' | 'cross' | 'dots' | 'ring' | 'diagonal' | 'steps';
-  centralQuestion?: string;
-  level?: 'Intro' | 'Foundational' | 'Advanced';
-  teachingAreas?: Array<
-    {
-      _key: string;
-    } & TeachingAreaReference
-  >;
-  instructors?: Array<
-    {
-      _key: string;
-    } & FacultyMemberReference
-  >;
-  format?: 'In person' | 'Hybrid';
-  location?: string;
-  whoFor?: Array<string>;
-  sessionOutline?: Array<{
-    title?: string;
-    focus?: string;
-    _type: 'courseSession';
-    _key: string;
-  }>;
-  syllabusFile?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: 'file';
-  };
-  offerings?: Array<{
-    term?: TermReference;
-    schedule?: string;
-    sessions?: number;
-    seatsNote?: string;
-    status?: 'open' | 'waitlist' | 'closed';
-    _type: 'courseOffering';
-    _key: string;
-  }>;
-  priceTier?: PricingTierReference;
-  priceNote?: string;
-  featured?: boolean;
-  startHere?: boolean;
-  displayOrder?: number;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-};
-
-export type PricingTier = {
-  _id: string;
-  _type: 'pricingTier';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  orderRank?: string;
-  archived?: boolean;
-  name?: string;
-  slug?: Slug;
-  amount?: number;
-  unit?: 'per course' | 'per track' | 'per term';
-  summary?: string;
-  includes?: Array<string>;
-  isAudit?: boolean;
-  featured?: boolean;
-  displayOrder?: number;
-};
-
-export type Term = {
-  _id: string;
-  _type: 'term';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  archived?: boolean;
-  title?: string;
-  slug?: Slug;
-  startDate?: string;
-  endDate?: string;
-  registrationOpens?: string;
-  registrationDeadline?: string;
-  status?: 'upcoming' | 'open' | 'inSession' | 'closed';
-  note?: string;
 };
 
 export type TeachingArea = {
@@ -1174,9 +1069,36 @@ export type NavLink = {
   href?: string;
 };
 
+export type SectionCourseFinder = {
+  _type: 'sectionCourseFinder';
+  kicker?: string;
+  heading?: string;
+  headingId?: string;
+  intro?: string;
+  question1?: Question1;
+  question2?: Question2;
+  question3?: string;
+  defaultCourse?: CourseReference;
+  resultLabel?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export type SectionTermContents = {
+  _type: 'sectionTermContents';
+  heading?: string;
+  headingId?: string;
+  scope?: 'all' | 'nextTerm';
+  noteLabel?: string;
+  note?: string;
+  signature?: string;
+};
+
 export type SectionTestimonialRail = {
   _type: 'sectionTestimonialRail';
+  variant?: 'cards' | 'letters';
   eyebrow?: string;
+  salutation?: string;
   heading?: string;
   headingId?: string;
   limit?: number;
@@ -1201,10 +1123,11 @@ export type SectionTicker = {
 
 export type SectionCourseRail = {
   _type: 'sectionCourseRail';
-  source?: 'startHere' | 'featured';
-  variant?: 'rail' | 'feature';
+  source?: 'startHere' | 'featured' | 'all';
+  variant?: 'rail' | 'feature' | 'covers';
   eyebrow?: string;
   heading?: string;
+  note?: string;
   headingId?: string;
   limit?: number;
   linkLabel?: string;
@@ -1367,7 +1290,22 @@ export type SectionPricingTiers = {
   ctaLabel?: string;
   ctaUrl?: string;
   headingLevel?: 'h3' | 'h2';
-  surface?: 'shell' | 'ledger';
+  surface?: 'shell' | 'ledger' | 'rates';
+  ratesNote?: string;
+  scholarshipLabel?: string;
+  scholarshipValue?: string;
+  ratesClosing?: string;
+  couponKicker?: string;
+  couponHeading?: string;
+  couponBody?: string;
+  couponCtaLabel?: string;
+  couponCtaHref?: string;
+  groupKicker?: string;
+  groupHeading?: string;
+  groupBody?: string;
+  groupRate?: string;
+  groupLinkLabel?: string;
+  groupLinkHref?: string;
   background?: SectionPricingTiersBackground;
 };
 
@@ -1978,6 +1916,12 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   publishAt?: string;
 };
@@ -2117,6 +2061,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   publishAt?: string;
 };
@@ -2279,6 +2229,12 @@ export type Page = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -2429,6 +2385,12 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2574,6 +2536,12 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2718,6 +2686,12 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2861,6 +2835,12 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3005,6 +2985,12 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3151,6 +3137,12 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3309,6 +3301,12 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
 };
 
@@ -3453,6 +3451,12 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   publishAt?: string;
 };
@@ -3607,6 +3611,12 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   publishAt?: string;
 };
@@ -3726,6 +3736,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3880,6 +3896,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -3905,6 +3927,137 @@ export type HomePage = {
   };
   hideFromSearch?: boolean;
   publishAt?: string;
+};
+
+export type FacultyMemberReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'facultyMember';
+};
+
+export type TermReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'term';
+};
+
+export type PricingTierReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'pricingTier';
+};
+
+export type Course = {
+  _id: string;
+  _type: 'course';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  archived?: boolean;
+  title?: string;
+  slug?: Slug;
+  summary?: string;
+  coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  courseCode?: string;
+  coverColor?: 'green' | 'ink' | 'cream' | 'oxblood' | 'brass' | 'sage' | 'slate' | 'parchment';
+  coverOrnament?:
+    'circle' | 'stripes' | 'half-moon' | 'cross' | 'dots' | 'ring' | 'diagonal' | 'steps';
+  centralQuestion?: string;
+  level?: 'Intro' | 'Foundational' | 'Advanced';
+  teachingAreas?: Array<
+    {
+      _key: string;
+    } & TeachingAreaReference
+  >;
+  instructors?: Array<
+    {
+      _key: string;
+    } & FacultyMemberReference
+  >;
+  format?: 'In person' | 'Hybrid';
+  location?: string;
+  whoFor?: Array<string>;
+  sessionOutline?: Array<{
+    title?: string;
+    focus?: string;
+    _type: 'courseSession';
+    _key: string;
+  }>;
+  syllabusFile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  offerings?: Array<{
+    term?: TermReference;
+    schedule?: string;
+    sessions?: number;
+    seatsNote?: string;
+    status?: 'open' | 'waitlist' | 'closed';
+    _type: 'courseOffering';
+    _key: string;
+  }>;
+  priceTier?: PricingTierReference;
+  priceNote?: string;
+  featured?: boolean;
+  startHere?: boolean;
+  displayOrder?: number;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+};
+
+export type PricingTier = {
+  _id: string;
+  _type: 'pricingTier';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderRank?: string;
+  archived?: boolean;
+  name?: string;
+  slug?: Slug;
+  amount?: number;
+  unit?: 'per course' | 'per track' | 'per term';
+  summary?: string;
+  includes?: Array<string>;
+  isAudit?: boolean;
+  featured?: boolean;
+  displayOrder?: number;
+};
+
+export type Term = {
+  _id: string;
+  _type: 'term';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  archived?: boolean;
+  title?: string;
+  slug?: Slug;
+  startDate?: string;
+  endDate?: string;
+  registrationOpens?: string;
+  registrationDeadline?: string;
+  status?: 'upcoming' | 'open' | 'inSession' | 'closed';
+  note?: string;
 };
 
 export type MediaTag = {
@@ -4054,21 +4207,17 @@ export type AllSanitySchemaTypes =
   | SectionKeyDatesBackgroundImage
   | SectionPricingTiersBackground
   | SectionPricingTiersBackgroundImage
+  | CourseReference
+  | Question1
+  | Question2
   | Redirect
   | SectionPreset
-  | CourseReference
   | Testimonial
   | SanityImageCrop
   | SanityImageHotspot
   | TeachingAreaReference
   | FacultyMember
   | Slug
-  | FacultyMemberReference
-  | TermReference
-  | PricingTierReference
-  | Course
-  | PricingTier
-  | Term
   | TeachingArea
   | Announcement
   | Event
@@ -4091,6 +4240,8 @@ export type AllSanitySchemaTypes =
   | ResourcesPageReference
   | PageReference
   | NavLink
+  | SectionCourseFinder
+  | SectionTermContents
   | SectionTestimonialRail
   | SectionFacultyRail
   | SectionTicker
@@ -4144,6 +4295,12 @@ export type AllSanitySchemaTypes =
   | FaqPage
   | AboutPage
   | HomePage
+  | FacultyMemberReference
+  | TermReference
+  | PricingTierReference
+  | Course
+  | PricingTier
+  | Term
   | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette
