@@ -16,6 +16,15 @@
 //
 // Honeypot: a visually-hidden `website` field. Bots fill it; humans can't see it.
 // The component fakes success when it's filled so the bot moves on.
+//
+// Two looks (Term Issue PR 4, 2026-10-13):
+//   variant="card" (default)  the boxed card with its own heading and blurb
+//                             (the footer)
+//   variant="band"            just the form, on the static dark ink band of the
+//                             home page's "Next issue" section, which prints
+//                             its own heading and copy. Fixed colours: the
+//                             band never flips with the theme.
+// `inputId` keeps the email field's id unique when both appear on one page.
 
 import { useRef, useState, type FormEvent } from 'react';
 import { subscribeEmail } from '@/lib/subscribe';
@@ -39,13 +48,22 @@ interface Props {
   newsletter: NewsletterConfig;
   /** Human-readable source label for tracking (e.g. "footer", "journal-index"). */
   source?: string;
+  /** "card" (default) or "band": the bare form for the dark Next issue band. */
+  variant?: 'card' | 'band';
+  /** The email input's id. Defaults to "newsletter-email". */
+  inputId?: string;
 }
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
 
-export default function NewsletterSignup({ newsletter, source = 'newsletter' }: Props) {
+export default function NewsletterSignup({
+  newsletter,
+  source = 'newsletter',
+  variant = 'card',
+  inputId = 'newsletter-email',
+}: Props) {
   // Guard: render nothing when the feature is disabled or unconfigured.
   if (!newsletter?.enabled) return null;
   if (!newsletter.formActionUrl && !WEB3FORMS_KEY) return null;
@@ -64,6 +82,8 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const emailRef = useRef<HTMLInputElement | null>(null);
+  const band = variant === 'band';
+  const errorId = `${inputId}-error`;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -104,25 +124,31 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
       <div
         role="status"
         aria-live="polite"
-        className="rounded-md border border-primary bg-muted p-l"
+        className={band ? 'issue-signup__done' : 'rounded-md border border-primary bg-muted p-l'}
       >
-        <p className="font-display text-h4 text-foreground">{successMessage}</p>
+        <p className={band ? 'font-display text-xl' : 'font-display text-h4 text-foreground'}>
+          {successMessage}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-md border border-border bg-card p-l">
-      {/* Brand accent stripe at the top — matches card grammar. */}
-      <div className="mb-l h-0.5 bg-primary" aria-hidden="true"></div>
+    <div className={band ? 'issue-signup' : 'rounded-md border border-border bg-card p-l'}>
+      {!band && (
+        <>
+          {/* Brand accent stripe at the top — matches card grammar. */}
+          <div className="mb-l h-0.5 bg-primary" aria-hidden="true"></div>
 
-      <h3 className="font-display text-h3 text-foreground">{heading}</h3>
-      {blurb && <p className="mt-s text-sm leading-relaxed text-foreground/80">{blurb}</p>}
+          <h3 className="font-display text-h3 text-foreground">{heading}</h3>
+          {blurb && <p className="mt-s text-sm leading-relaxed text-foreground/80">{blurb}</p>}
+        </>
+      )}
 
       <form
         onSubmit={onSubmit}
         noValidate
-        className="mt-m space-y-s"
+        className={band ? 'issue-signup__form' : 'mt-m space-y-s'}
         aria-busy={status === 'submitting'}
       >
         {/* Honeypot — visually hidden, bots fill it, real users can't see it. */}
@@ -143,8 +169,8 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
           </label>
         </div>
 
-        {/* Error banner */}
-        {errorMsg && (
+        {/* Error banner (the card only: on the band the line under the field says it). */}
+        {errorMsg && !band && (
           <div
             role="alert"
             aria-live="polite"
@@ -154,16 +180,18 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
           </div>
         )}
 
-        <div>
+        <div className={band ? 'issue-signup__field' : undefined}>
           <label
-            htmlFor="newsletter-email"
-            className="mb-1 block text-sm font-semibold text-foreground"
+            htmlFor={inputId}
+            className={
+              band ? 'issue-signup__label' : 'mb-1 block text-sm font-semibold text-foreground'
+            }
           >
             Email address
           </label>
           <input
             ref={emailRef}
-            id="newsletter-email"
+            id={inputId}
             name="email"
             type="email"
             required
@@ -174,16 +202,20 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
               if (errorMsg) setErrorMsg('');
             }}
             aria-invalid={!!errorMsg}
-            aria-describedby={errorMsg ? 'newsletter-email-error' : undefined}
+            aria-describedby={errorMsg ? errorId : undefined}
             placeholder="you@example.com"
-            className="min-h-[44px] w-full rounded-md border border-input bg-background px-s py-s text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
+            className={
+              band
+                ? 'issue-signup__input'
+                : 'min-h-[44px] w-full rounded-md border border-input bg-background px-s py-s text-foreground focus:ring-2 focus:ring-ring focus:outline-none'
+            }
           />
           {errorMsg && (
             <p
-              id="newsletter-email-error"
+              id={errorId}
               role="alert"
               aria-live="polite"
-              className="mt-xs text-sm text-destructive"
+              className={band ? 'issue-signup__error' : 'mt-xs text-sm text-destructive'}
             >
               {errorMsg}
             </p>
@@ -193,20 +225,30 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="press-tactile inline-flex min-h-[44px] w-full items-center justify-center rounded-sm bg-primary-dark px-l py-s text-xs font-semibold tracking-widest text-white uppercase transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-60"
+          className={
+            band
+              ? 'press-tactile issue-signup__button'
+              : 'press-tactile inline-flex min-h-[44px] w-full items-center justify-center rounded-sm bg-primary-dark px-l py-s text-xs font-semibold tracking-widest text-white uppercase transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-60'
+          }
         >
           {status === 'submitting' ? 'Subscribing…' : buttonLabel}
         </button>
       </form>
 
       {/* Consent / privacy note. Parses the privacy link pattern for the /privacy page. */}
-      <p className="mt-s text-xs leading-relaxed text-foreground/70">
+      <p
+        className={band ? 'issue-signup__note' : 'mt-s text-xs leading-relaxed text-foreground/70'}
+      >
         {consentNote.includes('privacy policy') ? (
           <>
             {consentNote.replace('privacy policy', '').trimEnd()}{' '}
             <a
               href="/privacy/"
-              className="underline underline-offset-2 transition-colors hover:text-link"
+              className={
+                band
+                  ? 'underline underline-offset-2'
+                  : 'underline underline-offset-2 transition-colors hover:text-link'
+              }
             >
               privacy policy
             </a>

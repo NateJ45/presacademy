@@ -103,7 +103,9 @@ const PAGE_LABELS: Record<string, string> = {
  * it. Keep in step with src/components/blocks/.
  */
 const RENDERED_BY: Record<string, string[]> = {
-  course: ['sectionCourseRail', 'sectionTermContents'],
+  // The Next issue band draws one course of the term after next as a cover
+  // (Term Issue PR 4).
+  course: ['sectionCourseRail', 'sectionTermContents', 'sectionNextIssue'],
   facultyMember: ['sectionFacultyRail'],
   testimonial: ['sectionTestimonialRail'],
   event: ['sectionEventGrid', 'sectionRuledList'],

@@ -1,0 +1,83 @@
+---
+// Foundation, edit with care
+// =============================================================================
+// NextIssueBlock: "Next issue", the look ahead (Term Issue PR 4, 2026-10-13)
+// =============================================================================
+// The issue's back page, first half: the term AFTER the next one (getNextIssue
+// in src/lib/queries.ts, the same date filter as the header's next term, one
+// place further along), one course with a cohort in that term drawn as a tilted
+// cover, a short line, and the newsletter sign-up ("get the summer issue
+// first"). The sign-up is NewsletterSignup.tsx in its "band" look; it renders
+// nothing when the newsletter is switched off in Site Settings, and the
+// section still stands as a look ahead.
+//
+// Rendered OUTSIDE SectionShell (decision D1): the fixed dark ink band
+// (`.issue-band`), static in both themes like the chapel bands.
+//
+// AUTO BLOCK. Renders NOTHING when the calendar holds no later term (and so in
+// the credential-less CI build). With a later term but no course on it yet, it
+// shows without the cover. Editable copy takes {term} and {season} tokens
+// (fillTermTokens in src/lib/term-issue.ts). Draft-aware through `fetcher`.
+import CourseCover from '@/components/CourseCover.astro';
+import NewsletterSignup from '@/components/NewsletterSignup';
+import { getNextIssue, getSiteSettings } from '@/lib/queries';
+import { fillTermTokens } from '@/lib/term-issue';
+
+interface Props {
+  block: any;
+  /** Draft-aware fetcher in the preview; undefined at build time. */
+  fetcher?: any;
+}
+const { block, fetcher } = Astro.props as Props;
+
+const [issue, siteSettings] = await Promise.all([
+  getNextIssue(fetcher).catch(() => ({ term: null, course: null })),
+  getSiteSettings().catch(() => null),
+]);
+const term = issue?.term ?? null;
+// The cover is a preview of that term, so it carries no status tag: the
+// course's own "next offering" may be an earlier term.
+const course = issue?.course ? { ...issue.course, nextOffering: null } : null;
+
+const termTitle: string = term?.title ?? '';
+const headingId: string = block?.headingId || 'next-issue';
+const kicker: string = block?.kicker || 'Next issue';
+const heading = fillTermTokens(block?.heading || '{term} is taking shape.', termTitle);
+const body = fillTermTokens(
+  (block?.body ?? '').trim() ||
+    'Get the {season} issue first, plus One Question a week: one teacher, one real question, a short answer.',
+  termTitle,
+);
+// The newsletter's own settings, with the band's button label on top.
+const newsletter = siteSettings?.newsletter
+  ? { ...siteSettings.newsletter, buttonLabel: block?.buttonLabel || 'Send it to me' }
+  : null;
+---
+
+{term && (
+  <section class="issue-band" aria-labelledby={headingId}>
+    <div class="issue-band__inner">
+      {course && (
+        <div class="issue-band__art issue-band__art--cover">
+          <CourseCover course={course} size="sm" />
+        </div>
+      )}
+      <div class="issue-band__text" data-reveal>
+        <p class="mono-detail issue-band__kicker">{kicker}</p>
+        <h2 id={headingId} class="issue-band__heading">
+          {heading}
+        </h2>
+        <p class="issue-band__body">{body}</p>
+        {newsletter && (
+          <NewsletterSignup
+            client:visible
+            newsletter={newsletter}
+            source="next-issue"
+            variant="band"
+            inputId={`${headingId}-email`}
+          />
+        )}
+      </div>
+    </div>
+  </section>
+)}

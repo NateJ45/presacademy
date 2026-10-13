@@ -350,6 +350,11 @@ const footerLink = 'tap-44 text-chapel-foreground/80 hover:text-white transition
           <span class="font-medium text-chapel-foreground/90">{brandName}</span>
           <br />
           {[locality, 'PC(USA)'].filter(Boolean).join('  ·  ')}
+          {/* The type credit (Term Issue PR 4, 2026-10-13). Code-owned on
+              purpose: it names the fonts this code loads, so it changes only
+              when globals.css does. */}
+          <br />
+          Set in Fraunces, Source Sans and IBM Plex Mono.
         </p>
       </div>
 

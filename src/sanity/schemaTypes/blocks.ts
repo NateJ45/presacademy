@@ -2580,6 +2580,147 @@ export const sectionCourseFinder = defineType({
   },
 });
 
+// -----------------------------------------------------------------------------
+// The Term Issue, PR 4 (2026-10-13): the issue's back page. Both sit on the
+// fixed dark ink band (decision D1: no tone field), outside SectionShell.
+// -----------------------------------------------------------------------------
+
+/**
+ * "Next issue": the term AFTER the next one, with one of its courses drawn as a
+ * cover, a short line and the newsletter sign-up ("get the summer issue
+ * first"). AUTO BLOCK: the term and the cover fill themselves. The section
+ * hides entirely when no later term is in the calendar.
+ */
+export const sectionNextIssue = defineType({
+  name: 'sectionNextIssue',
+  title: 'Next issue (sign-up)',
+  type: 'object',
+  description:
+    'A look ahead to the term after next: one of its courses as a cover, a short line, and the newsletter sign-up. The term and the cover fill themselves; the section hides when no later term is in the calendar.',
+  fields: [
+    defineField({
+      name: 'kicker',
+      title: 'Small label',
+      type: 'string',
+      description: 'Leave empty for "Next issue".',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      description:
+        'Leave empty for "Summer 2027 is taking shape." (with the real term name). Type {term} anywhere to drop the term name in.',
+    }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "next-issue".',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Text',
+      type: 'text',
+      rows: 3,
+      description:
+        'One or two sentences above the sign-up. Type {season} for the term’s first word in lower case ("summer"), or {term} for its full name. Leave empty for the default line.',
+    }),
+    defineField({
+      name: 'buttonLabel',
+      title: 'Sign-up button label',
+      type: 'string',
+      description:
+        'Leave empty for "Send it to me". The sign-up itself is the newsletter set up in Site Settings; it hides when the newsletter is switched off there.',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({
+      title: title || 'Next issue',
+      subtitle: 'Next issue: the term after next, with the sign-up',
+    }),
+  },
+});
+
+/**
+ * "For pastors": take the issue to your church. A bulletin-insert PDF to
+ * download and a link to request printed catalogs, beside a small drawing of
+ * the insert. The download hides with no file; the whole section hides when it
+ * has neither the file nor the link, so nothing promises what is not there.
+ */
+export const sectionForPastors = defineType({
+  name: 'sectionForPastors',
+  title: 'For pastors (bulletin insert)',
+  type: 'object',
+  description:
+    'A short note for pastors with the bulletin insert to download and a link to request printed catalogs. Hidden until you upload the insert or add the catalog link.',
+  fields: [
+    defineField({
+      name: 'kicker',
+      title: 'Small label',
+      type: 'string',
+      description: 'Leave empty for "For pastors".',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      description: 'Leave empty for "Take the issue to your church."',
+    }),
+    defineField({
+      name: 'headingId',
+      title: 'Anchor id (optional)',
+      type: 'string',
+      description: 'Only needed to link straight to this section. Leave empty for "for-pastors".',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Text',
+      type: 'text',
+      rows: 3,
+      description:
+        'One or two sentences. Leave empty for "A bulletin insert for Sunday and printed catalogs for your session, in the same design as this issue."',
+    }),
+    defineField({
+      name: 'insertPdf',
+      title: 'Bulletin insert (PDF)',
+      type: 'file',
+      options: { accept: 'application/pdf' },
+      description: 'The printable insert, as a PDF. The download link appears once a file is here.',
+    }),
+    defineField({
+      name: 'insertLabel',
+      title: 'Download link label',
+      type: 'string',
+      description:
+        'Leave empty for "Download the insert". The file type and size are added by themselves.',
+    }),
+    defineField({
+      name: 'catalogHref',
+      title: 'Printed catalog request link',
+      type: 'string',
+      description:
+        'Where a pastor asks for printed catalogs: a page such as /contact/, or a mailto: address. Leave empty to hide that link.',
+    }),
+    defineField({
+      name: 'catalogLabel',
+      title: 'Catalog link label',
+      type: 'string',
+      description: 'Leave empty for "Order printed catalogs".',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', file: 'insertPdf.asset', href: 'catalogHref' },
+    prepare: ({ title, file, href }) => ({
+      title: title || 'For pastors',
+      subtitle:
+        file || href
+          ? `For pastors: ${[file && 'insert PDF', href && 'catalog link'].filter(Boolean).join(' + ')}`
+          : 'For pastors: hidden until the insert or the catalog link is added',
+    }),
+  },
+});
+
 // All block types collected for registration in index.ts.
 export const sectionBlocks = [
   sectionRichText,
@@ -2628,6 +2769,9 @@ export const sectionBlocks = [
   // Term Issue PR 2, 2026-10-13 (home).
   sectionTermContents,
   sectionCourseFinder,
+  // Term Issue PR 4, 2026-10-13 (home, the back page).
+  sectionNextIssue,
+  sectionForPastors,
 ];
 
 // The array members allowed in a flexibleSections[] field (includes the shared
@@ -2680,6 +2824,9 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   // Term Issue PR 2, 2026-10-13 (home).
   { type: 'sectionTermContents' },
   { type: 'sectionCourseFinder' },
+  // Term Issue PR 4, 2026-10-13 (home, the back page).
+  { type: 'sectionNextIssue' },
+  { type: 'sectionForPastors' },
 ];
 
 // =============================================================================
@@ -2760,6 +2907,8 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
       'sectionTestimonialRail',
       'sectionTermContents',
       'sectionCourseFinder',
+      'sectionNextIssue',
+      'sectionForPastors',
     ],
   },
 ];
