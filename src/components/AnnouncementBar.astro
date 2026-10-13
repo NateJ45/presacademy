@@ -35,23 +35,9 @@ const announcementClass =
   ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? ANNOUNCEMENT_STYLES.info;
 ---
 
-{
-  showAnnouncement &&
-    (editAttr ? (
-      <div data-sanity={editAttr}>
-        <div class:list={[announcementClass, 'px-m py-2 text-center text-sm']}>
-          <span>{announcement.message}</span>
-          {announcement.link?.url && announcement.link?.label && (
-            <a
-              href={announcement.link.url}
-              class="ml-2 font-semibold underline underline-offset-2 transition-opacity hover:opacity-80"
-            >
-              {announcement.link.label}
-            </a>
-          )}
-        </div>
-      </div>
-    ) : (
+{showAnnouncement &&
+  (editAttr ? (
+    <div data-sanity={editAttr}>
       <div class:list={[announcementClass, 'px-m py-2 text-center text-sm']}>
         <span>{announcement.message}</span>
         {announcement.link?.url && announcement.link?.label && (
@@ -63,5 +49,17 @@ const announcementClass =
           </a>
         )}
       </div>
-    ))
-}
+    </div>
+  ) : (
+    <div class:list={[announcementClass, 'px-m py-2 text-center text-sm']}>
+      <span>{announcement.message}</span>
+      {announcement.link?.url && announcement.link?.label && (
+        <a
+          href={announcement.link.url}
+          class="ml-2 font-semibold underline underline-offset-2 transition-opacity hover:opacity-80"
+        >
+          {announcement.link.label}
+        </a>
+      )}
+    </div>
+  ))}

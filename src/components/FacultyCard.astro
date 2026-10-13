@@ -33,16 +33,14 @@ const areaSlugs = (person.teachingAreas ?? [])
     class="card-lift group grid grid-cols-[96px_1fr] gap-4 no-underline"
   >
     <div class="img-zoom image-well aspect-[4/5] overflow-hidden">
-      {
-        person.photo?.asset && (
-          <SanityImage
-            source={person.photo}
-            width={240}
-            sizes="96px"
-            class="h-full w-full object-cover"
-          />
-        )
-      }
+      {person.photo?.asset && (
+        <SanityImage
+          source={person.photo}
+          width={240}
+          sizes="96px"
+          class="h-full w-full object-cover"
+        />
+      )}
       <div class="img-tint img-tint-evergreen" aria-hidden="true"></div>
     </div>
     <div>
@@ -51,13 +49,11 @@ const areaSlugs = (person.teachingAreas ?? [])
       </h3>
       {degLine && <p class="mt-1 text-xs text-gold-ink">{degLine}</p>}
       {person.title && <p class="mt-1 text-sm text-foreground/70">{person.title}</p>}
-      {
-        credential && (
-          <span class="mt-2 inline-block rounded-[2px] border border-border px-2 py-0.5 text-[11px] tracking-[0.08em] text-foreground/70 uppercase">
-            {credential}
-          </span>
-        )
-      }
+      {credential && (
+        <span class="mt-2 inline-block rounded-[2px] border border-border px-2 py-0.5 text-[11px] tracking-[0.08em] text-foreground/70 uppercase">
+          {credential}
+        </span>
+      )}
     </div>
   </a>
 </li>

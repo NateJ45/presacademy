@@ -63,57 +63,55 @@ const catalogLabel: string = block?.catalogLabel || 'Order printed catalogs';
 const external = /^https?:\/\//i.test(catalogHref);
 ---
 
-{
-  show && (
-    <section class="issue-band" aria-labelledby={headingId}>
-      <div class="issue-band__inner">
-        <div class="issue-band__art" aria-hidden="true">
-          <div class="insert-mock">
-            <span class="insert-mock__brand">{site.name}</span>
-            <span class="insert-mock__rule" />
-            {termTitle.lead && (
-              <span class="insert-mock__title">
-                {termTitle.lead}
-                {termTitle.year && <i>{termTitle.year}</i>}
-              </span>
-            )}
-            <span class="insert-mock__covers">
-              {COVER_COLORS.map((c) => (
-                <span style={`background: var(--color-cover-${c})`} />
-              ))}
+{show && (
+  <section class="issue-band" aria-labelledby={headingId}>
+    <div class="issue-band__inner">
+      <div class="issue-band__art" aria-hidden="true">
+        <div class="insert-mock">
+          <span class="insert-mock__brand">{site.name}</span>
+          <span class="insert-mock__rule" />
+          {termTitle.lead && (
+            <span class="insert-mock__title">
+              {termTitle.lead}
+              {termTitle.year && <i>{termTitle.year}</i>}
             </span>
-            <span class="insert-mock__lines">
-              <span />
-              <span />
-              <span />
-            </span>
-          </div>
-        </div>
-        <div class="issue-band__text" data-reveal>
-          <p class="mono-detail issue-band__kicker">{kicker}</p>
-          <h2 id={headingId} class="issue-band__heading">
-            {heading}
-          </h2>
-          <p class="issue-band__body">{body}</p>
-          <div class="issue-band__links">
-            {pdfUrl && (
-              <a href={pdfUrl} class="issue-band__link" target="_blank" rel="noopener">
-                {insertLabel} <span class="issue-band__facts">({fileFacts(pdf)})</span>
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-            )}
-            {catalogHref && (
-              <a
-                href={catalogHref}
-                class="issue-band__link"
-                {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                {catalogLabel} <span aria-hidden="true">&rarr;</span>
-              </a>
-            )}
-          </div>
+          )}
+          <span class="insert-mock__covers">
+            {COVER_COLORS.map((c) => (
+              <span style={`background: var(--color-cover-${c})`} />
+            ))}
+          </span>
+          <span class="insert-mock__lines">
+            <span />
+            <span />
+            <span />
+          </span>
         </div>
       </div>
-    </section>
-  )
-}
+      <div class="issue-band__text" data-reveal>
+        <p class="mono-detail issue-band__kicker">{kicker}</p>
+        <h2 id={headingId} class="issue-band__heading">
+          {heading}
+        </h2>
+        <p class="issue-band__body">{body}</p>
+        <div class="issue-band__links">
+          {pdfUrl && (
+            <a href={pdfUrl} class="issue-band__link" target="_blank" rel="noopener">
+              {insertLabel} <span class="issue-band__facts">({fileFacts(pdf)})</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+          {catalogHref && (
+            <a
+              href={catalogHref}
+              class="issue-band__link"
+              {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {catalogLabel} <span aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+)}

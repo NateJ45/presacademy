@@ -30,73 +30,71 @@ const pill =
   'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
 ---
 
-{
-  block && (block.heading || block.body || richBodyText || hasMedia) && (
-    <div class="mx-auto grid max-w-content grid-cols-1 items-center gap-l px-m md:grid-cols-2 md:gap-section-md">
-      <div class={mediaLeft ? 'md:order-2' : 'md:order-1'}>
-        {block.eyebrow && (
-          <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
-        )}
-        {block.heading && (
-          <h2 class="mt-s font-display text-h2">
-            {ha.found ? (
-              <Fragment>
-                {ha.before}
-                <span class="heading-accent">{ha.word}</span>
-                {ha.after}
-              </Fragment>
-            ) : (
-              block.heading
-            )}
-          </h2>
-        )}
-        {richBodyText ? (
-          <p class="mt-m leading-relaxed whitespace-pre-line opacity-85">
-            <InlineRich value={block.bodyRich} />
-          </p>
-        ) : (
-          block.body && (
-            <p class="mt-m leading-relaxed whitespace-pre-line opacity-85">{block.body}</p>
-          )
-        )}
-        {block.ctaLabel && block.ctaUrl && (
-          <div class="mt-l">
-            <a href={block.ctaUrl} class={pill}>
-              {block.ctaLabel}
-            </a>
-          </div>
-        )}
-      </div>
-      {hasMedia && (
-        <div class={mediaLeft ? 'md:order-1' : 'md:order-2'}>
-          {embedUrl ? (
-            <div
-              class="overflow-hidden rounded-md border border-border-soft"
-              style="aspect-ratio: 16/9;"
-            >
-              <iframe
-                src={embedUrl}
-                title={block.heading || 'Video'}
-                loading="lazy"
-                class="h-full w-full"
-                style="border: 0;"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              />
-            </div>
-          ) : hasImage ? (
-            <div class="img-zoom group aspect-[4/3] overflow-hidden rounded-md ring-1 ring-border-soft">
-              <SanityImage
-                source={block.image}
-                width={900}
-                sizes="(min-width: 768px) 45vw, 90vw"
-                alt={block.image?.alt || block.heading || ''}
-                class="h-full w-full object-cover"
-              />
-            </div>
-          ) : null}
+{block && (block.heading || block.body || richBodyText || hasMedia) && (
+  <div class="mx-auto grid max-w-content grid-cols-1 items-center gap-l px-m md:grid-cols-2 md:gap-section-md">
+    <div class={mediaLeft ? 'md:order-2' : 'md:order-1'}>
+      {block.eyebrow && (
+        <p class="text-xs tracking-eyebrow uppercase opacity-70">{block.eyebrow}</p>
+      )}
+      {block.heading && (
+        <h2 class="mt-s font-display text-h2">
+          {ha.found ? (
+            <Fragment>
+              {ha.before}
+              <span class="heading-accent">{ha.word}</span>
+              {ha.after}
+            </Fragment>
+          ) : (
+            block.heading
+          )}
+        </h2>
+      )}
+      {richBodyText ? (
+        <p class="mt-m leading-relaxed whitespace-pre-line opacity-85">
+          <InlineRich value={block.bodyRich} />
+        </p>
+      ) : (
+        block.body && (
+          <p class="mt-m leading-relaxed whitespace-pre-line opacity-85">{block.body}</p>
+        )
+      )}
+      {block.ctaLabel && block.ctaUrl && (
+        <div class="mt-l">
+          <a href={block.ctaUrl} class={pill}>
+            {block.ctaLabel}
+          </a>
         </div>
       )}
     </div>
-  )
-}
+    {hasMedia && (
+      <div class={mediaLeft ? 'md:order-1' : 'md:order-2'}>
+        {embedUrl ? (
+          <div
+            class="overflow-hidden rounded-md border border-border-soft"
+            style="aspect-ratio: 16/9;"
+          >
+            <iframe
+              src={embedUrl}
+              title={block.heading || 'Video'}
+              loading="lazy"
+              class="h-full w-full"
+              style="border: 0;"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            />
+          </div>
+        ) : hasImage ? (
+          <div class="img-zoom group aspect-[4/3] overflow-hidden rounded-md ring-1 ring-border-soft">
+            <SanityImage
+              source={block.image}
+              width={900}
+              sizes="(min-width: 768px) 45vw, 90vw"
+              alt={block.image?.alt || block.heading || ''}
+              class="h-full w-full object-cover"
+            />
+          </div>
+        ) : null}
+      </div>
+    )}
+  </div>
+)}

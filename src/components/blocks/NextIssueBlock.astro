@@ -54,32 +54,30 @@ const newsletter = siteSettings?.newsletter
   : null;
 ---
 
-{
-  term && (
-    <section class="issue-band" aria-labelledby={headingId}>
-      <div class="issue-band__inner">
-        {course && (
-          <div class="issue-band__art issue-band__art--cover">
-            <CourseCover course={course} size="sm" />
-          </div>
-        )}
-        <div class="issue-band__text" data-reveal>
-          <p class="mono-detail issue-band__kicker">{kicker}</p>
-          <h2 id={headingId} class="issue-band__heading">
-            {heading}
-          </h2>
-          <p class="issue-band__body">{body}</p>
-          {newsletter && (
-            <NewsletterSignup
-              client:visible
-              newsletter={newsletter}
-              source="next-issue"
-              variant="band"
-              inputId={`${headingId}-email`}
-            />
-          )}
+{term && (
+  <section class="issue-band" aria-labelledby={headingId}>
+    <div class="issue-band__inner">
+      {course && (
+        <div class="issue-band__art issue-band__art--cover">
+          <CourseCover course={course} size="sm" />
         </div>
+      )}
+      <div class="issue-band__text" data-reveal>
+        <p class="mono-detail issue-band__kicker">{kicker}</p>
+        <h2 id={headingId} class="issue-band__heading">
+          {heading}
+        </h2>
+        <p class="issue-band__body">{body}</p>
+        {newsletter && (
+          <NewsletterSignup
+            client:visible
+            newsletter={newsletter}
+            source="next-issue"
+            variant="band"
+            inputId={`${headingId}-email`}
+          />
+        )}
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)}

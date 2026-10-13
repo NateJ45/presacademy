@@ -57,10 +57,8 @@ const schemas = [
   hideFromSearch={page?.hideFromSearch === true}
 >
   <SingletonPage pageType="privacyPage" {page} {settings}>
-    {
-      /* Hero — photo variant, short height. Rendered here rather than inside
-        SingletonPage so its scoped style stays on the pages that use it. */
-    }
+    {/* Hero — photo variant, short height. Rendered here rather than inside
+        SingletonPage so its scoped style stays on the pages that use it. */}
     <Hero
       slot="hero"
       eyebrow={heroEyebrow}

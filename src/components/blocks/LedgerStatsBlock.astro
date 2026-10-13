@@ -45,78 +45,31 @@ const countupGrid = items.some((s) => s?.count) ? true : undefined;
 const landmarkLabel = block?.landmarkLabel || undefined;
 ---
 
-{
-  items.length > 0 &&
-    (variant === 'quad' ? (
-      <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
-        {/* The grid is written out twice, on purpose (2026-08-26, Phase 4).
+{items.length > 0 &&
+  (variant === 'quad' ? (
+    <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
+      {/* The grid is written out twice, on purpose (2026-08-26, Phase 4).
             Astro serializes `data-countup-grid={true}` as `data-countup-grid="true"`,
             while home wrote the attribute BARE, and the parity harness reads
             bytes: that one difference was the only diff in the whole home
             conversion. A valueless attribute cannot be produced from an
             expression, so the presence of the attribute is a branch instead. */}
-        {countupGrid ? (
-          <div
-            class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4"
-            data-stagger-grid
-            data-countup-grid
-          >
-            {items.map((s: any, i: number) => (
-              <div
-                class:list={[
-                  'px-m py-l',
-                  i < items.length - 1 && 'border-border-soft lg:border-r',
-                  i < 2 && 'border-b border-border-soft lg:border-b-0',
-                ]}
-              >
-                <p
-                  class="font-display text-h2 text-chapel-ink tabular-nums"
-                  data-countup={s.count ? true : undefined}
-                >
-                  {s.value}
-                </p>
-                <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid>
-            {items.map((s: any, i: number) => (
-              <div
-                class:list={[
-                  'px-m py-l',
-                  i < items.length - 1 && 'border-border-soft lg:border-r',
-                  i < 2 && 'border-b border-border-soft lg:border-b-0',
-                ]}
-              >
-                <p
-                  class="font-display text-h2 text-chapel-ink tabular-nums"
-                  data-countup={s.count ? true : undefined}
-                >
-                  {s.value}
-                </p>
-                <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-    ) : (
-      <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
+      {countupGrid ? (
         <div
-          class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3"
+          class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4"
           data-stagger-grid
-          data-countup-grid={countupGrid}
+          data-countup-grid
         >
           {items.map((s: any, i: number) => (
             <div
               class:list={[
                 'px-m py-l',
-                i < items.length - 1 && 'border-b border-border-soft sm:border-r sm:border-b-0',
+                i < items.length - 1 && 'border-border-soft lg:border-r',
+                i < 2 && 'border-b border-border-soft lg:border-b-0',
               ]}
             >
               <p
-                class="font-display text-h3 text-chapel-ink"
+                class="font-display text-h2 text-chapel-ink tabular-nums"
                 data-countup={s.count ? true : undefined}
               >
                 {s.value}
@@ -125,6 +78,51 @@ const landmarkLabel = block?.landmarkLabel || undefined;
             </div>
           ))}
         </div>
-      </section>
-    ))
-}
+      ) : (
+        <div class="mx-auto grid max-w-content grid-cols-2 lg:grid-cols-4" data-stagger-grid>
+          {items.map((s: any, i: number) => (
+            <div
+              class:list={[
+                'px-m py-l',
+                i < items.length - 1 && 'border-border-soft lg:border-r',
+                i < 2 && 'border-b border-border-soft lg:border-b-0',
+              ]}
+            >
+              <p
+                class="font-display text-h2 text-chapel-ink tabular-nums"
+                data-countup={s.count ? true : undefined}
+              >
+                {s.value}
+              </p>
+              <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  ) : (
+    <section class="border-b border-border-soft bg-background" aria-label={landmarkLabel}>
+      <div
+        class="mx-auto grid max-w-content grid-cols-1 sm:grid-cols-3"
+        data-stagger-grid
+        data-countup-grid={countupGrid}
+      >
+        {items.map((s: any, i: number) => (
+          <div
+            class:list={[
+              'px-m py-l',
+              i < items.length - 1 && 'border-b border-border-soft sm:border-r sm:border-b-0',
+            ]}
+          >
+            <p
+              class="font-display text-h3 text-chapel-ink"
+              data-countup={s.count ? true : undefined}
+            >
+              {s.value}
+            </p>
+            <p class="mt-2 text-xs tracking-eyebrow text-foreground/80 uppercase">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}

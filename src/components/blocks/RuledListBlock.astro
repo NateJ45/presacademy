@@ -53,23 +53,23 @@ const headingId = block?.headingId || 'recurring-heading';
   <div class="mx-auto max-w-content px-m py-section-md">
     <div data-reveal>
       <p class="eyebrow text-xs tracking-eyebrow text-foreground/80 uppercase">{block?.eyebrow}</p>
-      <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">{block?.heading}</h2>
+      <h2 id={headingId} class="mt-2 font-display text-h2 text-foreground">
+        {block?.heading}
+      </h2>
     </div>
     <ul
       class="mt-l max-w-3xl list-none divide-y divide-border-soft border-t border-b border-border-soft p-0"
       data-stagger-grid
     >
-      {
-        items.map((ev: any) => (
-          <li class="py-m">
-            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-              <span class="font-display text-h4 text-foreground">{ev.title}</span>
-              <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
-            </div>
-            {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
-          </li>
-        ))
-      }
+      {items.map((ev: any) => (
+        <li class="py-m">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <span class="font-display text-h4 text-foreground">{ev.title}</span>
+            <span class="shrink-0 text-sm text-foreground/70">{whenLabel(ev)}</span>
+          </div>
+          {ev.summary && <p class="mt-1 text-foreground/75">{ev.summary}</p>}
+        </li>
+      ))}
     </ul>
   </div>
 </section>
