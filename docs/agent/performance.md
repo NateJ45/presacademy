@@ -69,7 +69,7 @@ Cloudflare auto-injects an `X-Robots-Tag: noindex` response header on every `*.w
 - Ken Burns slides after the first are deferred (`SanityImage defer` + a post-`load` hydration script) so only the LCP slide downloads during first paint
 - Logo PNGs moved from `public/` to `src/assets/` so Astro emits WebPs
 - Single-img theme-aware logo (one fetch per page load instead of two)
-- SanityImage emits real width-descriptor srcset with 8 breakpoints (400-2400)
+- SanityImage emits real width-descriptor srcset with 11 breakpoints (160-2400; small steps added 2026-10-13, see images.md)
 - AVIF as default format (`'auto'`) -- Sanity picks AVIF on supporting browsers
 - `fetchpriority="high"` on hero LCP image
 - Portrait inline images capped to `max-w-[600px]` (smaller files at the smaller cap)
