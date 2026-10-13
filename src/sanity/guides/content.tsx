@@ -1243,6 +1243,17 @@ export const guides: Guide[] = [
           'List **Selected publications**: title, publisher or venue, year, and an optional link.',
           'Write the **Bio** as a few short, scholarly but warm paragraphs.',
           'Add **One human line**: a single disarming sentence, shown in italic, like "She makes the hardest passages feel like an open door."',
+        ],
+      },
+      { kind: 'h', text: 'This term' },
+      {
+        kind: 'steps',
+        items: [
+          'All optional. Ask the teacher for these in their own words; do not write them on their behalf.',
+          'Fill in **On my desk** with what they are reading right now, up to 100 characters. It shows in italic after "On my desk:" on their profile and in the faculty strip when it is set to Contributors.',
+          'Upload a **Spoken introduction** if they have recorded one: a minute or two of them opening a class, as an MP3 or M4A. Nothing downloads for a visitor until they press play.',
+          'Paste the **Transcript of the introduction**, every word, with a blank line between paragraphs. It is required whenever a recording is uploaded: the document will not publish without it, because people who cannot hear the recording need to read it.',
+          'Type the **Length of the introduction** as minutes and seconds, like "1:32". It shows beside the play button.',
           '`Publish`.',
         ],
       },
@@ -1251,6 +1262,12 @@ export const guides: Guide[] = [
         tone: 'primary',
         title: 'Courses taught fills itself',
         text: 'You do not list courses on a faculty profile. The site reads that from each course\'s **Instructors** field, so "Courses taught" stays correct on its own. To link a teacher to a course, open the course and add them there.',
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'The Contributors style of the faculty strip',
+        text: 'A faculty strip section has a **Style** choice: Cards (the original row) or Contributors. Contributors sets each teacher as a row with their portrait, their degree and ordination, "In this issue:" (the courses they teach that run in the next term, worked out from each course\'s **Instructors** and **Offerings**), their On my desk line and the play button. Anything left empty simply does not show.',
       },
       {
         kind: 'callout',

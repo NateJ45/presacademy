@@ -868,11 +868,46 @@ export async function getFeaturedFaculty(limit = 4, fetcher = sanityFetch) {
   );
 }
 
+// The spoken introduction, as the IntroAudio island needs it. The transcript
+// travels with the file so a recording never renders without its text
+// alternative (WCAG 1.2.1); the renderers check both before showing a player.
+const INTRO_AUDIO = `"introAudio": introAudio.asset->{ url, mimeType },
+  introAudioTranscript, introAudioLength`;
+
+// Contributors: the faculty strip's "contributors" variant (2026-10-13, Term
+// Issue PR 3). The roster card fields plus the reading line, the audio, and
+// "inThisIssue": the courses this teacher is an instructor on that have an
+// offering in the NEXT term (the same term getNextTerm picks). The label is
+// `coalesce(courseCode, title)` so the optional course code a parallel PR adds
+// is picked up when present; before that field exists GROQ reads it as null and
+// the title shows. Two reads (the term, then the roster) keep the GROQ legible;
+// with no upcoming term, $termId is "" and every inThisIssue list is empty.
+export async function getContributors(limit = 4, fetcher = sanityFetch) {
+  const term = await getNextTerm(fetcher).catch(() => null);
+  return fetcher(
+    `*[_type == "facultyMember" && archived != true] | order(orderRank asc, displayOrder asc, name asc)[0...$limit]{
+      _id, name, honorific, title, "slug": slug.current, ordination, denomination,
+      photo${IMAGE_PROJECTION},
+      "topDegree": degrees[0]{ degree, field, institution },
+      currentlyReading,
+      ${INTRO_AUDIO},
+      "inThisIssue": *[_type == "course" && archived != true && ^._id in instructors[]._ref
+        && count(offerings[term._ref == $termId]) > 0] | order(displayOrder asc, title asc){
+        _id, "slug": slug.current, "label": coalesce(courseCode, title)
+      }
+    }`,
+    { limit, termId: term?._id ?? '' },
+    [],
+  );
+}
+
 export async function getFacultyBySlug(slug: string) {
   return sanityFetch(
     `*[_type == "facultyMember" && archived != true && slug.current == $slug][0]{
       _id, name, honorific, title, "slug": slug.current,
       ordination, denomination, yearsTeaching, humanLine, bio, email, specializations,
+      currentlyReading,
+      ${INTRO_AUDIO},
       photo${IMAGE_PROJECTION},
       seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
       "teachingAreas": teachingAreas[]->{ _id, title, "slug": slug.current },
