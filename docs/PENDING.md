@@ -10,20 +10,29 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
-- **Two orphan fields on `siteSettings`** (found 2026-10-13 by `npm run audit:data`).
+- **Two orphan fields on `siteSettings`, checked 2026-10-13: not restored, data left.**
   Stored data with no schema field, so the Studio shows an "Unknown fields" banner
-  with a "Remove field" button on Site settings (never click it, gotcha #1). Nothing
-  in `src/` reads either field. Published `siteSettings` only (no draft), last
-  updated 2026-06-15:
+  with a "Remove field" button on Site settings (never click it, gotcha #1).
+  Published `siteSettings` only (no draft), last updated 2026-06-15:
   - `admissionsEmail`: `"info@presbyterianacademy.org"`
   - `denominationStatement`: `"A PC(USA) school of theological formation, holding to
 the Westminster Standards and the Book of Confessions."`
 
-  Removing them deletes data, so it waits for Nathan. Options: unset both in an
-  idempotent script after a backup (mas-monograms `scripts/fix-orphan-data.mjs` is
-  the model; vault gotcha removed-schema-field-leaves-data-and-unknown-fields-banner),
-  or add the fields back to the schema if either is wanted (the denomination line may
-  be worth keeping somewhere). Then re-run `npm run audit:data` and expect 0.
+  What history says: neither field was ever in the schema, so nothing removed them.
+  The 2026-06-13 IA spec (`docs/superpowers/specs/2026-06-13-lay-school-ia-content-model.md`)
+  planned both (the statement as a footer line), and `scripts/seed-live-singletons.mjs`
+  (commit 7e59fd3, same day) writes them, but the schema step never landed. No file in
+  `src/` reads either field. `admissionsEmail` holds the same address as `email`, which
+  is the one the site uses. The denomination is shown, but not from this field: the
+  footer imprint hardcodes `PC(USA)` beside the locality, and the Westminster and Book
+  of Confessions wording lives in About and the FAQ. Restoring the fields would give
+  editors two boxes that change nothing on the site, so they were left out.
+
+  Nathan decides: (a) wire `denominationStatement` into the footer imprint (a design
+  change) and only then add it to `siteSettings.ts`; or (b) unset both after a backup,
+  dry run first (mas-monograms `scripts/fix-orphan-data.mjs` is the model), and drop
+  the two lines from `seed-live-singletons.mjs` so a reseed does not bring them back.
+  Then re-run `npm run audit:data` and expect 0.
 
 - **Finish the form cutover to `/api/contact/`** (2026-10-13, starter card 45).
   The code, D1 database, Email Routing, Turnstile widget and Worker secrets are
