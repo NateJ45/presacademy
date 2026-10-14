@@ -163,7 +163,7 @@ To mirror live copy into Studio today, there is nothing to mirror: the sections 
 
 ```bash
 node scripts/seed-page-copy.mjs            # dry run: lists the empty fields it would fill
-NCS_PRODUCTION_WRITE=yes node scripts/seed-page-copy.mjs --apply    # patch them (Nathan only)
+NCS_PRODUCTION_WRITE=yes node scripts/seed-page-copy.mjs --apply    # patch them (backup + dry run first)
 ```
 
 It patches only the `homePage`, `aboutPage`, `getStartedPage`, `facultyPage`, and `siteSettings` (the `funder` line) docs, fills **only empty fields** (`setIfMissing` semantics, never clobbers edited copy), and is idempotent — re-running once the fields are set does nothing. The built-in copy lives in the `HOME` / `ABOUT` / `GET_STARTED` / `FACULTY` / `SETTINGS` blocks at the top of the script; keep those in sync with the `.astro` fallbacks if you change one.
