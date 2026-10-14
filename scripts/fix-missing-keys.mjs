@@ -16,6 +16,7 @@
 // SANITY_AUTH_TOKEN). The token is never printed.
 // =============================================================================
 import { loadEnv } from './lib/loadEnv.mjs';
+import { guardProductionWrite } from './lib/production-guard.mjs';
 import crypto from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +26,9 @@ const projectId = env.PUBLIC_SANITY_PROJECT_ID || 'uz2sl3zp';
 const dataset = env.PUBLIC_SANITY_DATASET || 'production';
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;
 const APPLY = process.argv.includes('--apply');
+// Production second factor (PORTS.md card 86): --apply on `production` also needs
+// NCS_PRODUCTION_WRITE=yes in the real process environment. Runs before any request.
+guardProductionWrite({ apply: APPLY, dataset });
 
 if (!token) {
   console.error('fix-missing-keys: no write token in .env (SANITY_API_WRITE_TOKEN).');

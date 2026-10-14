@@ -27,11 +27,13 @@
     "format:check": "prettier --check .",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:unit": "node --experimental-strip-types --test src/lib/*.test.ts",
+    "test:unit": "node --experimental-strip-types --test src/lib/*.test.ts && npm run test:scripts",
+    "test:scripts": "node --test scripts/lib/*.test.mjs",
     "test:visual": "playwright test -c playwright.visual.config.ts",
     "serve:dist": "http-server dist/client -p 4321 -s -c-1 --silent",
     "check:links": "linkinator ./dist/client --recurse --skip \"^https?://(?!127\\.0\\.0\\.1)\" --skip \"/studio\" --skip \"/preview\" --skip \"/api\"",
     "sync-check": "node scripts/sync-check.mjs",
+    "audit:data": "node scripts/audit-data-vs-schema.mjs",
     "contact:migration": "node --experimental-strip-types scripts/gen-contact-migration.mjs"
   },
   "dependencies": {

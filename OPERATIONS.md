@@ -163,7 +163,7 @@ To mirror live copy into Studio today, there is nothing to mirror: the sections 
 
 ```bash
 node scripts/seed-page-copy.mjs            # dry run: lists the empty fields it would fill
-node scripts/seed-page-copy.mjs --apply    # patch them
+NCS_PRODUCTION_WRITE=yes node scripts/seed-page-copy.mjs --apply    # patch them (Nathan only)
 ```
 
 It patches only the `homePage`, `aboutPage`, `getStartedPage`, `facultyPage`, and `siteSettings` (the `funder` line) docs, fills **only empty fields** (`setIfMissing` semantics, never clobbers edited copy), and is idempotent — re-running once the fields are set does nothing. The built-in copy lives in the `HOME` / `ABOUT` / `GET_STARTED` / `FACULTY` / `SETTINGS` blocks at the top of the script; keep those in sync with the `.astro` fallbacks if you change one.
@@ -174,8 +174,8 @@ The school's placeholder-photo seeder. It sets the home hero to its 6-image Ken 
 
 ```bash
 node scripts/seed-academic-images.mjs            # dry run: what it would set/replace
-node scripts/seed-academic-images.mjs --apply    # set hero + replace covers/heroes
-node scripts/seed-academic-images.mjs --apply --force-hero  # also OVERWRITE an already-set hero
+NCS_PRODUCTION_WRITE=yes node scripts/seed-academic-images.mjs --apply    # set hero + replace covers/heroes
+NCS_PRODUCTION_WRITE=yes node scripts/seed-academic-images.mjs --apply --force-hero  # also OVERWRITE an already-set hero
 ```
 
 The curated picks are bundled in `src/assets/placeholders/acad-*.jpg`; the one-off Openverse curation tooling (probe + collector + downloads) is gitignored scratch under `scripts/_*`. The photos are public-domain placeholders for real Academy photography. CC0 has little smiling-students / teacher-at-work stock, so for warmer faces supply a Pexels/Unsplash key or real photography.
@@ -186,8 +186,18 @@ The broader companion to `seed-page-copy.mjs` (added 2026-06-15). Render-neutral
 
 ```bash
 node scripts/seed-editability.mjs            # dry run: 40 field patches + 24 new docs
-node scripts/seed-editability.mjs --apply    # write to the live dataset, then studio:deploy + rebuild
+NCS_PRODUCTION_WRITE=yes node scripts/seed-editability.mjs --apply    # write to the live dataset, then rebuild
 ```
+
+Its privacy body states the live analytics truth (GA4 on, it sets cookies, in the wording Nathan approved 2026-10-04). If analytics ever changes, change that copy, the stored `privacyPage` and the `LegalBodyBlock.astro` fallback together.
+
+### The production second factor on every write (2026-10-13)
+
+Every script here that writes to Sanity is a dry run unless it gets `--apply`, and on the `production` dataset (the only one this site has) `--apply` also needs `NCS_PRODUCTION_WRITE=yes` set in the same command (PowerShell: `$env:NCS_PRODUCTION_WRITE='yes'; node scripts/x.mjs --apply; Remove-Item Env:NCS_PRODUCTION_WRITE`). Scripts on `scripts/lib/sanity-lib.mjs` get it at import; the ones that build their own client call `scripts/lib/production-guard.mjs`. The rule and the backtick warning that goes with it: `.claude/rules/sanity-and-scripts.md`.
+
+### Check stored data against the schema (`npm run audit:data`)
+
+Read only. Walks every published and draft document against the compiled schema and reports array items with no `_type` or `_key`, orphan fields (stored data with no schema field, which the Studio shows as an "Unknown fields" banner), wrong kinds and unknown types. Exit 1 on any finding. To fix missing `_type`: back up (`npx sanity dataset export production <file> --raw`, outside the repo), `node scripts/backfill-array-types.mjs` (dry run), then `NCS_PRODUCTION_WRITE=yes node scripts/backfill-array-types.mjs --apply`, then re-run the audit. Orphan fields are NOT unset by any script here: removing them deletes data, so they wait for Nathan (`docs/PENDING.md`).
 
 ---
 

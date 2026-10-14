@@ -20,6 +20,7 @@
 // Run it once after deploying the new home/about schema (npm run studio:deploy).
 
 import { createClient } from '@sanity/client';
+import { guardProductionWrite } from './lib/production-guard.mjs';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,6 +48,9 @@ function parseEnv(p) {
 const env = { ...parseEnv(resolve(root, '.env')), ...process.env };
 const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.SANITY_STUDIO_PROJECT_ID;
 const dataset = env.PUBLIC_SANITY_DATASET || env.SANITY_STUDIO_DATASET || 'production';
+// Production second factor (PORTS.md card 86): --apply on `production` also needs
+// NCS_PRODUCTION_WRITE=yes in the real process environment. Runs before any request.
+guardProductionWrite({ apply: APPLY, dataset });
 const token = env.SANITY_API_WRITE_TOKEN || env.SANITY_AUTH_TOKEN;
 if (!projectId || !token) {
   console.error('Missing PUBLIC_SANITY_PROJECT_ID or SANITY_API_WRITE_TOKEN in .env');
