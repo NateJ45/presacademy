@@ -2,7 +2,7 @@
 
 > Custom CSS utilities and JS behaviors layered on Tailwind: the eyebrow rubric, brand stripe, card-lift, surface-warm / surface-chapel, reading-progress, sticky-header, nav-underline, and print stylesheet.
 
-Animation behaviors (Lenis, scroll reveals, stagger grid, hero entry, view transitions, Ken Burns slideshow, script accent opt-in) are documented separately in `animation.md`.
+Animation behaviors (native scrolling, scroll reveals, stagger grid, hero entry, view transitions, Ken Burns slideshow, script accent opt-in) are documented separately in `animation.md`.
 
 > **Direction A note (2026-06-14).** The brand evolution changed parts of this layer: the structural bands now read forest green (not oxblood), keyword emphasis is green, the Romanesque arch is retired (`.arch-top` renders near-rectangular), and the paper grain is turned off (`body::before` at `opacity: 0`). The new unifying signature is the **eyebrow rubric** below. Background: `docs/research/2026-06-14-brand-direction-debate.md`.
 
@@ -147,8 +147,8 @@ initThing();
 document.addEventListener('astro:page-load', initThing);
 ```
 
-Pattern used by: scroll-reveal observer, sticky-header listener, reading-progress, sticky CTA chip. See `animation.md` for details on the Lenis + view-transitions interaction, which is a special case.
+Pattern used by: scroll-reveal observer, sticky-header listener, reading-progress, sticky CTA chip. See `animation.md` for the scroll reset on navigation, which Astro's ClientRouter handles.
 
 ---
 
-Cross-reference: `animation.md` covers Lenis smooth scroll, scroll reveals, stagger reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent. (The paper grain that used to be listed here is retired in Direction A — see Paper grain above.)
+Cross-reference: `animation.md` covers native scrolling, scroll reveals, stagger reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent. (The paper grain that used to be listed here is retired in Direction A — see Paper grain above.)

@@ -307,7 +307,7 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
 2. No new fonts, no new dependencies, no client-side JS for decoration. (The
    one deliberate exception so far: IBM Plex Mono 400, approved 2026-10-13 for
    the Term Issue covers.)
-3. Desktop nav stays server-rendered; Lenis + reveal observers stay.
+3. Desktop nav stays server-rendered; reveal observers stay (Lenis was removed 2026-10-13; scrolling is native).
 4. No em-dashes in visitor-facing copy. Voice rules: `docs/brand/voice.md`.
 5. Defend Lighthouse 100/100/100/100 and zero CLS (animate transform/opacity
    only; never height/top).

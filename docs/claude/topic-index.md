@@ -15,8 +15,8 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 | Stack detail + astro.config landmines                                              | `docs/agent/stack-and-config.md`                                                   |
 | Page + section architecture, nav, visibility toggles                               | `docs/agent/page-architecture.md`                                                  |
 | Brand colors + theme system (light/dark discipline)                                | `docs/agent/theme-and-color.md`                                                    |
-| Polish layer (card-lift, scroll, Lenis, script accents)                            | `docs/agent/polish-layer.md`                                                       |
-| Animation layer (Lenis, motion, scroll-reveal, Ken Burns hero)                     | `docs/agent/animation.md`                                                          |
+| Polish layer (card-lift, scroll, script accents)                                   | `docs/agent/polish-layer.md`                                                       |
+| Animation layer (native scroll, motion, scroll-reveal, Ken Burns hero)             | `docs/agent/animation.md`                                                          |
 | Typography + spacing tokens                                                        | `docs/agent/design-tokens.md`                                                      |
 | Component catalog + long-read layout                                               | `docs/agent/components.md`                                                         |
 | Component sourcing guide (approved sources, token-remap cheat sheet)               | `docs/agent/component-sources.md`                                                  |

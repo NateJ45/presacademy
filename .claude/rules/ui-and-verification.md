@@ -13,7 +13,7 @@ paths:
 Numbering is stable: gotchas #9 and #21 from the original CLAUDE.md.
 
 <!-- prettier-ignore-start -->
-9. **`overflow-x: clip` on `html` + `body`** (in `globals.css`, `@layer base`) is the mobile horizontal-scroll guard: the scroll-reveal `.reveal-l`/`.reveal-r` `translate` would otherwise shift not-yet-revealed elements off-screen and let every page wobble sideways on phones. Don't remove it or swap it to `overflow: hidden` (which breaks the sticky course-detail aside and Lenis's smooth scroll).
+9. **`overflow-x: clip` on `html` + `body`** (in `globals.css`, `@layer base`) is the mobile horizontal-scroll guard: the scroll-reveal `.reveal-l`/`.reveal-r` `translate` would otherwise shift not-yet-revealed elements off-screen and let every page wobble sideways on phones. Don't remove it or swap it to `overflow: hidden` (which breaks the sticky course-detail aside).
 21. **`src/components/ui/accordion.tsx` is customized** (removed the `h-(--radix-accordion-content-height)` lock, dropped `text-sm font-medium` from the trigger). Reinstalling via `npx shadcn add` reverts it; reapply the changes.
 <!-- prettier-ignore-end -->
 
