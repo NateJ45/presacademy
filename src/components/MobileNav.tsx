@@ -231,7 +231,7 @@ export default function MobileNav({
                 On the shelf this term
               </p>
               <ul
-                className="mt-2.5 flex list-none gap-2 overflow-x-auto p-0"
+                className="mt-2.5 flex [scrollbar-width:none] list-none gap-2 overflow-x-auto p-0 [&::-webkit-scrollbar]:hidden"
                 aria-labelledby="contents-shelf"
               >
                 {shelf.map((c) => (
