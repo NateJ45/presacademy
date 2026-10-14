@@ -107,7 +107,7 @@ test('issueLine says "enrolling now" only when registration is open', () => {
   };
   // Before registration opens: the date, not a promise.
   assert.deepEqual(issueLine(spring, '2026-10-13'), {
-    short: 'Spring 2027 term',
+    short: 'Spring 2027 · first class 26 Jan',
     medium: 'Spring 2027 term · registration opens Sun 15 Nov',
     full: 'Spring 2027 term · registration opens Sun 15 Nov · first class Tue 26 Jan',
   });

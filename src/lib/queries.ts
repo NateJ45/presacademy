@@ -129,6 +129,7 @@ export const SITE_SETTINGS_PROJECTION = `{
     newsletter,
     navItems[]{
       ${NAV_LINK_FIELDS},
+      menuNote,
       links[]${NAV_LINK_PROJECTION}
     },
     footerColumns[]{
@@ -1023,6 +1024,77 @@ export async function getNextIssue(fetcher = sanityFetch) {
     null,
   );
   return { term, course: course ?? null };
+}
+
+// ---- Site chrome: the masthead, the contents menu, the back cover ----------
+// (2026-10-13, the chrome redesign.) One request for everything the header and
+// footer show beyond siteSettings: the next term, the course and faculty counts
+// for the nav note and the menu facts, the cheapest pricing tier ("from $95"),
+// and every course's cover fields for the fanned covers, the menu shelf and the
+// footer's "In this issue". `inTerm` marks the courses with a cohort in the
+// next term; src/lib/chrome.ts (orderShelf) puts those first.
+//
+// Memoized like getSiteSettings, because Header and Footer both call it on
+// every page. The memo expires after a minute so the SSR preview worker, which
+// lives longer than a build, never shows a count more than a minute stale.
+let _chromePromise: Promise<ChromeData> | null = null;
+let _chromeAt = 0;
+
+export interface ChromeCourse {
+  title?: string | null;
+  slug?: string | null;
+  courseCode?: string | null;
+  coverColor?: string | null;
+  coverOrnament?: string | null;
+  startHere?: boolean | null;
+  featured?: boolean | null;
+  inTerm?: boolean | null;
+  teachingAreas?: Array<{ slug?: string | null } | null> | null;
+}
+
+export interface ChromeData {
+  term: {
+    _id?: string;
+    title?: string | null;
+    startDate?: string | null;
+    registrationOpens?: string | null;
+    registrationDeadline?: string | null;
+    status?: string | null;
+  } | null;
+  courseCount: number;
+  facultyCount: number;
+  lowestPrice: number | null;
+  courses: ChromeCourse[];
+}
+
+export async function getChromeData(): Promise<ChromeData> {
+  if (_chromePromise && Date.now() - _chromeAt < 60_000) return _chromePromise;
+  _chromeAt = Date.now();
+  _chromePromise = (async () => {
+    const term = await getNextTerm().catch(() => null);
+    const data = await sanityFetch<any>(
+      `{
+        "courseCount": count(*[_type == "course" && archived != true]),
+        "facultyCount": count(*[_type == "facultyMember" && archived != true]),
+        "lowestPrice": *[_type == "pricingTier" && archived != true && amount > 0] | order(amount asc)[0].amount,
+        "courses": *[_type == "course" && archived != true] | order(displayOrder asc, title asc){
+          title, "slug": slug.current, courseCode, coverColor, coverOrnament, startHere, featured,
+          "teachingAreas": teachingAreas[]->{ "slug": slug.current },
+          "inTerm": count(offerings[term._ref == $termId]) > 0
+        }
+      }`,
+      { termId: term?._id ?? '' },
+      null,
+    ).catch(() => null);
+    return {
+      term: term ?? null,
+      courseCount: typeof data?.courseCount === 'number' ? data.courseCount : 0,
+      facultyCount: typeof data?.facultyCount === 'number' ? data.facultyCount : 0,
+      lowestPrice: typeof data?.lowestPrice === 'number' ? data.lowestPrice : null,
+      courses: Array.isArray(data?.courses) ? data.courses : [],
+    };
+  })();
+  return _chromePromise;
 }
 
 export async function getTerms() {

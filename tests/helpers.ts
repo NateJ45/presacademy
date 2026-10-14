@@ -49,6 +49,8 @@ export async function settle(page: Page): Promise<void> {
       /* Continuous loops (ticker, Ken Burns, parallax): stop them so nothing
          moves between measurement and assertion. */
       .marquee__track, .hero-slide, .hero-kb-img, .parallax-slow { animation: none !important; }
+      /* The condensed masthead bar (2026-10-13) slides in on scroll: no slide. */
+      .masthead-bar, .masthead-bar[data-shown] { transition: none !important; }
     `,
   });
   // Also flip the observer-driven classes so the IntersectionObservers stop

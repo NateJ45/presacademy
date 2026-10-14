@@ -40,7 +40,8 @@ export const siteSettings = defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
-      description: 'Short tagline shown under the wordmark in the footer.',
+      description:
+        'Short tagline shown under the name at the top of every page, and in the top bar when no term is scheduled.',
       group: 'identity',
       validation: (Rule) => Rule.required().max(140),
     }),
@@ -58,7 +59,7 @@ export const siteSettings = defineType({
       title: 'Funder / underwriter (optional)',
       type: 'string',
       description:
-        'Shown in the footer on every page as "Made possible by the [name]". Example: "Presbytery of Cincinnati". Clear this to hide the line.',
+        'Named in the footer on every page: "...and made possible by the [name]". Example: "Presbytery of Cincinnati". Clear this to drop that part of the sentence.',
       group: 'identity',
     }),
     defineField({
@@ -89,7 +90,7 @@ export const siteSettings = defineType({
       title: 'Office hours (optional)',
       type: 'string',
       description:
-        'Shown on the Contact page. Example: "Tuesday-Friday, 10am-2pm". Leave blank to hide.',
+        'Shown on the Contact page, in the footer and at the foot of the phone menu. Example: "Tuesday-Friday, 10am-2pm". Leave blank to hide.',
       group: 'identity',
     }),
     defineField({
@@ -167,7 +168,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'The links in the website header. Drag to reorder. Add a "Link" for a single page, or a "Dropdown menu" to group several links under one label. The header design fits at most six, so keep the list short. Leave this empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
+        'The links in the website header and in the phone "Contents" menu. Drag to reorder. Add a "Link" for a single page, or a "Dropdown menu" to group several links under one label. The header design fits at most six, so keep the list short. Each link can carry a short "Menu note" for its row in the phone menu. Leave this empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
       validation: (Rule) => Rule.max(6),
       of: [
         // The shared link object (./navLink.ts). Existing menu items already
@@ -234,11 +235,11 @@ export const siteSettings = defineType({
     // social) is always shown automatically and is not configured here.
     defineField({
       name: 'footerColumns',
-      title: 'Footer link columns',
+      title: 'Footer index links',
       type: 'array',
       group: 'navigation',
       description:
-        'The titled link columns in the footer, for example "Visit", "Get Involved", "Connect". Drag to reorder. Leave empty to use the built-in default columns. The "Get in touch" column (email, phone, social) always shows automatically. Aim for three columns so the footer grid stays balanced; four is the most that fits.',
+        'The links in the footer index. The footer prints every link here (and the small-print links below) once, sorted A to Z, so the column headings and the order are only for keeping the list tidy in Studio. A page linked twice shows once, under the first label. Leave empty to use the built-in links. The address, office hours and email come from Identity & contact.',
       validation: (Rule) => Rule.max(4),
       of: [
         defineArrayMember({
@@ -301,7 +302,7 @@ export const siteSettings = defineType({
     }),
 
     // The button at the right of the header (and at the top of the phone menu).
-    // Everything is optional: an empty label keeps the built-in "Request info"
+    // Everything is optional: an empty label keeps the built-in "Request information"
     // pointing at Get Started, and turning it off removes the button everywhere.
     defineField({
       name: 'headerCta',
@@ -309,7 +310,7 @@ export const siteSettings = defineType({
       type: 'object',
       group: 'navigation',
       description:
-        'The one button at the right of the header. Leave the boxes blank to keep the built-in "Request info" button.',
+        'The one button at the right of the header. Leave the boxes blank to keep the built-in "Request information" button.',
       options: { collapsible: true, collapsed: true },
       fields: [
         defineField({
@@ -323,7 +324,7 @@ export const siteSettings = defineType({
           name: 'label',
           title: 'Button text',
           type: 'string',
-          description: 'Leave blank for "Request info".',
+          description: 'Leave blank for "Request information".',
         }),
         defineField({
           name: 'link',
@@ -335,7 +336,7 @@ export const siteSettings = defineType({
       preview: {
         select: { show: 'show', label: 'label' },
         prepare: ({ show, label }) => ({
-          title: label || 'Request info',
+          title: label || 'Request information',
           subtitle: show === false ? 'Hidden' : 'Header button',
         }),
       },
@@ -352,6 +353,11 @@ export const siteSettings = defineType({
       description:
         'The "Get in touch" email at the foot of the phone menu. On unless you turn it off.',
       initialValue: true,
+      // The 2026-10-13 "Contents" menu has no email or social row (the footer
+      // carries both), so this switch has nothing to switch. Hidden rather
+      // than removed: the stored value stays put and nothing asks an editor
+      // to "Remove field" (gotcha #1). Unhide it if the menu grows the row back.
+      hidden: true,
     }),
     defineField({
       name: 'showSocials',
@@ -361,24 +367,27 @@ export const siteSettings = defineType({
       description:
         'The Instagram and Facebook buttons at the foot of the phone menu. On unless you turn it off.',
       initialValue: true,
+      // Hidden for the same reason as showEmail above.
+      hidden: true,
     }),
     defineField({
       name: 'showFooterSocials',
       title: 'Show social buttons in the footer',
       type: 'boolean',
       group: 'navigation',
-      description: 'The "Follow along" buttons in the footer. On unless you turn it off.',
+      description:
+        'The "Follow" line in the footer colophon (Instagram, Facebook, YouTube), shown when any of those addresses is set. On unless you turn it off.',
       initialValue: true,
     }),
 
     // The small print row along the very bottom of the footer.
     defineField({
       name: 'legalNav',
-      title: 'Footer small-print links',
+      title: 'Footer index: extra links',
       type: 'array',
       group: 'navigation',
       description:
-        'The little links beside the copyright line at the very bottom, e.g. Pricing, Privacy, Accessibility. Leave empty to keep those three.',
+        'Extra links for the footer index, e.g. Privacy and Accessibility. They join the footer link columns in one A to Z list. Leave empty to keep the built-in Pricing, Privacy and Accessibility.',
       validation: (Rule) => Rule.max(6),
       of: [defineArrayMember({ type: 'navLink' })],
     }),

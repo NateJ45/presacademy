@@ -44,7 +44,7 @@ import { navHref, resolveNavLinks, type RawNavLink, type ResolvedNavLink } from 
 
 /** One header menu entry: a plain link, or a dropdown group of links. */
 export type NavItem =
-  | { kind: 'flat'; label: string; href: string }
+  | { kind: 'flat'; label: string; href: string; menuNote?: string }
   | { kind: 'dropdown'; label: string; items: ResolvedNavLink[] };
 
 /** One titled column of footer links. */
@@ -63,6 +63,8 @@ export interface HeaderCta {
 /** A header menu entry as it comes from Sanity: a navLink, or a navGroup. */
 export interface RawNavItem extends RawNavLink {
   links?: (RawNavLink | null)[] | null;
+  /** The short fact for this link's row in the phone Contents menu. */
+  menuNote?: string | null;
 }
 
 /** A footer column as it comes from Sanity. */
@@ -73,17 +75,20 @@ export interface RawFooterColumn {
 
 /**
  * Built-in default menu. Renders when Site Settings -> Top menu links is empty,
- * so a fresh clone of the template still has a sensible header.
+ * so a fresh clone of the template still has a sensible header. The order is
+ * the one approved with the 2026-10-13 masthead (Pricing joined the menu).
  */
 export const FALLBACK_NAV_ITEMS: NavItem[] = [
   { kind: 'flat', label: 'Courses', href: '/courses/' },
   { kind: 'flat', label: 'Faculty', href: '/faculty/' },
-  { kind: 'flat', label: 'About', href: '/about/' },
+  { kind: 'flat', label: 'Pricing', href: '/pricing/' },
   { kind: 'flat', label: 'Events', href: '/events/' },
   { kind: 'flat', label: 'Resources', href: '/resources/' },
+  { kind: 'flat', label: 'About', href: '/about/' },
 ];
 
-/** Built-in footer index, grouped to mirror the header IA. */
+/** Built-in footer index links. The footer prints them once each, A to Z
+    (src/lib/chrome.ts buildIndex), so the grouping only matters in Studio. */
 export const FALLBACK_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: 'Explore',
@@ -114,7 +119,7 @@ export const FALLBACK_FOOTER_COLUMNS: FooterColumn[] = [
   },
 ];
 
-/** Built-in small-print row at the very bottom of the footer. */
+/** Built-in extra index links (they join the footer index, A to Z). */
 export const FALLBACK_LEGAL_NAV: ResolvedNavLink[] = [
   { label: 'Pricing', href: '/pricing/' },
   { label: 'Privacy', href: '/privacy/' },
@@ -124,7 +129,7 @@ export const FALLBACK_LEGAL_NAV: ResolvedNavLink[] = [
 /** Built-in header button. One unambiguous ask. */
 export const FALLBACK_HEADER_CTA: HeaderCta = {
   show: true,
-  label: 'Request info',
+  label: 'Request information',
   href: '/get-started/',
 };
 
@@ -219,9 +224,9 @@ export interface ResolvedSiteSettings {
   showEmail: boolean;
   /** Show the social buttons at the foot of the phone menu. Unset means yes. */
   showSocials: boolean;
-  /** Footer link columns. Falls back to FALLBACK_FOOTER_COLUMNS. */
+  /** Footer index links, by column. Falls back to FALLBACK_FOOTER_COLUMNS. */
   footerColumns: FooterColumn[];
-  /** Small-print row at the very bottom. Falls back to FALLBACK_LEGAL_NAV. */
+  /** Extra footer index links. Falls back to FALLBACK_LEGAL_NAV. */
   legalNav: ResolvedNavLink[];
   /** Show the footer's "Follow along" buttons. Unset means yes. */
   showFooterSocials: boolean;
@@ -285,7 +290,12 @@ function navFromSettings(items?: RawNavItem[] | null): NavItem[] | null {
     }
     const href = navHref(item);
     if (item?.label && href) {
-      mapped.push({ kind: 'flat', label: item.label, href });
+      const menuNote = item.menuNote ?? undefined;
+      mapped.push(
+        menuNote
+          ? { kind: 'flat', label: item.label, href, menuNote }
+          : { kind: 'flat', label: item.label, href },
+      );
     }
   }
   return mapped.length > 0 ? mapped : null;

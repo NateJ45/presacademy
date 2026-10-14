@@ -108,6 +108,43 @@ this direction; never swap it mid-project.
    in Fraunces, Source Sans and IBM Plex Mono." Every course also gets a
    share image drawn as its cover (`scripts/lib/render-og.mjs`
    `renderCourseOg`).
+10. **The chrome: spine strip, masthead, contents sheet, back cover** (the
+    chrome redesign, 2026-10-13; `Header.astro`, `MastheadNav.astro`,
+    `MobileNav.tsx`, `ThemeToggle.tsx`, `Footer.astro`, the "chrome" block in
+    `globals.css`, the pure decisions in `src/lib/chrome.ts`). The site's frame
+    reads as the printed issue the home page already is:
+    - **Spine strip.** A thin band of the eight cover colours, like the spines
+      on a shelf, across the very top of the masthead (6px, 5px on phones), the
+      condensed bar (4px) and the top of the footer (8px, 7px on phones).
+      Static in both themes, like the covers.
+    - **Masthead.** The green top bar keeps the issue line (Plex Mono, dimmer
+      dots) and adds "Visit a class, free" and a small Light / Dark segmented
+      control. Under it the nameplate on one line, "The Presbyterian
+      _Academy_" (Fraunces, the italic word in `chapel-ink`), with a mono
+      subline (tagline and town). On the right, "Spring 2027 issue" beside three
+      tiny fanned covers (the next term's courses first, then Start here, then
+      featured) and the one green button. Then the ruled nav strip: a 2px rule
+      over, a 1px rule under, Fraunces items, the current page underlined in
+      green, and a mono note built from real counts ("Eight courses · five
+      teachers · in West Chester Township"). The masthead never sticks or
+      shrinks; a separate condensed bar (nameplate, term tag, nav, button) is
+      `position: fixed` and slides in with `transform` once the masthead has
+      scrolled away (zero CLS; no slide under reduced motion).
+    - **Contents sheet.** On phones and tablets a bordered "Contents" button
+      opens a full-screen sheet drawn as a contents page: a light Fraunces
+      "Contents" heading and the term tag, each menu item a dotted-leader row
+      ending in a short mono fact ("8 this year", "5 teachers", "from $95", or
+      the item's Studio "Menu note"), a shelf of tiny covers linking to their
+      courses, one Request information button, the office hours and the Light /
+      Dark control.
+    - **Back cover.** The footer, on the deepest green: a **Colophon** (the
+      nameplate, the mission plus "published each term in {town}, and made
+      possible by the {funder}", and a Where / Office / Write list), an
+      **Index** (every footer link once, A to Z, a small brass initial at each
+      new letter, flowing in two CSS columns so the reading order stays
+      alphabetical) and **In this issue** (the term's lead cover, "Browse the
+      issue" and an outline Request information button). A mono bottom line
+      carries the copyright, the type credit and the designer credit.
 
 The italic display "moment" (epigraphs, blockquotes) is now quieted to true
 epigraphs only, and the calligraphic script accent stays OFF by default.
@@ -121,6 +158,11 @@ epigraphs only, and the calligraphic script accent stays OFF by default.
   every section. The ticker, stat and numbered-card blocks (and their CSS)
   stay available to other pages. PR 4 also retired the header's pulsing
   `.enroll-dot` and its "Now enrolling" label (the issue line replaced them).
+- **Retired by the chrome redesign (2026-10-13):** the sticky header with its
+  hide-on-scroll-down script (`.site-header[data-state]`), the sliding
+  `.nav-underline`, the hamburger drawer, the footer's oversized two-line
+  wordmark, its CTA pair, the five titled link columns, the "PA" monogram
+  seal and the faint dot pattern on the footer band.
 
 - **The Romanesque arch.** `--arch-radius` is neutralized to a quiet modern
   rounding (`clamp(0.5rem, 1vw, 0.85rem)`); `.arch-top` / `.arch-top-sm` now
@@ -231,7 +273,8 @@ the end of the motion section in `globals.css`. The home page is the showcase.
 Base idioms (all in globals.css): `[data-reveal]` scroll reveal (+`is-visible`),
 `[data-stagger-grid]` card stagger, `.card-lift` hover, `.press-tactile` CTA
 press, `.img-zoom`/`.img-tint` photo hover, `.hero-entry-stagger` load-in, hero
-Ken Burns, `.nav-underline` / `.link-underline`, View Transitions cross-fade.
+Ken Burns, `.link-underline`, the condensed masthead bar's slide
+(`.masthead-bar`), View Transitions cross-fade.
 
 The "refined kinetic editorial" idioms (added 2026-06-14, the academic-notebook
 layer):
@@ -281,10 +324,11 @@ transform / opacity / clip-path only, never height or top. Performance (Lighthou
   and buttons, `.tap-44` (real box, label in a `.link-underline` span) for stacked
   lists like the footer, `.check-44` for checkboxes. Never put `.hit-44` on a
   `.link-underline` element (both draw on `::after`). Scan: `scripts/measure-tap-targets.mjs`.
-- **Footer colophon.** The footer is composed as a printed-book _colophon_ page
-  (oversized Fraunces wordmark masthead, a brass-ruled imprint row, a monogram
-  seal, and a typeface credit), not a generic link grid. It is a current brand
-  idiom: keep the bookish colophon read on any footer work.
+- **The back cover.** The footer is composed as the back of the issue
+  (signature move 10): Colophon, Index and In this issue under brass mono
+  kickers, with a mono bottom line. Keep the bookish read on any footer work,
+  and keep the index in CSS columns (never a row-wise grid) so the DOM stays
+  A to Z.
 - **Rule & Ledger frame** (404, framed media). Framed photos now use a brass top
   rule above a clean rectangular crop, not a Romanesque arch. The arch was
   retired in Direction A; treat `.arch-top` as a soft rounding only.
