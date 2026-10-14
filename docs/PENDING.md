@@ -10,6 +10,21 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Two orphan fields on `siteSettings`** (found 2026-10-13 by `npm run audit:data`).
+  Stored data with no schema field, so the Studio shows an "Unknown fields" banner
+  with a "Remove field" button on Site settings (never click it, gotcha #1). Nothing
+  in `src/` reads either field. Published `siteSettings` only (no draft), last
+  updated 2026-06-15:
+  - `admissionsEmail`: `"info@presbyterianacademy.org"`
+  - `denominationStatement`: `"A PC(USA) school of theological formation, holding to
+the Westminster Standards and the Book of Confessions."`
+
+  Removing them deletes data, so it waits for Nathan. Options: unset both in an
+  idempotent script after a backup (mas-monograms `scripts/fix-orphan-data.mjs` is
+  the model; vault gotcha removed-schema-field-leaves-data-and-unknown-fields-banner),
+  or add the fields back to the schema if either is wanted (the denomination line may
+  be worth keeping somewhere). Then re-run `npm run audit:data` and expect 0.
+
 - **Finish the form cutover to `/api/contact/`** (2026-10-13, starter card 45).
   The code, D1 database, Email Routing, Turnstile widget and Worker secrets are
   in place. In order:
@@ -306,6 +321,18 @@ that section when it gets long.
   edit there.
 
 ## Recently closed
+
+- 2026-10-13: **63 array items with no `_type`** (starter card 95). `npm run audit:data`
+  found them on 13 documents: `sessionOutline` (courseSession) and `offerings`
+  (courseOffering) on all 8 courses, `degrees`, `affiliations` and `publications` on 5
+  faculty members. Backed up with `npx sanity dataset export production --raw` to
+  `_backups/presacademy-2026-10-13/production-before-backfill.tar.gz` at the Projects
+  root (outside the repo), dry run 63 changes / 0 unplaced, applied with
+  `scripts/backfill-array-types.mjs --apply` and the production second factor, re-audit
+  0 missing `_type` (2 orphan fields remain, open item above), second dry run 0. Run
+  through `npx sanity exec <script> --with-user-token` with
+  `PUBLIC_SANITY_PROJECT_ID=uz2sl3zp`, because the local `.env` has no write token
+  for `sanity-lib`.
 
 - 2026-10-13: **The home stats row, topics ticker and step strip** are off the
   home page in code (Term Issue PR 2: `default-sections.ts` and the migration);

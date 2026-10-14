@@ -199,6 +199,8 @@ Every script here that writes to Sanity is a dry run unless it gets `--apply`, a
 
 Read only. Walks every published and draft document against the compiled schema and reports array items with no `_type` or `_key`, orphan fields (stored data with no schema field, which the Studio shows as an "Unknown fields" banner), wrong kinds and unknown types. Exit 1 on any finding. To fix missing `_type`: back up (`npx sanity dataset export production <file> --raw`, outside the repo), `node scripts/backfill-array-types.mjs` (dry run), then `NCS_PRODUCTION_WRITE=yes node scripts/backfill-array-types.mjs --apply`, then re-run the audit. Orphan fields are NOT unset by any script here: removing them deletes data, so they wait for Nathan (`docs/PENDING.md`).
 
+Both scripts import `scripts/lib/sanity-lib.mjs`, which needs a token. If the local `.env` has none (it did not on 2026-10-13), run them through the Sanity CLI login instead: `PUBLIC_SANITY_PROJECT_ID=uz2sl3zp npx sanity exec scripts/audit-data-vs-schema.mjs --with-user-token`, and for the write `NCS_PRODUCTION_WRITE=yes PUBLIC_SANITY_PROJECT_ID=uz2sl3zp npx sanity exec scripts/backfill-array-types.mjs --with-user-token -- --apply`. `sanity dataset export` also needs `--project-id uz2sl3zp` when run non-interactively. First run, 2026-10-13: 63 typeless items backfilled, 2 orphan fields left open.
+
 ---
 
 ## Routes inventory
