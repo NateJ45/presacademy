@@ -1,31 +1,20 @@
 # Animation layer
 
-> Lenis smooth scroll, scroll reset on navigation, Motion integration, scroll-triggered reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, the refined-kinetic-editorial motion system, and the opt-in script accent.
+> Native scrolling and the scroll reset on navigation, Motion integration, scroll-triggered reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, the refined-kinetic-editorial motion system, and the opt-in script accent.
 
 Non-animation polish (brand stripe, card-lift, surface-warm, reading-progress, sticky-header, paper-grain, print stylesheet) is covered in `polish-layer.md`.
 
 > **Refined kinetic editorial (2026-06-14, PR #9, commit 864d173).** A CSS-first motion pass layered the "academic notebook" idioms below onto the existing reveal system: the graph-paper hero atmosphere, the kinetic hero headline, choreographed directional reveals + a self-drawing eyebrow rubric, the topics ticker, the stat count-up, and a scroll-driven image parallax. Everything is transform / opacity / clip-path only (zero CLS) and is neutralized by a dedicated `prefers-reduced-motion` reset block at the end of the motion section in `globals.css`. The full writeup is the [Refined kinetic editorial motion system](#refined-kinetic-editorial-motion-system) section below; `src/styles/globals.css` and `BaseLayout.astro` are the source of truth.
 
-## Lenis smooth scroll
+## Scrolling (native, no smooth-scroll library)
 
-Lenis is initialized once in `BaseLayout.astro` and exposed as `window.lenis`. The instance persists across View Transitions navigations -- it is NOT re-created on `astro:page-load`. This is intentional: re-creating Lenis on every navigation causes a flash of native scroll before the new instance takes over.
+Lenis smooth scroll was removed on 2026-10-13 at Nathan's request. Scrolling is the browser's own everywhere: wheel, touch, keyboard and in-page anchors. Programmatic scrolls (the home hero scroll cue) call `window.scrollTo({ behavior: 'smooth' })`, which the reduced-motion reset in `globals.css` turns into an instant jump via `scroll-behavior: auto`.
 
-Lenis init is wrapped in `requestIdleCallback` so it doesn't compete with first-paint work, and since 2026-09-04 it only runs on wheel devices: `(pointer: fine)` AND `(min-width: 1024px)`. Phones and tablets keep native inertial scrolling and never download the Lenis chunk (it was ~760ms of throttled main-thread time on the mobile Lighthouse run for an effect touch never shows). `window.lenis` is therefore undefined on touch devices; every caller already falls back to native `scrollTo`.
+### Scroll reset on navigation
 
-In-page anchor navigation routes through the persistent `window.lenis` instance so it glides instead of snapping. Controls that need programmatic scroll (home hero scroll cue, case-study TOC) call `window.lenis.scrollTo(target)` and fall back to native `scrollTo` when Lenis hasn't loaded or the user prefers reduced motion. Lenis honors `scroll-mt-*` values on heading targets, so TOC targets clear the sticky header without a manual offset -- don't add one (it double-applies).
+Forward navigations open at the top and browser back/forward restores the previous position. With Lenis gone this is Astro's `<ClientRouter />` doing its own scroll handling; nothing in the site code needs to manage it. The old `astro:after-swap` reset existed only because Lenis's in-flight momentum overrode the router.
 
-`prefers-reduced-motion` is respected: when the OS prefers reduced motion, Lenis is initialized with its `lerp: 1` (instant) or not initialized at all, depending on implementation. Verify the current behavior in `BaseLayout.astro` before changing.
-
-### Scroll reset on navigation (do not remove)
-
-Because the single Lenis instance persists, any in-flight scroll momentum carries across a View Transitions swap. While Lenis is actively smoothing it ignores the router's scroll-to-top reset, so a link clicked mid-scroll would open the next page partway down (the stale scroll target clamps to the new, often shorter, page's maximum).
-
-The fix lives in the Lenis init block:
-
-- An `astro:after-swap` listener calls `lenis.scrollTo(0, { immediate: true, force: true })` (cancels momentum and resets to top) plus `lenis.resize()`.
-- It runs on **forward navigations only**: the listener reads `navigationType` off the `astro:before-swap` event and skips the reset when that is `traverse`, so browser back/forward keeps Astro's built-in scroll restoration.
-
-**Caveat for testing:** Astro dev full-reloads on back/forward, so the traverse (restore-position) behavior can only be verified against the production build via `npm run preview`, not `npm run dev`.
+**Caveat for testing:** Astro dev full-reloads on back/forward, so the traverse (restore-position) behavior can only be verified against the production build via `npm run preview` (or the live site), not `npm run dev`.
 
 ---
 
@@ -57,7 +46,7 @@ The base `[data-reveal]` rise-and-fade gained variants that ride the same BaseLa
 
 - **Directional reveals** (`.reveal-l` / `.reveal-r`) — pair the class with `data-reveal` on any element to slide it in from the left (`translate: -1.5rem 0`) or right (`1.5rem 0`); `.is-visible` settles it to `translate: 0 0`. Transform-only.
 
-  **Horizontal-overflow guard (do not remove).** That `translate: +/-1.5rem` shifts a not-yet-revealed element 1.5rem past the viewport edge, so on mobile every page would gain an ~8-24px sideways scroll until each element reveals. `globals.css` clips it by setting `overflow-x: clip` on **both** `html` and `body` (in the `@layer base` block). It must be `clip`, NOT `hidden`: `clip` still allows `position: sticky` to work (the course-detail aside is `lg:sticky`) and does not interfere with Lenis's vertical smooth scroll, whereas `overflow: hidden` would break both. Keep this guard whenever the directional reveals (or anything else that translates content off-screen) are in play.
+  **Horizontal-overflow guard (do not remove).** That `translate: +/-1.5rem` shifts a not-yet-revealed element 1.5rem past the viewport edge, so on mobile every page would gain an ~8-24px sideways scroll until each element reveals. `globals.css` clips it by setting `overflow-x: clip` on **both** `html` and `body` (in the `@layer base` block). It must be `clip`, NOT `hidden`: `clip` still allows `position: sticky` to work (the course-detail aside is `lg:sticky`), whereas `overflow: hidden` would break it. Keep this guard whenever the directional reveals (or anything else that translates content off-screen) are in play.
 
 - **Headline mask-rise** (`.reveal-rise`) — put it on an `inline-block` display line _inside_ a `[data-reveal]` wrapper. The line starts clipped (`clip-path: inset(-0.12em 0 105% 0)`) and nudged down (`translateY(0.32em)`), then wipes up from behind its own baseline over 820ms when the wrapper reveals. clip-path + transform only, no reflow.
 - **Self-drawing eyebrow rubric** — the eyebrow rubric's leading rule (`.eyebrow::before`, see `polish-layer.md`) now DRAWS ITSELF IN. While the section is hidden the rule is `transform: scaleX(0)`; when the enclosing `[data-reveal]` gains `.is-visible` it scales to `scaleX(1)` over 560ms with a 120ms lead-in. Because `SectionHeading.astro`'s wrapper is itself `[data-reveal]`, the reveal + eyebrow-draw cascade to nearly every section on the site as one system.

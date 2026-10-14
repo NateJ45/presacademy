@@ -1538,7 +1538,7 @@
      The scroll-reveal classes shift not-yet-revealed elements 1.5rem off-screen
      (.reveal-l/.reveal-r translate), which otherwise widens the page on small
      viewports. `clip` (not `hidden`) preserves position: sticky (the
-     course-detail aside) and does not break Lenis's vertical smooth scroll.
+     course-detail aside).
      Set on html AND body so neither the root nor the body becomes scrollable
      sideways. */
   html {
@@ -2546,7 +2546,7 @@ body::before {
 
 /* ---------- Reduced motion -------------------------------------------- */
 /* Disables animations, transitions, and smooth scroll for users who
-   prefer reduced motion. Lenis init must also check this flag.
+   prefer reduced motion.
 
    Transitions are ZERO, duration AND delay, never the usual 0.01ms (starter
    PORTS.md card 61, 2026-09-30). `transition-property` defaults to `all`, so

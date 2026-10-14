@@ -21,7 +21,7 @@ Performance is a UX feature, not a vanity score. Lighthouse 100 on Performance i
 | Total CSS (compressed)                          | < 30KB  |
 | Hero image (any viewport)                       | < 200KB |
 
-If a new dependency pushes a budget, that's a discussion before merging. Some are worth it (Lenis adds smooth scroll, motion is the interaction language); some aren't (a 60KB icon library when three lucide-react icons would cover it).
+If a new dependency pushes a budget, that's a discussion before merging. Some are worth it (motion is the interaction language); some aren't (a 60KB icon library when three lucide-react icons would cover it).
 
 ### Image weight by slot
 
@@ -65,7 +65,7 @@ Cloudflare auto-injects an `X-Robots-Tag: noindex` response header on every `*.w
 **Levers that achieve this -- preserve unless you have a stronger reason than "I want to simplify":**
 
 - All islands hydrate at `client:idle` or `client:visible` (since 2026-09-04 that includes `MobileNav`: it server-renders only its trigger button and mounts the Radix Sheet after a `mounted` effect, which is what lets it leave `client:only="react"`; and the course/faculty filters moved from `client:load` to `client:idle`)
-- Lenis init wrapped in `requestIdleCallback` AND gated to wheel devices (`pointer: fine` + `min-width: 1024px`), so phones never load it
+- No smooth-scroll library (Lenis removed 2026-10-13); scrolling is native
 - Ken Burns slides after the first are deferred (`SanityImage defer` + a post-`load` hydration script) so only the LCP slide downloads during first paint
 - Logo PNGs moved from `public/` to `src/assets/` so Astro emits WebPs
 - Single-img theme-aware logo (one fetch per page load instead of two)
