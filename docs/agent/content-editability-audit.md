@@ -94,7 +94,7 @@ Orphans: `eventsPage.specialEyebrow/Headline` (church); `event.allDay` toggle ne
 
 ### Global chrome — Header / Footer
 
-Hardcoded (no field, every page): Footer `funder` const + "Made possible by the {funder}", "Set in Fraunces & Source Sans 3" type credit, the "PA" monogram seal, the "PC(USA)" tag, "Where we meet" / "Follow along" / "Get directions" / "Get in touch" labels, masthead CTA labels; Header "Now enrolling", "Reformed lay formation" (NOT `settings.tagline` — a real mismatch), "Request info", "Free intro".
+Hardcoded (no field, every page), as of the 2026-10-13 masthead and back cover: the type credit ("Set in Fraunces, Source Sans and IBM Plex Mono", names the fonts the code loads), the kickers (Colophon, Index, In this issue, The term catalog, On the shelf this term), "Visit a class, free", "Browse the issue", the Where / Office / Write labels and the colophon's "Published each term in {town}" wording. Data-driven with inline fallbacks: the nav note and the Contents-menu facts for Courses, Faculty and Pricing (counted, `src/lib/chrome.ts`), every other menu fact (`navItems[].menuNote`), the funder clause (`siteSettings.funder`), the issue line and covers (the next term and its courses).
 Editable-with-fallback (OK): designer credit (`siteSettings.footerCredit`), nav (`navItems`), footer columns (`footerColumns`).
 **Fix:** add `siteSettings` fields for the funder line, the colophon tag, and the brand monogram; make the Header bar use `settings.tagline`; decide which chrome labels are worth fielding vs structural.
 

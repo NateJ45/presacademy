@@ -1,254 +1,269 @@
 // Foundation, edit with care
-// Mobile nav drawer. Uses shadcn Sheet (Radix Dialog under the hood). Radix's
-// portal does not SSR cleanly inside Astro, so the component server-renders ONLY
-// the trigger button and mounts the Sheet after hydration (`mounted` below).
-// That is what lets Header.astro hydrate it with client:idle instead of
-// client:only: the button paints with the page, and React no longer downloads
-// inside the LCP window (it was ~100KB of the mobile critical path).
+// =============================================================================
+// The Contents menu (the 2026-10-13 chrome redesign): the phone and tablet nav,
+// drawn as the contents page of the term's issue. A full-screen sheet:
 //
-// Layout (top to bottom inside the sheet):
-//   1. Brand accent stripe (4px Warm Bronze) + "Menu" eyebrow
-//   2. Primary CTA — Book a consultation
-//   3. Tagline in display serif italic
-//   4. Nav links — flat items are single rows; dropdown groups are a heading
-//      row with indented sub-items underneath (always expanded on mobile,
-//      no accordion needed — full-height drawers have plenty of room)
-//   5. Spacer pushes the rest to the bottom
-//   6. Email link with Mail icon
-//   7. Social icons row (Instagram, Facebook) + ThemeToggle on the right
-//   8. Logo centered at the bottom of the panel
+//   ▓▓▓▓▓▓▓▓  spine strip
+//   The Presbyterian Academy                       [x CLOSE]
+//   ══════════════════════════════════════════════
+//   Contents                                    SPRING 2027
+//   ──────────────────────────────────────────────
+//   Courses ........................... 8 THIS YEAR
+//   Faculty ............................ 5 TEACHERS
+//   ...
+//   ON THE SHELF THIS TERM
+//   [] [] [] [] [] []   tiny covers, each a link to its course
 //
-// Data: tagline, email, social URLs all come from Sanity siteSettings via
-// the Header, with sensible defaults so the menu renders cleanly before
-// content is wired up.
+//   (           REQUEST INFORMATION            )
+//   OFFICE MONDAY TO THURSDAY ...       [LIGHT|DARK]
+//
+// Each row ends in a short mono fact: Courses, Faculty and Pricing are worked
+// out from the data and every other row reads its Studio "Menu note" (both
+// resolved in Header.astro through src/lib/chrome.ts menuFact).
+//
+// Accessibility comes from Radix Dialog (via the shadcn Sheet parts): dialog
+// semantics named by the "Contents" heading, a focus trap, Escape to close,
+// focus back on the button that opened it, and a native body scroll lock
+// (react-remove-scroll; no smooth-scroll library is involved).
+//
+// Two buttons open it: the bordered "Contents" button in the masthead (the
+// Radix trigger, rendered here) and the one in the condensed bar, which lives
+// in Header.astro's markup and carries `data-open-contents`. A click on that
+// one is caught by a document listener below; focus returns to it on close.
+//
+// Radix's portal does not SSR cleanly inside Astro, so the component
+// server-renders ONLY the trigger and mounts the Sheet after hydration
+// (`mounted`). The trigger is the same element before and after, so it never
+// jumps.
+// =============================================================================
 
-import { useEffect, useState } from 'react';
-import { Menu, Mail, Phone, ChevronRight } from 'lucide-react';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useEffect, useRef, useState } from 'react';
+import { X } from 'lucide-react';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import ThemeToggle from './ThemeToggle';
-import { telHref } from '@/lib/phone';
 import { site } from '@/data/site';
+import { COVER_COLORS, coverVars, type CoverColor, type CoverOrnament } from '@/lib/cover';
 
 // ---- Types ------------------------------------------------------------------
 
-interface FlatNavLink {
+interface FlatItem {
   kind: 'flat';
   label: string;
   href: string;
+  /** The mono fact at the end of the row ("8 this year"). */
+  note?: string;
 }
 
-interface DropdownNavGroup {
+interface DropdownItem {
   kind: 'dropdown';
   label: string;
   items: { label: string; href: string }[];
 }
 
-type NavItem = FlatNavLink | DropdownNavGroup;
-
-interface MobileNavSiteSettings {
-  tagline?: string;
-  email?: string;
-  phone?: string;
-  socialInstagram?: string;
-  socialFacebook?: string;
+interface ShelfCover {
+  title: string;
+  href: string;
+  color: CoverColor;
+  ornament: CoverOrnament;
 }
 
 interface Props {
-  links: NavItem[];
-  siteSettings?: MobileNavSiteSettings | null;
-  /**
-   * The header's editable button. Header.astro passes this ONLY when it differs
-   * from the built-in one below: an island's props are serialized into every
-   * page, so passing the default would rewrite markup site-wide for no change.
-   */
+  items: (FlatItem | DropdownItem)[];
+  shelf?: ShelfCover[];
+  /** The next term's name ("Spring 2027"), or empty. */
+  termTag?: string;
   cta?: { show: boolean; label: string; href: string };
+  officeHours?: string;
+}
+
+const DEFAULT_CTA = { show: true, label: 'Request information', href: '/get-started/' };
+
+// ---- Pieces -----------------------------------------------------------------
+
+function Spine() {
+  return (
+    <div className="spine" aria-hidden="true">
+      {COVER_COLORS.map((c) => (
+        <span key={c} style={{ background: `var(--color-cover-${c})` }} />
+      ))}
+    </div>
+  );
+}
+
+function ContentsGlyph() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14">
+      <path d="M1 3h12M1 7h12M1 11h8" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
 }
 
 // ---- Component --------------------------------------------------------------
 
-const DEFAULT_CTA = { show: true, label: 'Request info', href: '/get-started/' };
-
-export default function MobileNav({ links, siteSettings, cta = DEFAULT_CTA }: Props) {
+export default function MobileNav({
+  items,
+  shelf = [],
+  termTag = '',
+  cta = DEFAULT_CTA,
+  officeHours = '',
+}: Props) {
   const [open, setOpen] = useState(false);
-  // False during SSR and the first client render, so the server and hydration
-  // markup match; the Sheet (with its portal) mounts on the next effect tick.
   const [mounted, setMounted] = useState(false);
+  // The condensed bar's button, when it was the one that opened the menu.
+  const opener = useRef<HTMLElement | null>(null);
+
   useEffect(() => setMounted(true), []);
 
-  const tagline =
-    siteSettings?.tagline ?? 'Serving and celebrating Jesus for the good of the world.';
-  const email = siteSettings?.email;
-  const phone = siteSettings?.phone;
-  const ig = siteSettings?.socialInstagram;
-  const fb = siteSettings?.socialFacebook;
+  // Any [data-open-contents] button (the condensed bar's) opens the menu.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const btn = (e.target as Element | null)?.closest?.('[data-open-contents]');
+      if (!btn) return;
+      opener.current = btn as HTMLElement;
+      setOpen(true);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   const close = () => setOpen(false);
 
-  // The trigger is the same element before and after mount, so the button never
-  // jumps; only its behaviour arrives with the Sheet.
   const trigger = (
-    <button
-      type="button"
-      aria-label="Open menu"
-      className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
-    >
-      <Menu size={22} />
+    <button type="button" className="contents-btn" aria-haspopup="dialog">
+      <ContentsGlyph />
+      Contents
     </button>
   );
 
-  if (!mounted) {
-    return <div className="absolute top-1/2 right-m -translate-y-1/2 lg:hidden">{trigger}</div>;
-  }
+  if (!mounted) return trigger;
 
   return (
-    <div className="absolute top-1/2 right-m -translate-y-1/2 lg:hidden">
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>{trigger}</SheetTrigger>
-        <SheetContent
-          side="right"
-          className="flex w-[min(380px,90vw)] flex-col gap-0 overflow-y-auto border-t-4 border-t-primary bg-background p-0 sm:max-w-none"
-        >
-          {/* Eyebrow header. */}
-          <SheetHeader className="pt-xl px-l pb-m">
-            <SheetTitle className="font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
-              Menu
-            </SheetTitle>
-          </SheetHeader>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetContent
+        side="right"
+        showCloseButton={false}
+        className="contents-sheet inset-0 h-full gap-0 overflow-y-auto border-0 bg-background p-0 text-foreground shadow-none data-[side=right]:w-full data-[side=right]:border-l-0 data-[side=right]:sm:max-w-none"
+        onCloseAutoFocus={(e) => {
+          // Opened from the condensed bar: give focus back to that button.
+          if (opener.current && document.contains(opener.current)) {
+            e.preventDefault();
+            opener.current.focus();
+          }
+          opener.current = null;
+        }}
+      >
+        <Spine />
 
-          {/* Primary CTA — main conversion action surfaced before the nav list. */}
-          {cta.show && (
-            <div className="px-l pb-l">
-              <a
-                href={cta.href}
-                onClick={close}
-                className="block w-full rounded-full bg-primary px-m py-m text-center text-xs font-semibold tracking-eyebrow text-primary-foreground uppercase transition-colors hover:bg-primary-dark"
-              >
-                {cta.label}
-              </a>
-            </div>
-          )}
+        {/* The masthead row, repeated, with the Close button in place of
+            Contents. */}
+        <div className="flex h-[72px] shrink-0 items-center justify-between gap-3 border-b-2 border-foreground px-4 sm:px-6">
+          <a href="/" onClick={close} className="contents-sheet__plate hit-44 relative">
+            {site.wordmark.line1} {site.wordmark.line2 ? <i>{site.wordmark.line2}</i> : null}
+            <span className="sr-only"> home</span>
+          </a>
+          <SheetClose asChild>
+            <button type="button" className="contents-btn contents-btn--close">
+              <X size={12} strokeWidth={2} aria-hidden="true" />
+              Close
+            </button>
+          </SheetClose>
+        </div>
 
-          {/* Tagline in display serif for editorial feel. */}
-          <p className="px-l pb-l font-display text-h4 leading-snug text-foreground/85 italic">
-            {tagline}
-          </p>
+        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pt-[22px] sm:px-6">
+          <div className="flex items-baseline justify-between gap-4">
+            <SheetTitle className="contents-sheet__title">Contents</SheetTitle>
+            {termTag ? (
+              <span className="mast-mono text-[10.5px] text-muted-foreground">{termTag}</span>
+            ) : null}
+          </div>
+          <SheetDescription className="sr-only">
+            The site&apos;s main pages{termTag ? ` and the ${termTag} courses` : ''}.
+          </SheetDescription>
 
-          {/* Primary nav — flat items + group headers with indented sub-items. */}
-          <nav className="border-t border-border-soft py-s" aria-label="Primary mobile">
-            {links.map((item) => {
-              if (item.kind === 'flat') {
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={close}
-                    className="flex items-center px-l py-s font-display text-lg text-foreground transition-colors hover:bg-muted hover:text-link"
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
-
-              // Dropdown group — always expanded in the drawer (no accordion
-              // needed; the drawer has scroll and the groups are small).
-              return (
-                <div key={item.label}>
-                  {/* Group heading — visually distinct from flat items. Not
-                      a link itself; the sub-items carry the real hrefs. */}
-                  <p className="px-l pt-m pb-xs text-xs tracking-eyebrow text-foreground/80 uppercase">
-                    {item.label}
-                  </p>
+          <nav aria-label="Primary" className="mt-4 border-t border-foreground">
+            {items.map((item) =>
+              item.kind === 'flat' ? (
+                <a key={item.href} href={item.href} onClick={close} className="contents-row">
+                  <span className="contents-row__label">{item.label}</span>
+                  <span className="contents-row__leader" aria-hidden="true" />
+                  {item.note ? (
+                    <span
+                      className={[
+                        'contents-row__fact mast-mono',
+                        item.href === '/courses/' && 'contents-row__fact--key',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {item.note}
+                    </span>
+                  ) : null}
+                </a>
+              ) : (
+                <div key={item.label} className="border-b border-border-soft py-2">
+                  <p className="mast-mono pt-2 text-[10.5px] text-muted-foreground">{item.label}</p>
                   {item.items.map((sub) => (
                     <a
                       key={sub.href}
                       href={sub.href}
                       onClick={close}
-                      className="flex items-center gap-xs py-xs pr-l pl-[calc(theme(spacing.l)+0.5rem)] font-body text-base text-foreground transition-colors hover:bg-muted hover:text-link"
+                      className="contents-row contents-row--sub"
                     >
-                      <ChevronRight
-                        size={12}
-                        className="shrink-0 text-foreground/40"
-                        aria-hidden="true"
-                      />
-                      {sub.label}
+                      <span className="contents-row__label">{sub.label}</span>
                     </a>
                   ))}
                 </div>
-              );
-            })}
+              ),
+            )}
           </nav>
 
-          {/* Spacer pushes the contact + logo block to the bottom. */}
-          <div className="flex-1" />
-
-          {/* Contact + socials + theme. */}
-          <div className="border-t border-border-soft px-l pt-m pb-s">
-            <p className="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-              Get in touch
-            </p>
-            {email && (
-              <a
-                href={`mailto:${email}`}
-                className="inline-flex items-center gap-s text-sm text-link hover:underline"
+          {shelf.length > 0 ? (
+            <div className="mt-[18px]">
+              <p className="mast-mono text-[10.5px] text-muted-foreground" id="contents-shelf">
+                On the shelf this term
+              </p>
+              <ul
+                className="mt-2.5 flex [scrollbar-width:none] list-none gap-2 overflow-x-auto p-0 [&::-webkit-scrollbar]:hidden"
+                aria-labelledby="contents-shelf"
               >
-                <Mail size={16} aria-hidden="true" />
-                {email}
-              </a>
-            )}
-            {phone && (
-              <a
-                href={telHref(phone)}
-                className="mt-s flex items-center gap-s text-sm text-link hover:underline"
-              >
-                <Phone size={16} aria-hidden="true" />
-                {phone}
-              </a>
-            )}
+                {shelf.map((c) => (
+                  <li key={c.href} className="shrink-0">
+                    <a
+                      href={c.href}
+                      onClick={close}
+                      className="mini-cover mini-cover--shelf"
+                      style={coverVars(c.color)}
+                      aria-label={c.title}
+                    >
+                      <span className="cover__orn" data-ornament={c.ornament} aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
-            <div className="mt-m flex items-center gap-s">
-              {ig && (
-                <a
-                  href={ig}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <IconBrandInstagram size={20} stroke={1.5} />
-                </a>
-              )}
-              {fb && (
-                <a
-                  href={fb}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <IconBrandFacebook size={20} stroke={1.5} />
-                </a>
-              )}
-              <div className="ml-auto">
-                <ThemeToggle />
-              </div>
+          <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-[18px]">
+            {cta.show ? (
+              <a href={cta.href} onClick={close} className="mast-btn mast-btn--block press-tactile">
+                {cta.label}
+              </a>
+            ) : null}
+            <div className="mast-mono flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10.5px] tracking-[0.06em] text-muted-foreground">
+              {officeHours ? <span>Office {officeHours}</span> : <span />}
+              <ThemeToggle variant="sheet" />
             </div>
           </div>
-
-          {/* Logo at the bottom — brand-anchored close to the sheet's foot.
-              URLs come from Astro's image pipeline via Header.astro's
-              getImage() calls, so this is a WebP file with the same hash
-              as the desktop header logo (free cache hit). */}
-          <div className="flex flex-col items-center border-t border-border-soft px-l py-l text-center leading-none">
-            <span className="font-display text-xl text-foreground">{site.wordmark.line1}</span>
-            {site.wordmark.line2 ? (
-              <span className="mt-0.5 font-display text-base text-foreground/70">
-                {site.wordmark.line2}
-              </span>
-            ) : null}
-          </div>
-        </SheetContent>
-      </Sheet>
-    </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -157,7 +157,8 @@ export interface IssueTerm {
  * The header's issue line (Term Issue PR 4), from the next term's own data:
  *
  *   full    "Spring 2027 term · enrolling now · first class Tue 26 Jan"
- *   short   "Spring 2027 term" (phones)
+ *   short   "Spring 2027 · first class 26 Jan" (phones; the masthead redesign,
+ *           2026-10-13, swapped the bare term name for the first class)
  *   medium  "Spring 2027 term · enrolling now" (tablets)
  *
  * The middle part only says "enrolling now" when that is true: the term is
@@ -186,7 +187,10 @@ export function issueLine(
   }
   const first = shortDay(term?.startDate) ? `first class ${shortDay(term?.startDate)}` : '';
   const medium = [name, state].filter(Boolean).join(' · ');
-  return { short: name, medium, full: [name, state, first].filter(Boolean).join(' · ') };
+  // Phones: the date without its weekday, "first class 26 Jan".
+  const day = shortDay(term?.startDate).split(' ').slice(1).join(' ');
+  const short = day ? `${title} · first class ${day}` : name;
+  return { short, medium, full: [name, state, first].filter(Boolean).join(' · ') };
 }
 
 /** The Next issue block's editable copy: {term} becomes "Summer 2027" and

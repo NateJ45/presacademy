@@ -1,6 +1,6 @@
 # Polish layer
 
-> Custom CSS utilities and JS behaviors layered on Tailwind: the eyebrow rubric, brand stripe, card-lift, surface-warm / surface-chapel, reading-progress, sticky-header, nav-underline, and print stylesheet.
+> Custom CSS utilities and JS behaviors layered on Tailwind: the eyebrow rubric, brand stripe, card-lift, surface-warm / surface-chapel, reading-progress, the masthead's condensed bar, and print stylesheet.
 
 Animation behaviors (native scrolling, scroll reveals, stagger grid, hero entry, view transitions, Ken Burns slideshow, script accent opt-in) are documented separately in `animation.md`.
 
@@ -58,13 +58,9 @@ The `card-lift` utility class lives in `globals.css`. Defines `:hover { translat
 
 Applied to CtaLink, header consultation pill, contact form submit, sticky CTA chip, filter chips. Honors reduced-motion via the global transition kill.
 
-### Animated nav underline (`.nav-underline`)
+### Masthead condensed bar (`.masthead-bar`), which replaced the sticky header on 2026-10-13
 
-Brand-primary underline that slides in from the center on hover and locks full-width on `[aria-current="page"]`. Applied to every link in the primary nav. Defined in `globals.css`.
-
-### Sticky header behavior (`.site-header`)
-
-The header has `position: sticky; top: 0`. A scroll listener in BaseLayout sets `data-state="hidden"` on it when the user scrolls down past 120px, which CSS translates to `translateY(-100%)`. Scroll up = the header reveals. Pinned permanently under reduced-motion.
+The masthead (`.site-header`) is in normal flow now: no `position: sticky`, no hide-on-scroll script, no shrinking (both moved things on the page). A separate `position: fixed` bar slides in with `transform` once an IntersectionObserver in `Header.astro` sees the sentinel at the masthead's foot above the viewport, and slides away when it comes back. Hidden, it is `aria-hidden`, `inert` and `visibility: hidden`. Under reduced motion it appears without the slide (listed in the reduced-motion block and in `settle()`). The current page in the nav is a static green rule (`.mast-nav__link[aria-current='page']`); the old sliding `.nav-underline` is retired. Detail: `page-architecture.md`, "Header + footer nav".
 
 ### Reading progress (`.reading-progress`)
 
@@ -147,7 +143,7 @@ initThing();
 document.addEventListener('astro:page-load', initThing);
 ```
 
-Pattern used by: scroll-reveal observer, sticky-header listener, reading-progress, sticky CTA chip. See `animation.md` for the scroll reset on navigation, which Astro's ClientRouter handles.
+Pattern used by: scroll-reveal observer, the masthead bar's observer, reading-progress, sticky CTA chip. See `animation.md` for the scroll reset on navigation, which Astro's ClientRouter handles.
 
 ---
 

@@ -88,6 +88,21 @@ export const navLink = defineType({
       // links with no choice made yet; hidden once a link uses the picker.
       hidden: ({ parent }) => Boolean(parent?.linkType) && !parent?.href,
     }),
+    // The short fact at the end of this link's row in the phone "Contents"
+    // menu (the chrome redesign, 2026-10-13). Only the TOP menu draws it, so
+    // the field hides everywhere else this shared link object is used (footer
+    // columns, the small print, the header button). Optional: Courses,
+    // Faculty and Pricing work theirs out from the data, and every other row
+    // has a built-in note in src/lib/chrome.ts (MENU_FACT_FALLBACKS).
+    defineField({
+      name: 'menuNote',
+      title: 'Menu note (optional)',
+      type: 'string',
+      description:
+        'A few words shown at the end of this link in the phone menu, e.g. "Info nights" or "Reading". Courses, Faculty and Pricing fill theirs in on their own (the course count, the teacher count, the lowest price). Leave blank for the built-in note.',
+      validation: (Rule) => Rule.max(24).warning('Keep it to a few words so it fits on a phone.'),
+      hidden: ({ path }) => path?.[0] !== 'navItems',
+    }),
   ],
   preview: {
     select: {

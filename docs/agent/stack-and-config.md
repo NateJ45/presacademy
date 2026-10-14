@@ -17,7 +17,7 @@ Pinned versions reflect what's known to work together as of May 2026. Bump delib
 - opentype.js (dev-only) for the OG image generator at `scripts/generate-og-default.mjs`.
 - `@astrojs/rss` reserved for `/rss.xml` (not wired at launch by default).
 - `@astrojs/sitemap` for `sitemap-index.xml` (production sitemap).
-- Three-state dark/light/system theme system: `ThemeToggle.tsx` React island plus an anti-FOUC bootstrap script in BaseLayout, persisted to `localStorage["theme"]`. The site is light-primary; dark mode is supported for visitor preference but not the primary read of the brand.
+- Light/dark theme system (a stored "system" still follows the OS): `ThemeToggle.tsx` Light / Dark segmented-control island plus an anti-FOUC bootstrap script in BaseLayout, persisted to `localStorage["theme"]`. The site is light-primary; dark mode is supported for visitor preference but not the primary read of the brand.
 - `src/data/site.ts` as the single source of truth for hardcoded site identity (brand name, domain, asset paths, social URL strings the build needs at compile time). Editor-controlled content goes through Sanity.
 - **The forms post to the site's own Worker endpoint** `/api/contact/` (starter card 45, since 2026-10-13; it replaced Web3Forms + hCaptcha): submissions are stored in the D1 database `presacademy-contact`, emailed through Cloudflare Email Routing, and spam-checked by Cloudflare Turnstile. Bindings in `wrangler.jsonc`, operations in `OPERATIONS.md` ("Form submissions").
 - Cloudflare Web Analytics for privacy-friendly traffic (no cookie banner needed). Google Analytics 4 runs through `<Analytics />`, live since 2026-10-04 (`PUBLIC_GA_ID` = `G-1S5Z7MGZ9J`, GA4 property 557366198), a build variable; it sets cookies (see `deployment.md`).

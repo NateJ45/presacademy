@@ -152,6 +152,17 @@ export function coverStyle(color: CoverColor): string {
   ].join('; ');
 }
 
+/** The same three custom properties as coverStyle, as a React style object
+    (the phone Contents menu's shelf draws its tiny covers in an island). */
+export function coverVars(color: CoverColor): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const decl of coverStyle(color).split('; ')) {
+    const i = decl.indexOf(':');
+    out[decl.slice(0, i).trim()] = decl.slice(i + 1).trim();
+  }
+  return out;
+}
+
 /** Course code shape the Studio nudges towards: two to four capitals, a space,
     three digits ("SCR 101"). A warning in the Studio, never an error. */
 export const COURSE_CODE_PATTERN = /^[A-Z]{2,4} \d{3}$/;

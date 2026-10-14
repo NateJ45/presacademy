@@ -1,383 +1,336 @@
 ---
 // Foundation, edit with care
-// Site header. Two structural rows on desktop, one on mobile:
-//   ┌─────────────────────────────────────── 4px accent stripe
-//   │ ─────────────────────────────────────── eyebrow strip (desktop-only)
-//   │   [site tagline]           email  · IG · FB · theme
-//   ├─────────────────────────────────────── main row
-//   │   [logo]                  [nav]  │  [Book a consultation CTA]
-//   └───────────────────────────────────────
-// On mobile the eyebrow strip is hidden (its info lives in the redesigned
-// MobileNav drawer) and the main row centers the logo with the hamburger
-// pinned absolute to the right.
+// =============================================================================
+// The masthead (the 2026-10-13 chrome redesign: "masthead, contents menu and
+// back cover"). Top to bottom:
 //
-// siteSettings is optional. Defaults render cleanly so the header works
-// even before Sanity content is wired up.
+//   ▓▓▓▓▓▓▓▓  spine strip: the eight cover colours, static in both themes
+//   ░░░░░░░░  green top bar: the issue line (next term) · "Visit a class,
+//             free" · the Light / Dark control (tablet and up)
+//   The Presbyterian Academy            [covers] Spring 2027 issue → | REQUEST
+//   A SCHOOL OF ... · WEST CHESTER ...
+//   ════════════════════════════════════════════════  2px rule
+//   Courses  Faculty  Pricing  Events ...   EIGHT COURSES · FIVE TEACHERS ...
+//   ────────────────────────────────────────────────  1px rule
+//
+// Phones (and tablets below lg) keep the spine, the bar, the nameplate and its
+// subline, and swap the right side and the nav strip for a bordered "Contents"
+// button that opens the full-screen Contents menu (MobileNav.tsx).
+//
+// THE CONDENSED BAR. The masthead stays in normal flow and never shrinks
+// (shrinking an in-flow header is layout shift). Instead a SEPARATE bar,
+// `position: fixed`, slides in with `transform` once the masthead has scrolled
+// out of view, watched by an IntersectionObserver on a 1px sentinel at the
+// masthead's foot. While hidden it is aria-hidden and inert, so it is neither
+// read nor tabbable. Reduced motion: no slide, it just appears. Fixed plus
+// transform means it moves nothing else on the page: zero CLS.
+//
+// The desktop nav is SERVER-RENDERED (gotcha #5) in MastheadNav.astro, drawn
+// here twice (strip and bar). The Contents menu is the only island.
+//
+// Content: the nav, the button and the identity lines come from Sanity
+// siteSettings through resolveSiteSettings; the issue line, the counts and the
+// covers from getChromeData (src/lib/queries.ts), turned into words by
+// src/lib/chrome.ts. Every one has an inline fallback, so the masthead renders
+// cleanly before any content exists.
+// =============================================================================
 
 import { resolveSiteSettings, type RawSiteSettings } from '@/lib/siteSettings';
 import { site } from '@/data/site';
-import { getNextTerm } from '@/lib/queries';
+import { getChromeData } from '@/lib/queries';
 import { issueLine } from '@/lib/term-issue';
-import { telHref } from '@/lib/phone';
-import { ChevronDown, Phone } from 'lucide-react';
+import { menuFact, navNote, orderShelf } from '@/lib/chrome';
+import { COVER_COLORS, coverStyle, resolveCover, type CoverColor } from '@/lib/cover';
 import SanityImage from './SanityImage.astro';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
-
-// The brand is a text wordmark (Instrument Serif) by default, so there is
-// nothing to pipe through getImage. An uploaded siteSettings.logo replaces it
-// and goes through Sanity's CDN like every other Sanity image.
+import MastheadNav from './MastheadNav.astro';
 
 interface Props {
-  siteSettings?:
-    | (RawSiteSettings & {
-        siteName?: string;
-        // Church utility-bar content. All optional with real fallbacks below, so
-        // the bar is never empty before Sanity is wired.
-        worshipService?: {
-          time?: string;
-          day?: string;
-          startTime24?: string;
-          endTime24?: string;
-        } | null; // single source for the service time
-        giveUrl?: string; // giving portal; falls back to the /give page
-        watchUrl?: string; // livestream; falls back to the /sermons page
-      })
-    | null;
+  siteSettings?: (RawSiteSettings & { siteName?: string }) | null;
 }
 
 const { siteSettings } = Astro.props as Props;
 
-// Identity / contact / social values resolve through one shared helper (see
-// src/lib/siteSettings.ts) so the header, footer, pages, and JSON-LD stay in
-// lockstep. An empty Sanity field renders blank instead of being masked by a
-// hardcoded default.
+// Identity / contact / menus resolve through one shared helper so the header,
+// footer, pages and JSON-LD stay in lockstep.
 const settings = resolveSiteSettings(siteSettings);
-
 const brandName = settings.brandName;
-
-// Split the wordmark's first line so its final word carries the brand
-// keyword-emphasis color (text-chapel-ink), e.g. "The [Presbyterian]". The
-// footer wordmark sits on the dark band and stays all-cream, so this only
-// applies in the header (on the cream page surface).
-const line1Words = site.wordmark.line1.trim().split(/\s+/);
-const line1Key = line1Words.pop() ?? site.wordmark.line1;
-const line1Lead = line1Words.join(' ');
-
-// Utility-bar content (school). Left: identity line; right: a request-info
-// link, social, and the theme toggle.
-const cityLine = settings.addressLocality ?? settings.cityStateZip ?? '';
-
-// Utility toggles (Site Settings -> Navigation). Both read "unset means yes",
-// so an untouched site is unchanged. Turning one off is expressed by handing
-// MobileNav an empty value rather than a new flag, which keeps the drawer's
-// existing `{email && ...}` guards as the single place that decides.
-const ig = settings.showSocials ? settings.social.instagram : undefined;
-const fb = settings.showSocials ? settings.social.facebook : undefined;
-const phone = settings.phone;
-
-// The header's one button, and the logo that may stand in for the wordmark.
-const headerCta = settings.headerCta;
 const logo = settings.logo;
-
-// The issue line for the utility bar (Term Issue PR 4, 2026-10-13): the
-// soonest upcoming term, set in Plex Mono like a catalog's running head,
-// "Spring 2027 term · enrolling now · first class Tue 26 Jan". It says
-// "enrolling now" only when the term's own dates or status make that true
-// (issueLine in src/lib/term-issue.ts); before registration opens it names the
-// opening date instead. Phones get the term name, tablets add the state, and
-// desktops the whole line. Falls back to the identity line when no term is
-// scheduled. Read at build time, like every other date on the site.
-const nextTerm = await getNextTerm().catch(() => null);
-const issue = issueLine(nextTerm, new Date().toISOString().slice(0, 10));
-
-// Subset of siteSettings the mobile menu needs. Pass as a plain object so the
-// React island doesn't try to serialize the whole Sanity document graph.
-const mobileNavSettings = {
-  tagline: settings.tagline,
-  email: settings.showEmail ? settings.email : '',
-  phone: settings.phone,
-  socialInstagram: ig,
-  socialFacebook: fb,
-};
-
-// The drawer's CTA prop is only passed when it DIFFERS from the drawer's own
-// built-in button. An island's props are serialized into the page, so passing
-// the default every time would rewrite the markup of every page for no change.
-const mobileCtaProps =
-  headerCta.show && headerCta.label === 'Request info' && headerCta.href === '/get-started/'
-    ? {}
-    : { cta: headerCta };
-
-// Core nav structure. Flat items render as plain anchor links; dropdown
-// items render as native <details>/<summary> disclosure groups on desktop
-// (server-rendered, see the nav markup below) and as indented expandable
-// groups in MobileNav.
-//
-// Why <details> and not a React island: the desktop nav must exist in the
-// server-rendered HTML so search-engine crawlers see every internal link and
-// so there is no flash-of-missing-nav (or CLS) before hydration. A native
-// <details> disclosure is crawlable, keyboard-accessible, and works with zero
-// JS. A tiny progressive-enhancement script (further down) adds the niceties
-// browsers don't give us for free: open-on-hover, close-on-outside-click,
-// close-on-Escape, and close-on-navigation. The links work without it.
-//
-// "Contact" is intentionally NOT in the primary nav — the "Book a consultation"
-// CTA at the right of the nav row does that job, and the MobileNav drawer also
-// surfaces the CTA at the top.
-//
-// Core nav lives in Sanity (Site Settings -> Navigation). Both the mapping and
-// the built-in safety-net menu live in src/lib/siteSettings.ts, so the header,
-// the drawer, and the footer can never disagree about what the menu is.
-
+const headerCta = settings.headerCta;
 const NAV_ITEMS = settings.headerNav;
 
-// MobileNav consumes the same {kind} shape (NavLink[] with optional sub-items).
-const NAV_LINKS = NAV_ITEMS;
+// The nameplate: "The Presbyterian" upright, "Academy" italic in the
+// theme-aware green, on one line.
+const plateLead = site.wordmark.line1;
+const plateKey = site.wordmark.line2;
 
-const pathname = Astro.url.pathname;
-function isActive(href: string) {
-  if (href === '/') return pathname === '/';
-  return pathname.startsWith(href);
-}
-// A dropdown group is "active" (its trigger underline locks wide + aria-current
-// is set) when the current route matches any of its child links.
-function isGroupActive(items: { href: string }[]) {
-  return items.some((item) => isActive(item.href));
-}
+// The subline under the nameplate, in Plex Mono: the tagline and the town.
+// Below xl the tagline stands alone (the town is in the footer).
+const place = settings.addressLocality ?? '';
+// A tagline's closing full stop would sit oddly before the " · ".
+const tagline = settings.tagline.replace(/[.\s]+$/, '');
+const subline = [tagline, place].filter(Boolean).join(' · ');
+
+// Everything beyond siteSettings, in one request (memoized for the build).
+const chrome = await getChromeData();
+const counts = {
+  courses: chrome.courseCount,
+  faculty: chrome.facultyCount,
+  lowestPrice: chrome.lowestPrice,
+};
+
+// The issue line (Term Issue PR 4): "Spring 2027 term · registration opens Sun
+// 15 Nov · first class Tue 26 Jan". Phones get "Spring 2027 · first class 26
+// Jan", tablets the term and its state, desktops the whole line. Falls back to
+// the tagline when no term is scheduled. The dots are drawn dimmer, so each
+// variant is split on them here.
+const issue = issueLine(chrome.term, new Date().toISOString().slice(0, 10));
+const dotted = (line: string) => line.split(' · ');
+const termTag = (chrome.term?.title ?? '').trim();
+
+// The three covers fanned beside "Spring 2027 issue": the next term's courses
+// first, then Start here, then featured (chrome.ts orderShelf). Before any
+// course exists, three fixed colours stand in so the masthead keeps its shape.
+const FALLBACK_FAN: CoverColor[] = ['green', 'oxblood', 'brass'];
+const fanCourses = orderShelf(chrome.courses, 3);
+const fan: CoverColor[] = FALLBACK_FAN.map((fallback, i) =>
+  fanCourses[i] ? resolveCover(fanCourses[i]).color : fallback,
+);
+
+// The note at the right of the nav strip, from the real counts.
+const note = navNote(counts, settings.addressLocality);
+
+// What the Contents menu needs, as plain data (an island's props are
+// serialized into every page, so nothing more than this).
+const menuItems = NAV_ITEMS.map((item) =>
+  item.kind === 'flat' ? { ...item, note: menuFact(item.href, counts, item.menuNote) } : item,
+);
+const shelf = orderShelf(chrome.courses, 6).map((c) => {
+  const { color, ornament } = resolveCover(c);
+  return { title: c.title ?? '', href: `/courses/${c.slug}/`, color, ornament };
+});
 ---
 
-<header class="site-header bg-background">
-  {/* Brand accent stripe — same visual signature used at the top of the
-      mobile menu drawer. Visible on every viewport. */}
-  <div class="h-1 bg-primary" aria-hidden="true"></div>
+<header class="site-header masthead">
+  {/* Spine strip: the eight cover colours, like the spines on a shelf. */}
+  <div class="spine" aria-hidden="true">
+    {COVER_COLORS.map((c) => (
+      <span style={`background: var(--color-cover-${c})`} />
+    ))}
+  </div>
 
-  {/* Utility bar (all viewports). It earns its keep by carrying the one timely,
-      decision-relevant thing a prospective student wants on every page — the
-      issue line (next term, enrollment state, first class) — plus tap-to-call, the Request-info
-      action, and the theme toggle. Falls back to the identity line when no term
-      is scheduled. Cream on deep green (~9:1 contrast). */}
-  <div class="bg-chapel text-chapel-foreground">
-    <div class="mx-auto flex max-w-content items-center justify-between gap-m px-m py-1.5 text-[0.7rem] sm:px-l sm:text-xs">
+  {/* Top bar: the issue's running head. Cream on the deepest green, both themes. */}
+  <div class="masthead__bar bg-chapel-deep text-chapel-foreground">
+    <div class="mx-auto flex h-[34px] max-w-content items-center justify-between gap-m px-4 sm:h-[38px] sm:px-6 lg:px-12">
       {issue ? (
-        <a
-          href="/courses/"
-          class="issue-line hit-44 relative flex min-w-0 transition-colors hover:text-white"
-        >
-          {/* The truncation sits on an inner span: an overflow-hidden link
-                would clip the .hit-44 tap box drawn by its ::after. */}
+        <a href="/courses/" class="mast-mono hit-44 relative flex min-w-0 hover:text-white">
+          {/* Truncation sits on an inner span: an overflow-hidden link would
+                clip the .hit-44 tap box drawn by its ::after. */}
           <span class="min-w-0 truncate">
-            <span class="sm:hidden">{issue.short}</span>
-            <span class="hidden sm:inline lg:hidden">{issue.medium}</span>
-            <span class="hidden lg:inline">{issue.full}</span>
+            <span class="sm:hidden">
+              {dotted(issue.short).map((p, i) => (
+                <>
+                  {i > 0 && <span class="mast-dot"> · </span>}
+                  {p}
+                </>
+              ))}
+            </span>
+            <span class="hidden sm:inline lg:hidden">
+              {dotted(issue.medium).map((p, i) => (
+                <>
+                  {i > 0 && <span class="mast-dot"> · </span>}
+                  {p}
+                </>
+              ))}
+            </span>
+            <span class="hidden lg:inline">
+              {dotted(issue.full).map((p, i) => (
+                <>
+                  {i > 0 && <span class="mast-dot"> · </span>}
+                  {p}
+                </>
+              ))}
+            </span>
           </span>
         </a>
       ) : (
-        <p class="flex min-w-0 items-center gap-2">
-          <span class="font-semibold tracking-eyebrow whitespace-nowrap uppercase">
-            {settings.tagline ?? 'Reformed lay formation'}
-          </span>
-          {cityLine && (
-            <>
-              <span class="hidden text-chapel-foreground/40 sm:inline" aria-hidden="true">
-                ·
-              </span>
-              <span class="hidden truncate text-chapel-foreground/80 sm:inline">{cityLine}</span>
-            </>
-          )}
-        </p>
+        <p class="mast-mono min-w-0 truncate">{settings.tagline}</p>
       )}
 
-      <div class="flex shrink-0 items-center gap-3 sm:gap-m">
-        {phone && (
-          <a
-            href={telHref(phone)}
-            class="hit-44 relative inline-flex items-center gap-1.5 font-medium text-chapel-foreground/90 transition-colors hover:text-white"
-            aria-label={`Call ${phone}`}
-          >
-            <Phone size={13} strokeWidth={1.75} aria-hidden="true" />
-            <span class="hidden tabular-nums sm:inline">{phone}</span>
-          </a>
-        )}
-        {/* Hidden on desktop (lg+): the primary CTA pill lives in the nav row
-            there, so this utility-bar link is the mobile/tablet CTA only. That
-            stops the same ask from appearing twice in the desktop header. */}
-        {headerCta.show && (
-          <>
-            <span
-              class="hidden h-3.5 w-px bg-chapel-foreground/25 sm:inline lg:hidden"
-              aria-hidden="true"
-            />
-            <a
-              href={headerCta.href}
-              class="hit-44 relative font-semibold tracking-eyebrow text-chapel-foreground/90 uppercase transition-colors hover:text-white lg:hidden"
-            >
-              {headerCta.label}
-            </a>
-          </>
-        )}
-        {/* Theme toggle. Force cream + a soft-white hover so the button reads on
-            the green bar (its default dark ink would vanish). Hydrate on idle. */}
-        <div class="[&_button]:!text-chapel-foreground [&_button:hover]:!bg-white/10 [&_button:hover]:!text-white">
-          <ThemeToggle client:idle />
+      <div class="flex shrink-0 items-center gap-6">
+        {/* The free first class (RequestPanel and RuledList on Get Started say
+            the same). Code-owned label, like the type credit in the footer. */}
+        <a
+          href="/get-started/"
+          class="mast-mono hit-44 relative whitespace-nowrap hover:text-white"
+        >
+          <span class="sm:hidden">Visit free</span>
+          <span class="hidden sm:inline">Visit a class, free</span>
+          <span aria-hidden="true"> &rarr;</span>
+        </a>
+        <div class="hidden md:block">
+          <ThemeToggle client:idle variant="bar" />
         </div>
       </div>
     </div>
   </div>
 
-  {/* Main nav row. Mobile (and tablet) center the logo; desktop ≥1024 px
-      justifies logo left, nav+CTA grouped right. Breakpoint matches the
-      eyebrow strip above — at viewports between md and lg the desktop
-      layout would squish, so mobile-style header stays in use. */}
-  <div class="relative mx-auto flex max-w-content items-center justify-center border-b border-border px-l py-m lg:justify-between">
-    {/* Text wordmark in the display serif. The brand is typographic by
-        default, so it renders crisp at any density and needs no theme-swap
-        machinery (it inherits the theme-aware foreground color). An uploaded
-        Site Settings logo takes its place, capped to the header's height so a
-        large upload can't stretch the row. */}
-    <a
-      href="/"
-      class="hit-44 relative inline-flex flex-col leading-none transition-opacity hover:opacity-80"
-      aria-label={logo ? `${brandName} home` : undefined}
-    >
-      {logo ? (
-        <SanityImage
-          source={logo}
-          width={480}
-          alt={logo.alt || brandName}
-          loading="eager"
-          class="h-10 w-auto object-contain sm:h-12"
-        />
-      ) : (
-        <>
-          <span class="font-display text-xl leading-none sm:text-2xl">
-            {line1Lead && <span class="text-foreground">{line1Lead} </span>}
-            <span class="text-chapel-ink">{line1Key}</span>
-          </span>
-          {site.wordmark.line2 && (
-            <span class="mt-0.5 font-display text-base leading-tight text-foreground/70 sm:text-lg">
-              {site.wordmark.line2}
-            </span>
-          )}
-          {/* No aria-label on the text wordmark: the link is named by its own
-                text (WCAG 2.5.3, Lighthouse label-content-name-mismatch), and
-                this keeps "home" in the name for screen readers. */}
-          <span class="sr-only"> home</span>
-        </>
-      )}
-    </a>
-
-    {/* Nav + CTA grouped on the right (lg+ only).
-
-        The desktop nav is server-rendered as real <a> tags (flat links) plus
-        native <details> disclosure groups (the two dropdowns). Everything is in
-        the HTML at build time — crawlable, keyboard-usable, and present before
-        any JS runs (no flash, no CLS). The progressive-enhancement script at the
-        bottom of this file layers on hover-to-open + outside-click/Escape/
-        navigation close; the nav is fully functional without it. */}
-    <div class="hidden items-center gap-l lg:flex">
-      <nav class="site-nav flex items-center gap-l" aria-label="Primary">
-        {NAV_ITEMS.map((item) =>
-          item.kind === 'flat' ? (
-            <a
-              href={item.href}
-              class:list={[
-                'nav-underline text-sm tracking-wide transition-colors',
-                isActive(item.href) ? 'font-semibold text-link' : 'text-foreground hover:text-link',
-              ]}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
+  <div class="mx-auto max-w-content px-4 sm:px-6 lg:px-12">
+    {/* Nameplate row. Phones: 72px tall with a 2px ink rule under it (the nav
+        strip carries the rules from lg up). */}
+    <div class="masthead__row">
+      <div class="min-w-0">
+        <a
+          href="/"
+          class="masthead__plate hit-44 relative"
+          aria-label={logo ? `${brandName} home` : undefined}
+        >
+          {logo ? (
+            <SanityImage
+              source={logo}
+              width={480}
+              alt={logo.alt || brandName}
+              loading="eager"
+              class="h-10 w-auto object-contain lg:h-12"
+            />
           ) : (
-            <details class="site-nav__group relative">
-              {/* <summary> is the disclosure toggle. It carries .nav-underline
-                  so it gets the same bronze underline as flat links, and
-                  aria-current="page" (which locks the underline wide) when one
-                  of its children is the active route. role/aria-expanded are
-                  managed natively by <details>. */}
-              <summary
-                class:list={[
-                  'nav-underline text-sm tracking-wide transition-colors',
-                  'inline-flex cursor-pointer list-none items-center gap-0.5 select-none',
-                  'rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                  isGroupActive(item.items)
-                    ? 'font-semibold text-link'
-                    : 'text-foreground hover:text-link',
-                ]}
-                aria-current={isGroupActive(item.items) ? 'page' : undefined}
-              >
-                {item.label}
-                <ChevronDown
-                  size={14}
-                  className="site-nav__chevron mt-px transition-transform duration-150"
-                  aria-hidden="true"
-                />
-              </summary>
-
-              {/* Menu panel. Absolutely positioned under the summary so it
-                  doesn't shift layout. Uses popover tokens to match the mobile
-                  drawer + shadcn dropdowns, and the bronze ring + shadow of the
-                  card rhythm. */}
-              <div class="site-nav__menu absolute top-full left-0 z-50 mt-2 min-w-[200px] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10">
-                {item.items.map((sub) => (
-                  <a
-                    href={sub.href}
-                    class:list={[
-                      'block rounded-md px-2.5 py-1.5 text-sm transition-colors',
-                      'outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground',
-                      isActive(sub.href) ? 'font-semibold text-link' : 'text-foreground',
-                    ]}
-                    aria-current={isActive(sub.href) ? 'page' : undefined}
-                  >
-                    {sub.label}
-                  </a>
-                ))}
-              </div>
-            </details>
-          ),
+            <>
+              {plateLead}
+              {plateKey && (
+                <>
+                  {' '}
+                  <i>{plateKey}</i>
+                </>
+              )}
+              {/* Named by its own text (WCAG 2.5.3), "home" for screen readers. */}
+              <span class="sr-only"> home</span>
+            </>
+          )}
+        </a>
+        {subline && (
+          <p class="masthead__sub mast-mono">
+            <span class="xl:hidden">{tagline}</span>
+            <span class="hidden xl:inline">{subline}</span>
+          </p>
         )}
-      </nav>
-      {/* One primary CTA in the desktop header. The "free intro" path is still
-          surfaced just below in the hero and in the footer, so the header stays
-          a single, unambiguous ask rather than two same-destination pills. Its
-          text and target are editable in Site Settings -> Header button. */}
-      {headerCta.show && (
-        <>
-          <span class="h-6 w-px bg-border-soft" aria-hidden="true" />
-          <a
-            href={headerCta.href}
-            class="press-tactile inline-flex items-center rounded-full bg-primary px-m py-2 text-xs font-semibold tracking-eyebrow text-primary-foreground uppercase hover:bg-primary-dark"
-          >
-            {headerCta.label}
-          </a>
-        </>
-      )}
+      </div>
+
+      {/* Desktop: the issue with its fanned covers, a hairline, the button. */}
+      <div class="hidden shrink-0 items-center gap-5 lg:flex xl:gap-7">
+        <a href="/courses/" class="masthead__issue group">
+          <span class="issue-fan" aria-hidden="true">
+            <span class="issue-fan__cover issue-fan__cover--l" style={coverStyle(fan[1])} />
+            <span class="issue-fan__cover issue-fan__cover--r" style={coverStyle(fan[2])} />
+            <span class="issue-fan__cover issue-fan__cover--c" style={coverStyle(fan[0])}>
+              <span class="issue-fan__dot" />
+            </span>
+          </span>
+          <span class="flex flex-col gap-[3px]">
+            <span class="mast-mono text-[11px] text-muted-foreground">The term catalog</span>
+            <span class="font-display text-[19px] leading-[1.1]">
+              {termTag ? `${termTag} issue` : 'Course catalog'}{' '}
+              <span class="text-chapel-ink" aria-hidden="true">
+                &rarr;
+              </span>
+            </span>
+          </span>
+        </a>
+        {headerCta.show && (
+          <>
+            <span class="h-11 w-px bg-border" aria-hidden="true" />
+            <a href={headerCta.href} class="mast-btn press-tactile">
+              {headerCta.label}
+            </a>
+          </>
+        )}
+      </div>
+
+      {/* Phones: the Contents button and its full-screen menu. client:idle, not
+          client:only: the button server-renders and paints with the page; the
+          dialog mounts after hydration, so React stays off the LCP path. */}
+      <div class="shrink-0 lg:hidden">
+        <MobileNav
+          client:idle
+          items={menuItems}
+          shelf={shelf}
+          termTag={termTag}
+          cta={headerCta}
+          officeHours={settings.officeHours ?? ''}
+        />
+      </div>
     </div>
 
-    {/* client:idle, not client:only: the component server-renders its trigger
-        button and mounts the Radix Sheet after hydration, so React stays off
-        the LCP path (2026-09-04 Lighthouse pass). */}
-    <MobileNav client:idle links={NAV_LINKS} siteSettings={mobileNavSettings} {...mobileCtaProps} />
+    {/* The ruled nav strip (lg up): 2px rule over, 1px under. */}
+    <div class="masthead__strip hidden lg:flex">
+      <MastheadNav items={NAV_ITEMS} variant="strip" label="Primary" />
+      <p class="mast-mono hidden items-center text-[11.5px] tracking-[0.06em] text-muted-foreground xl:flex">
+        {note}
+      </p>
+    </div>
   </div>
+
+  {/* The condensed bar watches this. */}
+  <div class="masthead__sentinel" data-masthead-sentinel aria-hidden="true"></div>
 </header>
 
+{/* The condensed bar. Outside <header> on purpose: the header carries a
+    view-transition-name, and a fixed child inside a captured element snapshots
+    at the wrong place during a page swap. Hidden (aria-hidden + inert) until the
+    script below shows it. */}
+<div class="masthead-bar" data-masthead-bar aria-hidden="true" inert>
+  <div class="spine spine--bar" aria-hidden="true">
+    {COVER_COLORS.map((c) => (
+      <span style={`background: var(--color-cover-${c})`} />
+    ))}
+  </div>
+  <div class="mx-auto flex h-14 max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:h-[60px] lg:gap-8 lg:px-12">
+    <div class="flex shrink-0 items-baseline gap-3.5">
+      <a href="/" class="masthead-bar__plate hit-44 relative">
+        {plateLead}
+        {plateKey && (
+          <>
+            {' '}
+            <i>{plateKey}</i>
+          </>
+        )}
+        <span class="sr-only"> home</span>
+      </a>
+      {termTag && <span class="term-tag mast-mono hidden xl:inline-block">{termTag}</span>}
+    </div>
+    {/* Visibility lives on wrappers: the chrome classes set their own
+        display in unlayered CSS, which a Tailwind `hidden` cannot beat. */}
+    <div class="hidden lg:block">
+      <MastheadNav items={NAV_ITEMS} variant="bar" label="Primary, pinned" />
+    </div>
+    {headerCta.show && (
+      <div class="hidden lg:block">
+        <a href={headerCta.href} class="mast-btn mast-btn--sm press-tactile">
+          {headerCta.label}
+        </a>
+      </div>
+    )}
+    {/* Phones: opens the same Contents menu (MobileNav listens for the click
+        on any [data-open-contents] and returns focus here on close). */}
+    <div class="lg:hidden">
+      <button type="button" class="contents-btn" data-open-contents aria-haspopup="dialog">
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14">
+          <path
+            d="M1 3h12M1 7h12M1 11h8"
+            stroke="currentColor"
+            stroke-width="1.5"
+            fill="none"
+          ></path>
+        </svg>
+        Contents
+      </button>
+    </div>
+  </div>
+</div>
+
 <style>
-  /* The issue line (Term Issue PR 4, 2026-10-13): Plex Mono, like a catalog's
-     running head. Replaced the "Now enrolling" label and its pulsing
-     .enroll-dot, so the bar carries no animation now. Cream on the green bar
-     (~9:1). */
-  .issue-line {
-    font-family: var(--font-mono);
-    letter-spacing: 0.02em;
-    color: color-mix(in srgb, var(--color-chapel-foreground) 92%, transparent);
-  }
-
-  /* Desktop dropdown groups (native <details>). The links are server-rendered
-     and fully usable with no JS; these styles + the script below add the
-     dropdown affordances. */
-
-  /* Hide the default disclosure triangle in every engine. */
+  /* Desktop dropdown groups (native <details>): hide the default triangle,
+     turn the chevron, and keep the panel hidden until open. */
   .site-nav__group > summary {
     list-style: none;
   }
@@ -386,15 +339,9 @@ function isGroupActive(items: { href: string }[]) {
     display: none;
     content: '';
   }
-
-  /* Rotate the chevron when the group is open. */
   .site-nav__group[open] > summary .site-nav__chevron {
     transform: rotate(180deg);
   }
-
-  /* The menu panel starts hidden until the <details> is open. <details>
-     natively hides non-summary children when closed, but we keep an explicit
-     rule so the absolutely-positioned panel never flashes during hydration. */
   .site-nav__menu {
     display: none;
   }
@@ -403,14 +350,11 @@ function isGroupActive(items: { href: string }[]) {
   }
 </style>
 
-{/* Progressive enhancement for the desktop dropdown nav. Everything still
-    works without this (native <details> toggles on click/Enter/Space, links
-    are real <a> tags). This adds: open-on-hover with a small close delay,
-    close-on-outside-click, close-on-Escape, and close-when-a-link-is-followed.
+{/* Progressive enhancement: the dropdown niceties (hover, outside click,
+    Escape, close on follow) and the condensed bar. Everything works without
+    it: the links are real links and the masthead is always in the page.
     Re-binds on astro:page-load so it survives View Transitions navigations. */}
 <script>
-  // Query groups fresh each call — the nav DOM is replaced on every View
-  // Transitions navigation, so a captured list would go stale.
   function currentGroups() {
     return Array.from(document.querySelectorAll<HTMLDetailsElement>('.site-nav__group'));
   }
@@ -422,29 +366,24 @@ function isGroupActive(items: { href: string }[]) {
   }
 
   function initHeaderNav() {
-    const groups = currentGroups();
-    if (groups.length === 0) return;
-
-    const closeAll = closeAllGroups;
-
-    for (const group of groups) {
+    for (const group of currentGroups()) {
+      // astro:page-load also fires on the first load, so bind each group once.
+      if (group.dataset.bound) continue;
+      group.dataset.bound = '1';
       const summary = group.querySelector('summary');
       let closeTimer: number | undefined;
-
       const cancelClose = () => {
         if (closeTimer) {
           window.clearTimeout(closeTimer);
           closeTimer = undefined;
         }
       };
-
-      // Hover intent: open immediately on enter, close after a short delay on
-      // leave so a diagonal mouse path to the menu doesn't snap it shut. Only
-      // engages on pointers that can actually hover (skips touch).
+      // Hover intent: open on enter, close after a short delay on leave.
+      // Pointers that can hover only (touch is skipped).
       group.addEventListener('pointerenter', (e) => {
         if (e.pointerType === 'touch') return;
         cancelClose();
-        closeAll(group);
+        closeAllGroups(group);
         group.open = true;
       });
       group.addEventListener('pointerleave', (e) => {
@@ -454,16 +393,10 @@ function isGroupActive(items: { href: string }[]) {
           group.open = false;
         }, 140);
       });
-
-      // When opened via keyboard/click, make sure the others close.
+      // <details> toggles AFTER this handler: about to open, close the rest.
       summary?.addEventListener('click', () => {
-        // <details> toggles AFTER this handler, so the post-toggle state is the
-        // inverse of the current one. If it's about to open, close the rest.
-        if (!group.open) closeAll(group);
+        if (!group.open) closeAllGroups(group);
       });
-
-      // Following a link inside the menu should close the group (so it isn't
-      // left open behind the next page during a View Transitions swap).
       group.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => {
           group.open = false;
@@ -472,20 +405,52 @@ function isGroupActive(items: { href: string }[]) {
     }
   }
 
-  // Document-level listeners bind ONCE (guarded by a window flag), so they
-  // don't stack up across View Transitions navigations. They query the nav
-  // groups fresh each time they fire, so the swapped-in DOM is always covered.
+  // ---- The condensed bar ----------------------------------------------------
+  // Shown once the sentinel at the masthead's foot has scrolled ABOVE the
+  // viewport (not merely out of it, which a short window would also report).
+  // The observer is created per page and dropped before View Transitions
+  // swaps the DOM, so it never watches a detached node.
+  type BarWindow = typeof window & { __mastheadIO?: IntersectionObserver };
+
+  function initMastheadBar() {
+    const w = window as BarWindow;
+    w.__mastheadIO?.disconnect();
+    const bar = document.querySelector<HTMLElement>('[data-masthead-bar]');
+    const sentinel = document.querySelector<HTMLElement>('[data-masthead-sentinel]');
+    if (!bar || !sentinel || !('IntersectionObserver' in window)) return;
+
+    const setShown = (shown: boolean) => {
+      if (bar.hasAttribute('data-shown') === shown) return;
+      if (shown) {
+        bar.setAttribute('data-shown', '');
+        bar.removeAttribute('aria-hidden');
+        bar.inert = false;
+      } else {
+        // Never strand keyboard focus inside a bar that is leaving.
+        if (bar.contains(document.activeElement)) (document.activeElement as HTMLElement).blur();
+        bar.removeAttribute('data-shown');
+        bar.setAttribute('aria-hidden', 'true');
+        bar.inert = true;
+        bar.querySelectorAll<HTMLDetailsElement>('details[open]').forEach((d) => (d.open = false));
+      }
+    };
+
+    const io = new IntersectionObserver(([entry]) => {
+      setShown(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+    });
+    io.observe(sentinel);
+    w.__mastheadIO = io;
+  }
+
+  // Document-level listeners bind ONCE (guarded by a window flag), and query
+  // the nav fresh each time, so they cover the swapped-in DOM too.
   const w = window as typeof window & { __headerNavBound?: boolean };
   if (!w.__headerNavBound) {
     w.__headerNavBound = true;
-
-    // Close any open group when clicking outside the nav.
     document.addEventListener('pointerdown', (e) => {
       const target = e.target as Node;
       if (!currentGroups().some((g) => g.contains(target))) closeAllGroups();
     });
-
-    // Escape closes the open group and returns focus to its summary.
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
       const openGroup = currentGroups().find((g) => g.open);
@@ -494,8 +459,15 @@ function isGroupActive(items: { href: string }[]) {
         openGroup.querySelector('summary')?.focus();
       }
     });
+    document.addEventListener('astro:before-swap', () => {
+      (window as BarWindow).__mastheadIO?.disconnect();
+    });
   }
 
   initHeaderNav();
-  document.addEventListener('astro:page-load', initHeaderNav);
+  initMastheadBar();
+  document.addEventListener('astro:page-load', () => {
+    initHeaderNav();
+    initMastheadBar();
+  });
 </script>

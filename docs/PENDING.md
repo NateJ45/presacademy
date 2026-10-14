@@ -10,6 +10,19 @@ that section when it gets long.
 
 ## Open — needs a human (Nathan)
 
+- **Run the nav migration for the masthead** (2026-10-13, the chrome redesign PR).
+  `scripts/migrate-nav-contents.mjs` adds Pricing (/pricing) to `siteSettings.navItems`,
+  orders it Courses, Faculty, Pricing, Events, Resources, About, and sets the new
+  `menuNote` on Events ("Info nights"), Resources ("Reading") and About ("The school")
+  only where empty. Dry run on 2026-10-13 (published settings, no draft exists): one
+  change, 6 links. Routine after the PR deploys: backup, dry run, `--apply` with the
+  second factor, re-run (expect "nothing to do"), `/rebuild`. The site renders
+  correctly before it runs (Pricing is simply absent from the live menu until then).
+- **Check the Contents menu facts read true** (2026-10-13). "Info nights" (Events) and
+  "8 this year" (Courses, the count of every non-archived course) came from the approved
+  mockup; edit the Events / Resources / About notes in Studio (Site Settings, Navigation,
+  each top-menu link's "Menu note") if the wording should change.
+
 - **Two orphan fields on `siteSettings`** (found 2026-10-13 by `npm run audit:data`).
   Stored data with no schema field, so the Studio shows an "Unknown fields" banner
   with a "Remove field" button on Site settings (never click it, gotcha #1). Nothing
@@ -166,6 +179,14 @@ the Westminster Standards and the Book of Confessions."`
   inert. Check the repo settings on GitHub and set whichever are missing.
 
 ## Open — code/content work queued
+
+- **Two hidden menu switches** (2026-10-13). The Contents menu has no email or social
+  row, so `siteSettings.showEmail` and `showSocials` are now `hidden: true` in the
+  schema (data kept, still resolved in `src/lib/siteSettings.ts`, read by nothing).
+  Delete both fields with a data cleanup, or unhide them if the menu grows that row back.
+- **"Visit a class, free" is a code-owned label** (2026-10-13). The masthead's top-bar
+  link and the back cover's kickers are literals in `Header.astro` / `Footer.astro`,
+  like the type credit. Wire a Site Settings field if editors need to change them.
 
 - **Re-test undo/redo in the deployed Studio, then discard the
   `drafts.pricingPage` fixture** (2026-08-28, opened with the card 27 bug

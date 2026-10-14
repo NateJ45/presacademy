@@ -1073,6 +1073,7 @@ export type NavLink = {
     | PageReference;
   externalUrl?: string;
   href?: string;
+  menuNote?: string;
 };
 
 export type SectionForPastors = {
