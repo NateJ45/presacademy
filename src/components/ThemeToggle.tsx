@@ -1,28 +1,39 @@
 // Foundation, edit with care
-// Three-state theme toggle: light → dark → system. LIGHT is the default for a
-// new visitor (no saved choice); the OS theme is only followed if the visitor
-// explicitly picks "system". Persists to localStorage (key from
-// site.themeStorageKey). Anti-FOUC script in BaseLayout applies the resolved
-// class on initial paint; this component only handles cycling + re-application.
+// Theme control: a small Light / Dark segmented control (the 2026-10-13
+// masthead redesign; it used to be a single icon button cycling light -> dark
+// -> system). LIGHT is the default for a new visitor (no saved choice). The
+// choice persists to localStorage under site.themeStorageKey, the same key and
+// the same values ('light' | 'dark' | 'system') as before, so a visitor's saved
+// choice survives the redesign. A stored 'system' (from the old cycle) keeps
+// following the OS, as it always did, until the visitor picks Light or Dark.
+// The anti-FOUC script in BaseLayout applies the resolved class on first
+// paint; this component only switches and re-applies.
+//
+// Which half LOOKS selected is decided by CSS from the `dark` class on <html>
+// (the .theme-seg rules in globals.css), not by React state, so the control is
+// right from the first paint even before the island hydrates. aria-pressed
+// arrives with hydration.
+//
+// Two looks, by `variant`:
+//   'bar'    cream outline pill for the green top bar of the masthead
+//   'sheet'  square ink outline for the foot of the phone Contents menu
 
 import { useEffect, useState } from 'react';
-import { Sun, Moon, Monitor } from 'lucide-react';
 import { site } from '@/data/site';
 
 type Theme = 'light' | 'dark' | 'system';
 const KEY = site.themeStorageKey;
-const ORDER: Theme[] = ['light', 'dark', 'system'];
+
+function prefersDark() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
 
 function applyTheme(theme: Theme) {
-  const dark =
-    theme === 'dark' ||
-    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const dark = theme === 'dark' || (theme === 'system' && prefersDark());
   document.documentElement.classList.toggle('dark', dark);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-  // Keep theme-aware images (header logo) in sync. The light/dark srcs are
-  // pre-rendered by Astro at build time and stored on each img as data
-  // attributes; we swap them here so toggling the theme doesn't leave a
-  // light logo on a dark background (or vice versa).
+  // Keep theme-aware images (an uploaded header logo) in sync. The light/dark
+  // srcs are stored on each img as data attributes.
   const imgs = document.querySelectorAll<HTMLImageElement>('img[data-theme-logo]');
   imgs.forEach((img) => {
     const nextSrc = dark ? img.dataset.logoDarkSrc : img.dataset.logoLightSrc;
@@ -30,48 +41,66 @@ function applyTheme(theme: Theme) {
     if (nextSrc && img.src !== nextSrc) img.src = nextSrc;
     if (nextSrcset && img.srcset !== nextSrcset) img.srcset = nextSrcset;
   });
+  // Every mounted control (the masthead's and the menu's) re-reads the state.
+  window.dispatchEvent(new CustomEvent('pa:theme-change'));
 }
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('light');
+function readStored(): Theme {
+  try {
+    const v = localStorage.getItem(KEY);
+    return v === 'dark' || v === 'system' ? v : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+interface Props {
+  variant?: 'bar' | 'sheet';
+}
+
+export default function ThemeToggle({ variant = 'bar' }: Props) {
+  // null until mounted: the server cannot know, so it renders no aria-pressed.
+  const [resolved, setResolved] = useState<'light' | 'dark' | null>(null);
 
   useEffect(() => {
-    const stored = (localStorage.getItem(KEY) as Theme | null) ?? 'light';
-    setTheme(stored);
-
+    const sync = () =>
+      setResolved(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    sync();
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      if ((localStorage.getItem(KEY) ?? 'light') === 'system') applyTheme('system');
+    const onOs = () => {
+      if (readStored() === 'system') applyTheme('system');
     };
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
+    mq.addEventListener('change', onOs);
+    window.addEventListener('pa:theme-change', sync);
+    return () => {
+      mq.removeEventListener('change', onOs);
+      window.removeEventListener('pa:theme-change', sync);
+    };
   }, []);
 
-  const cycle = () => {
-    const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length];
-    setTheme(next);
-    localStorage.setItem(KEY, next);
+  const choose = (next: 'light' | 'dark') => {
+    try {
+      localStorage.setItem(KEY, next);
+    } catch {
+      // Private mode: the choice still applies for this page view.
+    }
     applyTheme(next);
   };
 
-  const label =
-    theme === 'light'
-      ? 'Switch to dark mode'
-      : theme === 'dark'
-        ? 'Switch to system theme'
-        : 'Switch to light mode';
-
   return (
-    <button
-      type="button"
-      onClick={cycle}
-      aria-label={label}
-      title={label}
-      className="hit-44 relative inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
-    >
-      {theme === 'light' && <Sun size={18} />}
-      {theme === 'dark' && <Moon size={18} />}
-      {theme === 'system' && <Monitor size={18} />}
-    </button>
+    <div role="group" aria-label="Colour theme" className={`theme-seg theme-seg--${variant}`}>
+      {(['light', 'dark'] as const).map((mode) => (
+        <button
+          key={mode}
+          type="button"
+          data-mode={mode}
+          className="theme-seg__opt"
+          aria-pressed={resolved === null ? undefined : resolved === mode}
+          onClick={() => choose(mode)}
+        >
+          {mode === 'light' ? 'Light' : 'Dark'}
+        </button>
+      ))}
+    </div>
   );
 }

@@ -1,0 +1,79 @@
+---
+// Foundation, edit with care
+// The primary nav links, drawn twice by Header.astro: once in the masthead's
+// ruled nav strip (`variant="strip"`) and once in the condensed bar that slides
+// in after the masthead scrolls away (`variant="bar"`). One component so the two
+// can never disagree about the menu or the current page.
+//
+// SERVER-RENDERED, always (gotcha #5): flat items are real <a> tags and a
+// dropdown group is a native <details>/<summary> with real <a> children, so
+// crawlers see every link and nothing waits on JS. Header.astro's script adds
+// the hover / outside-click / Escape niceties to every `.site-nav__group`.
+//
+// The current page carries aria-current="page", which the CSS draws as the
+// green underline (`.mast-nav__link[aria-current='page']` in globals.css).
+
+import { ChevronDown } from 'lucide-react';
+import type { NavItem } from '@/lib/siteSettings';
+
+interface Props {
+  items: NavItem[];
+  variant: 'strip' | 'bar';
+  label: string;
+  class?: string;
+}
+
+const { items, variant, label, class: extraClass } = Astro.props as Props;
+
+const pathname = Astro.url.pathname;
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+function isGroupActive(group: { href: string }[]) {
+  return group.some((item) => isActive(item.href));
+}
+---
+
+<nav class:list={['mast-nav', `mast-nav--${variant}`, 'site-nav', extraClass]} aria-label={label}>
+  {items.map((item) =>
+    item.kind === 'flat' ? (
+      <a
+        href={item.href}
+        class="mast-nav__link"
+        aria-current={isActive(item.href) ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    ) : (
+      <details class="site-nav__group relative">
+        <summary
+          class="mast-nav__link inline-flex cursor-pointer list-none items-center gap-1 select-none"
+          aria-current={isGroupActive(item.items) ? 'page' : undefined}
+        >
+          {item.label}
+          <ChevronDown
+            size={14}
+            className="site-nav__chevron mt-px transition-transform duration-150"
+            aria-hidden="true"
+          />
+        </summary>
+        <div class="site-nav__menu absolute top-full left-0 z-50 mt-1 min-w-[200px] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10">
+          {item.items.map((sub) => (
+            <a
+              href={sub.href}
+              class:list={[
+                'block rounded-md px-2.5 py-1.5 font-body text-sm transition-colors',
+                'outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground',
+                isActive(sub.href) ? 'font-semibold text-link' : 'text-foreground',
+              ]}
+              aria-current={isActive(sub.href) ? 'page' : undefined}
+            >
+              {sub.label}
+            </a>
+          ))}
+        </div>
+      </details>
+    ),
+  )}
+</nav>

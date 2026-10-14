@@ -1643,29 +1643,9 @@
   translate: 0 0;
 }
 
-/* Animated active-link underline. Used in the primary nav: an underline that
-   slides in from the center on hover and stays full-width when the link is
-   the active page. */
-.nav-underline {
-  position: relative;
-}
-.nav-underline::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -0.35rem;
-  height: 2px;
-  width: 100%;
-  background-color: var(--primary);
-  transform: translateX(-50%) scaleX(0);
-  transform-origin: center;
-  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.nav-underline:hover::after,
-.nav-underline:focus-visible::after,
-.nav-underline[aria-current='page']::after {
-  transform: translateX(-50%) scaleX(1);
-}
+/* (The old primary nav's sliding .nav-underline was retired 2026-10-13: the
+   masthead's nav strip marks the current page with a green rule instead, see
+   .mast-nav__link in the chrome block below.) */
 
 /* Reading progress bar. Fixed thin bronze track + an inner fill that scales
    horizontally with the article's scroll progress (driven by the script in
@@ -1689,17 +1669,810 @@
   transition: transform 80ms linear;
 }
 
-/* Sticky header behavior. The hide-on-scroll-down / show-on-scroll-up state
-   is toggled by the script in BaseLayout via data-state. */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+/* ---------- The chrome: masthead, contents menu, back cover ------------ */
+/* (2026-10-13, the chrome redesign.) Header.astro, MastheadNav.astro,
+   MobileNav.tsx, ThemeToggle.tsx and Footer.astro draw the site's frame as a
+   printed issue: a spine strip of the eight cover colours top and bottom, a
+   masthead with a ruled nav strip, a condensed bar that slides in once the
+   masthead has scrolled away, a full-screen "Contents" menu on phones, and a
+   three-part back cover. The literal hexes below are the approved mockup's
+   values on the STATIC green surfaces (top bar, footer), which never flip
+   with the theme; everything on the page surface reads theme tokens. */
+
+/* Spine strip: eight equal bands, static in both themes (like the covers). */
+.spine {
+  display: flex;
+  height: 5px;
 }
-.site-header[data-state='hidden'] {
+.spine > span {
+  flex: 1;
+}
+.spine--bar {
+  height: 4px;
+}
+.spine--footer {
+  height: 7px;
+}
+@media (min-width: 64rem) {
+  .spine {
+    height: 6px;
+  }
+  .spine.spine--bar {
+    height: 4px;
+  }
+  .spine.spine--footer {
+    height: 8px;
+  }
+}
+
+/* The catalog voice in the chrome: Plex Mono, uppercase, open tracking. */
+.mast-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.masthead__bar .mast-mono {
+  font-size: 11px;
+}
+@media (min-width: 40rem) {
+  .masthead__bar .mast-mono {
+    font-size: 12px;
+  }
+}
+/* The dimmer separators in the issue line, on the static deep green. */
+.mast-dot {
+  color: #8fa594;
+}
+
+/* The masthead stays in normal flow (never sticky, never shrinking: that is
+   layout shift). It stacks above the page so its dropdowns overlap content. */
+.site-header {
+  position: relative;
+  z-index: 40;
+}
+.masthead__row {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 2px solid var(--foreground);
+  padding: 8px 0;
+}
+.masthead__plate {
+  display: inline-block;
+  font-family: var(--font-display);
+  /* 22px from a 450px-wide phone down; smaller below that so the nameplate
+     stays on one line beside the Contents button (it wraps only at 320). */
+  font-size: clamp(1rem, 4.9vw, 1.375rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.masthead__plate i,
+.masthead-bar__plate i,
+.contents-sheet__plate i {
+  font-style: italic;
+  color: var(--chapel-ink);
+}
+.masthead__plate:hover {
+  color: var(--foreground);
+  opacity: 0.85;
+}
+.masthead__sub {
+  margin-top: 6px;
+  font-size: 9.5px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  text-wrap: balance;
+}
+@media (min-width: 64rem) {
+  .masthead__row {
+    min-height: 0;
+    gap: 24px;
+    border-bottom: 0;
+    padding: 30px 0 26px;
+  }
+  .masthead__plate {
+    font-size: clamp(1.75rem, 2.9vw, 2.5rem);
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+  .masthead__sub {
+    margin-top: 10px;
+    font-size: 11.5px;
+  }
+}
+
+/* "Spring 2027 issue" with three tiny fanned covers. */
+.masthead__issue {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.masthead__issue:hover .font-display {
+  color: var(--link);
+}
+.issue-fan {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 66px;
+  height: 52px;
+}
+.issue-fan__cover {
+  position: absolute;
+  width: 28px;
+  height: 42px;
+  background: var(--cover-bg);
+  color: var(--cover-fg);
+  box-shadow:
+    inset 0 0 0 1px var(--cover-hairline),
+    0 6px 10px -6px rgb(0 0 0 / 0.5);
+  transition: transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.issue-fan__cover--l {
+  left: 0;
+  top: 6px;
+  transform: rotate(-9deg);
+}
+.issue-fan__cover--r {
+  right: 0;
+  top: 4px;
+  transform: rotate(8deg);
+}
+.issue-fan__cover--c {
+  left: 18px;
+  top: 0;
+  display: flex;
+  width: 30px;
+  height: 45px;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-1deg);
+  box-shadow:
+    inset 0 0 0 1px var(--cover-hairline),
+    0 8px 12px -6px rgb(0 0 0 / 0.55);
+}
+.issue-fan__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: currentColor;
+}
+/* Hover: the fan opens a touch, like thumbing the stack. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .masthead__issue:hover .issue-fan__cover--l {
+    transform: rotate(-13deg) translateX(-2px);
+  }
+  .masthead__issue:hover .issue-fan__cover--r {
+    transform: rotate(12deg) translateX(2px);
+  }
+}
+
+/* The pill buttons of the chrome (green fill, uppercase, tracked). */
+.mast-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-primary);
+  padding: 0 22px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--primary-foreground);
+  transition: background-color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mast-btn:hover {
+  background: var(--color-primary-dark);
+  color: var(--primary-foreground);
+}
+.mast-btn--sm {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 12px;
+}
+.mast-btn--block {
+  width: 100%;
+  min-height: 48px;
+}
+
+/* The ruled nav strip: 2px rule over, 1px under, Fraunces items, the current
+   page underlined in green. */
+.masthead__strip {
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 2px solid var(--foreground);
+  border-bottom: 1px solid var(--foreground);
+}
+.mast-nav {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+}
+.mast-nav__link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  padding: 13px 0 11px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--foreground);
+  text-decoration: none;
+  transition:
+    color 440ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mast-nav__link:hover {
+  color: var(--link);
+}
+.mast-nav__link[aria-current='page'] {
+  border-bottom-color: var(--chapel-ink);
+}
+.mast-nav--bar {
+  gap: 16px;
+}
+.mast-nav--bar .mast-nav__link {
+  margin-bottom: 0;
+  border-bottom-width: 2px;
+  padding: 10px 0;
+  font-size: 15.5px;
+}
+@media (min-width: 80rem) {
+  .mast-nav {
+    gap: 36px;
+  }
+  .mast-nav--bar {
+    gap: 28px;
+  }
+  .mast-nav--bar .mast-nav__link {
+    font-size: 16.5px;
+  }
+}
+
+/* The bordered "Contents" button (phones), and its inverse "Close". */
+.contents-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--foreground);
+  background: transparent;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  cursor: pointer;
+  transition:
+    background-color 440ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.contents-btn:hover,
+.contents-btn--close {
+  background: var(--foreground);
+  color: var(--background);
+}
+.contents-btn--close:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* The condensed bar. Fixed, so it never moves the page; it slides in with
+   transform once Header.astro's observer marks it [data-shown]. While hidden
+   it is also visibility: hidden (and aria-hidden + inert from the script), so
+   its shadow never peeks and nothing in it can be focused. */
+.masthead-bar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 45;
+  border-bottom: 1px solid var(--foreground);
+  background: color-mix(in srgb, var(--background) 94%, transparent);
+  box-shadow: 0 10px 24px -20px rgb(0 0 0 / 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   transform: translateY(-100%);
+  visibility: hidden;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 320ms;
+}
+.masthead-bar[data-shown] {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s;
+}
+.masthead-bar__plate {
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 5vw, 1.25rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--foreground);
+  text-decoration: none;
+}
+@media (min-width: 64rem) {
+  .masthead-bar__plate {
+    font-size: 18px;
+  }
+}
+@media (min-width: 80rem) {
+  .masthead-bar__plate {
+    font-size: 22px;
+  }
+  .masthead__row {
+    gap: 40px;
+  }
+}
+.term-tag {
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+/* Anchor jumps land below the condensed bar, not under it. */
+html {
+  scroll-padding-top: 4.5rem;
+}
+
+/* The Light / Dark control. The selected half is drawn from the `dark` class
+   on <html>, so it is right before the island hydrates. No overflow clipping
+   on the group: each half grows an invisible 44px tap area (like .hit-44). */
+.theme-seg {
+  display: inline-flex;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.theme-seg__opt {
+  position: relative;
+  border: 1px solid currentColor;
+  background: transparent;
+  padding: 3px 10px;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.theme-seg__opt + .theme-seg__opt {
+  border-left: 0;
+}
+.theme-seg__opt::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+.theme-seg--bar {
+  font-size: 12px;
+}
+.theme-seg--bar .theme-seg__opt {
+  border-color: #4b5e50;
+}
+.theme-seg--bar .theme-seg__opt:first-child {
+  border-radius: 999px 0 0 999px;
+}
+.theme-seg--bar .theme-seg__opt:last-child {
+  border-radius: 0 999px 999px 0;
+}
+:root:not(.dark) .theme-seg--bar .theme-seg__opt[data-mode='light'],
+.dark .theme-seg--bar .theme-seg__opt[data-mode='dark'] {
+  background: #e9e1cc;
+  color: var(--color-chapel-deep);
+}
+.theme-seg--sheet {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--foreground);
+}
+.theme-seg--sheet .theme-seg__opt {
+  padding: 4px 9px;
+}
+:root:not(.dark) .theme-seg--sheet .theme-seg__opt[data-mode='light'],
+.dark .theme-seg--sheet .theme-seg__opt[data-mode='dark'] {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* The Contents menu (MobileNav.tsx). */
+.contents-sheet__plate {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 4.9vw, 1.375rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.contents-sheet__title {
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.contents-row {
+  display: flex;
+  min-height: 52px;
+  align-items: baseline;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 0;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.contents-row__label {
+  font-family: var(--font-display);
+  font-size: 23px;
+  line-height: 1.15;
+  transition: color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.contents-row:hover .contents-row__label {
+  color: var(--link);
+}
+.contents-row__leader {
+  flex: 1;
+  min-width: 1rem;
+  border-bottom: 1px dotted color-mix(in srgb, var(--foreground) 45%, transparent);
+  transform: translateY(-5px);
+}
+.contents-row__fact {
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+.contents-row__fact--key {
+  color: var(--chapel-ink);
+}
+.contents-row--sub {
+  min-height: 44px;
+  border-bottom: 0;
+  padding: 8px 0 8px 1rem;
+}
+.contents-row--sub .contents-row__label {
+  font-size: 19px;
+}
+
+/* Tiny covers: the menu's shelf and the footer's "In this issue". They reuse
+   the course cover ornaments (.cover__orn), which size against this element
+   (container-type), and the cover colour variables from src/lib/cover.ts. */
+.mini-cover {
+  container-type: inline-size;
+  display: grid;
+  flex: none;
+  aspect-ratio: 2 / 3;
+  place-items: center;
+  background: var(--cover-bg);
+  color: var(--cover-fg);
+  box-shadow: inset 0 0 0 1px var(--cover-hairline);
+  text-decoration: none;
+}
+.mini-cover--shelf {
+  width: 52px;
+}
+.mini-cover--shelf .cover__orn {
+  width: 46%;
+}
+.mini-cover--issue {
+  display: flex;
+  width: 64px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 7px;
+  box-shadow:
+    inset 0 0 0 1px rgb(241 234 217 / 0.18),
+    0 12px 20px -12px rgb(0 0 0 / 0.7);
+  transform: rotate(-2deg);
+}
+.mini-cover--issue .cover__orn {
+  width: 40%;
+}
+.mini-cover__code,
+.mini-cover__title {
+  display: none;
+}
+@media (min-width: 64rem) {
+  .mini-cover--issue {
+    width: 74px;
+    justify-content: space-between;
+  }
+  /* No course behind it yet: just the ornament, centred. */
+  .mini-cover--issue.mini-cover--plain {
+    justify-content: center;
+  }
+  .mini-cover__code {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 0.06em;
+  }
+  .mini-cover__title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 1.05;
+  }
+}
+
+/* The back cover (Footer.astro). Phones stack Colophon, In this issue, Index;
+   from 64rem it is a 5 / 4 / 3 grid in DOM order. */
+.back-cover__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.back-cover__colophon,
+.back-cover__index,
+.back-cover__issue {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+.back-cover__issue {
+  order: 2;
+}
+.back-cover__index {
+  order: 3;
+  gap: 10px;
+}
+.back-cover__kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #c7a875;
+}
+.back-cover__plate {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--color-chapel-foreground);
+  text-decoration: none;
+}
+.back-cover__plate i {
+  font-style: italic;
+  color: #9cc6ac;
+}
+.back-cover__lede {
+  margin: 0;
+  max-width: 34em;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #dcd4c1;
+}
+.back-cover__facts {
+  display: grid;
+  margin: 0;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+  border-top: 1px solid rgb(233 225 204 / 0.16);
+  padding-top: 18px;
+  font-size: 15.5px;
+}
+.back-cover__facts dt {
+  padding-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a9b4a7;
+}
+.back-cover__facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.back-cover a {
+  color: var(--color-chapel-foreground);
+}
+.back-cover a:hover {
+  color: #ffffff;
+}
+.back-cover__link,
+.back-cover__directions,
+.back-cover__credit {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  text-decoration: underline;
+  text-decoration-color: rgb(233 225 204 / 0.35);
+  text-underline-offset: 3px;
+}
+.back-cover__directions {
+  display: flex;
+  gap: 0.3em;
+  font-weight: 600;
+}
+.back-cover__credit {
+  text-decoration: none;
+}
+.back-cover__link:hover,
+.back-cover__directions:hover,
+.back-cover__credit:hover {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+.back-cover__issue-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+.back-cover__cta {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(233 225 204 / 0.5);
+  border-radius: 999px;
+  padding: 0 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.back-cover__cta:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+
+/* The index: two CSS columns, so the DOM (and the screen reader) stays A to Z
+   while the eye reads down each column. Never a row-wise grid here. */
+.index-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 16px;
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+.index-list__item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  break-inside: avoid;
+}
+.index-list__initial {
+  flex: none;
+  width: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: #c7a875;
+}
+.index-list__link {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  text-decoration: none;
+}
+.index-list__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The bottom line, in mono. */
+.back-cover__base {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgb(233 225 204 / 0.16);
+  padding: 20px 0 32px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #a9b4a7;
+}
+.back-cover__base .back-cover__credit {
+  color: #a9b4a7;
+}
+
+@media (min-width: 64rem) {
+  .back-cover__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+    gap: 48px;
+  }
+  .back-cover__colophon,
+  .back-cover__index,
+  .back-cover__issue {
+    order: 0;
+    gap: 22px;
+  }
+  .back-cover__kicker {
+    font-size: 11.5px;
+  }
+  /* One line, as drawn: the size follows the column so it never wraps. */
+  .back-cover__plate {
+    font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .back-cover__lede {
+    font-size: 19px;
+  }
+  .back-cover__facts {
+    margin-top: 6px;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 12px 16px;
+    padding-top: 22px;
+  }
+  .back-cover__facts dt {
+    font-size: 11px;
+  }
+  .back-cover__link,
+  .back-cover__directions,
+  .back-cover__credit {
+    display: inline;
+    min-height: 0;
+  }
+  .back-cover__issue-link {
+    gap: 18px;
+  }
+  .back-cover__cta {
+    align-self: flex-start;
+  }
+  .index-list {
+    column-gap: 32px;
+    font-size: 18px;
+  }
+  .index-list__item {
+    gap: 12px;
+  }
+  .index-list__initial {
+    width: 14px;
+    font-size: 11px;
+  }
+  .index-list__link {
+    display: inline;
+    min-width: 0;
+    min-height: 0;
+    padding: 6px 0;
+  }
+  .back-cover__base {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px 0;
+    font-size: 11.5px;
+  }
+}
+@media (min-width: 80rem) {
+  .back-cover__grid {
+    gap: 72px;
+  }
 }
 
 /* Card lift on hover. Marketing cards (project, journal, service) opt in via
@@ -2594,6 +3367,11 @@ body::before {
     transform: scaleY(1) !important;
     transition: none !important;
   }
+  /* The condensed bar (2026-10-13 masthead): no slide, it just appears. */
+  .masthead-bar,
+  .masthead-bar[data-shown] {
+    transition: none !important;
+  }
 }
 
 /* ---------- Print stylesheet ------------------------------------------ */
@@ -2623,6 +3401,7 @@ body::before {
 
   /* Hide site chrome + interactive elements that don't translate to paper. */
   .site-header,
+  .masthead-bar,
   footer,
   nav[aria-label='More projects'],
   nav[aria-label='More journal posts'],

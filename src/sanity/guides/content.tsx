@@ -922,7 +922,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Edit the top menu & footer',
     icon: '🧭',
-    lead: 'Add, rename, reorder, or remove the links in the website header and footer, including dropdown menus, the header button, a logo, and the small print at the bottom.',
+    lead: 'Add, rename, reorder, or remove the links in the website header, the phone menu and the footer index, including dropdown menus, the short notes in the phone menu, the header button and a logo.',
     diy: 'self',
     body: [
       {
@@ -942,6 +942,11 @@ export const guides: Guide[] = [
           'The header fits **six** links at most, so keep the list short.',
           'Click `Publish`. The header updates across the site.',
         ],
+      },
+      { kind: 'h', text: 'The short notes in the phone menu' },
+      {
+        kind: 'p',
+        text: 'On a phone, the menu opens as a "Contents" page, and each link ends in a few words in small capitals, like "Info nights" beside Events. Open a link in **Top menu links** and type them in its **Menu note**. Keep it to two or three words. Courses, Faculty and Pricing fill theirs in on their own (how many courses, how many teachers, the lowest price), so their note box can stay empty. Leave any note blank and the site uses a built-in one.',
       },
       {
         kind: 'callout',
@@ -980,28 +985,27 @@ export const guides: Guide[] = [
         title: 'Your list becomes the whole menu',
         text: 'While Top menu links is empty, the site shows the built-in menu. As soon as you add any items, they become the entire menu, so include every link you want in the header, not just the new one.',
       },
-      { kind: 'h', text: 'Footer link columns' },
+      { kind: 'h', text: 'The footer index' },
       {
         kind: 'steps',
         items: [
-          'In the same `Navigation (menus)` tab, scroll to **Footer link columns**.',
-          'Click `Add item`, choose **Column**, and give it a **Column heading**, for example "Study".',
-          'Add a **Link** for each item in that column. Aim for three columns so the footer stays balanced.',
-          '`Publish`. The "Get in touch" column (email, phone, social) is added for you automatically.',
+          'In the same `Navigation (menus)` tab, scroll to **Footer index links**.',
+          'Add a **Link** to any column. The footer prints every link once, sorted A to Z with a small letter at each new initial, so the columns and their headings only keep the list tidy here.',
+          'A page linked twice shows once, under the first label.',
+          '`Publish`. The address, office hours and email beside the index come from `Identity & contact`.',
         ],
       },
-      { kind: 'h', text: 'The small print at the very bottom' },
       {
         kind: 'p',
-        text: 'The little links beside the copyright line (Pricing, Privacy, Accessibility) are **Footer small-print links**, in the same `Navigation (menus)` tab. Leave it empty to keep those three, or add your own to replace them.',
+        text: '**Footer index: extra links** (Privacy, Accessibility) join the same A to Z list. Leave it empty to keep the built-in Pricing, Privacy and Accessibility.',
       },
       { kind: 'h', text: 'The button at the right of the header' },
       {
         kind: 'steps',
         items: [
           'In `Navigation (menus)`, open **Header button**.',
-          'Type **Button text** to change what it says, and set **Where the button goes** to change where it leads. Leave both blank for the built-in "Request info" pointing at Get Started.',
-          'Turn **Show the header button** off to remove the button from the header and from the phone menu.',
+          'Type **Button text** to change what it says, and set **Where the button goes** to change where it leads. Leave both blank for the built-in "Request information" pointing at Get Started.',
+          'Turn **Show the header button** off to remove the button from the header, the phone menu and the footer.',
         ],
       },
       { kind: 'h', text: 'Use a logo instead of the typed name' },
@@ -1013,7 +1017,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'Empty means the built-in menus',
-        text: 'The top menu, the footer columns, the small-print links and the header button all fall back to the built-in ones while they are empty, so you only change what you fill in. The same goes for the three switches here (the email and social buttons in the phone menu, the social buttons in the footer): leave them alone and everything shows as it does today.',
+        text: 'The top menu, the footer index links and the header button all fall back to the built-in ones while they are empty, so you only change what you fill in. The same goes for the footer social switch: leave it alone and any social links you set show in the footer.',
       },
       {
         kind: 'callout',

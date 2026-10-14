@@ -55,7 +55,7 @@ If a new shadcn primitive ever looks off-brand, the fix is almost always in that
 
 ## Theme system
 
-Three-state toggle (light / dark / system), persisted to `localStorage["theme"]`. **Light is the default for first-time visitors** (no saved choice) — the site does NOT follow the OS by default. "System" is opt-in: only a visitor who explicitly picks System from the toggle gets OS-following behavior, and while set to System the page listens to `matchMedia('(prefers-color-scheme: dark)')` and flips live when the OS changes. The choice persists in `localStorage` either way. (Changed 2026-06-14 — the bootstrap and `ThemeToggle` both default to `'light'`, previously `'system'`.)
+Light / Dark control (three stored states: light / dark / system; the control offers Light and Dark since 2026-10-13, and a stored system still follows the OS), persisted to `localStorage["theme"]`. **Light is the default for first-time visitors** (no saved choice) — the site does NOT follow the OS by default. "System" is opt-in: only a visitor who explicitly picks System from the toggle gets OS-following behavior, and while set to System the page listens to `matchMedia('(prefers-color-scheme: dark)')` and flips live when the OS changes. The choice persists in `localStorage` either way. (Changed 2026-06-14 — the bootstrap and `ThemeToggle` both default to `'light'`, previously `'system'`.)
 
 The wiring, in order of execution:
 
@@ -64,7 +64,7 @@ The wiring, in order of execution:
    - Applies the `.dark` class on `<html>` plus an inline `color-scheme` style so native widgets (scrollbars, form controls) follow
    - Updates the single `<meta name="theme-color" id="theme-color-meta">` to the dark value (`#1C1813`) when dark is active, else the light value (`#ECE4DA`), so the mobile browser chrome follows the APP theme (see the theme-color note below)
    - Walks every `<img data-theme-logo>` and assigns the matching variant's `src` + `srcset` (theme-aware logo, see below)
-2. **`ThemeToggle.tsx`** (React island, single instance in the Header) cycles light -> dark -> system on click, writes to the same localStorage key, and re-binds the matchMedia listener whenever the chosen theme changes. Its `applyTheme()` function also walks the `[data-theme-logo]` images and swaps their srcs, so toggling the theme doesn't leave a dark-ink logo on a dark background.
+2. **`ThemeToggle.tsx`** (React island; since 2026-10-13 a small **Light / Dark segmented control**, mounted in the masthead's top bar from md up and at the foot of the phone Contents menu) writes `light` or `dark` to the same localStorage key and dispatches `pa:theme-change` so every mounted copy re-reads. A stored `system` from the old three-state cycle keeps following the OS (the matchMedia listener stays) until the visitor picks Light or Dark; the control no longer offers System. Which half looks selected is drawn by CSS from the `dark` class on `<html>`, so it is right before hydration; `aria-pressed` arrives with it. Its `applyTheme()` also walks the `[data-theme-logo]` images and swaps their srcs.
 3. **`globals.css`** defines color tokens for both modes. `:root` carries light; `.dark` carries the overrides. The static `bg-primary` green holds in both modes; the shadcn `--primary` lifts to a brighter green in dark for rings / underlines / decoration, and only surface and muted-text tokens flip.
 
 ### View Transitions persistence (the gotcha)

@@ -287,9 +287,11 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     {/* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */}
     <Toaster client:idle position="bottom-right" />
 
-    {/* Polish layer: scroll-triggered reveal observer + sticky-header
-        hide-on-scroll-down behavior. Both honor prefers-reduced-motion.
-        Re-init on astro:page-load so they survive View Transitions. */}
+    {/* Polish layer: the scroll-triggered reveal observers. They honor
+        prefers-reduced-motion and re-init on astro:page-load so they survive
+        View Transitions. (The sticky header's hide-on-scroll script left with
+        the 2026-10-13 masthead: the masthead stays in flow and Header.astro
+        owns the condensed bar that replaces it.) */}
     <script>
       function initPolish() {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -440,40 +442,6 @@ const announcement = await getActiveAnnouncement().catch(() => null);
             );
             countGrids.forEach((el) => countObserver.observe(el));
           }
-        }
-
-        // ---- Sticky-header hide on scroll-down --------------------------
-        // The header is position:sticky via .site-header. We swap a data-state
-        // attribute that the CSS translates into a translateY(-100%) when the
-        // user scrolls downward past the hero band.
-        const header = document.querySelector<HTMLElement>('.site-header');
-        if (header && !(header as any).__polishWired) {
-          (header as any).__polishWired = true;
-          let lastY = window.scrollY;
-          let ticking = false;
-          const SHOW_THRESHOLD = 80; // small jitter buffer
-          const HIDE_AFTER = 120; // don't hide until past hero band
-
-          const onScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-              const y = window.scrollY;
-              const dy = y - lastY;
-              if (reduceMotion) {
-                header.removeAttribute('data-state');
-              } else if (y < HIDE_AFTER) {
-                header.removeAttribute('data-state');
-              } else if (dy > 4) {
-                header.setAttribute('data-state', 'hidden');
-              } else if (dy < -4) {
-                header.removeAttribute('data-state');
-              }
-              lastY = y;
-              ticking = false;
-            });
-          };
-          window.addEventListener('scroll', onScroll, { passive: true });
         }
       }
 
