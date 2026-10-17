@@ -9,7 +9,7 @@
 // Returns null for documents with no public page (e.g. Site Settings).
 
 import { Card, Stack, Flex, Text, Button } from '@sanity/ui';
-import { LaunchIcon } from '@sanity/icons';
+import { LaunchIcon } from '@sanity/icons/Launch';
 // pathForDoc maps a doc type (+ slug) to its site path; LIVE_SITE_URL is the
 // production base. Imported from the config — a safe ES-module cycle because
 // both are used only at render time, long after the modules finish loading.
@@ -29,7 +29,7 @@ export function PageHelpBanner({
   return (
     <Card tone="primary" padding={3} radius={3} shadow={1}>
       <Flex align="center" justify="space-between" gap={3} wrap="wrap">
-        <Stack space={2} style={{ flex: 1, minWidth: 220 }}>
+        <Stack gap={2} style={{ flex: 1, minWidth: 220 }}>
           <Text size={1} weight="semibold">
             You are editing: {title}
           </Text>

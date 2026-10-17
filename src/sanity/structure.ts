@@ -21,28 +21,26 @@ import { makeGuideView } from './components/GuideView';
 import { WelcomePane } from './components/WelcomePane';
 import { guides, GUIDE_CATEGORIES } from './guides/content';
 import { ARCHIVABLE_TYPES, NOT_ARCHIVED } from './schemaTypes/archived';
-import {
-  CogIcon,
-  HomeIcon,
-  UserIcon,
-  UsersIcon,
-  HelpCircleIcon,
-  EnvelopeIcon,
-  DocumentTextIcon,
-  CalendarIcon,
-  StarIcon,
-  HeartIcon,
-  ThListIcon,
-  BookIcon,
-  LockIcon,
-  BellIcon,
-  DocumentsIcon,
-  TagIcon,
-  TrashIcon,
-  CommentIcon,
-  BlockElementIcon,
-  ArrowRightIcon,
-} from '@sanity/icons';
+import { CogIcon } from '@sanity/icons/Cog';
+import { HomeIcon } from '@sanity/icons/Home';
+import { UserIcon } from '@sanity/icons/User';
+import { UsersIcon } from '@sanity/icons/Users';
+import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
+import { CalendarIcon } from '@sanity/icons/Calendar';
+import { StarIcon } from '@sanity/icons/Star';
+import { HeartIcon } from '@sanity/icons/Heart';
+import { ThListIcon } from '@sanity/icons/ThList';
+import { BookIcon } from '@sanity/icons/Book';
+import { LockIcon } from '@sanity/icons/Lock';
+import { BellIcon } from '@sanity/icons/Bell';
+import { DocumentsIcon } from '@sanity/icons/Documents';
+import { TagIcon } from '@sanity/icons/Tag';
+import { TrashIcon } from '@sanity/icons/Trash';
+import { CommentIcon } from '@sanity/icons/Comment';
+import { BlockElementIcon } from '@sanity/icons/BlockElement';
+import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
 
 const API_VERSION = '2025-01-01';
 

@@ -56,7 +56,7 @@ function shortDay(iso: string): string {
 function BigNumber(props: { label: string; value: number; hint: string }) {
   return (
     <Card padding={4} radius={3} shadow={1} tone="primary">
-      <Stack space={3}>
+      <Stack gap={3}>
         <Text size={1} weight="medium">
           {props.label}
         </Text>
@@ -77,7 +77,7 @@ function Chart(props: { stats: SiteStats }) {
   const peak = days.reduce((m, d) => (d.requests > m ? d.requests : m), 0);
 
   return (
-    <Stack space={3}>
+    <Stack gap={3}>
       <Flex align="baseline" justify="space-between">
         <Text size={1} weight="medium">
           Each bar is one day
@@ -151,11 +151,11 @@ function ProblemCard(props: { problem: Problem; onRetry: () => void }) {
 
   const body =
     problem.reason === 'no-session' ? (
-      <Stack space={4}>
+      <Stack gap={4}>
         <Text size={1}>
           The stats panel needs to know that you work here. It gets that from the site preview.
         </Text>
-        <Stack space={2} as="ol">
+        <Stack gap={2} as="ol">
           <Text size={1}>1. Open any page from the left menu.</Text>
           <Text size={1}>2. Click the Presentation tab, so the website shows beside it.</Text>
           <Text size={1}>3. Come back here and click Try again.</Text>
@@ -165,14 +165,14 @@ function ProblemCard(props: { problem: Problem; onRetry: () => void }) {
         </Text>
       </Stack>
     ) : problem.reason === 'unconfigured' ? (
-      <Stack space={4}>
+      <Stack gap={4}>
         <Text size={1}>{problem.message}</Text>
         <Text size={1} muted>
           This is a one-time setup step for the website, not something you can fix from here.
         </Text>
       </Stack>
     ) : (
-      <Stack space={4}>
+      <Stack gap={4}>
         <Text size={1}>{problem.message}</Text>
         <Text size={1} muted>
           If this keeps happening, tell Nathan.
@@ -182,7 +182,7 @@ function ProblemCard(props: { problem: Problem; onRetry: () => void }) {
 
   return (
     <Card padding={4} radius={3} shadow={1} tone="caution">
-      <Stack space={4}>
+      <Stack gap={4}>
         <Heading size={1}>
           {problem.reason === 'no-session'
             ? 'Open the site preview once, then come back'
@@ -253,8 +253,8 @@ export function StatsTool() {
   return (
     <Box padding={4} overflow="auto" height="fill">
       <Box style={{ maxWidth: 760, margin: '0 auto' }}>
-        <Stack space={5}>
-          <Stack space={3}>
+        <Stack gap={5}>
+          <Stack gap={3}>
             <ToolHeading>📈 Site stats</ToolHeading>
             <Text size={1} muted>
               How busy the website has been. Read only, and always a few minutes behind.
@@ -273,8 +273,8 @@ export function StatsTool() {
           ) : state.kind === 'problem' ? (
             <ProblemCard problem={state.problem} onRetry={() => void load()} />
           ) : (
-            <Stack space={5}>
-              <Grid columns={[1, 1, 2]} gap={3}>
+            <Stack gap={5}>
+              <Grid gridTemplateColumns={[1, 1, 2]} gap={3}>
                 <BigNumber
                   label="Last 7 days"
                   value={state.stats.last7.requests}
@@ -293,7 +293,7 @@ export function StatsTool() {
 
               {state.stats.last28.errors > 0 ? (
                 <Card padding={4} radius={3} shadow={1} tone="caution">
-                  <Stack space={3}>
+                  <Stack gap={3}>
                     <Flex align="center" gap={2}>
                       <Badge tone="caution">Errors</Badge>
                       <Text size={1} weight="medium">
@@ -309,7 +309,7 @@ export function StatsTool() {
               ) : null}
 
               <Card padding={4} radius={3} shadow={1} tone="transparent">
-                <Stack space={4}>
+                <Stack gap={4}>
                   <Heading size={1}>What this number means</Heading>
                   <Text size={1}>
                     This counts every REQUEST the website answers. One person reading one page makes

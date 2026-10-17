@@ -17,7 +17,7 @@ export function StudioFormInput(props: InputProps) {
   // help banner there; PageHelpBanner renders nothing for types with no page.
   if (props.id === 'root') {
     return (
-      <Stack space={4}>
+      <Stack gap={4}>
         <PageHelpBanner
           schemaType={props.schemaType as { name: string; title?: string }}
           value={(props as { value?: unknown }).value}
