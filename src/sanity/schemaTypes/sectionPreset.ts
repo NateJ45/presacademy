@@ -37,7 +37,7 @@
 // =============================================================================
 
 import { defineType, defineField } from 'sanity';
-import { BlockElementIcon } from '@sanity/icons';
+import { BlockElementIcon } from '@sanity/icons/BlockElement';
 import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
 
 export const sectionPreset = defineType({

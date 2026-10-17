@@ -57,7 +57,7 @@ export function SeoPanelInput(props: StringInputProps) {
   const prettyUrl = `${DOMAIN}${path === '/' ? '' : path}`;
 
   return (
-    <Stack space={4}>
+    <Stack gap={4}>
       {hidden && (
         <Card padding={3} radius={2} tone="caution" border>
           <Text size={1}>
@@ -68,12 +68,12 @@ export function SeoPanelInput(props: StringInputProps) {
       )}
 
       {/* Google search result */}
-      <Stack space={3}>
+      <Stack gap={3}>
         <Label size={1} muted>
           In Google
         </Label>
         <Card padding={4} radius={2} border>
-          <Stack space={2}>
+          <Stack gap={2}>
             <Text size={1} style={{ color: '#5f6368' }}>
               {prettyUrl}
             </Text>
@@ -88,7 +88,7 @@ export function SeoPanelInput(props: StringInputProps) {
       </Stack>
 
       {/* Social share card */}
-      <Stack space={3}>
+      <Stack gap={3}>
         <Label size={1} muted>
           Shared in a message
         </Label>
@@ -107,7 +107,7 @@ export function SeoPanelInput(props: StringInputProps) {
             </Text>
           </Box>
           <Card padding={3} tone="transparent" style={{ background: '#f2f3f5' }}>
-            <Stack space={2}>
+            <Stack gap={2}>
               <Text size={0} muted style={{ textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 {DOMAIN}
               </Text>

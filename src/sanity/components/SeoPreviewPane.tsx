@@ -52,7 +52,7 @@ export function SeoPreviewPane(props: SeoPreviewPaneProps) {
 
   return (
     <Box padding={4}>
-      <Stack space={5} style={{ maxWidth: 640, margin: '0 auto' }}>
+      <Stack gap={5} style={{ maxWidth: 640, margin: '0 auto' }}>
         <Card padding={3} radius={2} tone="primary" border>
           <Text size={1} muted>
             This is a preview of how this page looks in Google and when shared on social media. It
@@ -61,12 +61,12 @@ export function SeoPreviewPane(props: SeoPreviewPaneProps) {
         </Card>
 
         {/* Google search result */}
-        <Stack space={3}>
+        <Stack gap={3}>
           <Label size={1} muted>
             Google result
           </Label>
           <Card padding={4} radius={2} border>
-            <Stack space={2}>
+            <Stack gap={2}>
               <Text size={1} style={{ color: '#5f6368' }}>
                 {prettyUrl}
               </Text>
@@ -81,7 +81,7 @@ export function SeoPreviewPane(props: SeoPreviewPaneProps) {
         </Stack>
 
         {/* Social share card */}
-        <Stack space={3}>
+        <Stack gap={3}>
           <Label size={1} muted>
             Social share card (Facebook, iMessage, Slack)
           </Label>
@@ -100,7 +100,7 @@ export function SeoPreviewPane(props: SeoPreviewPaneProps) {
               </Text>
             </Box>
             <Card padding={3} tone="transparent" style={{ background: '#f2f3f5' }}>
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Text
                   size={0}
                   muted

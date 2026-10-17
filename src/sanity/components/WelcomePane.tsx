@@ -132,7 +132,7 @@ function TaskCard(props: {
     <Card className="pa-task-card" padding={3} radius={3} border style={{ height: '100%' }}>
       <Flex align="center" gap={3}>
         <Chip tint={tint}>{icon}</Chip>
-        <Stack space={2}>
+        <Stack gap={2}>
           <Text size={1} weight="semibold">
             {label}
           </Text>
@@ -194,8 +194,8 @@ export function WelcomePane() {
           a:hover .pa-task-card { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(51, 80, 63, 0.16); }
         }
       `}</style>
-      <Stack space={5} style={{ maxWidth: 680, margin: '0 auto' }}>
-        <Stack space={3}>
+      <Stack gap={5} style={{ maxWidth: 680, margin: '0 auto' }}>
+        <Stack gap={3}>
           <ToolHeading>👋 Welcome to The Presbyterian Academy Studio</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
             This is where you edit the website. Nothing goes live until you click{' '}
@@ -213,7 +213,7 @@ export function WelcomePane() {
           </Box>
         </Stack>
 
-        <Stack space={3}>
+        <Stack gap={3}>
           <Text
             size={1}
             weight="semibold"
@@ -283,7 +283,7 @@ export function WelcomePane() {
           </div>
         </Stack>
 
-        <Stack space={3}>
+        <Stack gap={3}>
           <Text
             size={1}
             weight="semibold"
@@ -304,7 +304,7 @@ export function WelcomePane() {
               Nothing published yet.
             </Text>
           ) : (
-            <Stack space={2}>
+            <Stack gap={2}>
               {recent.map((doc) => (
                 <IntentLink
                   key={doc._id}
@@ -314,7 +314,7 @@ export function WelcomePane() {
                 >
                   <Card className="pa-task-card" padding={3} radius={3} border>
                     <Flex align="center" justify="space-between" gap={3}>
-                      <Stack space={1}>
+                      <Stack gap={1}>
                         <Text size={1} weight="medium">
                           {docLabel(doc)}
                         </Text>

@@ -7,7 +7,9 @@
 // the module section-visibility toggles) were removed. Church fields replace them.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { LinkIcon, ChevronDownIcon, ListIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
+import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
+import { ListIcon } from '@sanity/icons/List';
 
 // The menu-link object (label + destination) is shared: see ./navLink.ts. Every
 // menu here uses it, so a link behaves the same wherever it sits.

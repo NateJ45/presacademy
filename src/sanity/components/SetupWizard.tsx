@@ -203,7 +203,7 @@ function StepCard({ step }: { step: Step }) {
         <span aria-hidden style={{ fontSize: 20, lineHeight: '24px', flexShrink: 0 }}>
           {step.icon}
         </span>
-        <Stack space={2} flex={1}>
+        <Stack gap={2} flex={1}>
           <Flex align="center" gap={2}>
             <Text size={1} weight="semibold">
               {step.title}
@@ -290,8 +290,8 @@ export function SetupWizard() {
           a:hover .pa-setup-card { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(51, 80, 63, 0.16); }
         }
       `}</style>
-      <Stack space={5} style={{ maxWidth: 680, margin: '0 auto' }}>
-        <Stack space={3}>
+      <Stack gap={5} style={{ maxWidth: 680, margin: '0 auto' }}>
+        <Stack gap={3}>
           <ToolHeading>🍂 New term setup</ToolHeading>
           <Text size={2} muted style={{ lineHeight: 1.5 }}>
             The season rollover, in order. Each card jumps you to the right place to update it.
@@ -331,9 +331,9 @@ export function SetupWizard() {
             </Text>
           </Flex>
         ) : (
-          <Stack space={5}>
+          <Stack gap={5}>
             {sections.map((section) => (
-              <Stack space={3} key={section.heading}>
+              <Stack gap={3} key={section.heading}>
                 <Text
                   size={1}
                   weight="semibold"

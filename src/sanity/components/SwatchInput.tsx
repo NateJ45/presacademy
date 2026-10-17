@@ -114,7 +114,7 @@ function SwatchRow(props: StringInputProps & { swatches: Swatch[]; fallback: str
   );
 
   return (
-    <Stack space={3}>
+    <Stack gap={3}>
       {/* elementProps is spread selectively: it carries a `readOnly` key that a
           <div> must not receive, and a ref typed for an <input>. The id is what
           the field label's htmlFor points at, so that one has to be kept. */}
@@ -148,7 +148,7 @@ function SwatchRow(props: StringInputProps & { swatches: Swatch[]; fallback: str
                 textAlign: 'center',
               }}
             >
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Flex justify="center">
                   <Chip swatch={s} selected={selected} />
                 </Flex>

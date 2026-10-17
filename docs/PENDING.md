@@ -80,6 +80,9 @@ the Westminster Standards and the Book of Confessions."`
   Data collection). The privacy text makes no advertising claim either way, so this
   is about keeping a school site free of ad profiling, not about fixing copy.
 
+- **Sign in to the Studio after the Sanity phase-2 bump** (2026-10-17,
+  `sanity` 6.19.0 / `@sanity/ui` 4.4.9; see gotcha #18). The paragraph below
+  is the phase-1 original (2026-09-06) and the same check applies.
 - **Sign in to the Studio after the Sanity phase-1 bump**
   (2026-09-06). The stack moved to `sanity` 6.9.1 / `@sanity/ui` 3.5.4 /
   `@sanity/client` 7.26.2 / `@sanity/visual-editing` 5.7.3 /

@@ -136,7 +136,7 @@ export function StudioTour() {
       }
     >
       <Box padding={4}>
-        <Stack space={4}>
+        <Stack gap={4}>
           <ToolHeading>
             {current.emoji} {current.title}
           </ToolHeading>
