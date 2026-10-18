@@ -13,6 +13,7 @@ paths:
   - 'scripts/lib/sanity-lib.mjs'
   - 'scripts/measure-tap-targets.mjs'
   - 'scripts/lib/site-identity.mjs'
+  - 'scripts/lib/write-gate.mjs'
   - 'scripts/propose-drift.mjs'
   - 'scripts/public-data-audit.mjs'
   - 'scripts/publish-due.mjs'
