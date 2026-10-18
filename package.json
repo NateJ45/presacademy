@@ -20,6 +20,8 @@
     "llms:full": "node scripts/generate-llms-full.mjs",
     "studio-thumbs": "node scripts/studio-thumbs.mjs",
     "publish-due": "node scripts/publish-due.mjs",
+    "restore:doc": "node scripts/restore-doc.mjs",
+    "gen:studio-art": "node scripts/gen-studio-art.mjs",
     "check": "astro check && npm run lint",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

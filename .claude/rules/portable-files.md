@@ -107,7 +107,7 @@ them shareable, and BOTH are edited here rather than there:
 TextPopover,useInstantText,timing}.ts(x)` and `src/lib/section-fields.ts` stay per-repo
 on purpose: they name this schema's sections, fields and labels.
 
-`src/lib/site-stats.ts` is deliberately **unmarked for now**: it is repo-agnostic and the
+`src/lib/site-stats.ts` (retired 2026-10-18 with the Site stats tool, replaced by the Studio kit's Visitors card) was deliberately **unmarked**: it is repo-agnostic and the
 starter should adopt it, but the starter has no copy yet. Add the marker to both in the
 sync session that ports it.
 

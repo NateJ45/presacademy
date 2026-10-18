@@ -703,6 +703,7 @@ export type Announcement = {
   startDate?: string;
   endDate?: string;
   enabled?: boolean;
+  publishAt?: string;
 };
 
 export type Event = {
@@ -764,6 +765,7 @@ export type Event = {
   };
   featured?: boolean;
   featuredOnHome?: boolean;
+  publishAt?: string;
 };
 
 export type FaqCategoryReference = {
@@ -4138,6 +4140,7 @@ export type Course = {
     alt?: string;
     _type: 'image';
   };
+  publishAt?: string;
 };
 
 export type PricingTier = {
@@ -4174,6 +4177,47 @@ export type Term = {
   registrationDeadline?: string;
   status?: 'upcoming' | 'open' | 'inSession' | 'closed';
   note?: string;
+};
+
+export type StudioWeek = {
+  _id: string;
+  _type: 'studioWeek';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  weekOf?: string;
+  ticked?: Array<string>;
+};
+
+export type TrashedItem = {
+  _id: string;
+  _type: 'trashedItem';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  kind?: string;
+  deletedAt?: string;
+  wasPublished?: boolean;
+  originalType?: string;
+  originalId?: string;
+  payload?: string;
+};
+
+export type PreviewShare = {
+  _id: string;
+  _type: 'previewShare';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  docId?: string;
+  docType?: string;
+  path?: string;
+  days?: number;
+  expiresAt?: string;
+  createdBy?: string;
+  revoked?: boolean;
 };
 
 export type MediaFolderReference = {
@@ -4436,6 +4480,9 @@ export type AllSanitySchemaTypes =
   | Course
   | PricingTier
   | Term
+  | StudioWeek
+  | TrashedItem
+  | PreviewShare
   | MediaFolderReference
   | MediaFolder
   | MediaTag

@@ -65,8 +65,10 @@ If a content change isn't appearing on the live site after a few minutes:
 The webhook lives at manage.sanity.io → API → Webhooks. The recommended GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare"])
 ```
+
+`studioWeek` (Home's hand-ticked weekly jobs, starter card 111) and `previewShare` (private preview links, card 117) are the Studio's own bookkeeping and never change a page; without them in the list, ticking a job or making a preview link rebuilds the site. (Added 2026-10-18; the live filter needs the same edit by hand.)
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
 
@@ -269,6 +271,53 @@ The items below apply to any project built on this starter. Replace the angle-br
 - [ ] Sitemap submitted to Google Search Console
 
 ---
+
+## The Studio kit (Home, Messages, preview links, the change note)
+
+The Studio is the Academy's admin (starter cards 106 to 120, adopted 2026-10-18): Home, Quick update, Content, Live preview, Messages, New term, Site Guide and Checkup in the top bar. Settings live in `src/sanity/kit.config.ts`; how it all works is `docs/agent/studio-kit.md`. Everything below is a one-time switch; until it is set, each piece says "not set up yet" in plain words and nothing else is affected. The open list is `docs/PENDING.md`, "Switch on the Studio kit's server half".
+
+### Visitor numbers (Home's Visitors card, PORTS.md card 115)
+
+Home's Visitors card reads Cloudflare Web Analytics through `/api/studio/visitors/` (signed-in Studio members only). It replaced the old Site stats tool (Workers request counts) on 2026-10-18. Web Analytics is not on for this site yet (no beacon in the pages), so:
+
+1. **Turn on Web Analytics** for presbyterianacademy.org (Cloudflare dashboard, Analytics & Logs, Web Analytics, Add a site). The beacon token it shows goes in `PUBLIC_CF_ANALYTICS_TOKEN` as a **build** variable in Cloudflare Workers Builds, so visits are counted at all. That is NOT the site tag.
+2. **Find the site tag.** Open the site in Web Analytics: the address bar ends in `siteTag~in=<32 characters>`.
+3. **Create the read-only token.** My Profile, API Tokens, Create Token, Create Custom Token: one permission row, **Account**, **Account Analytics**, **Read**; Account Resources: Include, this account. Copy it once.
+4. **Give it to the Worker as a secret** (never in the repo or in chat): `npx wrangler secret put CF_ANALYTICS_TOKEN`. Keep a copy in 1Password.
+5. **Add the site tag** to `wrangler.jsonc` `vars` as `"CF_WEB_ANALYTICS_SITE_TAG"` (`CF_ACCOUNT_ID` is already there).
+6. Deploy, open `/studio`, check the card shows numbers (cached ten minutes). "Could not load just now" means Cloudflare refused: check the token's permission first (`npx wrangler tail` shows `visitors: Cloudflare answered <status>`).
+
+### Messages (the form inbox, card 117)
+
+The Messages tool lists `contact_submissions` from the D1 `presacademy-contact` (the same rows as "Form submissions" below) with a status staff set (New, Needs a person, Replied, Spam). The status lives in a second table; apply its migration once:
+
+```powershell
+npx wrangler d1 migrations apply presacademy-contact --remote
+```
+
+It only creates `message_status`. Nothing personal is written to Sanity.
+
+### Private preview links (card 117)
+
+"Share a preview" in a page's publish menu makes a link that shows that page's draft for 1 to 14 days, signed with the Worker secret `SHARE_PREVIEW_SECRET` (48 random characters; rotating it stops every link). Set it without printing it:
+
+```powershell
+node -e "process.stdout.write(require('crypto').randomBytes(36).toString('base64url'))" | npx wrangler secret put SHARE_PREVIEW_SECRET
+```
+
+The older one-hour "Copy share link" stays.
+
+### The morning change note (card 117)
+
+`.github/workflows/change-note.yml` opens a GitHub issue "What changed on <date>" each morning there were Studio edits (who, what, which page). It needs only the `SANITY_AUTH_TOKEN` repo secret (the backup's READ token). Uncomment its `schedule:` and watch the repo (Custom, Issues) to get the email.
+
+### Put one document back from a backup (card 111)
+
+`npm run restore:doc -- <document id>` reads the newest encrypted backup from the backup workflow (or `--from YYYY-MM-DD` for an older one), shows a field-by-field summary, and with `--apply` (plus `NCS_PRODUCTION_WRITE=yes` on production) writes it back as a DRAFT for someone to check and publish.
+
+### The Studio's art
+
+The course-cover icons in list rows and the cover shelf on Home's banner and the /studio splash are drawn from the cover tokens in `src/styles/globals.css` by `npm run gen:studio-art`. Re-run it after changing a cover colour or ornament, and commit the files.
 
 ## Form submissions
 

@@ -12,6 +12,8 @@ Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. 
 
 **Current state, in brief.** Astro 7 + Sanity Studio v6; the Sanity packages are PINNED to exact versions (never bump one alone; see gotcha #18). The theme **defaults to LIGHT**. **The school was founded in 2026: never highlight a founding year or imply a long history or large enrollment.** The Sanity dataset still runs on placeholder CC0 photography. Full state and history: `docs/claude/project-state.md`.
 
+**The Studio is the Academy's admin** (starter cards 106 to 120, adopted 2026-10-18): the Studio kit (`src/sanity/kit/`, PORTABLE; Home, Quick update, Site Guide, Checkup, Move to Trash, the tour, the status line) and the workflow tools (`src/sanity/workflow/`, PORTABLE; Messages, Share a preview, table views), dressed in the school's brand (green chrome, Fraunces, course-cover icons and banner art from `npm run gen:studio-art`), on the site's own `/studio/` page. The school-specific pieces: `src/sanity/kit.config.ts`, `src/sanity/schoolCheckup.ts`, `src/lib/quick-updates.ts`, the **New term** tool (`src/sanity/components/SetupWizard.tsx`), `src/sanity/tables.config.ts`, `src/sanity/brandIconArt.tsx`, `src/sanity/studioEdges.config.ts` and `brand/brand.config.json` (`studio` keys). Everything is in `docs/agent/studio-kit.md`; the one-time switches (Visitors, Messages, preview links, the change note) are in `OPERATIONS.md`, "The Studio kit".
+
 ## Stack essentials
 
 Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-and-config.md`. The must-knows:
@@ -62,7 +64,7 @@ Each entry carries the date it bit (or was decided) and the symptom, so future s
 A change is not done until the documentation that describes the changed behavior is updated **in the same commit**:
 
 1. The affected files under `docs/` (and `README.md` / this file / `OPERATIONS.md` when the architecture or commands shift).
-2. The in-Studio editor guides (`src/sanity/guides/content.tsx`) when the change touches anything a faculty editor does in Studio.
+2. The in-Studio editor guides (`src/sanity/guides/content.ts`, shown in the Site Guide tool) when the change touches anything a faculty editor does in Studio.
 3. `docs/PENDING.md` when the change closes, opens, or discovers an open loop.
 
 Stale docs in this repo have already shipped real bugs (the 2026-06-14 stale-types incident traced to a doc claiming typegen ran in the build when it did not). Doc drift is a defect, not a chore.
@@ -108,6 +110,7 @@ Read on demand:
 - `docs/claude/project-state.md`: current state, stack-pin history, brand direction. Read for background.
 - `docs/claude/file-ownership.md`: safe-to-edit vs foundation file lists. Read before touching foundation files.
 - `docs/claude/topic-index.md`: index of every `docs/agent/*` deep dive, research and checklists. Read when a task touches those areas.
+- `docs/agent/studio-kit.md`: the Studio kit (PORTABLE, from the starter): Home, Site Guide, Checkup, Trash, the look, the edges, Messages, preview links.
 - `docs/PENDING.md` (open loops), `docs/TESTING.md`, `OPERATIONS.md`, `design.md`, `PRODUCT.md`, `docs/agent/changelog.md` (change history).
 
 ## Vault (business context)

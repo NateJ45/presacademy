@@ -9,11 +9,17 @@
 
 import { defineType, defineField } from 'sanity';
 import { archivedField } from './archived';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const announcement = defineType({
   name: 'announcement',
   title: 'Announcement',
   type: 'document',
+  // Scheduled publishing (PORTS.md cards 111 and 114): "Publish automatically at"
+  // on the Publishing tab. Leave a notice as a draft with a time and
+  // publish-due.yml publishes it within the half hour (it shows on Home's
+  // "Coming up"). Every other field stays on the "All fields" tab, as before.
+  groups: [PUBLISH_AT_GROUP],
   fields: [
     // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
     archivedField(),
@@ -84,6 +90,7 @@ export const announcement = defineType({
       description: 'Master on/off. When off, this announcement never shows regardless of dates.',
       initialValue: true,
     }),
+    publishAtField(),
   ],
   preview: {
     select: {

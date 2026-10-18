@@ -78,7 +78,7 @@ const HOST_TYPES = Object.keys(SECTION_HOST_TYPES);
 
 // Friendly names for the singleton pages, which carry no `title` field of their
 // own (their headings live in the hero fields). Mirrors structure.ts naming,
-// the same way WelcomePane.tsx's TYPE_LABELS does.
+// in plain words, one name per thing.
 const PAGE_LABELS: Record<string, string> = {
   homePage: 'Home page',
   aboutPage: 'About page',

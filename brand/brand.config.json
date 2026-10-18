@@ -1,4 +1,91 @@
 {
   "name": "The Presbyterian Academy",
-  "domain": "presbyterianacademy.org"
+  "domain": "presbyterianacademy.org",
+  "palette": {
+    "theme": {
+      "--color-primary": "#33503F",
+      "--color-primary-dark": "#2A4233"
+    },
+    "light": {
+      "--background": "#FAF8F4",
+      "--foreground": "#1F1B18",
+      "--primary": "#33503F",
+      "--link": "#33503F"
+    },
+    "dark": {
+      "--background": "#1E1A17",
+      "--foreground": "#F1EAD9",
+      "--primary": "#74A98A",
+      "--link": "#9CC6AC"
+    }
+  },
+  "fonts": {
+    "display": {
+      "familyValue": "\"Fraunces Variable\", Georgia, \"Times New Roman\", serif",
+      "imports": [
+        "@fontsource-variable/fraunces/standard.css",
+        "@fontsource-variable/fraunces/standard-italic.css"
+      ]
+    },
+    "body": {
+      "familyValue": "\"Source Sans 3 Variable\", system-ui, -apple-system, sans-serif",
+      "imports": [
+        "@fontsource-variable/source-sans-3/index.css",
+        "@fontsource-variable/source-sans-3/wght-italic.css"
+      ]
+    }
+  },
+  "radius": "0.5rem",
+  "logoPaths": {
+    "dark": "src/assets/brand/wordmark-dark.svg"
+  },
+  "studio": {
+    "accent": "#33503F",
+    "chrome": "#2A4233",
+    "fonts": {
+      "display": "\"Fraunces Variable\", Georgia, \"Times New Roman\", serif",
+      "body": "\"Source Sans 3 Variable\", system-ui, -apple-system, sans-serif"
+    },
+    "icons": {
+      "types": {
+        "aboutPage": "overview",
+        "accessibilityPage": "help",
+        "coursesPage": "scripture",
+        "course": "scripture",
+        "term": "times",
+        "teachingArea": "category",
+        "facultyPage": "people",
+        "facultyMember": "person",
+        "pricingPage": "give",
+        "pricingTier": "give",
+        "getStartedPage": "form",
+        "forYouPage": "people",
+        "resourcesPage": "download",
+        "eventsPage": "event",
+        "event": "event",
+        "form": "form"
+      },
+      "groups": {
+        "cover": "image",
+        "schedule": "times",
+        "thisTerm": "times",
+        "pricing": "give",
+        "pricingIntro": "give",
+        "sections": "sections",
+        "identity": "settings",
+        "navigation": "link",
+        "social": "link",
+        "connect": "contact",
+        "credentials": "person",
+        "writing": "text",
+        "details": "text",
+        "fields": "form",
+        "newsletter": "message"
+      },
+      "tools": {
+        "term-setup": "times",
+        "structure": "pages"
+      }
+    }
+  }
 }

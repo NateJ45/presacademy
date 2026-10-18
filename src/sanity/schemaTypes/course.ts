@@ -15,6 +15,7 @@
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { archivedField } from './archived';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import {
   COURSE_CODE_PATTERN,
   COVER_COLORS,
@@ -39,6 +40,9 @@ export const course = defineType({
     { name: 'schedule', title: 'Schedule & cohorts' },
     { name: 'pricing', title: 'Pricing' },
     { name: 'seo', title: 'SEO' },
+    // "Publish automatically at" (PORTS.md cards 111 and 114): a new course can
+    // go up by itself on the morning enrollment opens.
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
@@ -346,6 +350,7 @@ export const course = defineType({
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
       group: 'seo',
     }),
+    publishAtField(),
   ],
   preview: {
     select: {

@@ -50,6 +50,10 @@ local build has content (`discoverDetailRoutes` in `tests/helpers.ts`).
   reduced-motion reset in globals.css (`transition-duration: 0s` + delay `0s`,
   never 0.01ms, which strands WebKit transitions). Runs on chromium AND
   webkit-iphone.
+- **`tests/studio-boot.spec.ts`** (site copy of the starter's, card 120) — `/studio/`
+  is the site's own page before JavaScript runs: the school's name as the title,
+  its icon, the branded splash on a non-white ground in light and dark, no
+  sideways scroll. The signed-in Studio is not covered (it needs a login).
 - **`tests/reflow.spec.ts`** — WCAG 1.4.10: no horizontal overflow at a
   320px viewport, then a second sweep resizing through 1440/1024/768 without
   reload. Measured on `document.scrollingElement.scrollWidth` (+1px rounding

@@ -62,12 +62,20 @@
   },
   // Plain (non-secret) runtime values.
   //
-  // CF_ACCOUNT_ID names the Cloudflare account whose Workers analytics the
-  // Studio's "Site stats" panel reads (src/pages/api/stats.ts). An account id
-  // NAMES an account, it does not open one, so it is not a secret. Its partner
-  // CF_ANALYTICS_TOKEN is a real secret (Account Analytics · Read, one
+  // CF_ACCOUNT_ID names the Cloudflare account whose Web Analytics the Studio
+  // Home's Visitors card reads (src/pages/api/studio/visitors.ts, PORTS.md card
+  // 115). An account id NAMES an account, it does not open one, so it is not a
+  // secret. Its partners: CF_WEB_ANALYTICS_SITE_TAG (a var, added here once the
+  // Web Analytics site exists; OPERATIONS.md "Visitor numbers") and
+  // CF_ANALYTICS_TOKEN, a real secret (Account Analytics · Read, one
   // permission, read-only), set with `npx wrangler secret put
   // CF_ANALYTICS_TOKEN` and never written here. Same account as the WCP site.
+  //
+  // The Studio's other Worker secrets (none written here): SHARE_PREVIEW_SECRET
+  // (private preview links, card 117). GITHUB_DEPLOY_TOKEN is NOT used: this
+  // site deploys through Cloudflare Workers Builds, not a GitHub workflow, so
+  // the deploy-status route answers "not configured" and the Studio's status
+  // line compares the build time with the last publish instead.
   "vars": {
     "CF_ACCOUNT_ID": "7e75a15ddc72aae04dca71aca5c7294b",
   },

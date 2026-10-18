@@ -5,11 +5,11 @@ import { useRouter } from 'sanity/router';
 import { guides, SITE, type DiyLevel, type GuideBlock, type PathLink } from '../guides/content';
 
 // =============================================================================
-// GuideView — read-only "How This Works" pane rendered inside the Studio desk
+// GuideView: one read-only guide, rendered by the Studio kit's Site Guide tool
 // =============================================================================
 // One instance per guide (bound to a slug at structure-build time via
 // makeGuideView), so there is no prop-plumbing to get wrong. Renders the typed
-// guide blocks (guides/content.tsx) with @sanity/ui primitives.
+// guide blocks (guides/content.ts) with @sanity/ui primitives.
 //
 // Brand accents use the Geneva Green pair below rather than theme tokens: the
 // tint is decorative (behind emoji / markers), the label text stays the theme's

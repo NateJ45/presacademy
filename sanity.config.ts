@@ -12,7 +12,6 @@
 import { defineConfig, type DocumentActionComponent, type Tool } from 'sanity';
 import { structureTool, type DefaultDocumentNodeResolver } from 'sanity/structure';
 import { presentationTool } from 'sanity/presentation';
-import { buildTheme, type RootTheme, type ThemeFont } from '@sanity/ui/theme';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
 import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
@@ -24,15 +23,11 @@ import { resolve } from './src/sanity/resolve';
 import { envVal } from './src/sanity/urls';
 import { PreviewNavigator } from './src/sanity/components/PreviewNavigator';
 import { STARTING_TEMPLATES } from './src/sanity/templates';
-import StudioLogo from './src/sanity/components/StudioLogo';
-import StudioLayout from './src/sanity/components/StudioLayout';
 import { StudioFormInput } from './src/sanity/components/StudioFormInput';
 import { documentBadges } from './src/sanity/components/documentBadges';
 import { SeoPreviewPane } from './src/sanity/components/SeoPreviewPane';
-import { HealthTool } from './src/sanity/components/HealthTool';
 import { SetupWizard } from './src/sanity/components/SetupWizard';
-import { StatsTool } from './src/sanity/components/StatsTool';
-import { ArchiveAction, RestoreAction, DeleteForeverAction } from './src/sanity/actions/archive';
+import { RestoreAction, DeleteForeverAction } from './src/sanity/actions/archive';
 import { shareDraftLinkAction } from './src/sanity/components/shareDraftLink';
 import { withSlugRedirect } from './src/sanity/components/slugRedirect';
 import { SaveSectionPresetAction } from './src/sanity/actions/saveSectionPreset';
@@ -40,53 +35,57 @@ import { CheckPageAction } from './src/sanity/actions/checkPage';
 import { UndoAction, RedoAction, undoRedoShortcuts } from './src/sanity/components/UndoRedo';
 import { PAGE_BUILDER_TYPES } from './src/sanity/pageBuilderConfig';
 import { SINGLETON_PREVIEW_PATHS } from './src/sanity/resolve';
+import { StudioIcon } from './src/sanity/components/StudioIdentity';
+import { buildStudioTheme, seedLightScheme } from './src/sanity/studioTheme';
+import {
+  studioLook,
+  StudioWordmarkNavbar,
+  withEditorTypography,
+} from './src/sanity/components/StudioLook';
+// The Studio's edges: sign-in line, wording, navbar wordmark (card 120).
+import { studioWording } from './src/sanity/studioWording';
+import { studioEdges } from './src/sanity/studioEdges.config';
+// The site's own font files for the Studio (card 116).
+import './src/sanity/studioFonts.css';
+import brand from './brand/brand.config.json';
+import { ncsStudioKit } from './src/sanity/kit';
+import { kitConfig } from './src/sanity/kit.config';
+import { ncsWorkflowTools } from './src/sanity/workflow';
+import { brandIcon, brandIcons, withBrandPreviews } from './src/sanity/brandIcons';
 
 // =============================================================================
-// Studio theme — brand fonts + a real light AND dark mode
+// Studio theme
 // =============================================================================
-// @sanity/ui's buildTheme() ships BOTH a light and a dark color scheme (tested
-// and accessible), so the Studio's Appearance toggle in the avatar menu
-// (System / Light / Dark) works properly. We keep only the brand FONTS on top:
-// Fraunces for headings, Source Sans 3 for text and labels.
+// Built in src/sanity/studioTheme.ts from brand/brand.config.json (PORTS.md
+// cards 110 and 116): a warm paper, Geneva Green as the accent, re-hued greys,
+// Fraunces and Source Sans 3, in BOTH schemes so the Appearance menu (System /
+// Light / Dark) works. Light is the default for a new editor (seedLightScheme).
+// The deep green top bar and the rich-text typography are StudioLook.tsx.
 //
-// This replaced the old `buildLegacyTheme` approach, which was light-ONLY: it
-// hard-codes white component backgrounds and dark text, so flipping the Studio
-// to Dark leaves every panel white (effectively no dark mode). The Geneva
-// Green surface tinting that legacy theme carried is gone with it; the brand
-// now lives in the logo, the Welcome/guide card accents, and the fonts.
-//
-// The font FILES are loaded by src/sanity/components/StudioLayout.tsx (a
-// Google Fonts <link>); this only points the theme's font families at them.
-// The families have to go INTO buildTheme({ font }) — it bakes the CSS at
-// build time; a post-hoc `theme.fonts.family` patch is ignored.
+// The families have to go INTO buildTheme({ font }): it bakes the CSS at build
+// time. The font files load from src/sanity/studioFonts.css, imported above
+// (they replaced the Google Fonts <link> StudioLayout.tsx used to inject).
+// Keep these two stacks in step with brand.config.json studio.fonts.
 // =============================================================================
-const DISPLAY_STACK = "'Fraunces', Georgia, 'Times New Roman', serif";
-const BODY_STACK = "'Source Sans 3', system-ui, -apple-system, sans-serif";
+const DISPLAY_STACK = '"Fraunces Variable", Georgia, "Times New Roman", serif';
+const BODY_STACK = '"Source Sans 3 Variable", system-ui, -apple-system, sans-serif';
+const STUDIO_FONTS = { display: DISPLAY_STACK, body: BODY_STACK };
+
+const studioTheme = buildStudioTheme(STUDIO_FONTS);
+seedLightScheme();
+
+// The tab's title and icons come from the site's own /studio page
+// (src/pages/studio/index.astro, card 120).
+const wording = studioWording(brand.name, studioEdges);
 
 // Dev detection must FAIL CLOSED. An earlier version also treated
 // `process.env.NODE_ENV !== 'production'` as dev, but the Astro/Vite client
 // bundle injects `globalThis.process ??= {}`, so `process` exists with an
-// empty env and NODE_ENV is undefined — which made this true in PRODUCTION
+// empty env and NODE_ENV is undefined, which made this true in PRODUCTION
 // and shipped the Vision tool to editors.
 const IS_DEV =
   (import.meta as { env?: { DEV?: boolean } }).env?.DEV === true ||
   (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development');
-
-function withFamily(font: ThemeFont, family: string): ThemeFont {
-  return { ...font, family };
-}
-
-// Build the default theme once to inherit its font SIZES, then rebuild with
-// the brand families fed back through `buildTheme({ font })`.
-const themeDefaults = buildTheme();
-const studioTheme: RootTheme = buildTheme({
-  font: {
-    ...themeDefaults.fonts,
-    text: withFamily(themeDefaults.fonts.text, BODY_STACK),
-    label: withFamily(themeDefaults.fonts.label, BODY_STACK),
-    heading: withFamily(themeDefaults.fonts.heading, DISPLAY_STACK),
-  },
-});
 
 // =============================================================================
 // Extra document views (tabs), added by type via defaultDocumentNode below.
@@ -136,71 +135,68 @@ function usedOnView(S: Parameters<DefaultDocumentNodeResolver>[0]) {
       options: { perspective: 'previewDrafts' },
     })
     .title('Used on')
-    .icon(() => '🔗');
+    .icon(brandIcon('related'));
 }
 
 const defaultDocumentNode: DefaultDocumentNodeResolver = (S, { schemaType }) => {
   return S.document().views([
     S.view.form(),
     ...(SEO_PREVIEW_TYPES.includes(schemaType)
-      ? [
-          S.view
-            .component(SeoPreviewPane)
-            .title('SEO preview')
-            .icon(() => '🔎'),
-        ]
+      ? [S.view.component(SeoPreviewPane).title('Google preview').icon(brandIcon('search'))]
       : []),
     ...(USED_ON_TYPES.includes(schemaType) ? [usedOnView(S)] : []),
   ]);
 };
 
-// Custom Studio tools (navbar entries).
-// Checkup — read-only "what needs attention?" report.
-const checkupTool: Tool = {
-  name: 'checkup',
-  title: 'Checkup',
-  component: HealthTool,
-  icon: () => '🩺',
-};
-// New term setup — a read-only guided checklist for the term rollover, each
+// Documents a share link can be minted for (PORTS.md card 19).
+//
+// The link points at a /preview/* route, and this site has those routes for the
+// page singletons and for custom `page` documents only (see
+// src/pages/preview/[...slug].astro). A course, a faculty member or an event
+// resolves to a LIVE address through pathForDoc, and `/preview` + that address
+// is a route that does not exist, so offering the action there would hand an
+// editor a link to a 404. Those documents preview through their index page
+// instead, which is what src/sanity/resolve.ts already says.
+const SHAREABLE_TYPES = new Set<string>([...Object.keys(SINGLETON_PREVIEW_PATHS), 'page']);
+
+// The Academy's own top-bar tool. Home, Site Guide, Checkup and Quick update
+// come from the Studio kit (ncsStudioKit below), Messages from the workflow
+// tools; the kit puts them all in order (kit.config.ts toolOrder).
+// New term: a read-only guided checklist for the start of every term, each
 // card jumping straight to the thing to update.
-const setupTool: Tool = {
+const termTool: Tool = {
   name: 'term-setup',
-  title: 'New term setup',
+  title: 'New term',
   component: SetupWizard,
-  icon: () => '🍂',
-};
-// Site stats — the read-only traffic panel a Squarespace refugee looks for.
-// It reads the site's own /api/stats endpoint (Cloudflare Workers analytics for
-// this Worker). Honest labels: the number is REQUESTS SERVED, not page views.
-const statsTool: Tool = {
-  name: 'site-stats',
-  title: 'Site stats',
-  component: StatsTool,
-  icon: () => '📈',
+  icon: brandIcon('times'),
 };
 
 export default defineConfig({
   name: 'presacademy',
-  // Short title shown in the browser tab when editing.
-  title: 'The Presbyterian Academy',
+  // The school's own name and mark (PORTS.md card 110), both from the brand:
+  // `title` is brand.config.json `name`, the icon is public/favicon.svg.
+  title: brand.name,
+  icon: StudioIcon,
+  // The line under the name on the sign-in card (card 120).
+  subtitle: wording.subtitle,
+  // The site's words on Sanity's screens: signed-out notice, user menu.
+  i18n: { bundles: wording.bundles },
+  // The wordmark beside the icon. At the ROOT on purpose: the root's middleware
+  // sits innermost, right around Sanity's bar (see StudioLook.tsx).
+  studio: { components: { navbar: StudioWordmarkNavbar } },
+
+  // Content Releases and Scheduled Drafts are paid Sanity features: on the free
+  // plan they only show an "Upgrade to unlock" screen. Scheduling is the site's
+  // own "Publish automatically at" field and publish-due.yml instead.
+  releases: { enabled: false },
+  scheduledDrafts: { enabled: false },
 
   projectId:
     envVal('SANITY_STUDIO_PROJECT_ID', 'PUBLIC_SANITY_PROJECT_ID') || 'placeholder-project-id',
   dataset: envVal('SANITY_STUDIO_DATASET', 'PUBLIC_SANITY_DATASET') || 'production',
 
-  // Brand theme — fonts only; see the theme block above.
+  // The brand theme; see the theme block above.
   theme: studioTheme,
-
-  // Studio chrome overrides. Logo replaces the default Sanity wordmark; the
-  // layout wrapper injects the brand web fonts so the theme's serif families
-  // (set above) actually load in the Studio.
-  studio: {
-    components: {
-      logo: StudioLogo,
-      layout: StudioLayout,
-    },
-  },
 
   // Global form customization. Only one input component is allowed at this slot,
   // so StudioFormInput composes two aids: a "what you're editing + view it live"
@@ -212,8 +208,8 @@ export default defineConfig({
     },
   },
 
-  // Navbar tools: the built-ins plus Checkup, New term setup and Site stats.
-  tools: (prev) => [...prev, checkupTool, setupTool, statsTool],
+  // The Academy's own tool; the kit orders it with the rest.
+  tools: (prev) => [...prev, termTool],
 
   plugins: [
     structureTool({
@@ -262,13 +258,29 @@ export default defineConfig({
     // (PORTS.md card 27). The buttons are the two document actions in
     // pageActions() below; this plugin adds only the keyboard layer, and it
     // stays out of text boxes so their own undo keeps working. It contributes a
-    // second studio.components.layout, which composes with StudioLayout above
+    // second studio.components.layout, which composes with the kit's layout
     // rather than replacing it. See src/sanity/components/UndoRedo.tsx.
     undoRedoShortcuts(),
+    // Deep green chrome for the top bar (StudioLook.tsx, PORTS.md card 116).
+    studioLook(STUDIO_FONTS),
+    // Share a preview, Messages, the previewShare type (PORTS.md card 117).
+    // Before the kit, so the kit's tool order and staff view place "messages".
+    // shareTypes: the types whose own page /preview renders.
+    ncsWorkflowTools({ shareTypes: [...SHAREABLE_TYPES] }),
+    // The Studio kit (src/sanity/kit/, settings in src/sanity/kit.config.ts):
+    // Home, Site Guide, Checkup and Quick update, plain tool names, the staff
+    // view, Move to Trash, the note after Publish and the first-run tour.
+    // Its tools reducer has to see every other tool, so only brandIcons follows.
+    ncsStudioKit(kitConfig),
+    // Icons by meaning on every tool and plugin type (card 119). After the kit
+    // so its tools get icons too; it only swaps icons.
+    brandIcons(),
   ],
 
   schema: {
-    types: schemaTypes,
+    // Portable Text styles drawn in the site's fonts (StudioLook.tsx, card 116).
+    // Every document type gets its icon and a picture in list rows (card 119).
+    types: withBrandPreviews(withEditorTypography(schemaTypes, STUDIO_FONTS)),
     // Pre-filled "+ New" starting points for pages, courses, and events (the
     // blank options stay available too).
     templates: (prev) => [...prev, ...STARTING_TEMPLATES],
@@ -289,15 +301,15 @@ export default defineConfig({
     },
     // Action wiring, in priority order:
     //  - singletons: keep only editing actions (no unpublish/delete/duplicate).
-    //  - archivable content: swap the destructive Delete for the soft-delete
-    //    Archive ("move to trash"), and append Restore + Delete forever (each
-    //    renders only when the document is actually in the trash). Everything
-    //    else (publish, duplicate, ...) stays.
+    //  - archivable content: no permanent Delete. The Studio kit adds "Move to
+    //    Trash" (kit.config.ts trashTypes); Restore + Delete forever stay for
+    //    documents still carrying the older soft-delete flag (each renders only
+    //    when the document has archived: true). Everything else stays.
     //  - page-builder types: "Save a section as preset..." (PORTS.md card 24)
     //    and "Check this page..." (card 25), the two courtesy verbs a page
     //    gets. Neither blocks publish and neither edits anything on its own.
     //  - shareable types: "Copy share link" (card 19), on the documents that
-    //    HAVE a /preview route to show. See SHAREABLE_TYPES below.
+    //    HAVE a /preview route to show. See SHAREABLE_TYPES above.
     //  - safe rename (PORTS.md card 22): whatever list the branches below
     //    produce, the stock Publish is wrapped so a changed web address files
     //    an old -> new redirect FIRST. The wrapper asks pathForDoc for the old
@@ -343,7 +355,6 @@ function pageActions(
   if (ARCHIVABLE_TYPES.has(schemaType)) {
     return [
       ...prev.filter(({ action }) => action !== 'delete'),
-      ArchiveAction,
       RestoreAction,
       DeleteForeverAction,
       ...extras,
@@ -351,17 +362,6 @@ function pageActions(
   }
   return [...prev, ...extras];
 }
-
-// Documents a share link can be minted for (PORTS.md card 19).
-//
-// The link points at a /preview/* route, and this site has those routes for the
-// page singletons and for custom `page` documents only (see
-// src/pages/preview/[...slug].astro). A course, a faculty member or an event
-// resolves to a LIVE address through pathForDoc, and `/preview` + that address
-// is a route that does not exist, so offering the action there would hand an
-// editor a link to a 404. Those documents preview through their index page
-// instead, which is what src/sanity/resolve.ts already says.
-const SHAREABLE_TYPES = new Set<string>([...Object.keys(SINGLETON_PREVIEW_PATHS), 'page']);
 
 // Singleton document types — one instance each, not duplicable.
 const SINGLETON_TYPES = new Set<string>([

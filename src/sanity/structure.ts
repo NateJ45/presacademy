@@ -1,54 +1,43 @@
-// Studio Desk structure. Pins the Welcome landing pane and the "How This Works"
-// help center on top, then Site Settings, all page singletons under "Pages",
-// then the catalog, people, and reusable content collections. Every document
-// type is placed explicitly so nothing floats loose at the desk root; the
-// trailing default-list filter is a safety net for any future type that hasn't
-// been placed (and hides media.tag).
+// Studio Desk structure (the "Content" tool). Site Settings on top, then all
+// page singletons under "Pages", then the catalog (courses, terms, teaching
+// areas, pricing), faculty, the reusable content lists, events, and the Trash.
+// Every document type is placed explicitly so nothing floats loose at the desk
+// root; the trailing default-list filter is a safety net for any future type
+// that hasn't been placed (and hides sanity-plugin-media's media.* types).
 //
-// Two conventions the rest of the Studio leans on:
-//  - Pane IDS are load-bearing: guide "Take me there" cards and Welcome task
-//    cards navigate to `structure/<id>` paths (nested panes join with ';', e.g.
-//    'catalog;course'). Rename an id here and grep guides/content.tsx +
-//    components/WelcomePane.tsx for it.
-//  - Every collection list filters `archived != true` (the soft-delete flag,
-//    schemaTypes/archived.ts); trashed docs surface only in "Recently deleted"
-//    at the bottom, where the Restore / Delete forever actions live.
+// Home, the Site Guide and the Checkup are top-bar tools from the Studio kit
+// (src/sanity/kit/, settings in kit.config.ts, PORTS.md card 106). They
+// replaced the desk's old Welcome pane and "How This Works" list on
+// 2026-10-18, so the desk is only the content.
+//
+// Conventions the rest of the Studio leans on:
+//  - Pane IDS are load-bearing: guide "Take me there" cards, Home's buttons and
+//    the Checkup navigate to `structure/<id>` paths (nested panes join with
+//    ';', e.g. 'catalog;course'). Rename an id here and grep guides/content.ts
+//    and kit.config.ts for it. Singletons use the document id as the item id,
+//    so an intent link ("open the About page") resolves to `pages;aboutPage`.
+//  - Delete is "Move to Trash" (the kit's Trash, a copy that comes back with
+//    one click). The older soft-delete flag (`archived: true`, set by a page's
+//    Archive in the live preview's page list, and by the pre-2026-10-18
+//    delete) still keeps documents out of every list here and off the site;
+//    those are under "Older deleted items" at the bottom.
+//  - Icons come from the brand icon registry (brandIcons.tsx, card 119): a
+//    type's icon by meaning, drawn as a tiny course cover where the brand has
+//    art for it.
 
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
-import type { ComponentType } from 'react';
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
-import { makeGuideView } from './components/GuideView';
-import { WelcomePane } from './components/WelcomePane';
-import { guides, GUIDE_CATEGORIES } from './guides/content';
 import { ARCHIVABLE_TYPES, NOT_ARCHIVED } from './schemaTypes/archived';
-import { CogIcon } from '@sanity/icons/Cog';
-import { HomeIcon } from '@sanity/icons/Home';
-import { UserIcon } from '@sanity/icons/User';
-import { UsersIcon } from '@sanity/icons/Users';
-import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
-import { EnvelopeIcon } from '@sanity/icons/Envelope';
-import { DocumentTextIcon } from '@sanity/icons/DocumentText';
-import { CalendarIcon } from '@sanity/icons/Calendar';
-import { StarIcon } from '@sanity/icons/Star';
-import { HeartIcon } from '@sanity/icons/Heart';
-import { ThListIcon } from '@sanity/icons/ThList';
-import { BookIcon } from '@sanity/icons/Book';
-import { LockIcon } from '@sanity/icons/Lock';
-import { BellIcon } from '@sanity/icons/Bell';
-import { DocumentsIcon } from '@sanity/icons/Documents';
-import { TagIcon } from '@sanity/icons/Tag';
-import { TrashIcon } from '@sanity/icons/Trash';
-import { CommentIcon } from '@sanity/icons/Comment';
-import { BlockElementIcon } from '@sanity/icons/BlockElement';
-import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
+import { staffDesk } from './kit/shared';
+import { emptyAwareList } from './kit/emptyList';
+import { brandIcon, typeIcon } from './brandIcons';
+import { WEEK_TYPE } from '../lib/studio-kit';
+import { TRASH_TYPE } from '../lib/studio-trash';
+import { tableListItem } from './workflow';
+import { TABLES } from './tables.config';
+import { kitConfig } from './kit.config';
 
 const API_VERSION = '2025-01-01';
-
-// Guide icons are emoji strings (friendly, and they match the guide data).
-const emoji =
-  (glyph: string): ComponentType =>
-  () =>
-    glyph;
 
 const SINGLETON_TYPES = [
   'siteSettings',
@@ -89,55 +78,68 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   // Saved sections + redirects (both placed under Pages below).
   'sectionPreset',
   'redirect',
-  // sanity-plugin-media registers this tag type; keep it out of the desk root
-  // (the "Media" tool in the top sidebar is where tags belong).
-  'media.tag',
+  // The Studio kit's Trash, placed explicitly at the bottom (card 106).
+  TRASH_TYPE,
+  // The kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
+  WEEK_TYPE,
+  // Private preview link records (card 117): managed from "Share a preview" only.
+  'previewShare',
 ]);
 
-/**
- * A singleton desk item: one document, form view only. The static site has no
- * live draft preview, so we do NOT attach an iframe "Preview" view.
- */
-function singleton(S: StructureBuilder, schemaType: string, title: string, icon: any) {
+/** A singleton desk item: one document. The id is the document id (see above). */
+function singleton(S: StructureBuilder, schemaType: string, title: string) {
   return S.listItem()
     .title(title)
     .id(schemaType)
-    .icon(icon)
+    .icon(typeIcon(schemaType))
     .child(S.document().schemaType(schemaType).documentId(schemaType));
 }
 
 /**
- * A collection list that keeps soft-deleted documents out of sight. Falls back
- * to the plain documentTypeList for types without the archived flag.
+ * A collection list that keeps soft-deleted (archived) documents out of sight
+ * and, while it is empty, explains what goes in it (card 111).
  */
-function collection(S: StructureBuilder, schemaType: string, title: string, icon: any) {
-  if (!ARCHIVABLE_TYPES.has(schemaType)) {
-    return S.documentTypeListItem(schemaType).title(title).icon(icon);
-  }
-  return S.listItem()
-    .id(schemaType)
-    .title(title)
-    .icon(icon)
-    .child(
-      S.documentTypeList(schemaType)
-        .id(schemaType)
-        .title(title)
-        .filter(`_type == $type && ${NOT_ARCHIVED}`)
-        .params({ type: schemaType })
-        .apiVersion(API_VERSION),
-    );
+function collection(
+  S: StructureBuilder,
+  context: StructureResolverContext,
+  schemaType: string,
+  title: string,
+  explain: string,
+  createLabel?: string,
+) {
+  return emptyAwareList(S, context, {
+    id: schemaType,
+    type: schemaType,
+    title,
+    icon: typeIcon(schemaType),
+    explain,
+    createLabel,
+    list: (S) =>
+      ARCHIVABLE_TYPES.has(schemaType)
+        ? S.documentTypeList(schemaType)
+            .id(schemaType)
+            .title(title)
+            .filter(`_type == $type && ${NOT_ARCHIVED}`)
+            .params({ type: schemaType })
+            .apiVersion(API_VERSION)
+        : S.documentTypeList(schemaType).title(title),
+  });
 }
+
+/** The "... as a table" items for one type (tables.config.ts, card 117). */
+const tablesFor = (S: StructureBuilder, type: string) =>
+  TABLES.filter((t) => t.type === type).map((t) => tableListItem(S, t));
 
 // =============================================================================
 // Year-scoped Events (ported from the WCP site's yearScopedList, 2026-08-31)
 // =============================================================================
 // Events accumulate forever. A flat list means a year-three editor scrolls
-// past dozens of dead rows to find this term's — so Events opens as "This
+// past dozens of dead rows to find this term's, so Events opens as "This
 // school year" (the default view) plus one pane per past year, with an
 // Everything list at the bottom. Nothing moves or archives; this is
 // presentation only, and every pane keeps soft-deleted events out of sight
-// (NOT_ARCHIVED, same as collection()). School years run Aug 1 – Jul 31 and
-// are named by their fall ("2026–27").
+// (NOT_ARCHIVED, same as collection()). School years run Aug 1 to Jul 31 and
+// are named by their fall ("2026-27").
 const FIRST_CONTENT_YEAR = 2026; // the site's first events
 
 const currentFallYear = (): number => {
@@ -146,10 +148,11 @@ const currentFallYear = (): number => {
 };
 const yearLabel = (y: number): string => `${y}–${String((y + 1) % 100).padStart(2, '0')}`;
 
-function yearScopedEvents(S: StructureBuilder, icon: any) {
+function yearScopedEvents(S: StructureBuilder) {
+  const icon = typeIcon('event');
   const fall = currentFallYear();
   // An UNDATED event is an ongoing one ("Monthly info session", "Visit a
-  // class") — it belongs in EVERY year pane, not in the year it happened to
+  // class"): it belongs in EVERY year pane, not in the year it happened to
   // be created. Dated events bucket by their start.
   const filter = `_type == "event" && ${NOT_ARCHIVED} && (!defined(start) || (start >= $from && start < $to))`;
 
@@ -197,155 +200,141 @@ function yearScopedEvents(S: StructureBuilder, icon: any) {
                 .filter(`_type == "event" && ${NOT_ARCHIVED}`)
                 .apiVersion(API_VERSION),
             ),
+          ...tablesFor(S, 'event'),
         ]),
     );
 }
 
-/**
- * "How This Works" — a pinned, read-only help center built from repo data
- * (studio/guides/content.tsx), rendered by GuideView. Guides are grouped under
- * titled dividers by category (GUIDE_CATEGORIES order).
- */
-function howThisWorks(S: StructureBuilder) {
-  const guideItem = (g: (typeof guides)[number]) =>
-    S.listItem()
-      .id(`guide-${g.slug}`)
-      .title(g.title)
-      .icon(emoji(g.icon))
-      .child(
-        // Cast: our pane ignores props, but S.component wants the pane type.
-        S.component(makeGuideView(g.slug) as never)
-          .id(`guide-view-${g.slug}`)
-          .title(g.title),
-      );
-  return S.listItem()
-    .id('how-this-works')
-    .title('How This Works')
-    .icon(BookIcon)
-    .child(
-      S.list()
-        .id('how-this-works-list')
-        .title('How This Works')
-        .items(
-          GUIDE_CATEGORIES.flatMap((category) => [
-            S.divider().title(category),
-            ...guides.filter((g) => g.category === category).map(guideItem),
-          ]),
-        ),
-    );
-}
-
-// The Welcome landing pane — the first thing an editor sees.
-function welcomeItem(S: StructureBuilder) {
-  return S.listItem()
-    .id('welcome')
-    .title('Welcome')
-    .icon(HomeIcon)
-    .child(
-      S.component(WelcomePane as never)
-        .id('welcome-pane')
-        .title('Welcome'),
-    );
-}
-
+// The Studio kit's staff view hides kitConfig.staffHiddenPanes from this desk
+// (src/sanity/kit/shared.tsx, staffDesk); everyone else sees all of it.
 export const deskStructure = (S: StructureBuilder, context: StructureResolverContext) =>
+  staffDesk(fullDesk(S, context), context, kitConfig);
+
+const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
-    .title('The Presbyterian Academy')
+    .title('Content')
     .items([
-      // Welcome + How This Works — pinned on top.
-      welcomeItem(S),
-      howThisWorks(S),
+      // Site Settings: pinned singleton (not a page).
+      singleton(S, 'siteSettings', 'Site Settings'),
 
       S.divider(),
 
-      // Site Settings — pinned singleton (no preview; not a page)
-      singleton(S, 'siteSettings', 'Site Settings', CogIcon),
-
-      S.divider(),
-
-      // Pages — every page singleton lives here.
+      // Pages: every page singleton lives here.
       S.listItem()
         .title('Pages')
         .id('pages')
-        .icon(DocumentTextIcon)
+        .icon(brandIcon('pages'))
         .child(
           S.list()
             .id('pages')
             .title('Pages')
             .items([
-              singleton(S, 'homePage', 'Home', HomeIcon),
-              singleton(S, 'coursesPage', 'Courses', BookIcon),
-              singleton(S, 'facultyPage', 'Faculty', UsersIcon),
-              singleton(S, 'aboutPage', 'About', UserIcon),
+              singleton(S, 'homePage', 'Home'),
+              singleton(S, 'coursesPage', 'Courses'),
+              singleton(S, 'facultyPage', 'Faculty'),
+              singleton(S, 'aboutPage', 'About'),
 
               S.divider(),
 
-              singleton(S, 'eventsPage', 'Events (index page)', CalendarIcon),
-              singleton(S, 'resourcesPage', 'Resources', DocumentsIcon),
+              singleton(S, 'eventsPage', 'Events (the list page)'),
+              singleton(S, 'resourcesPage', 'Resources'),
 
               S.divider(),
 
-              singleton(S, 'pricingPage', 'Pricing & Scholarships', StarIcon),
-              singleton(S, 'getStartedPage', 'Get Started', EnvelopeIcon),
-              singleton(S, 'forYouPage', 'For You', HeartIcon),
+              singleton(S, 'pricingPage', 'Pricing and scholarships'),
+              singleton(S, 'getStartedPage', 'Get started'),
+              singleton(S, 'forYouPage', 'For you'),
 
               S.divider(),
 
-              singleton(S, 'faqPage', 'FAQ', HelpCircleIcon),
-              singleton(S, 'contactPage', 'Contact', EnvelopeIcon),
-              singleton(S, 'notFoundPage', '404 Page', DocumentTextIcon),
-              singleton(S, 'privacyPage', 'Privacy Policy Page', LockIcon),
-              singleton(S, 'accessibilityPage', 'Accessibility Page', HeartIcon),
+              singleton(S, 'faqPage', 'Questions (FAQ)'),
+              singleton(S, 'contactPage', 'Contact'),
+              singleton(S, 'notFoundPage', 'Page not found'),
+              singleton(S, 'privacyPage', 'Privacy policy'),
+              singleton(S, 'accessibilityPage', 'Accessibility'),
 
               S.divider(),
 
               // Custom pages (collection): build new pages at /<slug> with blocks.
-              collection(S, 'page', 'Custom Pages', DocumentTextIcon),
+              collection(
+                S,
+                context,
+                'page',
+                'Custom pages (build your own)',
+                'Pages you build yourself, each with its own web address: an open lecture series, a page for a partner congregation, a reading list.',
+                'Build the first page',
+              ),
 
               S.divider(),
 
               // Saved sections: bands kept from one page, ready to drop on
-              // another. They sit under Pages because that is the only place
-              // they are ever used. Made with "Save a section as preset..." in a
-              // page's publish menu; added from the Saved sections group beside
-              // the live preview.
-              collection(S, 'sectionPreset', 'Saved Sections', BlockElementIcon),
+              // another. Made with "Save a section as preset..." in a page's
+              // publish menu; added from the Saved sections group beside the
+              // live preview.
+              collection(
+                S,
+                context,
+                'sectionPreset',
+                'Saved sections',
+                'Sections kept for reuse. Open a page, use "Save a section as preset..." in its publish menu, and it appears here.',
+              ),
 
               S.divider(),
 
               // Redirects: old address -> new address. Most entries are filed
               // automatically when a page's web address changes on publish
-              // (components/slugRedirect.tsx); the editor adds one by hand for
-              // an address that never existed on this site (a link from an old
-              // site, or a printed card).
+              // (components/slugRedirect.tsx); add one by hand for an address
+              // that never existed on this site (a printed card, an old link).
               S.documentTypeListItem('redirect')
                 .title('Redirects (old links)')
-                .icon(ArrowRightIcon),
+                .icon(typeIcon('redirect')),
             ]),
         ),
 
       S.divider(),
 
-      // Catalog — the course library and its supporting types.
+      // Catalog: the course library and what supports it.
       S.listItem()
         .title('Catalog')
         .id('catalog')
-        .icon(BookIcon)
+        .icon(typeIcon('course'))
         .child(
           S.list()
             .id('catalog')
             .title('Catalog')
             .items([
-              collection(S, 'course', 'Courses', BookIcon),
-              collection(S, 'term', 'Terms', CalendarIcon),
-              collection(S, 'teachingArea', 'Teaching Areas', ThListIcon),
+              collection(
+                S,
+                context,
+                'course',
+                'Courses',
+                'Every course the Academy teaches, with its cover, its teacher and the terms it runs in.',
+                'Add the first course',
+              ),
+              ...tablesFor(S, 'course'),
+              collection(
+                S,
+                context,
+                'term',
+                'Terms',
+                'Each term or cohort, with its dates and the day applications close. Courses point at the terms they run in.',
+                'Add the first term',
+              ),
+              ...tablesFor(S, 'term'),
+              collection(
+                S,
+                context,
+                'teachingArea',
+                'Teaching areas',
+                'The subjects courses and faculty are filed under, like Scripture or Church history.',
+              ),
               // Drag-to-reorder: the order set here is the order the site
               // shows tiers in. The list itself hides archived tiers.
               orderableDocumentListDeskItem({
                 type: 'pricingTier',
                 id: 'pricingTier',
-                title: 'Pricing Tiers',
-                icon: TagIcon,
+                title: 'Pricing tiers',
+                icon: typeIcon('pricingTier'),
                 filter: NOT_ARCHIVED,
                 S,
                 context,
@@ -353,75 +342,112 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
             ]),
         ),
 
-      // People — faculty. Drag-to-reorder; the order is the site's order.
+      // People: faculty. Drag-to-reorder; the order is the site's order.
       orderableDocumentListDeskItem({
         type: 'facultyMember',
         id: 'facultyMember',
         title: 'Faculty',
-        icon: UsersIcon,
+        icon: typeIcon('facultyMember'),
         filter: NOT_ARCHIVED,
         S,
         context,
       }),
+      ...tablesFor(S, 'facultyMember'),
 
       S.divider(),
 
-      // Content — reusable collections.
+      // Content: reusable collections.
       S.listItem()
-        .title('Content')
+        .title('Notices, voices and questions')
         .id('content')
-        .icon(ThListIcon)
+        .icon(brandIcon('content'))
         .child(
           S.list()
             .id('content')
-            .title('Content')
+            .title('Notices, voices and questions')
             .items([
+              collection(
+                S,
+                context,
+                'announcement',
+                'Notices',
+                'A short line across the top of every page, like "Enrollment is open" or a class change. Each one can take itself down on a date you pick.',
+                'Put up the first notice',
+              ),
+              S.divider(),
               orderableDocumentListDeskItem({
                 type: 'testimonial',
                 id: 'testimonial',
                 title: 'Testimonials',
-                icon: CommentIcon,
+                icon: typeIcon('testimonial'),
                 filter: NOT_ARCHIVED,
                 S,
                 context,
               }),
+              S.divider(),
               orderableDocumentListDeskItem({
                 type: 'faqCategory',
                 id: 'faqCategory',
-                title: 'FAQ Categories',
-                icon: ThListIcon,
+                title: 'Question groups',
+                icon: typeIcon('faqCategory'),
                 S,
                 context,
               }),
-              collection(S, 'faqItem', 'FAQ Items', HelpCircleIcon),
-              collection(S, 'form', 'Forms', EnvelopeIcon),
-              collection(S, 'announcement', 'Announcements', BellIcon),
+              collection(
+                S,
+                context,
+                'faqItem',
+                'Questions and answers',
+                'The questions people ask before they enroll, with your answers. They show on the FAQ page, in their groups.',
+              ),
+              S.divider(),
+              collection(
+                S,
+                context,
+                'form',
+                'Forms',
+                'Forms people fill in on the website, like an enquiry or an expression of interest. What they send arrives in Messages.',
+              ),
             ]),
         ),
 
       S.divider(),
 
-      // Events — info sessions, lectures, workshops, term starts shown on /events
-      yearScopedEvents(S, CalendarIcon),
+      // Events: info sessions, lectures, workshops, term starts shown on /events.
+      yearScopedEvents(S),
 
-      // ── Recently deleted ── soft-deleted content; restore or empty for good.
-      S.divider().title('Trash'),
+      S.divider(),
+
+      // The Studio kit's Trash (card 106): copies of deleted things, one click
+      // to bring each back. Id 'trash' is load-bearing (the Checkup links here).
       S.listItem()
         .id('trash')
-        .title('Recently deleted')
-        .icon(TrashIcon)
+        .title('Trash (bring things back)')
+        .icon(brandIcon('trash'))
+        .child(
+          S.documentTypeList(TRASH_TYPE)
+            .id('trash-list')
+            .title('Trash')
+            .defaultOrdering([{ field: 'deletedAt', direction: 'desc' }]),
+        ),
+      // Documents soft-deleted before the kit's Trash (archived == true), and
+      // pages put away with Archive. Restore and Delete forever live here.
+      S.listItem()
+        .id('trash-older')
+        .title('Archived and older deleted items')
+        .icon(brandIcon('trash'))
         .child(
           S.documentList()
-            .id('trash')
-            .title('Recently deleted')
+            .id('trash-older')
+            .title('Archived and older deleted items')
             .filter('archived == true')
             .apiVersion(API_VERSION)
             .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }]),
         ),
 
-      // Safety net: surface any document type we have NOT explicitly placed above
-      // (and keep the hidden set, including media.tag, out of the desk root).
-      ...S.documentTypeListItems().filter(
-        (item) => !HIDDEN_FROM_DEFAULT.has(item.getId() as string),
-      ),
+      // Safety net: surface any document type not explicitly placed above.
+      ...S.documentTypeListItems().filter((item) => {
+        const id = item.getId() as string;
+        return !HIDDEN_FROM_DEFAULT.has(id) && !id.startsWith('media.');
+      }),
     ]);
