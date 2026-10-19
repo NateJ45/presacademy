@@ -31,6 +31,7 @@ import { buildEvent, buildNotice, daysFrom } from '../lib/quick-updates';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 import { schoolRules } from './schoolCheckup';
+import { exampleTextRule } from '../lib/studio-prepublish';
 import { ARCHIVABLE_TYPES } from './schemaTypes/archived';
 
 const PUBLISHED = '!(_id in path("drafts.**"))';
@@ -279,6 +280,9 @@ export const kitConfig: KitConfig = {
         altExemptFields: ['logo', 'favicon', 'icon', 'logoImage', 'seoImage'],
       }),
       ...schoolRules,
+      // Card 123: words still starting "Example:" from a template or a seasonal saved section.
+      // (Not llmsRules: this site keeps /llms-full.txt off until launch, on purpose.)
+      exampleTextRule(),
     ],
     ignoreTypes: ['sectionPreset', 'redirect', 'form'],
   },
