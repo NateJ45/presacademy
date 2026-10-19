@@ -1,4 +1,4 @@
-// Site copy of the starter's tests/studio-app.spec.ts (PORTS.md card 125). Not
+// Site copy of the starter's tests/studio-app.spec.ts (PORTS.md cards 125 and 132). Not
 // marked PORTABLE: this repo has no tests/fixtures.ts, so it imports Playwright directly.
 import { test, expect } from '@playwright/test';
 
@@ -71,8 +71,11 @@ test.describe('Studio app', () => {
     await page.reload();
     await expect(page.locator('[data-studio-offline]')).toBeVisible();
     await expect(page.locator('h1')).toHaveText("You're offline");
+    // Card 132: the brand's path, last stone unlaid, and a real Try again button.
+    await expect(page.locator('[data-studio-offline] .ncs-sp__stone[data-unlaid]')).toHaveCount(1);
+    await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
     await expect(page.locator('body')).toContainText(
-      "Your changes are saved when you're back online",
+      'Your work is safe in the Studio. It will be here when the connection comes back.',
     );
     await ctx.setOffline(false);
     await ctx.close();
