@@ -294,7 +294,7 @@ The Messages tool lists `contact_submissions` from the D1 `presacademy-contact` 
 npx wrangler d1 migrations apply presacademy-contact --remote
 ```
 
-It only creates `message_status`. Nothing personal is written to Sanity.
+`0002` creates `message_status`. `0003_mail.sql` (starter card 127) is carried only so the shared mail code and its tests match the starter: it creates the empty newsletter and RSVP tables, which nothing here writes to while the email backbone is off. Nothing personal is written to Sanity.
 
 ### Private preview links (card 117)
 
