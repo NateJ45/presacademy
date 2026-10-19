@@ -22,13 +22,19 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 // still deciding, and the site would forward a live address on a guess.
 const QUERY = `*[_type == "redirect" && defined(from) && defined(to) && !(_id in path("drafts.**"))]{ from, to, permanent }`;
 
+// Every published document whose type has a slugged address, for the live-page guard
+// (src/lib/redirect-guard.ts). Types come from LIVE_PATH_BY_TYPE in astro.config.mjs.
+const liveQuery = (types) =>
+  `*[_type in ${JSON.stringify(types)} && defined(slug.current) && archived != true && !(_id in path("drafts.**"))]{ _type, "slug": slug.current }`;
+
 /**
- * Every published redirect document, in the loose shape buildRedirectMap()
- * expects. Always resolves; never throws.
+ * Run one GROQ query against the published dataset. Always resolves to an array;
+ * never throws.
  *
- * @returns {Promise<Array<{ from?: string, to?: string, permanent?: boolean }>>}
+ * @param {string} query
+ * @returns {Promise<any[]>}
  */
-export async function fetchRedirectDocs() {
+async function runQuery(query) {
   const env = loadEnv(root);
   const projectId = env.PUBLIC_SANITY_PROJECT_ID;
   const dataset = env.PUBLIC_SANITY_DATASET ?? 'production';
@@ -43,7 +49,7 @@ export async function fetchRedirectDocs() {
   const host = token ? 'api.sanity.io' : 'apicdn.sanity.io';
   const url =
     `https://${projectId}.${host}/v${apiVersion}/data/query/${dataset}` +
-    `?query=${encodeURIComponent(QUERY)}`;
+    `?query=${encodeURIComponent(query)}`;
 
   try {
     const res = await fetch(url, {
@@ -60,4 +66,25 @@ export async function fetchRedirectDocs() {
     );
     return [];
   }
+}
+
+/**
+ * Every published redirect document, in the loose shape buildRedirectMap()
+ * expects. Always resolves; never throws.
+ *
+ * @returns {Promise<Array<{ from?: string, to?: string, permanent?: boolean }>>}
+ */
+export function fetchRedirectDocs() {
+  return runQuery(QUERY);
+}
+
+/**
+ * The slug of every published document of the given types, so the build can tell
+ * which addresses a page lives at now (the live-page guard). Always resolves.
+ *
+ * @param {string[]} types
+ * @returns {Promise<Array<{ _type: string, slug: string }>>}
+ */
+export function fetchLiveDocs(types) {
+  return runQuery(liveQuery(types));
 }
