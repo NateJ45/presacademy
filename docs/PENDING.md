@@ -220,6 +220,14 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
+- **Wire the Studio tours and videos once starter card 137 lands** (2026-10-19, studio-complete
+  Phase A). The jobs and surfaces are in `docs/agent/studio-plan.md`. Waiting on 137: merge
+  `origin/main`, resync the PORTABLE files, map `src/sanity/guides/tours.ts` onto 137's tour
+  config, record the seven clips scripted in `docs/agent/studio-videos.md` with the tutorial-video
+  pipeline (sample data only), set each guide's `video`, and check every caption frame. Two job
+  types are noted for 137 in the plan (a form that changes an existing document, so "Mark a
+  course full" can move to Quick update; a `select` field kind for the event form).
+
 - **Earlier versions (card 125) is switched off** (2026-10-19). The Studio phone app came
   with the card 125 sync (`/studio/manifest.webmanifest`, `public/studio/sw.js`, the
   `icon-192/512/maskable-512.png` icons), but "Earlier versions" needs the nightly backup
