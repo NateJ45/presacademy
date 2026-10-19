@@ -767,9 +767,17 @@ const OFFERING_PROJECTION = `{
 }`;
 
 // The soonest cohort that begins today or later (the "next offering").
+// A hand-set "Seats right now" on the course (Quick update, "Mark a course full or
+// waitlisted") wins over the offering's own Status and Seats note; empty, the offering
+// decides (a hand-set status takes its own note, never the offering's). `^` is the course the projection sits in.
 const NEXT_OFFERING = `"nextOffering": (
   offerings[defined(term->startDate) && term->startDate >= $today]
-  | order(term->startDate asc))[0]${OFFERING_PROJECTION}`;
+  | order(term->startDate asc))[0]{
+  schedule, sessions,
+  "seatsNote": select(defined(^.seatsNow) => ^.seatsNowNote, seatsNote),
+  "status": coalesce(^.seatsNow, status),
+  "term": term->{ _id, title, "slug": slug.current, startDate, endDate, registrationDeadline, status }
+}`;
 
 // The cover fields (Term Issue, 2026-10-13) ride on every card: the code,
 // colour, ornament and question are drawn by CourseCover.astro, and week one is

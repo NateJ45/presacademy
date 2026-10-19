@@ -1,0 +1,67 @@
+{
+  "slug": "quick-updates",
+  "title": "Quick updates from your phone",
+  "start": "/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "steps": [
+    {
+      "do": "caption",
+      "text": "Quick update is for the jobs that cannot wait.",
+      "ms": 2800,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/quick-update",
+      "caption": "On a phone, open the menu and choose Quick update.",
+      "ms": 2800
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-quick=\"notice\"]"
+    },
+    {
+      "do": "ring",
+      "target": "[data-tour=\"quick-list\"]",
+      "caption": "Each big button is one job, a few taps each.",
+      "ms": 3200,
+      "hold": 2800
+    },
+    {
+      "do": "click",
+      "target": "[data-quick=\"notice\"]",
+      "caption": "Try the first one: put up a notice.",
+      "ms": 900
+    },
+    {
+      "do": "waitFor",
+      "target": "#quick-message"
+    },
+    {
+      "do": "type",
+      "target": "#quick-message",
+      "text": "The office is closed on Monday.",
+      "caption": "Type the notice in one or two sentences.",
+      "ms": 1800
+    },
+    {
+      "do": "scroll",
+      "target": "text:Put it on the website"
+    },
+    {
+      "do": "ring",
+      "target": "text:Put it on the website",
+      "caption": "The notice is on the website in a few minutes.",
+      "ms": 3200,
+      "hold": 2800
+    },
+    {
+      "do": "caption",
+      "text": "It takes itself down on the last day you pick.",
+      "ms": 3200
+    }
+  ]
+}

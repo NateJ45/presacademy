@@ -29,28 +29,43 @@ import type { GuideShotData } from '../../lib/studio-look.ts';
 // Captured 2026-10-19 from the kit harness (/kit-harness/studio/) against the local dev
 // server, with every Sanity request answered by sample data, so no real document or person
 // is in any picture; the navbar (and its account avatar) is cropped off. Still to capture,
-// so they draw the wireframe for now: 'term-editor' and 'offering-status' (a term and a
-// course in the editor), with the tutorial-video pipeline's sample data (card 137).
+// so it draws the wireframe for now: 'offering-status' (a course's offering in the editor);
+// the capture is in tools/guide-shots/shots.json (docs/agent/studio-videos.md).
 export const GUIDE_SHOTS: Record<string, GuideShotData> = {
   'quick-update-tiles': {
     src: '/guide-shots/quick-update-tiles.webp',
-    alt: 'Quick update on a phone: four big buttons, Put up a notice, Remind people enrollment closes, Cancel or move a class, and Add an info session or event.',
-    width: 1620,
-    height: 1740,
+    alt: 'Quick update on a phone: big buttons for Put up a notice, Remind people enrollment closes, Mark a course full or waitlisted, Cancel or move a class, Add an info session or event, Change an event time or place, Open or close enrollment for a term, and Answer this week messages.',
+    width: 544,
+    height: 1038,
     marks: [
-      { kind: 'ring', x: 28.1, y: 41.8, w: 43.7, h: 20 },
+      { kind: 'ring', x: 2.2, y: 25.5, w: 95.6, h: 11.6 },
       {
         kind: 'stone',
-        x: 70.7,
-        y: 44,
-        label: 'In enrollment weeks, this one writes the reminder for you.',
+        x: 96,
+        y: 25,
+        label: 'Mark a course full or waitlisted: pick it, then Open, Waitlist or Full.',
       },
-      {
-        kind: 'stone',
-        x: 70.7,
-        y: 74,
-        label: 'A class that moved: a red notice that comes down by itself.',
-      },
+    ],
+  },
+  'seats-form': {
+    src: '/guide-shots/seats-form.webp',
+    alt: 'The Mark a course full or waitlisted form on a phone: Seats right now set to Waitlist, a note reading Waitlist only, and the Save the seats button.',
+    width: 560,
+    height: 760,
+    marks: [
+      { kind: 'stone', x: 94, y: 40, label: 'Open, Waitlist or Full.' },
+      { kind: 'ring', x: 3.6, y: 64.5, w: 92.8, h: 7 },
+      { kind: 'stone', x: 94, y: 68, label: 'Saves it. The course card changes in a few minutes.' },
+    ],
+  },
+  'term-editor': {
+    src: '/guide-shots/term-editor.webp',
+    alt: 'A term open in the editor: its name, slug, dates and Status, with the start date marked.',
+    width: 840,
+    height: 1038,
+    marks: [
+      { kind: 'ring', x: 14, y: 47.1, w: 72.1, h: 7.9 },
+      { kind: 'stone', x: 86.8, y: 46.7, label: 'The dates and status the whole website reads.' },
     ],
   },
   'quick-update-reminder': {

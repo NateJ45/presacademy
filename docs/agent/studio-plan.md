@@ -5,8 +5,9 @@ in a week, a month and a season, and which part of the Studio serves each one. W
 changes or a new one appears, change this page, the Quick update forms in
 `src/sanity/kit.config.ts` and the Site Guide (`src/sanity/guides/content.ts`) together.
 
-Written 2026-10-19 for the "Studio complete" work (starter card 137). Plain words, no
-business details: the repo is public.
+Written 2026-10-19 for the "Studio complete" work (starter card 137); Phase B (the same day) wired
+the tours, the extra Quick update jobs, the pictures and the videos. Plain words, no business
+details: the repo is public.
 
 ## Who edits
 
@@ -32,17 +33,19 @@ term's **Status**, and the jobs change with them:
 
 ## Weekly jobs
 
-| Job                                               | When                        | Studio surface                                                                                                 | Phone? |
-| ------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------- | ------ |
-| Answer enquiries and expressions of interest      | Every week, all year        | `Messages` tool; Home's This week ("Answer this week's messages", by hand)                                     | Yes    |
-| Remind people enrollment closes                   | Each enrollment week        | Quick update, **Remind people enrollment closes** (worded from the next term)                                  | Yes    |
-| Keep a notice up while enrollment is open         | Enrollment weeks            | Home's This week ("While enrollment is open, a notice says so", checked for you)                               | Yes    |
-| Mark a course full, waitlisted or closed          | Enrollment weeks            | Course editor, `Schedule & cohorts`, offering **Status**; This week ("Seats and waitlists are right", by hand) | Desk   |
-| Cancel or move a class                            | In session, when it happens | Quick update, **Cancel or move a class** (red notice, comes down by itself)                                    | Yes    |
-| Add an info session or open lecture, with sign-up | Most weeks before a term    | Quick update, **Add an info session or event**; Home's This week checks one is coming                          | Yes    |
-| Put up a general notice                           | As needed                   | Quick update, **Put up a notice**                                                                              | Yes    |
-| Take down notices that have ended                 | Weekly (mostly automatic)   | Notices take themselves down; This week and Checkup flag any left on                                           | Desk   |
-| Check nothing needs fixing                        | Weekly                      | Home's fix-it list and the `Checkup` tool                                                                      | Desk   |
+| Job                                               | When                        | Studio surface                                                                                                                                                           | Phone? |
+| ------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| Answer enquiries and expressions of interest      | Every week, all year        | `Messages` tool; Home's This week ("Answer this week's messages", by hand)                                                                                               | Yes    |
+| Remind people enrollment closes                   | Each enrollment week        | Quick update, **Remind people enrollment closes** (worded from the next term)                                                                                            | Yes    |
+| Keep a notice up while enrollment is open         | Enrollment weeks            | Home's This week ("While enrollment is open, a notice says so", checked for you)                                                                                         | Yes    |
+| Mark a course full, waitlisted or closed          | Enrollment weeks            | Quick update, **Mark a course full or waitlisted**; the offering's **Status** in the course for a per-term setting; This week ("Seats and waitlists are right", by hand) | Yes    |
+| Cancel or move a class                            | In session, when it happens | Quick update, **Cancel or move a class** (red notice, comes down by itself)                                                                                              | Yes    |
+| Add an info session or open lecture, with sign-up | Most weeks before a term    | Quick update, **Add an info session or event**; Home's This week checks one is coming                                                                                    | Yes    |
+| Move an event, or change its place or link        | When plans change           | Quick update, **Change an event's time or place**                                                                                                                        | Yes    |
+| Open or close enrollment for a term               | Start and end of enrollment | Quick update, **Open or close enrollment for a term** (the term's Status)                                                                                                | Yes    |
+| Put up a general notice                           | As needed                   | Quick update, **Put up a notice**                                                                                                                                        | Yes    |
+| Take down notices that have ended                 | Weekly (mostly automatic)   | Notices take themselves down; This week and Checkup flag any left on                                                                                                     | Desk   |
+| Check nothing needs fixing                        | Weekly                      | Home's fix-it list and the `Checkup` tool                                                                                                                                | Desk   |
 
 ## Monthly jobs
 
@@ -70,39 +73,68 @@ term's **Status**, and the jobs change with them:
 ## Guides for each job
 
 Every job above has a Site Guide. "Shot" means the guide carries a real capture (key in
-`src/sanity/guides/shots.ts`); "Video" means a clip is scripted in `docs/agent/studio-videos.md`.
+`src/sanity/guides/shots.ts`); "Video" means a recorded clip (`src/sanity/guides/videos.ts`,
+made as `docs/agent/studio-videos.md` says). None are recorded yet, so every Video cell reads as planned.
 
-| Job                               | Guide (slug)                                   | Shot                                       | Video   |
-| --------------------------------- | ---------------------------------------------- | ------------------------------------------ | ------- |
-| Answer messages                   | Read messages from the website (`messages`)    | No (real enquiries; never captured)        | No      |
-| Quick updates in general          | Quick updates from your phone (`quick-update`) | `quick-update-tiles`                       | Yes (1) |
-| Enrollment weeks, seats, reminder | Enrollment season, week by week (`enrollment`) | `quick-update-reminder`                    | Yes (2) |
-| Cancel or move a class            | Cancel or move a class (`cancel-a-class`)      | Uses `quick-update-tiles` via Quick update | Yes (3) |
-| Info session or event             | Post or edit an event (`post-event`)           | No                                         | Yes (4) |
-| Notices                           | Announcement banners (`announcements`)         | No                                         | No      |
-| Open a new term                   | Open a new term (`new-term`)                   | `new-term-tool`                            | Yes (5) |
-| A term's dates and status         | Set up a term or cohort (`terms`)              | `term-editor` (to capture)                 | No      |
-| Add or edit a course; seats       | Add or edit a course (`courses`)               | `offering-status` (to capture)             | Yes (6) |
-| Close a term                      | Close a term (`end-of-term`)                   | No                                         | No      |
-| Faculty, testimonials, questions  | `faculty`, `testimonials`, `faqs`              | No                                         | No      |
-| Pages, sections, saved sections   | `edit-page`, `sections`, `saved-sections`      | No                                         | Yes (7) |
+| Job                              | Guide (slug)                                   | Shot                                       | Video   |
+| -------------------------------- | ---------------------------------------------- | ------------------------------------------ | ------- |
+| Answer messages                  | Read messages from the website (`messages`)    | No (real enquiries; never captured)        | No      |
+| Quick updates in general         | Quick updates from your phone (`quick-update`) | `quick-update-tiles`                       | Yes     |
+| Enrollment weeks, the reminder   | Enrollment season, week by week (`enrollment`) | `quick-update-reminder`                    | Yes     |
+| Mark a course full or waitlisted | Mark a course full or waitlisted (`seats`)     | `seats-form`, `offering-status`            | Yes     |
+| Cancel or move a class           | Cancel or move a class (`cancel-a-class`)      | Uses `quick-update-tiles` via Quick update | Yes     |
+| Info session or event            | Post or edit an event (`post-event`)           | No                                         | Yes     |
+| Notices                          | Announcement banners (`announcements`)         | No                                         | No      |
+| Open a new term                  | Open a new term (`new-term`)                   | `new-term-tool`                            | Yes     |
+| A term's dates and status        | Set up a term or cohort (`terms`)              | `term-editor`                              | No      |
+| Add or edit a course             | Add or edit a course (`courses`)               | `offering-status`                          | No      |
+| Close a term                     | Close a term (`end-of-term`)                   | No                                         | No      |
+| Faculty, testimonials, questions | `faculty`, `testimonials`, `faqs`              | No                                         | No      |
+| Pages, sections, saved sections  | `edit-page`, `sections`, `saved-sections`      | No                                         | Not yet |
 
 "How to" chips (card 134, `GUIDE_FOR_FIELD`) sit beside the fields staff most often get
 wrong: a course's offerings, cover code and question, price tier; a term's Apply by; an
 event's type; and the search title and description.
 
-## For card 137 (the shared tours, videos and job types)
+## What Quick update covers now (card 137's job types)
 
-- **A job type that changes an existing document.** Quick update can only CREATE a document
-  (`QuickUpdateTool` calls `client.create`). "Mark a course full" needs a form that picks a
-  course (a document-picker field kind), picks one of its offerings for the next term and sets
-  its status (a `select` field kind with the schema's list), then patches it. Until then the
-  job is a This week line plus the `enrollment` guide, and it is done at a desk.
-- **A `select` field kind.** The event form's "Kind of event" is free text today; the builder
-  falls back to Info session for anything else. A select with Info session, Open lecture and
-  Workshop would remove the guesswork.
-- **Tour steps and video scripts** are written as data in `src/sanity/guides/tours.ts` and
-  `docs/agent/studio-videos.md`, ready to wire when 137 lands.
+Phase A could only create documents. Card 137 added jobs that edit one, link to a tool, show in
+a season, and take a select field, so the weekly list above is now all a few taps on a phone.
+
+| Tile                                          | Kind of job   | Notes                                                                               |
+| --------------------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| Put up a notice                               | build         | One line, until a last day                                                          |
+| Remind people enrollment closes               | build         | Worded from the next term and its Apply by date                                     |
+| Mark a course full or waitlisted              | edit (pick)   | Sets **Seats right now** on the course; wins over the offering's status (see below) |
+| Cancel or move a class                        | build         | A red notice that comes down by itself                                              |
+| Add an info session or event                  | build         | The kind is a select (Info session, Open lecture, Workshop); a sign-up link         |
+| Change an event's time or place               | edit (pick)   | Upcoming one-time events, newest first; start, place and sign-up link               |
+| Open or close enrollment for a term           | edit (pick)   | The term's Status as a select; the notices and Apply by lines follow it             |
+| Answer this week's messages                   | link          | Opens Messages, which keeps its own Replied marks                                   |
+| Announce the holiday break (15 Nov to 10 Jan) | build, season | Only on screen in its season                                                        |
+| Announce the summer break (1 May to 31 Aug)   | build, season | Only on screen in its season                                                        |
+
+**Why "Seats right now" lives on the course.** An edit job writes top-level fields by a dot path,
+and an offering is an item inside the course's `offerings` list, which a path cannot address. So
+the course has two small fields of its own, `seatsNow` and `seatsNowNote`. When `seatsNow` is set
+it wins over the next offering's `status` and `seatsNote` (`NEXT_OFFERING` in
+`src/lib/queries.ts`, tested in `src/lib/seats-now.test.ts`); empty, the offering decides, so
+the desk way still works. The cost is a value that stays until someone changes it, so the
+Checkup lists every course with seats set by hand ("Courses with seats set by hand") and the
+guide tells the administrator to set it back when a new term opens.
+
+Not built, because no job type fits: uploading a course syllabus (an upload job needs one fixed
+document, and a syllabus belongs to a course). Posting a notice for later is possible with the
+schedule job but would ask for a title and an end date by hand, so Put up a notice stays the way.
+
+## Tours, welcome and What's new
+
+Data in `src/sanity/studio-tours.ts`, passed through `kit.config.ts`. A first-run tour of seven
+stops (Home, This week, Quick update, Content, New term, Publish, Help), then "How this screen
+works" tours for Home, Quick update, the Site Guide and New term (the New term button is in
+`SetupWizard.tsx`). The welcome modal greets a new person once. What's new has two entries dated
+2026-10-19 (Quick update does more; Tours and short videos), each starting its tour. Reset one
+person's tour by clearing their `ncs-studio-kit:*` keys in the browser.
 
 ## Ideas, not built
 

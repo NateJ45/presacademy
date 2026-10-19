@@ -1,0 +1,62 @@
+{
+  "base": "http://localhost:4321/kit-harness/studio",
+  "viewport": {
+    "width": 1280,
+    "height": 1350
+  },
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  },
+  "shots": [
+    {
+      "key": "offering-status",
+      "path": "/structure/catalog;course;course-romans",
+      "waitFor": "[data-testid=\"field-title\"]",
+      "steps": [
+        {
+          "do": "click",
+          "target": "role:tab|Schedule & cohorts",
+          "ms": 1500
+        },
+        {
+          "do": "waitFor",
+          "target": "[data-testid=\"field-offerings\"]"
+        },
+        {
+          "do": "wait",
+          "ms": 7000
+        },
+        {
+          "do": "click",
+          "target": "text:Spring 2027",
+          "ms": 9000
+        }
+      ],
+      "clip": "[data-testid=\"nested-object-dialog\"]",
+      "pad": 12,
+      "measure": {
+        "Set the Status for this term here.": "[data-testid='field-offerings[_key==\"o1\"].status']"
+      },
+      "settle": 7000
+    },
+    {
+      "key": "term-editor",
+      "path": "/structure/catalog;term;term-spring-2027",
+      "waitFor": "[data-testid=\"field-title\"]",
+      "steps": [
+        {
+          "do": "wait",
+          "ms": 5000
+        }
+      ],
+      "clip": "[data-testid=\"document-panel-scroller\"]",
+      "pad": 0,
+      "measure": {
+        "The dates and status the whole website reads.": "[data-testid=\"field-startDate\"]"
+      }
+    }
+  ]
+}

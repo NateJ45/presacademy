@@ -289,6 +289,35 @@ export const course = defineType({
       ],
       group: 'schedule',
     }),
+    // Set from Quick update, "Mark a course full or waitlisted" (kit.config.ts), so the
+    // administrator can do it from a phone: a Quick update edit changes top-level fields,
+    // not an item inside the offerings list. When set it wins over the next offering's
+    // own Status and Seats note (NEXT_OFFERING in src/lib/queries.ts); empty, the offering decides.
+    defineField({
+      name: 'seatsNow',
+      title: 'Seats right now',
+      type: 'string',
+      description:
+        'Open, Waitlist or Full, for the next term. Empty means the offering above decides. Clear it when a new term opens.',
+      options: {
+        list: [
+          { title: 'Open', value: 'open' },
+          { title: 'Waitlist', value: 'waitlist' },
+          { title: 'Full', value: 'closed' },
+        ],
+        layout: 'radio',
+      },
+      group: 'schedule',
+    }),
+    defineField({
+      name: 'seatsNowNote',
+      title: 'Seats note right now',
+      type: 'string',
+      description:
+        'Shown on the course page instead of the offering’s Seats note. Example: "Waitlist only".',
+      hidden: ({ document }) => !document?.seatsNow,
+      group: 'schedule',
+    }),
     defineField({
       name: 'priceTier',
       title: 'Price tier',
