@@ -218,6 +218,22 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
+- **Studio art layer for starter card 128** (2026-10-19). When card 128 (the Studio design
+  language with a per-site art slot) merges in the starter, point its slot at
+  `public/studio-art/`: `mark-issue.svg` (the masthead's fanned covers), `cover-shelf.svg`
+  and `-phone` (issues standing on the spine strip), `issue-fan.svg` (the hero's fan),
+  `spine-strip.svg`, `cover-<colour>.svg`, `ornament-<name>.svg`, and Fraunces italic in
+  brass as the heading treatment (`fraunces-italic-wght.woff2`). All made by
+  `npm run gen:studio-art`.
+- **Earlier versions (card 125) is switched off** (2026-10-19). The Studio phone app came
+  with the card 125 sync (`/studio/manifest.webmanifest`, `public/studio/sw.js`, the
+  `icon-192/512/maskable-512.png` icons), but "Earlier versions" needs the nightly backup
+  with `SANITY_API_WRITE_TOKEN` and the Worker's `GITHUB_DEPLOY_TOKEN` (Actions: Read and
+  write). Once those are set, delete `earlierVersions: false` in `kit.config.ts`. "Post a
+  photo" (`kitConfig.postPhoto`) is not set up either.
+- **Signed-in check of the Studio art** (2026-10-19): Home banner (mark, shelf, italic
+  "Academy"), the top-bar wordmark, list-row icons on their cream tiles, at 1280 and 375.
+
 - **Two hidden menu switches** (2026-10-13). The Contents menu has no email or social
   row, so `siteSettings.showEmail` and `showSocials` are now `hidden: true` in the
   schema (data kept, still resolved in `src/lib/siteSettings.ts`, read by nothing).
