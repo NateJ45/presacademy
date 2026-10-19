@@ -22,7 +22,7 @@ import { deskStructure } from './src/sanity/structure';
 import { resolve } from './src/sanity/resolve';
 import { envVal } from './src/sanity/urls';
 import { PreviewNavigator } from './src/sanity/components/PreviewNavigator';
-import { STARTING_TEMPLATES } from './src/sanity/templates';
+import { startingTemplates } from './src/sanity/templates';
 import { StudioFormInput } from './src/sanity/components/StudioFormInput';
 import { documentBadges } from './src/sanity/components/documentBadges';
 import { SeoPreviewPane } from './src/sanity/components/SeoPreviewPane';
@@ -51,7 +51,7 @@ import brand from './brand/brand.config.json';
 import { ncsStudioKit } from './src/sanity/kit';
 import { kitConfig } from './src/sanity/kit.config';
 import { ncsWorkflowTools } from './src/sanity/workflow';
-import { brandIcon, brandIcons, withBrandPreviews } from './src/sanity/brandIcons';
+import { brandIcon, brandIcons, typeIcon, withBrandPreviews } from './src/sanity/brandIcons';
 
 // =============================================================================
 // Studio theme
@@ -281,9 +281,12 @@ export default defineConfig({
     // Portable Text styles drawn in the site's fonts (StudioLook.tsx, card 116).
     // Every document type gets its icon and a picture in list rows (card 119).
     types: withBrandPreviews(withEditorTypography(schemaTypes, STUDIO_FONTS)),
-    // Pre-filled "+ New" starting points for pages, courses, and events (the
-    // blank options stay available too).
-    templates: (prev) => [...prev, ...STARTING_TEMPLATES],
+    // The "+ New" starting points: page templates, course and event starters
+    // (src/sanity/templates.ts, the authoring kit, PORTS.md card 109).
+    templates: (prev) => [
+      ...prev,
+      ...startingTemplates().map((t) => ({ ...t, icon: typeIcon(t.schemaType) })),
+    ],
   },
 
   // Singleton enforcement: hide these from the global "+" create menu so editors
@@ -294,10 +297,15 @@ export default defineConfig({
     // append ours.
     badges: (prev) => [...prev, ...documentBadges],
     newDocumentOptions: (prev, { creationContext }) => {
+      // A custom page is made from a page template (templates.ts, card 109);
+      // the bare stock one is hidden because Basics: Blank page is the same
+      // thing with a clearer name. It stays registered, so links that name it
+      // keep working.
+      const options = prev.filter((option) => option.templateId !== 'page');
       if (creationContext.type === 'global') {
-        return prev.filter((option) => !SINGLETON_TYPES.has(option.templateId));
+        return options.filter((option) => !SINGLETON_TYPES.has(option.templateId));
       }
-      return prev;
+      return options;
     },
     // Action wiring, in priority order:
     //  - singletons: keep only editing actions (no unpublish/delete/duplicate).

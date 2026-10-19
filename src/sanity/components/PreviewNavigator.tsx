@@ -109,8 +109,13 @@ interface PresetRow {
   id: string;
   title: string;
   sectionType: string;
-  /** The captured section object, exactly as it will be appended. */
+  /** The first captured section (null when the saved section is empty). */
   section: Record<string, unknown> | null;
+  /**
+   * Every section it holds, in order (up to twelve since the authoring kit,
+   * PORTS.md card 109): adding it appends them all.
+   */
+  sections: Record<string, unknown>[];
 }
 
 /** A raw sectionPreset document, as the list query returns it. */
@@ -254,14 +259,19 @@ async function fetchState(
 function buildPresets(docs: PresetDoc[]): PresetRow[] {
   const rows: PresetRow[] = [];
   for (const [id, { doc }] of collapse(docs)) {
-    const held = Array.isArray(doc.section) ? doc.section[0] : null;
-    const section =
-      held && typeof held === 'object' && !Array.isArray(held)
-        ? (held as Record<string, unknown>)
-        : null;
+    const sections = (Array.isArray(doc.section) ? doc.section : []).filter(
+      (v): v is Record<string, unknown> => Boolean(v) && typeof v === 'object' && !Array.isArray(v),
+    );
+    const section = sections[0] ?? null;
     const type =
       doc.sectionType || (section && typeof section._type === 'string' ? section._type : '');
-    rows.push({ id, title: doc.title || '(unnamed saved section)', sectionType: type, section });
+    rows.push({
+      id,
+      title: doc.title || '(unnamed saved section)',
+      sectionType: type,
+      section,
+      sections,
+    });
   }
   rows.sort((a, b) => a.title.localeCompare(b.title));
   return rows;
@@ -666,12 +676,16 @@ export function PreviewNavigator() {
 
         // Always onto the DRAFT, always at the bottom: a saved section that went
         // live on click would be a publish nobody asked for.
-        await addSectionToPage(
-          client as unknown as PageOpsClient,
-          currentRow.id,
-          currentField,
-          adaptToneToNeighbour(preset.section, previous),
-        );
+        // A pattern of several sections goes in whole and in order; the first
+        // takes the neighbour's tone, the rest keep their own.
+        for (const [i, section] of preset.sections.entries()) {
+          await addSectionToPage(
+            client as unknown as PageOpsClient,
+            currentRow.id,
+            currentField,
+            i === 0 ? adaptToneToNeighbour(section, previous) : section,
+          );
+        }
         refetch();
         toast.push({
           status: 'success',

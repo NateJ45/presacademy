@@ -1,6 +1,6 @@
 // Site-wide announcement banner, as a collection so the secretary can queue
-// several notices ahead of time (Christmas services, a closure, a special
-// guest) and let them switch on/off by date. The active one shows at the very
+// several notices ahead of time (enrollment opening, a class moved, a guest
+// lecture) and let them switch on/off by date. The active one shows at the very
 // top of every page. Replaces the single siteSettings.announcement object.
 //
 // "Active" = enabled AND (no start date or start has passed) AND (no end date
@@ -28,7 +28,7 @@ export const announcement = defineType({
       title: 'Internal name',
       type: 'string',
       description:
-        'For your reference in the Studio (e.g. "Christmas Eve services"). Not shown on the site.',
+        'For your reference in the Studio, like "Spring enrollment open". Not shown on the site.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -36,7 +36,7 @@ export const announcement = defineType({
       title: 'Message',
       type: 'string',
       description:
-        'The text shown in the banner. Example: "Join us for Christmas Eve worship at 5pm and 11pm." It appears on the website at the next rebuild, a few minutes after you publish, the same as any other change. You can see it right away in the preview.',
+        'The text shown in the banner. Like "Enrollment for the spring term is open." It appears on the website at the next rebuild, a few minutes after you publish, the same as any other change. You can see it right away in the preview.',
       validation: (Rule) => Rule.required().max(160),
     }),
     defineField({
@@ -44,7 +44,7 @@ export const announcement = defineType({
       title: 'Style',
       type: 'string',
       description:
-        'Info = calm green. Special = gold, for seasonal good news. Urgent = red, for closures.',
+        'Info = calm green. Special = gold, for good news like enrollment opening. Urgent = red, for a cancelled or moved class.',
       options: {
         list: [
           { title: 'Info', value: 'info' },

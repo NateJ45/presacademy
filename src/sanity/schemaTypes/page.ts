@@ -4,8 +4,9 @@
 // singletons; this is for one-off additions.
 
 import { defineType, defineField } from 'sanity';
+import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import { archivedField } from './archived';
-import { FLEXIBLE_SECTION_MEMBERS, FLEXIBLE_SECTIONS_OPTIONS } from './blocks';
+import { PAGE_SECTION_MEMBERS, PAGE_SECTIONS_OPTIONS } from './blocks';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { SEO_GROUP, seoFields } from './seo';
 
@@ -69,9 +70,11 @@ export const page = defineType({
       type: 'array',
       group: 'content',
       description: 'Build the page from blocks. Add, remove, and drag to reorder.',
-      of: FLEXIBLE_SECTION_MEMBERS,
+      of: PAGE_SECTION_MEMBERS,
+      // "Insert a saved section" and the page warnings (card 109).
+      ...pageBuilderAuthoring,
 
-      options: FLEXIBLE_SECTIONS_OPTIONS,
+      options: PAGE_SECTIONS_OPTIONS,
     }),
     ...seoFields({ group: 'seo' }),
     publishAtField(),

@@ -8,6 +8,7 @@
 // `embed` object (embed.ts) is also allowed in flexibleSections.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { SyncIcon } from '@sanity/icons/Sync';
 import { hasInlineRich } from '../../lib/inline-rich';
 import { ACCENT_OPTIONS, SURFACE_OPTIONS } from '../../lib/surfaces';
 import { columnFallback, columnOptions, sideOptions } from '../../lib/layout-variants';
@@ -2722,7 +2723,53 @@ export const sectionForPastors = defineType({
 });
 
 // All block types collected for registration in index.ts.
+// ── Synced section (the authoring kit, PORTS.md card 109) ────────────────────
+// "Edit once, everywhere." A synced section holds no words of its own: it points
+// at a saved section (a `sectionPreset` document), and the page shows whatever
+// that saved section holds today. Change the saved section, publish it, and every
+// page using it changes on the next rebuild ("Enrollment is open" on Home, Courses
+// and Pricing at once). A plain copy ("Add a copy" in the picker) never changes.
+//
+// Rendering: SECTION_MEMBERS in src/lib/queries.ts resolves the reference into a
+// `sections` array and Sections.astro expands it in place
+// (expandSyncedSections in src/lib/authoring.ts). Like every block it carries no
+// colour field of its own; the sections inside keep theirs.
+//
+// Deliberately NOT in FLEXIBLE_SECTION_MEMBERS (the saved-section member list),
+// so a saved section can never hold a synced section: no loop (A shows B shows A).
+export const syncedSection = defineType({
+  name: 'syncedSection',
+  title: 'Synced section',
+  type: 'object',
+  icon: SyncIcon,
+  description:
+    'Shows a saved section. Edit the saved section once and every page using it changes.',
+  fields: [
+    defineField({
+      name: 'preset',
+      title: 'Saved section to show',
+      type: 'reference',
+      to: [{ type: 'sectionPreset' }],
+      description:
+        'Pick a saved section. To change what it says, open the saved section itself (Content, Pages, Saved sections) and publish it: every page that uses it updates together.',
+    }),
+  ],
+  preview: {
+    select: { title: 'preset.title', sections: 'preset.section' },
+    prepare: ({ title, sections }) => {
+      const count = Array.isArray(sections) ? sections.length : 0;
+      return {
+        title: title ? `Synced: ${title}` : 'Synced: nothing picked yet',
+        subtitle: title
+          ? `${count === 1 ? '1 section' : `${count} sections`}. Edit the saved section to change every page using it.`
+          : 'Pick a saved section to show here.',
+      };
+    },
+  },
+});
+
 export const sectionBlocks = [
+  syncedSection,
   sectionRichText,
   sectionImageText,
   sectionCardGrid,
@@ -2774,8 +2821,9 @@ export const sectionBlocks = [
   sectionForPastors,
 ];
 
-// The array members allowed in a flexibleSections[] field (includes the shared
-// embed object). Used by the generic `page` type and any page that opts in.
+// The array members allowed in a saved section (sectionPreset) and, with a
+// synced section added, in every page's sections field (PAGE_SECTION_MEMBERS
+// below). Includes the shared embed object.
 export const FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionRichText' },
   { type: 'sectionImageText' },
@@ -2960,5 +3008,27 @@ export const FLEXIBLE_SECTIONS_OPTIONS = {
       { name: 'list' as const },
     ],
     groups: INSERT_MENU_GROUPS,
+  },
+};
+
+// A page's sections: everything a saved section can hold, plus a synced section
+// (the authoring kit, PORTS.md card 109). Used by every page-builder field.
+export const PAGE_SECTION_MEMBERS = [...FLEXIBLE_SECTION_MEMBERS, { type: 'syncedSection' }];
+
+/** The page fields' picker: the same groups, with "Synced section" under extras, no picture for it. */
+export const PAGE_SECTIONS_OPTIONS = {
+  insertMenu: {
+    ...FLEXIBLE_SECTIONS_OPTIONS.insertMenu,
+    views: [
+      {
+        name: 'grid' as const,
+        previewImageUrl: (name: string) =>
+          name === 'syncedSection' ? undefined : `/studio-thumbs/${name}.jpg`,
+      },
+      { name: 'list' as const },
+    ],
+    groups: INSERT_MENU_GROUPS.map((g) =>
+      g.name === 'extras' ? { ...g, of: [...g.of, 'syncedSection'] } : g,
+    ),
   },
 };

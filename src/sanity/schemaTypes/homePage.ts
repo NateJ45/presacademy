@@ -23,10 +23,11 @@
 // "Remove field", gotcha #1); their descriptions say so.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import {
-  FLEXIBLE_SECTION_MEMBERS,
+  PAGE_SECTION_MEMBERS,
   FLEXIBLE_SECTIONS_DESCRIPTION,
-  FLEXIBLE_SECTIONS_OPTIONS,
+  PAGE_SECTIONS_OPTIONS,
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
@@ -119,39 +120,41 @@ export const homePage = defineType({
       type: 'array',
       group: 'sections',
       description: FLEXIBLE_SECTIONS_DESCRIPTION,
-      of: FLEXIBLE_SECTION_MEMBERS,
-      options: FLEXIBLE_SECTIONS_OPTIONS,
+      of: PAGE_SECTION_MEMBERS,
+      // "Insert a saved section" and the page warnings (card 109).
+      ...pageBuilderAuthoring,
+      options: PAGE_SECTIONS_OPTIONS,
     }),
 
     // ---- Final CTA ----
     defineField({
       name: 'finalCtaEyebrow',
-      title: 'Final CTA — eyebrow',
+      title: 'Closing band: eyebrow',
       type: 'string',
       group: 'final',
     }),
     defineField({
       name: 'finalCtaHeadline',
-      title: 'Final CTA — headline',
+      title: 'Closing band: headline',
       type: 'string',
       group: 'final',
     }),
     defineField({
       name: 'finalCtaSubhead',
-      title: 'Final CTA — subhead',
+      title: 'Closing band: subhead',
       type: 'text',
       rows: 2,
       group: 'final',
     }),
     defineField({
       name: 'finalCta',
-      title: 'Final CTA — button',
+      title: 'Closing band: button',
       type: 'ctaBlock',
       group: 'final',
     }),
     defineField({
       name: 'finalCtaBackgroundImage',
-      title: 'Final CTA — background image (optional)',
+      title: 'Closing band: background image (optional)',
       type: 'image',
       group: 'final',
       options: { hotspot: true },

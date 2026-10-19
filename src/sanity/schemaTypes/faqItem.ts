@@ -22,7 +22,7 @@ export const faqItem = defineType({
       options: {
         canvasApp: {
           purpose:
-            'The question as a visitor would actually ask it, in plain English, not jargon. Example: "What time are Sunday services?" not "What is the schedule of weekly worship gatherings?"',
+            'The question as a visitor would actually ask it, in plain English, not jargon. Like "How much does a course cost?" not "What is the schedule of weekly worship gatherings?"',
         },
       },
       validation: (Rule) => Rule.required(),
