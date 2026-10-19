@@ -44,7 +44,7 @@ export const event = defineType({
       title: 'Type',
       type: 'string',
       description:
-        'Recurring events (weekly worship, Bible study) always show. One-time events show until their date passes.',
+        'Recurring events (a monthly info session, say) always show. One-time events show until their date passes.',
       options: {
         list: [
           { title: 'Recurring', value: 'recurring' },
@@ -93,7 +93,7 @@ export const event = defineType({
       title: 'Schedule (display text)',
       type: 'string',
       description:
-        'How the time reads on the page. Examples: "Sundays, 11am" or "Saturday, June 27, 11am to 3pm". For recurring events this is the main time shown.',
+        'How the time reads on the page. Like "First Tuesday of the month, 7pm" or "Saturday, 10am to 2pm". For recurring events this is the main time shown.',
     }),
     defineField({
       name: 'start',

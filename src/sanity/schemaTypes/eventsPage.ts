@@ -8,10 +8,11 @@
 // event DETAIL route renders them.
 
 import { defineType, defineField } from 'sanity';
+import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import {
-  FLEXIBLE_SECTION_MEMBERS,
+  PAGE_SECTION_MEMBERS,
   FLEXIBLE_SECTIONS_DESCRIPTION,
-  FLEXIBLE_SECTIONS_OPTIONS,
+  PAGE_SECTIONS_OPTIONS,
 } from './blocks';
 import { seoFields } from './seo';
 
@@ -55,21 +56,21 @@ export const eventsPage = defineType({
     }),
     defineField({
       name: 'detailFinalCtaEyebrow',
-      title: 'Event detail — closing CTA eyebrow',
+      title: 'Event detail: closing band eyebrow',
       type: 'string',
       description:
         'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.',
     }),
     defineField({
       name: 'detailFinalCtaHeadline',
-      title: 'Event detail — closing CTA headline',
+      title: 'Event detail: closing band headline',
       type: 'string',
       description:
         'Shown in the closing band at the bottom of every individual event page. Leave empty to use the built-in default.',
     }),
     defineField({
       name: 'detailFinalCtaSubhead',
-      title: 'Event detail — closing CTA subhead',
+      title: 'Event detail: closing band subhead',
       type: 'text',
       rows: 2,
       description:
@@ -77,7 +78,7 @@ export const eventsPage = defineType({
     }),
     defineField({
       name: 'detailFinalCta',
-      title: 'Event detail — closing CTA button',
+      title: 'Event detail: closing band button',
       type: 'ctaBlock',
       description:
         'The button in the closing band at the bottom of every individual event page. Leave empty to use the built-in default button.',
@@ -87,9 +88,11 @@ export const eventsPage = defineType({
       title: 'Page sections',
       type: 'array',
       description: FLEXIBLE_SECTIONS_DESCRIPTION,
-      of: FLEXIBLE_SECTION_MEMBERS,
+      of: PAGE_SECTION_MEMBERS,
+      // "Insert a saved section" and the page warnings (card 109).
+      ...pageBuilderAuthoring,
 
-      options: FLEXIBLE_SECTIONS_OPTIONS,
+      options: PAGE_SECTIONS_OPTIONS,
     }),
   ],
   preview: { prepare: () => ({ title: 'Events (index page)' }) },

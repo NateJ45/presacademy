@@ -185,7 +185,7 @@ export const facultyMember = defineType({
       name: 'yearsTeaching',
       title: 'Years serving / teaching',
       type: 'string',
-      description: 'A string. Example: "18 years in pastoral ministry".',
+      description: 'In plain words, like "Twenty years in parish ministry".',
       group: 'credentials',
     }),
     defineField({

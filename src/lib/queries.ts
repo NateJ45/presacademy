@@ -39,8 +39,9 @@ const FORM_PROJECTION = `{
 
 // Page-builder block members (flexibleSections[] / page.sections[]). Resolves
 // image + form references; other blocks carry their fields via the spread.
-export const SECTION_MEMBERS = `{
-  ...,
+// SECTION_ARMS is the body, so a synced section (the authoring kit, PORTS.md
+// card 109) can run its saved sections through exactly the same arms.
+const SECTION_ARMS = `
   background{ ..., image${IMAGE_PROJECTION} },
   _type == "sectionImageText" => { image${IMAGE_PROJECTION} },
   _type == "sectionFeatureCards" => { cards[]{ ..., image${IMAGE_PROJECTION} } },
@@ -70,6 +71,22 @@ export const SECTION_MEMBERS = `{
   // insert PDF, resolved so the block can print its link with type and size.
   _type == "sectionForPastors" => {
     insertPdf{ asset->{ url, originalFilename, size, extension, mimeType } }
+  }`;
+
+// A synced section holds only a reference to a saved section; resolve it into
+// `sections` here, and Sections.astro swaps the block for them in place
+// (expandSyncedSections in src/lib/authoring.ts). One level only: a saved
+// section cannot hold a synced section. A missing one resolves to null and
+// renders nothing.
+export const SECTION_MEMBERS = `{
+  ...,
+  ${SECTION_ARMS},
+  _type == "syncedSection" => {
+    "presetTitle": preset->title,
+    "sections": preset->section[]{
+      ...,
+      ${SECTION_ARMS}
+    }
   }
 }`;
 

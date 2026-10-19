@@ -13,6 +13,7 @@ import { sectionEditAttr, sectionFieldEditAttr, type EditDoc } from '@/lib/previ
 import { sectionCoach } from '@/lib/section-coach';
 import { backgroundApplies } from '@/lib/section-fields';
 import type { SurfaceValue } from '@/lib/surfaces';
+import { expandSyncedSections } from '@/lib/authoring';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -166,7 +167,11 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
 };
 ---
 
-{(sections ?? []).map((block: any) => {
+{expandSyncedSections(sections ?? []).map((block: any) => {
+  // Synced sections (the authoring kit, PORTS.md card 109) were swapped above
+  // for the sections their saved copy holds; each carries `_editKey`, the
+  // synced block's own key, so the preview's controls act on the block that
+  // is really in the page.
   const Cmp = MAP[block?._type];
   if (!Cmp) return null;
   // A shell-aware block can opt OUT of the shell per instance by choosing a
@@ -203,7 +208,8 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
   // overlay outlines the element's rect, and a `display: contents` element has
   // no rect to outline. With no `editDoc` there is no wrapper at all, so the
   // live HTML does not change.
-  const editAttr = editDoc && block._key ? sectionEditAttr(editDoc, block._key) : undefined;
+  const editKey: string | undefined = block._editKey ?? block._key;
+  const editAttr = editDoc && editKey ? sectionEditAttr(editDoc, editKey) : undefined;
   // ---------------------------------------------------------------------
   // The surface handle (2026-08-28) — PREVIEW ONLY, same `editDoc` gate
   // ---------------------------------------------------------------------
@@ -225,7 +231,7 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
   // is. It renders after the content so it paints above it, and it carries
   // its styles inline because this shell loads no preview-only stylesheet.
   const handleAttr =
-    editAttr && editDoc && block._key && backgroundApplies(block._type, block)
+    editAttr && editDoc && block._key && !block._editKey && backgroundApplies(block._type, block)
       ? sectionFieldEditAttr(editDoc, block._key, 'background')
       : undefined;
   return editAttr ? (

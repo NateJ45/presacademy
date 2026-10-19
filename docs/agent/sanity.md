@@ -142,6 +142,14 @@ All GROQ queries live in `src/lib/queries.ts`. Each page has a typed query funct
 
 `siteSettings` has a `sectionVisibility` object field. `src/lib/sectionVisibility.ts` exports `getSectionVisibility(raw)`, which converts the raw Sanity object into a flat boolean map. The critical rule: `value !== false`. Undefined, null, or true all produce true (visible). Only an explicit false produces false (hidden). This rule is what makes a freshly-configured project safe to deploy before all optional sections have content.
 
+### The authoring kit (2026-10-18, starter PORTS.md card 109)
+
+- **Templates.** `src/sanity/templates.ts`: the custom-page templates (Basics, Enrollment, Teaching, Partners; shown as "Group: Title"), and the course and event starters. Each `value` is a function, so every new document gets fresh `_key`s (`freshKeys` in `src/lib/authoring.ts`). The stock `page` template is hidden in the menus; "Basics: Blank page" stands in for it. Every word a template writes starts `Example:`, because the school's facts are still placeholder; `src/lib/templates.test.ts` checks types, keys, the marker and em-dashes.
+- **Saved sections.** `sectionPreset.section` holds up to twelve sections (was one). Every page-builder field (`flexibleSections` and `page.sections`, `PAGE_SECTION_MEMBERS` in `blocks.ts`) spreads `pageBuilderAuthoring`, whose input adds **Insert a saved section**: Add a copy, or Add synced (published presets only). The live preview's Saved sections panel adds a whole pattern in order.
+- **Synced sections.** `syncedSection` (in `blocks.ts`, NOT in `FLEXIBLE_SECTION_MEMBERS`, so no loop) references a preset. `SECTION_MEMBERS` in `src/lib/queries.ts` resolves it into `sections` through the same arms (`SECTION_ARMS`), and `Sections.astro` expands it with `expandSyncedSections()`; `_editKey` points the preview's controls at the synced block. It is in `SELF_FILLING_SECTIONS`.
+- **Seasonal patterns.** `src/sanity/sectionPatterns.ts` (enrollment open, apply by soon, info session, term begins, first week, term ends, between terms, course full, help with the cost, Advent or Lent study, share with your congregation). `node --experimental-strip-types scripts/seed-section-patterns.mjs` writes each as a DRAFT `pattern-<id>`, never overwriting; production needs `--apply` and `NCS_PRODUCTION_WRITE=yes`.
+- **Warnings.** `pageRules` in `kit.config.ts` (custom pages: at most one course finder, next-issue band and form; a nudge past fifteen sections) plus the built-in ones (empty section, leftover `Example:`, a synced section with nothing picked). Warnings only, never errors (`src/lib/page-guardrails.ts`).
+
 ### Studio configuration notes
 
 **All-fields default.** The `default: true` property is removed from every schema field group definition. Without it, Studio opens documents on the "All fields" tab instead of a single group, so editors see everything without needing to know which group a field lives in.

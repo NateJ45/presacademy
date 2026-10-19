@@ -78,6 +78,8 @@ export const SELF_FILLING_SECTIONS = [
   'sectionRuledList',
   'sectionTermContents',
   'sectionTestimonialRail',
+  // A synced section's words live in its saved section (card 109).
+  'syncedSection',
 ];
 
 export const PAGE_CHECK_CONFIG: PageCheckConfig = {

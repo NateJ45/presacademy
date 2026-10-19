@@ -160,6 +160,17 @@ the Westminster Standards and the Book of Confessions."`
      Cloudflare BUILD variable (else the guides' studio address is used).
      Not used here: `GITHUB_DEPLOY_TOKEN` (card 111's failed-deploy line reads a
      GitHub deploy workflow; this site deploys through Cloudflare Workers Builds).
+- **Seed the seasonal saved sections** (2026-10-18, card 109). Needs a write token
+  in `.env` (`SANITY_API_WRITE_TOKEN`): dry run
+  `node --experimental-strip-types scripts/seed-section-patterns.mjs`, then
+  `$env:NCS_PRODUCTION_WRITE='yes'; node --experimental-strip-types scripts/seed-section-patterns.mjs --apply; Remove-Item Env:NCS_PRODUCTION_WRITE`,
+  re-run (expect eleven SKIPs). It only creates new DRAFT `pattern-*` saved sections. Until
+  then "Insert a saved section" lists only the ones staff saved themselves.
+- **Card 122 (private and hidden pages) to adopt next round** (2026-10-18). The kit's
+  Checkup and Your pages now honour `hideFromSearch` (synced byte-identical). This site's
+  own `seo.ts` titles it "Hide this page from search engines" and the hidden pages drop
+  out of the sitemap (`scripts/lib/hidden-pages.mjs`), but the menus and the link
+  picker do not check it yet. Private pages were not adopted.
 - **Signed-in Studio walkthrough after the kit PR deploys** (2026-10-18). Checked
   signed out only (the /studio boot page, splash, sign-in card). Sign in and look at:
   Home (banner with the cover shelf, This week, Coming up, Fix-it list, Your pages),
@@ -167,7 +178,7 @@ the Westminster Standards and the Book of Confessions."`
   straight away), Messages, New term, Site Guide, Checkup, Help for this page on a
   course, Move to Trash then Bring it back on a test notice, Share a preview on a
   custom page, the table views beside Courses / Terms / Faculty / Events, the
-  course-cover icons in list rows (light and dark), and the console.
+  course-cover icons in list rows (light and dark), and the console. After the authoring PR: make a page from each template group, "+ Add" in grid view, Insert a saved section as a copy and as synced (then edit the saved section and check both pages), and the yellow warnings on a page with Example: text left.
 
 - **Set the `SANITY_TOKEN` Worker secret before the next deploy.** The new
   SSR preview routes read it at request time. Locally it lives in
