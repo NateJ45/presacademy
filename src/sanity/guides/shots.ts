@@ -28,10 +28,19 @@ import type { GuideShotData } from '../../lib/studio-look.ts';
 
 // Captured 2026-10-19 from the kit harness (/kit-harness/studio/) against the local dev
 // server, with every Sanity request answered by sample data, so no real document or person
-// is in any picture; the navbar (and its account avatar) is cropped off. Still to capture,
-// so it draws the wireframe for now: 'offering-status' (a course's offering in the editor);
-// the capture is in tools/guide-shots/shots.json (docs/agent/studio-videos.md).
+// is in any picture; the navbar (and its account avatar) is cropped off. The captures are
+// in tools/guide-shots/shots.json (docs/agent/studio-videos.md).
 export const GUIDE_SHOTS: Record<string, GuideShotData> = {
+  'offering-status': {
+    src: '/guide-shots/offering-status.webp',
+    alt: 'A course offering open in the editor: Term, Schedule, Number of sessions and Seats note, with the Status choice at the bottom set to Open, Waitlist or Closed.',
+    width: 852,
+    height: 1062,
+    marks: [
+      { kind: 'ring', x: 15.2, y: 72.8, w: 69.4, h: 13.9 },
+      { kind: 'stone', x: 85.3, y: 72.5, label: 'Set the Status for this term here.' },
+    ],
+  },
   'quick-update-tiles': {
     src: '/guide-shots/quick-update-tiles.webp',
     alt: 'Quick update on a phone: big buttons for Put up a notice, Remind people enrollment closes, Mark a course full or waitlisted, Cancel or move a class, Add an info session or event, Change an event time or place, Open or close enrollment for a term, and Answer this week messages.',

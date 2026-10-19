@@ -1,7 +1,8 @@
 {
   "slug": "quick-updates",
   "title": "Quick updates from your phone",
-  "start": "/",
+  "start": "/quick-update",
+  "ready": "[data-quick=\"notice\"]",
   "viewport": {
     "width": 390,
     "height": 844
@@ -14,9 +15,8 @@
       "poster": true
     },
     {
-      "do": "goto",
-      "path": "/quick-update",
-      "caption": "On a phone, open the menu and choose Quick update.",
+      "do": "caption",
+      "text": "On a phone, open the menu and choose Quick update.",
       "ms": 2800
     },
     {
@@ -63,5 +63,11 @@
       "text": "It takes itself down on the last day you pick.",
       "ms": 3200
     }
-  ]
+  ],
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  }
 }

@@ -1406,6 +1406,7 @@ export const guides: Guide[] = [
     icon: 'event',
     lead: 'Add an info session, open lecture, workshop, or term start. Events show on the Events page automatically.',
     diy: 'self',
+    video: 'add-info-session',
     body: [
       { kind: 'path', items: ['Events', '+ New event'], link: { pane: 'event' } },
       {
@@ -1923,6 +1924,7 @@ guides.push(
     icon: 'quickUpdate',
     lead: 'Short forms for the jobs that cannot wait until you are at a desk.',
     diy: 'self',
+    video: 'quick-updates',
     body: [
       {
         kind: 'p',
@@ -2036,6 +2038,7 @@ guides.push(
     icon: 'times',
     lead: 'A new term is the biggest job of the season. The New term tool lays it out in order and ticks each step off as you go.',
     diy: 'self',
+    video: 'new-term',
     body: [
       { kind: 'path', items: ['New term (top bar)'], link: { tool: 'term-setup' } },
       {
@@ -2056,6 +2059,11 @@ guides.push(
           '**Announce registration** with a notice. Quick update has a ready-made one: **Remind people enrollment closes**.',
           '**Clear out old notices** and **re-read the home page** with the new term in mind.',
         ],
+      },
+      {
+        kind: 'video',
+        key: 'enrollment-reminder',
+        caption: 'Remind people enrollment closes, from your phone.',
       },
       {
         kind: 'callout',
@@ -2143,6 +2151,7 @@ guides.push(
     icon: 'people',
     lead: 'When a course fills, tell the website in a few taps from your phone. When a seat opens up, set it back.',
     diy: 'self',
+    video: 'mark-course-full',
     body: [
       {
         kind: 'path',
@@ -2199,6 +2208,7 @@ guides.push(
     icon: 'times',
     lead: 'Snow, illness or a room change: tell people in under a minute, from your phone.',
     diy: 'self',
+    video: 'cancel-a-class',
     body: [
       {
         kind: 'path',

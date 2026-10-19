@@ -1,6 +1,6 @@
 # Studio tutorial videos
 
-**Status (2026-10-19): the six scripts and the sample data are written and the pipeline runs, but no clip has been recorded yet.** `src/sanity/guides/videos.ts` is empty and no guide names a `video`. After recording, add `video: '<key>'` to each guide in the table.
+**Status (2026-10-19): all six clips are recorded** (sample data, with the music track kept outside the repo), registered in `src/sanity/guides/videos.ts`, and named by the guides in the table (the enrollment reminder clip sits in the New term guide as a clip block). Re-record one with the commands below. If port 4321 is taken by another site's server, pass `--base http://localhost:<port>/kit-harness/studio` (the sample data module answers Sanity's other calls itself, so any port loads).
 
 Six short clips show the jobs people ask about most. Each one is a "Watch how it is done" button
 on its guide and a card in Home's row. They are recorded by script, not by hand, so they can be
