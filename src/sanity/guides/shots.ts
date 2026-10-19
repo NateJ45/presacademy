@@ -99,7 +99,12 @@ export const GUIDE_SHOTS: Record<string, GuideShotData> = {
         y: 31.8,
         label: 'Check again reads the website afresh after you publish.',
       },
-      { kind: 'stone', x: 29, y: 82.5, label: 'Each card opens the right place to make the change.' },
+      {
+        kind: 'stone',
+        x: 29,
+        y: 82.5,
+        label: 'Each card opens the right place to make the change.',
+      },
     ],
   },
 };

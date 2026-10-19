@@ -81,8 +81,8 @@ Every job above has a Site Guide. "Shot" means the guide carries a real capture 
 | Info session or event             | Post or edit an event (`post-event`)           | No                                         | Yes (4) |
 | Notices                           | Announcement banners (`announcements`)         | No                                         | No      |
 | Open a new term                   | Open a new term (`new-term`)                   | `new-term-tool`                            | Yes (5) |
-| A term's dates and status         | Set up a term or cohort (`terms`)              | `term-editor`                              | No      |
-| Add or edit a course; seats       | Add or edit a course (`courses`)               | `offering-status`                          | Yes (6) |
+| A term's dates and status         | Set up a term or cohort (`terms`)              | `term-editor` (to capture)                 | No      |
+| Add or edit a course; seats       | Add or edit a course (`courses`)               | `offering-status` (to capture)             | Yes (6) |
 | Close a term                      | Close a term (`end-of-term`)                   | No                                         | No      |
 | Faculty, testimonials, questions  | `faculty`, `testimonials`, `faqs`              | No                                         | No      |
 | Pages, sections, saved sections   | `edit-page`, `sections`, `saved-sections`      | No                                         | Yes (7) |

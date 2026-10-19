@@ -224,7 +224,9 @@ the Westminster Standards and the Book of Confessions."`
   Phase A). The jobs and surfaces are in `docs/agent/studio-plan.md`. Waiting on 137: merge
   `origin/main`, resync the PORTABLE files, map `src/sanity/guides/tours.ts` onto 137's tour
   config, record the seven clips scripted in `docs/agent/studio-videos.md` with the tutorial-video
-  pipeline (sample data only), set each guide's `video`, and check every caption frame. Two job
+  pipeline (sample data only), set each guide's `video`, and check every caption frame. Capture
+  the two shots still drawn as the wireframe (`term-editor`, `offering-status` in
+  `src/sanity/guides/shots.ts`): the harness cannot open an editor without a read token. Two job
   types are noted for 137 in the plan (a form that changes an existing document, so "Mark a
   course full" can move to Quick update; a `select` field kind for the event form).
 
