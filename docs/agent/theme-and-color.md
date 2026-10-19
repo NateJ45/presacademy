@@ -200,6 +200,6 @@ Changing the visual identity of a project built on this starter requires touchin
    Update the brand name, domain, tagline, social URLs, and any other hardcoded identity strings the build needs at compile time.
 
 4. **Logo, favicon, and OG inputs**
-   Drop your `logo-light.*` and `logo-dark.*` files into `src/assets/` (or wherever `BaseLayout.astro` imports them from). Replace the favicon in `public/`. Re-run `npm run og` if you want updated default OG images.
+   This site has no logo files (the masthead is type). Replace the favicon set in `public/` and `public/site.webmanifest`. Re-run `npm run og` if you want updated default OG images.
 
 No other files need to change for a basic re-skin. The `--tint-rgb` token propagates your hue through all the polish-layer overlays automatically.

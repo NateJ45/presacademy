@@ -238,7 +238,6 @@ The items below apply to any project built on this starter. Replace the angle-br
 
 - [ ] `src/data/site.ts` — set real `name`, `domain`, `url`, `storageKeyPrefix`, `themeStorageKey`, `brandColors`
 - [ ] `src/styles/globals.css` — replace placeholder palette tokens and font imports with the project's brand
-- [ ] Replace logo files in `src/assets/` with the real logo variants; regenerate with `node scripts/generate-logo-variants.mjs`
 - [ ] Regenerate `public/og-default.png` via `npm run og` after updating brand inputs in `scripts/generate-og-default.mjs`
 - [ ] Replace `public/favicon.svg` with the project's favicon
 
@@ -317,7 +316,7 @@ The older one-hour "Copy share link" stays.
 
 ### The Studio's art
 
-The course-cover icons in list rows and the cover shelf on Home's banner and the /studio splash are drawn from the cover tokens in `src/styles/globals.css` by `npm run gen:studio-art`. Re-run it after changing a cover colour or ornament, and commit the files.
+The Studio is dressed in the site's own Term Issue grammar. The course-cover icons in list rows (`src/assets/brand/icon-*.svg`) and the motif kit in `public/studio-art/` (the cover shelf on Home's banner and the /studio splash, one cover per colour pair, each ornament alone) are drawn from the cover tokens in `src/styles/globals.css` by `npm run gen:studio-art`. Re-run it after changing a cover colour or ornament, and commit the files. The banner sets "Academy" in brass with `public/studio-art/fraunces-wght.woff2` (Fraunces, SIL Open Font License, copied from `@fontsource-variable/fraunces`), the way the site colours a heading's accent word on a dark band.
 
 ## Form submissions
 
@@ -444,23 +443,11 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 
 ---
 
-## Regenerate logos
+## The logo and the icons
 
-Source files live in `src/assets/`. To regenerate from a source image:
+The site's masthead sets the name in type (no logo file), and the mark is `public/favicon.svg` (the green PA square), with `favicon.png`, `favicon.ico` and `apple-touch-icon.png` beside it and `public/site.webmanifest` naming them. Editors can override the browser-tab icon in Site Settings (Favicon). The Studio's wordmark is `src/assets/brand/wordmark-dark.svg`.
 
-```bash
-# 1. Build new variants from a source JPG
-node scripts/generate-logo-variants.mjs
-# OR with a specific source file:
-node scripts/generate-logo-variants.mjs your-logo.jpg
-
-# 2. Optimize before Astro picks them up
-node scripts/optimize-logo-files.mjs
-```
-
-The PNGs land in `src/assets/` (NOT `public/`) so Astro's `<Image>` / `getImage()` pipeline can emit content-hashed WebPs. `Header.astro` and `Footer.astro` read these via `getImage()`.
-
-**Don't move them back to `public/`** — Astro can't touch `public/` files and you'd lose the WebP conversion + content-hashing.
+The starter-era `src/assets/logo-{light,dark}.{png,svg}` files and the two scripts that made them (`generate-logo-variants.mjs`, `optimize-logo-files.mjs`) were removed on 2026-10-18: nothing rendered them, and the PNGs were another studio client's logo.
 
 ---
 

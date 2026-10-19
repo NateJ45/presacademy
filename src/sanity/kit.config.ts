@@ -348,14 +348,23 @@ export const kitConfig: KitConfig = {
     },
   ],
 
-  // Home's banner (card 118): the deep green welcome, with the PA mark on a
-  // light disc, a shelf of course covers along the foot (the Term Issue look,
-  // scripts/gen-studio-art.mjs) and the editor's name in the covers' brass.
+  // Home's banner (card 118), drawn from the public site: the deep green of the
+  // masthead's chrome, the PA mark on a light disc, a shelf of the course covers
+  // along the foot (the Term Issue's covers, in their own colour pairs and
+  // ornaments: scripts/gen-studio-art.mjs), and "Academy" in brass, the way the
+  // site colours the accent word of a heading on a dark band (.heading-accent,
+  // --section-accent #C7A875). The editor's name takes the same brass.
   homeBanner: {
     mark: '/favicon.svg',
-    motif: '/studio-banner/cover-shelf.svg',
-    motifNarrow: '/studio-banner/cover-shelf-phone.svg',
-    accent: '#D9C79F',
+    motif: '/studio-art/cover-shelf.svg',
+    motifNarrow: '/studio-art/cover-shelf-phone.svg',
+    accent: '#C7A875',
+    lettering: {
+      text: 'Academy',
+      family: 'PA Fraunces',
+      src: '/studio-art/fraunces-wght.woff2',
+      colors: ['#C7A875'],
+    },
   },
 
   // Home's big buttons (card 110): the jobs staff do most. Keep it to four.
