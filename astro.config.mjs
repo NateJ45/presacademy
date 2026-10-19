@@ -8,8 +8,9 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 import { fetchHiddenPagePaths } from './scripts/lib/hidden-pages.mjs';
-import { fetchRedirectDocs } from './scripts/lib/redirects.mjs';
+import { fetchLiveDocs, fetchRedirectDocs } from './scripts/lib/redirects.mjs';
 import { buildRedirectMap } from './src/lib/redirects.ts';
+import { dropRedirectsOverLivePages } from './src/lib/redirect-guard.ts';
 import { fixSanityDedupeAlias } from './src/lib/sanity-dedupe-alias.ts';
 import { studioConfigModule } from './src/lib/studio-route.ts';
 
@@ -25,7 +26,32 @@ const hiddenPagePaths = await fetchHiddenPagePaths();
 // address changes on publish (src/sanity/components/slugRedirect.tsx); the
 // shaping rules live in src/lib/redirects.ts, so the Studio and the build agree
 // on what a path is. Fail-open to none, same as the hidden-page lookup above.
-const cmsRedirects = buildRedirectMap(await fetchRedirectDocs());
+//
+// The live-page guard (src/lib/redirect-guard.ts, starter card 22 addendum): a
+// redirect whose OLD address is where a published page lives NOW is dropped,
+// because Cloudflare applies redirects before it serves files and it would
+// shadow the page (a rename and a rename back, or a launch redirect meeting a
+// Studio-filed one, loops both ways). The address of each slugged type is listed
+// here, the same map pathForDoc() in src/sanity/urls.ts holds; a new slugged
+// route adds a line. Archived pages are not built, so they are left out.
+/** @type {Record<string, (slug: string) => string>} */
+const LIVE_PATH_BY_TYPE = {
+  page: (slug) => `/${slug}`,
+  event: (slug) => `/events/${slug}`,
+  course: (slug) => `/courses/${slug}`,
+  facultyMember: (slug) => `/faculty/${slug}`,
+};
+const liveDocs = await fetchLiveDocs(Object.keys(LIVE_PATH_BY_TYPE));
+const guarded = dropRedirectsOverLivePages(
+  buildRedirectMap(await fetchRedirectDocs()),
+  liveDocs.map((doc) => LIVE_PATH_BY_TYPE[doc._type]?.(doc.slug) ?? null),
+);
+if (guarded.dropped.length) {
+  console.warn(
+    `[redirects] skipped ${guarded.dropped.length} redirect(s) from an address a published page lives at now: ${guarded.dropped.join(', ')}`,
+  );
+}
+const cmsRedirects = guarded.redirects;
 
 // https://astro.build/config
 // The commit this build came from, for /build-info.json (the Studio kit, PORTS.md

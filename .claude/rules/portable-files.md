@@ -47,6 +47,8 @@ paths:
   - 'src/lib/preview-text-nodes.test.ts'
   - 'src/lib/preview-text-nodes.ts'
   - 'src/lib/reading-time.ts'
+  - 'src/lib/redirect-guard.test.ts'
+  - 'src/lib/redirect-guard.ts'
   - 'src/lib/redirects.test.ts'
   - 'src/lib/redirects.ts'
   - 'src/lib/sanity-path.test.ts'
@@ -85,7 +87,7 @@ which. Files the starter owns carry a first-line marker:
 `scripts/lib/sanity-lib.mjs`, `src/lib/contrast.ts`, `scripts/sync-check.mjs`,
 `src/lib/page-checks.ts`, `src/sanity/pageOps.ts`, and the safe-rename trio
 `src/lib/redirects.ts`, `src/lib/redirects.test.ts`,
-`src/sanity/components/slugRedirect.tsx`; and, since 2026-09-29 (card 60), the Windows
+`src/sanity/components/slugRedirect.tsx`; the live-page guard `src/lib/redirect-guard.ts` + `.test.ts` (since 2026-10-19, wired into `astro.config.mjs` with a `LIVE_PATH_BY_TYPE` map that mirrors `pathForDoc()`; a new slugged route adds a line there); and, since 2026-09-29 (card 60), the Windows
 `astro dev` fix `src/lib/sanity-dedupe-alias.ts` + `.test.ts` (wired into
 `astro.config.mjs` as `fixSanityDedupeAlias()`; never delete it, see stack-and-config.md).
 Since 2026-10-03 (card 71) two Claude setup files are marked too: `.claude/settings.json` (JSON, marker is the top-level `"_portable"` key; deny rules for `git reset --hard` and force pushes) and `docs/claude/family-conventions.md` (the code conventions and working-with-Claude text, imported from CLAUDE.md with `@docs/claude/family-conventions.md`). Edit neither here. `.claude/settings.local.json` stays git-ignored and personal.
