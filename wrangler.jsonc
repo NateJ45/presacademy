@@ -76,7 +76,12 @@
   // site deploys through Cloudflare Workers Builds, not a GitHub workflow, so
   // the deploy-status route answers "not configured" and the Studio's status
   // line compares the build time with the last publish instead.
+  // Visitors card (starter PORTS.md card 136): GA4 and Search Console read through
+  // studio-status. SITE_DATA_KEY names this site there; ANALYTICS_PROVIDER picks ga4.
+  "services": [{ "binding": "SITE_DATA", "service": "studio-status", "entrypoint": "SiteData" }],
   "vars": {
+    "SITE_DATA_KEY": "presacademy",
+    "ANALYTICS_PROVIDER": "ga4",
     "CF_ACCOUNT_ID": "7e75a15ddc72aae04dca71aca5c7294b",
   },
   "observability": {
