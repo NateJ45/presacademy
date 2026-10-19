@@ -41,6 +41,8 @@ import SingletonPage from '@/components/SingletonPage.astro';
 import CoursesCatalog from '@/components/pinned/CoursesCatalog.astro';
 import FacultyRoster from '@/components/pinned/FacultyRoster.astro';
 import { previewFetch } from '@/lib/cms-preview';
+import { SHARE_PARAM } from '@/lib/preview-share';
+import { sharedPreviewAccess, sharedPreviewFetch } from '@/lib/preview-share-server';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import {
   IMAGE_PROJECTION,
@@ -71,6 +73,17 @@ import {
 // drafts through the server's token. isStudioPreview compares it with the
 // fingerprint /api/draft-mode/enable writes (src/lib/preview-auth.ts).
 const draftMode = await isStudioPreview(Astro.cookies.get(perspectiveCookieName)?.value);
+
+// A private preview link (PORTS.md card 117): `?share=<signed token>` shows
+// THIS page's draft to someone with no login, until the link expires or an
+// editor stops it. It never turns on draftMode: no overlay, no live channel,
+// no stega, and every other page stays published. src/lib/preview-share.ts.
+// The draft-aware sections on the page (Home's courses, say) read drafts too,
+// through the same stega-free client.
+const share = draftMode
+  ? null
+  : await sharedPreviewAccess(Astro.url.searchParams.get(SHARE_PARAM), Astro.url.pathname);
+if (share) Astro.response.headers.set('Referrer-Policy', 'no-referrer');
 
 // Never let a browser cache a preview page (2026-08-28). These SSR responses
 // carried NO Cache-Control, so browsers applied heuristic caching - and the
@@ -135,7 +148,8 @@ const draftFetch = (
   q: string,
   p: Record<string, unknown> = {},
   fallback: any = null,
-): Promise<any> => previewFetch(draftMode, q, p).catch(() => fallback);
+): Promise<any> =>
+  (share ? sharedPreviewFetch(q, p) : previewFetch(draftMode, q, p)).catch(() => fallback);
 
 // ---------------------------------------------------------------------------
 // CONVERTED SINGLETONS: full-fidelity preview (2026-08-26). All thirteen.
@@ -227,10 +241,9 @@ if (converted && singletonType === 'coursesPage') {
   pinned = { faculty, areas };
 }
 
-const doc = converted
+const doc: PreviewDoc | null = converted
   ? null
-  : await previewFetch<PreviewDoc | null>(
-      draftMode,
+  : await draftFetch(
       singletonType
         ? `*[_type == $type][0]${PREVIEW_FIELDS}`
         : `*[_type == "page" && slug.current == $slug][0]${PREVIEW_FIELDS}`,
@@ -251,6 +264,18 @@ const generic = !converted;
 // drafts. twin's id; strip it so the listen filter matches both twins. The
 // converted singletons have fixed ids equal to their type.
 const pageId = converted ? singletonType : doc!._id.replace(/^drafts\./, '');
+
+// A share link shows ONE document's draft. If this address now belongs to
+// another document (a web address moved), send the visitor to the published
+// page instead.
+if (share && pageId !== share.d) {
+  return Astro.redirect(Astro.url.pathname, 302);
+}
+const sharedUntil = share
+  ? new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/New_York' }).format(
+      new Date(share.e * 1000),
+    )
+  : null;
 
 // ---------------------------------------------------------------------------
 // In-canvas section controls (2026-08-27)
@@ -292,6 +317,14 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
 ---
 
 <PreviewLayout {title} {draftMode} {pageId}>
+  {sharedUntil && (
+    <div class="mx-auto max-w-3xl px-4 pt-6" data-share-banner>
+      <p class="rounded-md border border-border bg-muted px-4 py-3 text-sm text-foreground">
+        You are looking at a draft of this page that has not been published yet. This private link
+        works until {sharedUntil}.
+      </p>
+    </div>
+  )}
   {converted && (
     <SingletonPage
       pageType={singletonType}

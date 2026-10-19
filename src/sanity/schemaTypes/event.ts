@@ -5,6 +5,7 @@
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { archivedField } from './archived';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const event = defineType({
   name: 'event',
@@ -16,6 +17,11 @@ export const event = defineType({
   ],
   title: 'Event',
   type: 'document',
+  // Scheduled publishing (PORTS.md cards 111 and 114): "Publish automatically at"
+  // on the Publishing tab. Leave an event as a draft with a time and
+  // publish-due.yml publishes it within the half hour (it shows on Home's
+  // "Coming up"). Every other field stays on the "All fields" tab, as before.
+  groups: [PUBLISH_AT_GROUP],
   fields: [
     // Soft-delete flag (see ./archived.ts). Hidden; set by the trash actions.
     archivedField(),
@@ -211,6 +217,7 @@ export const event = defineType({
       description: 'Show this event in the home page events teaser.',
       initialValue: false,
     }),
+    publishAtField(),
   ],
   preview: {
     select: {

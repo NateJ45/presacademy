@@ -1,0 +1,10 @@
+/* The site's font files, loaded into the Studio (PORTS.md card 116).
+   This site has no apply-brand script, so this list is kept by hand in step
+   with brand/brand.config.json (fonts.display.imports and fonts.body.imports).
+   sanity.config.ts imports this file; the family names are DISPLAY_STACK and
+   BODY_STACK there. studio-theme.test.ts fails if this list drifts from the
+   brand. */
+@import '@fontsource-variable/fraunces/standard.css';
+@import '@fontsource-variable/fraunces/standard-italic.css';
+@import '@fontsource-variable/source-sans-3/index.css';
+@import '@fontsource-variable/source-sans-3/wght-italic.css';

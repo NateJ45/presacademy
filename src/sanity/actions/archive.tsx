@@ -5,7 +5,9 @@ import { useClient, type DocumentActionComponent, type DocumentActionProps } fro
 import { useToast } from '@sanity/ui/toast';
 
 // =============================================================================
-// Archive / Restore / Delete forever — the soft-delete ("Recently deleted")
+// Restore / Delete forever for the OLDER soft delete (2026-10-18: everyday Delete
+// is now the Studio kit's Move to Trash, src/sanity/kit/trash.tsx). Archive /
+// Restore / Delete forever, the soft-delete
 // =============================================================================
 // ArchiveAction replaces the destructive Delete on content types (see
 // ARCHIVABLE_TYPES in schemaTypes/archived.ts): it flips the document's hidden

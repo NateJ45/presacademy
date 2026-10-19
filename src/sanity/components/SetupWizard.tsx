@@ -1,6 +1,22 @@
-import { useCallback, useEffect, useState, type ComponentProps, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ComponentType,
+  type ReactNode,
+} from 'react';
 import { useClient, useWorkspace } from 'sanity';
-import { ToolHeading } from './ToolHeading';
+import { ToolHeading } from '../kit/shared';
+import { brandIcon } from '../brandIcons';
+import { CalendarIcon } from '@sanity/icons/Calendar';
+import { EditIcon } from '@sanity/icons/Edit';
+import { BookIcon } from '@sanity/icons/Book';
+import { TagIcon } from '@sanity/icons/Tag';
+import { BellIcon } from '@sanity/icons/Bell';
+import { ClockIcon } from '@sanity/icons/Clock';
+import { HomeIcon } from '@sanity/icons/Home';
+import { ArchiveIcon } from '@sanity/icons/Archive';
 import { IntentLink, useRouter } from 'sanity/router';
 import { Badge, Box, Card, Flex, Spinner, Stack, Text } from '@sanity/ui';
 
@@ -18,7 +34,7 @@ type Status = 'done' | 'todo' | 'info';
 
 interface Step {
   key: string;
-  icon: string;
+  icon: ComponentType;
   title: string;
   detail: string;
   status: Status;
@@ -35,7 +51,13 @@ interface Section {
 }
 
 interface SetupData {
-  nextTerm: { title?: string; startDate?: string; status?: string } | null;
+  nextTerm: {
+    title?: string;
+    startDate?: string;
+    status?: string;
+    registrationOpens?: string;
+    registrationDeadline?: string;
+  } | null;
   coursesWithoutFutureOffering: number;
   liveCourses: number;
   tiers: number;
@@ -46,7 +68,7 @@ interface SetupData {
 const LIVE = '!(_id in path("drafts.**")) && archived != true';
 
 const SETUP_QUERY = `{
-  "nextTerm": *[_type == "term" && ${LIVE} && defined(startDate) && startDate >= now()] | order(startDate asc)[0]{ title, startDate, status },
+  "nextTerm": *[_type == "term" && ${LIVE} && defined(startDate) && startDate >= now()] | order(startDate asc)[0]{ title, startDate, status, registrationOpens, registrationDeadline },
   "coursesWithoutFutureOffering": count(*[_type == "course" && ${LIVE} && count(offerings[term->startDate >= now()]) == 0]),
   "liveCourses": count(*[_type == "course" && ${LIVE}]),
   "tiers": count(*[_type == "pricingTier" && ${LIVE}]),
@@ -72,7 +94,7 @@ function buildSections(data: SetupData, basePath: string): Section[] {
       steps: [
         {
           key: 'create-term',
-          icon: '🗓️',
+          icon: CalendarIcon,
           title: 'Create the new term',
           detail: t
             ? `"${t.title ?? 'Untitled term'}" is on file, starting ${t.startDate ?? '(no date)'}. The whole site's "next cohort" lines read from it.`
@@ -85,12 +107,25 @@ function buildSections(data: SetupData, basePath: string): Section[] {
         },
         {
           key: 'term-status',
-          icon: '📝',
+          icon: EditIcon,
           title: 'Set the enrollment status',
           detail: t
             ? `The next term reads: ${STATUS_LABEL[t.status ?? ''] ?? 'not set'}. Flip it to "Registration open" when applications open, and "Closed" after.`
             : 'Once the term exists, keep its Status honest as the season turns.',
           status: 'info',
+          path: termsPane,
+          linkText: 'Open Terms',
+        },
+        {
+          key: 'term-dates',
+          icon: ClockIcon,
+          title: 'Set when enrollment opens and closes',
+          detail: !t
+            ? 'Once the term exists, give it the day registration opens and the "Apply by" day. The site and the course pages show them.'
+            : t.registrationOpens && t.registrationDeadline
+              ? `Registration opens ${t.registrationOpens} and closes ${t.registrationDeadline}.`
+              : 'The next term is missing the day registration opens or the "Apply by" day. People deciding whether to enroll look for both.',
+          status: t && t.registrationOpens && t.registrationDeadline ? 'done' : 'todo',
           path: termsPane,
           linkText: 'Open Terms',
         },
@@ -101,11 +136,11 @@ function buildSections(data: SetupData, basePath: string): Section[] {
       steps: [
         {
           key: 'course-offerings',
-          icon: '📚',
+          icon: BookIcon,
           title: 'Point courses at the new term',
           detail:
             data.coursesWithoutFutureOffering > 0
-              ? `${data.coursesWithoutFutureOffering} of ${data.liveCourses} course${data.liveCourses === 1 ? '' : 's'} ha${data.coursesWithoutFutureOffering === 1 ? 's' : 've'} no offering in a future term. Open each course's Schedule & cohorts tab and add an offering.`
+              ? `${data.coursesWithoutFutureOffering} of ${data.liveCourses} course${data.liveCourses === 1 ? '' : 's'} ha${data.coursesWithoutFutureOffering === 1 ? 's' : 've'} no offering in a future term. Open each course and add an offering for the new term under "When it runs".`
               : 'Every course has an offering in a future term. Review schedules and seat notes for the new season.',
           status: data.coursesWithoutFutureOffering > 0 ? 'todo' : 'done',
           path: coursesPane,
@@ -113,7 +148,7 @@ function buildSections(data: SetupData, basePath: string): Section[] {
         },
         {
           key: 'pricing',
-          icon: '💵',
+          icon: TagIcon,
           title: 'Check the pricing tiers',
           detail:
             data.tiers > 0
@@ -121,7 +156,7 @@ function buildSections(data: SetupData, basePath: string): Section[] {
               : 'No pricing tiers exist yet. Add them so courses and the Pricing page have amounts to show.',
           status: data.tiers > 0 ? 'info' : 'todo',
           path: `${basePath}/structure/catalog;pricingTier`,
-          linkText: 'Open Pricing Tiers',
+          linkText: 'Open Pricing tiers',
         },
       ],
     },
@@ -130,7 +165,7 @@ function buildSections(data: SetupData, basePath: string): Section[] {
       steps: [
         {
           key: 'term-event',
-          icon: '📅',
+          icon: CalendarIcon,
           title: 'Post the term-start event',
           detail:
             data.futureTermStartEvents > 0
@@ -143,14 +178,14 @@ function buildSections(data: SetupData, basePath: string): Section[] {
         },
         {
           key: 'announcement',
-          icon: '📢',
+          icon: BellIcon,
           title: 'Announce registration',
           detail:
-            'When registration opens, put up an announcement banner pointing at /courses, with an end date so it retires itself.',
+            'When registration opens, put up a notice pointing at /courses/, with an end date so it takes itself down. Set "Publish automatically at" to have it appear on the morning registration opens.',
           status: 'info',
           intent: 'create',
           params: { type: 'announcement' },
-          linkText: 'Add an announcement',
+          linkText: 'Add a notice',
         },
       ],
     },
@@ -159,19 +194,19 @@ function buildSections(data: SetupData, basePath: string): Section[] {
       steps: [
         {
           key: 'old-announcements',
-          icon: '🧹',
+          icon: ArchiveIcon,
           title: 'Clear out old notices',
           detail:
             data.expiredAnnouncements > 0
-              ? `${data.expiredAnnouncements} announcement${data.expiredAnnouncements === 1 ? '' : 's'} past their end date are still switched on. Turn them off.`
-              : 'No stale announcements. The Checkup tool keeps an eye on this too.',
+              ? `${data.expiredAnnouncements} notice${data.expiredAnnouncements === 1 ? '' : 's'} past their end date ${data.expiredAnnouncements === 1 ? 'is' : 'are'} still switched on. Turn them off.`
+              : 'No old notices left on. The Checkup keeps an eye on this too.',
           status: data.expiredAnnouncements > 0 ? 'todo' : 'done',
           path: `${basePath}/structure/content;announcement`,
-          linkText: 'Open Announcements',
+          linkText: 'Open Notices',
         },
         {
           key: 'home-refresh',
-          icon: '🏠',
+          icon: HomeIcon,
           title: 'Re-read the home page',
           detail:
             'Season wording drifts: intro lines, featured courses, the events teaser. Give the home page a fresh read for the new term.',
@@ -193,16 +228,16 @@ const STATUS_BADGE: Record<Status, { tone: 'positive' | 'caution' | 'primary'; t
 
 // A card that jumps to a doc (IntentLink) or a pane path (router). The path
 // variant must use the router, not a raw <a>, or it breaks in a hash-routed
-// Studio (see WelcomePane's note).
+// Studio.
 function StepCard({ step }: { step: Step }) {
   const router = useRouter();
   const badge = STATUS_BADGE[step.status];
   const inner: ReactNode = (
     <Card className="pa-setup-card" padding={3} radius={3} border style={{ height: '100%' }}>
       <Flex align="flex-start" gap={3}>
-        <span aria-hidden style={{ fontSize: 20, lineHeight: '24px', flexShrink: 0 }}>
-          {step.icon}
-        </span>
+        <Text size={3} muted aria-hidden>
+          <step.icon />
+        </Text>
         <Stack gap={2} flex={1}>
           <Flex align="center" gap={2}>
             <Text size={1} weight="semibold">
@@ -215,7 +250,7 @@ function StepCard({ step }: { step: Step }) {
           <Text size={1} muted style={{ lineHeight: 1.5 }}>
             {step.detail}
           </Text>
-          <Text size={1} style={{ color: '#33503F', fontWeight: 600 }}>
+          <Text size={1} weight="semibold" style={{ color: 'var(--card-link-color, inherit)' }}>
             {step.linkText} →
           </Text>
         </Stack>
@@ -287,16 +322,17 @@ export function SetupWizard() {
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           .pa-setup-card { transition: transform 150ms ease, box-shadow 150ms ease; }
-          a:hover .pa-setup-card { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(51, 80, 63, 0.16); }
+          a:hover .pa-setup-card { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(31, 27, 24, 0.14); }
         }
       `}</style>
       <Stack gap={5} style={{ maxWidth: 680, margin: '0 auto' }}>
         <Stack gap={3}>
-          <ToolHeading>🍂 New term setup</ToolHeading>
-          <Text size={2} muted style={{ lineHeight: 1.5 }}>
-            The season rollover, in order. Each card jumps you to the right place to update it.
-            Nothing changes here, you edit and publish as usual. Work top to bottom.
-          </Text>
+          <ToolHeading
+            icon={brandIcon('times')}
+            lead="The start of every term, in order. Each card jumps to the right place to update it. Nothing changes here: you edit and publish as usual. Work top to bottom."
+          >
+            New term
+          </ToolHeading>
           {data && tracked.length > 0 && (
             <Text size={1} weight="semibold" muted>
               {doneCount} of {tracked.length} key items look set.
@@ -319,7 +355,7 @@ export function SetupWizard() {
               color: 'inherit',
             }}
           >
-            {busy ? 'Checking…' : 'Refresh'}
+            {busy ? 'Checking...' : 'Check again'}
           </button>
         </Flex>
 
@@ -327,7 +363,7 @@ export function SetupWizard() {
           <Flex align="center" gap={2}>
             <Spinner muted />
             <Text size={1} muted>
-              Loading…
+              Loading...
             </Text>
           </Flex>
         ) : (

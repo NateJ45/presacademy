@@ -135,25 +135,39 @@ the Westminster Standards and the Book of Confessions."`
   workflow wants. Pick one: set the secret, or comment out the two
   `schedule:` lines until you do.
 
-- **Mint `CF_ANALYTICS_TOKEN` and set it as a Worker secret** (2026-08-28,
-  opened with the "Site stats" panel). The Studio's new **Site stats** tool
-  reads `/api/stats`, which asks Cloudflare's GraphQL Analytics API how many
-  requests this Worker served. It needs ONE Cloudflare API token with ONE
-  permission: **Account · Account Analytics · Read**, scoped to the account
-  already named in `wrangler.jsonc` (`CF_ACCOUNT_ID`, the same account as the
-  WCP site). Read-only: it can change nothing. Then
-  `npx wrangler secret put CF_ANALYTICS_TOKEN` and redeploy. Until it exists
-  the panel says so in plain language and names the missing variable, and
-  nothing else on the site is affected. For local `wrangler dev`, put the
-  same value in `.dev.vars` beside `SANITY_TOKEN`. NEVER paste the token into
-  a tracked file; the endpoint never logs or echoes it.
-- **Confirm which of the two Cloudflare stats queries answers** (2026-08-28).
-  `/api/stats` asks for the `date` dimension first and falls back once to
-  `datetimeHour`; both bucket into the same UTC days, so the panel cannot
-  tell which one replied. Neither path can be exercised without the real
-  token. Once the secret is set, open the tool: numbers mean one of them
-  worked. If it reports "Cloudflare could not answer", the message is the
-  GraphQL one, passed through on purpose.
+- **Switch on the Studio kit's server half** (2026-10-18, starter cards 106 to 120).
+  The kit is live without these; each piece says "not set up yet" in plain words
+  until its setting exists. In order of value:
+  1. **Visitors on Home** (card 115). In Cloudflare, add a Web Analytics site for
+     presbyterianacademy.org (the site has no beacon today), then: a token with ONE
+     permission, **Account · Account Analytics · Read**
+     (`npx wrangler secret put CF_ANALYTICS_TOKEN`, never in a file), and the site
+     tag as a `CF_WEB_ANALYTICS_SITE_TAG` var in `wrangler.jsonc` (`CF_ACCOUNT_ID`
+     is already there). Detail: `OPERATIONS.md`, "Visitor numbers". This replaced
+     the old Site stats tool (Workers requests), retired the same day.
+  2. **Messages** (card 117): apply `migrations/0002_message_status.sql` to the D1
+     `presacademy-contact`
+     (`npx wrangler d1 migrations apply presacademy-contact --remote`); it only
+     creates the status table.
+  3. **Private preview links** (card 117): `SHARE_PREVIEW_SECRET` Worker secret
+     (48 random characters). Add `"previewShare"` and `"studioWeek"` to the Sanity
+     publish webhook's deny-list filter (OPERATIONS.md), or a new link or a ticked
+     job rebuilds the site.
+  4. **Morning change note** (card 117): `.github/workflows/change-note.yml` needs
+     only the `SANITY_AUTH_TOKEN` repo secret (the backup's READ token); uncomment
+     its `schedule:` and watch the repo for issues.
+  5. **The help address** on Home's Ask card: `PUBLIC_STUDIO_HELP_EMAIL` as a
+     Cloudflare BUILD variable (else the guides' studio address is used).
+     Not used here: `GITHUB_DEPLOY_TOKEN` (card 111's failed-deploy line reads a
+     GitHub deploy workflow; this site deploys through Cloudflare Workers Builds).
+- **Signed-in Studio walkthrough after the kit PR deploys** (2026-10-18). Checked
+  signed out only (the /studio boot page, splash, sign-in card). Sign in and look at:
+  Home (banner with the cover shelf, This week, Coming up, Fix-it list, Your pages),
+  the status line under the top bar, Quick update (each form; they publish
+  straight away), Messages, New term, Site Guide, Checkup, Help for this page on a
+  course, Move to Trash then Bring it back on a test notice, Share a preview on a
+  custom page, the table views beside Courses / Terms / Faculty / Events, the
+  course-cover icons in list rows (light and dark), and the console.
 
 - **Set the `SANITY_TOKEN` Worker secret before the next deploy.** The new
   SSR preview routes read it at request time. Locally it lives in
