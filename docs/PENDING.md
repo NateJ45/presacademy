@@ -518,3 +518,4 @@ The shared mail code, `ncsMailTools` files and `migrations/0003_mail.sql` are sy
     for the academy (fixing the typegen-in-build contradiction and the
     ghost component lists). Swapped the six church-era hero fallbacks to
     `acad-*` images.
+- 2026-10-19: **Starter cards 130 and 133 adopted**: guide pictures are asked for by key from `src/sanity/guides/shots.ts` (empty registry, so guides show the wireframe; real captures need a signed-in Studio, still to do), and Home's ways-in tiles are 260px wide. PreviewLayout already imports the same stylesheet as BaseLayout (globals.css), so no change.
