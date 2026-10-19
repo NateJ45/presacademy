@@ -399,6 +399,10 @@ the Westminster Standards and the Book of Confessions."`
 
 The shared mail code, `ncsMailTools` files and `migrations/0003_mail.sql` are synced byte-identical so `sync-check` stays clean. Nothing is switched on: no `ncsMailTools()` in `sanity.config.ts`, `features.mail` unset in `kit.config.ts`, no `/api/subscribe/`, `/api/rsvp/` or newsletter routes, no `newsletter` or `rsvpSection` schema, and no MAIL_SECRET, MAIL_FROM or RESEND_API_KEY. The one live change is the contact form's email step, which now goes through `src/lib/mail-send.ts` (same message, same Cloudflare binding; Resend becomes possible later). To adopt newsletter or RSVPs, follow the starter's card 127 "Adopting it in a site".
 
+### Guide icons are still emoji (starter card 128 carried)
+
+Card 128 (the Studio design language, `src/sanity/kit/ui/`, the redrawn Site Guide) is synced byte-identical and `GuideView.tsx` is now the thin wrapper. The guides in `src/sanity/guides/content.ts` still name emoji icons, which the new guide draws as the default guide icon; give each guide a meaning name (`icon: 'clock'`) and add a `studio.look` block to `brand/brand.config.json` when the Studio is redrawn in the school's language. `/kit-harness/` is dev-only and builds no page.
+
 ## Recently closed
 
 - 2026-10-13: **63 array items with no `_type`** (starter card 95). `npm run audit:data`
