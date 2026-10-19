@@ -206,7 +206,16 @@ Regenerate those images with `npm run build && npm run studio-thumbs`
 re-run after a design change or a new section type. This renderer stamps no per-section
 attribute on the live HTML (page-parity holds it byte-identical), so the script locates a
 section by its POSITION among `main`'s children, verified against text it fetched from
-Sanity. A type with no example anywhere on the site gets a branded placeholder. The whole
+Sanity. The page is settled first exactly as `tests/helpers.ts` settles it (every reveal and
+grid stagger in its end state, lazy images loaded), or card grids come out blank. A type with
+no example anywhere on the site is captured from the example sections page
+`/style-guide/sections/` (`src/pages/style-guide/sections.astro`: fixtures with "Example:"
+words, each in a `[data-thumb="<type>"]` wrapper; noindex and out of the sitemap); only a type
+with no fixture there either gets a branded placeholder. A band shorter than 180px at 600 wide
+(the ticker) is letterboxed on the paper. Run it with `SANITY_API_READ_TOKEN` in `.env`: an
+anonymous build leaves Home's and Courses' sections out, those pages are skipped, and any type
+found only there falls back to a placeholder (keep the committed picture instead of the
+placeholder in that case). The whole
 folder is about 200 KB at 600px / JPEG quality 80.
 
 ### Auto-populated lists

@@ -30,8 +30,12 @@
 //      child process, so nothing can stay alive and lock dist/ afterwards),
 //      Playwright measures the element and captures it, and sharp scales the
 //      shot to a 600px-wide JPEG at quality 80.
-//   5. A section type with no instance anywhere on the site gets a plain
-//      branded placeholder, so the grid never shows a broken image.
+//   5. A section type with no instance anywhere on the site is captured from
+//      the example sections page (/style-guide/sections/, its [data-thumb]
+//      wrapper); one with no fixture there either gets a plain branded
+//      placeholder, so the grid never shows a broken image. A band under
+//      MIN_THUMB_HEIGHT is letterboxed on the paper so it does not read as a
+//      sliver.
 //
 // Run it after you add a section type, or when the site design changes:
 //   npm run build && npm run studio-thumbs
@@ -62,6 +66,13 @@ const JPEG_QUALITY = 80;
 // A section band can be very tall (a long FAQ, a photo wall). The top of the
 // band is what identifies it, so the capture stops after this height.
 const MAX_CAPTURE_HEIGHT = 760;
+// Below this many pixels tall (at THUMB_WIDTH) a picture is letterboxed on paper.
+const MIN_THUMB_HEIGHT = 180;
+// The site's paper (--color-background), behind a letterboxed band.
+const PAPER = '#faf8f4';
+// The example sections page (src/pages/style-guide/sections.astro): the second
+// source, for a type no live page uses.
+const FIXTURE_PATH = '/style-guide/sections/';
 
 // Brand colors for the placeholder card (design tokens: chapel + cream).
 const CHAPEL = '#1f3d2b';
@@ -270,12 +281,40 @@ async function settle(page) {
       new Promise((resolve) => setTimeout(() => resolve(true), 5000)),
     ]),
   );
+  // Every entrance in its END state, as tests/helpers.ts settle() does. The
+  // first version only revealed [data-reveal], so the card grids that enter
+  // with [data-stagger-grid] (numbered cards, ledger stats, the course rail)
+  // were captured at opacity 0: blank pictures in the Studio.
   await page.addStyleTag({
-    content: '*,*::before,*::after{transition:none!important;animation:none!important}',
+    content: `
+      *, *::before, *::after { transition: none !important; }
+      [data-reveal] { opacity: 1 !important; translate: 0 0 !important; }
+      [data-reveal] .reveal-rise { clip-path: none !important; transform: none !important; }
+      .eyebrow::before { transform: scaleX(1) !important; }
+      [data-stagger-grid] > * { opacity: 1 !important; translate: 0 0 !important; }
+      .hero-entry-stagger > * { opacity: 1 !important; animation: none !important; transform: none !important; }
+      .kinetic-words .w > span { transform: none !important; animation: none !important; }
+      .img-curtain { display: none !important; }
+      .step-connector::after { transform: scaleY(1) !important; }
+      .marquee__track, .hero-slide, .hero-kb-img, .parallax-slow { animation: none !important; }
+      .masthead-bar, .masthead-bar[data-shown] { transition: none !important; }
+    `,
   });
-  await page.evaluate(() =>
-    document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-visible')),
-  );
+  await page.evaluate(async () => {
+    document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
+    document
+      .querySelectorAll('[data-stagger-grid]')
+      .forEach((el) => el.classList.add('is-staggered'));
+    document.querySelectorAll('.img-curtain').forEach((el) => el.classList.add('is-revealed'));
+    document.querySelectorAll('.step-connector').forEach((el) => el.classList.add('is-visible'));
+    // Lazy images below the fold load only when asked: ask, then wait for them.
+    const imgs = [...document.images];
+    imgs.forEach((img) => (img.loading = 'eager'));
+    await Promise.race([
+      Promise.all(imgs.map((img) => (img.complete ? null : img.decode().catch(() => null)))),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
+  });
 }
 
 /** The visible text of every top-level <section> under <main>, in order. */
@@ -283,9 +322,10 @@ function sectionTexts(page) {
   return page.evaluate(() => {
     const main = document.querySelector('main');
     if (!main) return [];
-    return [...main.children].map((el) =>
-      (el.textContent ?? '').replace(/\s+/g, ' ').trim().toLowerCase(),
-    );
+    // Inline <script> tags sit among the sections on some pages; they are not bands.
+    return [...main.children]
+      .filter((el) => !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(el.tagName))
+      .map((el) => (el.textContent ?? '').replace(/\s+/g, ' ').trim().toLowerCase());
   });
 }
 
@@ -325,7 +365,9 @@ function resolveOffset(texts, sections) {
 function sectionBox(page, index) {
   return page.evaluate((i) => {
     const main = document.querySelector('main');
-    const el = main?.children[i];
+    const el = main
+      ? [...main.children].filter((c) => !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(c.tagName))[i]
+      : undefined;
     if (!el) return null;
     const r = el.getBoundingClientRect();
     return {
@@ -338,10 +380,20 @@ function sectionBox(page, index) {
 }
 
 async function toThumb(buffer, file) {
-  const out = await sharp(buffer)
-    .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
-    .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-    .toBuffer();
+  let img = sharp(buffer).resize({ width: THUMB_WIDTH, withoutEnlargement: true });
+  // A thin band (the topics ticker, a one-line strip) would come out as a sliver
+  // in the grid. Stand it in the middle of a paper card of a readable height.
+  const { data, info } = await img.png().toBuffer({ resolveWithObject: true });
+  img = sharp(data);
+  if (info.height < MIN_THUMB_HEIGHT) {
+    const pad = MIN_THUMB_HEIGHT - info.height;
+    img = img.extend({
+      top: Math.floor(pad / 2),
+      bottom: Math.ceil(pad / 2),
+      background: PAPER,
+    });
+  }
+  const out = await img.jpeg({ quality: JPEG_QUALITY, mozjpeg: true }).toBuffer();
   await writeFile(file, out);
   return out.length;
 }
@@ -426,7 +478,38 @@ try {
     }
   }
 
-  // Pass two: a branded card for every type the site has no example of.
+  // Pass two: the example sections page, for a type no live page uses.
+  if (types.some((type) => !done.has(type.name))) {
+    const res = await page.goto(`http://127.0.0.1:${PORT}${FIXTURE_PATH}`, { waitUntil: 'load' });
+    if (res?.ok()) {
+      await settle(page);
+      for (const type of types) {
+        if (done.has(type.name)) continue;
+        const box = await page.evaluate((name) => {
+          const el = document.querySelector(`[data-thumb="${name}"]`);
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return {
+            x: r.left + window.scrollX,
+            y: r.top + window.scrollY,
+            width: r.width,
+            height: r.height,
+          };
+        }, type.name);
+        if (!box || box.width <= 0 || box.height <= 0) continue;
+        const shot = await page.screenshot({
+          fullPage: true,
+          clip: { ...box, height: Math.min(box.height, MAX_CAPTURE_HEIGHT) },
+        });
+        bytes += await toThumb(shot, join(OUT_DIR, `${type.name}.jpg`));
+        done.add(type.name);
+        captured.push(type.name);
+        console.log(`  ${type.name} <- ${FIXTURE_PATH}`);
+      }
+    }
+  }
+
+  // Pass three: a branded card for every type the site has no example of.
   for (const type of types) {
     if (done.has(type.name)) continue;
     bytes += await placeholder(page, type, join(OUT_DIR, `${type.name}.jpg`));

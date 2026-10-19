@@ -195,6 +195,12 @@ export default defineConfig({
     envVal('SANITY_STUDIO_PROJECT_ID', 'PUBLIC_SANITY_PROJECT_ID') || 'placeholder-project-id',
   dataset: envVal('SANITY_STUDIO_DATASET', 'PUBLIC_SANITY_DATASET') || 'production',
 
+  // Sign in with a session TOKEN, not Sanity's default (a cookie where the
+  // browser allows one). The kit's Worker routes (/api/studio/*) check a Bearer
+  // token; a cookie session sends none and every route answers 401 (card 129).
+  // Each editor signs in once more after the site takes this line.
+  auth: { loginMethod: 'token' },
+
   // The brand theme; see the theme block above.
   theme: studioTheme,
 

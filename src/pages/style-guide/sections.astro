@@ -1,0 +1,111 @@
+---
+// Safe to edit by hand
+// =============================================================================
+// /style-guide/sections/: example sections for the Studio's block pictures
+// =============================================================================
+// The Studio's "+ Add item" grid shows a picture of each section type, made by
+// scripts/studio-thumbs.mjs from the built site (npm run thumbnails). It
+// captures each type from a live page first. A type no live page uses yet, or
+// one whose live copy is too thin to read as a picture, is captured here
+// instead, from the fixture below, found by its [data-thumb] wrapper.
+//
+// Every word a visitor could read is marked "Example:" so nothing here reads as
+// a statement about the school. The course rail is an auto block, so it is
+// handed a fetcher that returns three example covers instead of the catalog
+// (no slug, so the covers link nowhere; no price).
+//
+// Secret like /style-guide: noindex, out of the sitemap (astro.config.mjs
+// filters every /style-guide path), linked from nowhere.
+// =============================================================================
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Sections from '@/components/Sections.astro';
+
+const EXAMPLE_COURSES = [
+  { color: 'green', ornament: 'circle' },
+  { color: 'oxblood', ornament: 'half-moon' },
+  { color: 'sage', ornament: 'ring' },
+].map((c, i) => ({
+  _id: `example-course-${i + 1}`,
+  title: 'Example: a course title',
+  summary: 'Example: one line about the course.',
+  courseCode: `EXA 10${i + 1}`,
+  coverColor: c.color,
+  coverOrnament: c.ornament,
+  teachingAreas: [{ _id: 'example-area', title: 'Example: an area', slug: 'example' }],
+  instructors: [{ _id: 'example-teacher', name: 'Example: the teacher' }],
+}));
+const exampleFetcher = async () => EXAMPLE_COURSES;
+
+// The section types this page holds, in order. scripts/studio-thumbs.mjs reads
+// the [data-thumb] attributes, so a new fixture needs nothing else.
+const fixtures: any[] = [
+  {
+    _key: 'fxLedger',
+    _type: 'sectionLedgerStats',
+    variant: 'trio',
+    items: [
+      { _key: 's1', value: 'Example', label: 'Example: a short fact' },
+      { _key: 's2', value: 'Example', label: 'Example: a second fact' },
+      { _key: 's3', value: 'Example', label: 'Example: a third fact' },
+    ],
+  },
+  {
+    _key: 'fxNumbered',
+    _type: 'sectionNumberedCards',
+    variant: 'top2',
+    cards: [
+      {
+        _key: 'c1',
+        title: 'Example: the first card',
+        body: 'Example: one or two lines about who this is for.',
+      },
+      {
+        _key: 'c2',
+        title: 'Example: the second card',
+        body: 'Example: one or two lines about who this is for.',
+      },
+      {
+        _key: 'c3',
+        title: 'Example: the third card',
+        body: 'Example: one or two lines about who this is for.',
+      },
+    ],
+  },
+  {
+    _key: 'fxCourses',
+    _type: 'sectionCourseRail',
+    source: 'all',
+    variant: 'rail',
+    eyebrow: 'Example: an eyebrow',
+    heading: 'Example: a heading over the courses',
+    limit: 3,
+  },
+  {
+    _key: 'fxTicker',
+    _type: 'sectionTicker',
+    topics: [
+      'Example: a topic',
+      'Example: another topic',
+      'Example: a third topic',
+      'Example: a fourth topic',
+      'Example: a fifth topic',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Example sections (internal)"
+  description="Example sections for the Studio's block pictures."
+  noindex
+>
+  <h1 class="sr-only">Example sections</h1>
+  {fixtures.map((f) => (
+    <div data-thumb={f._type}>
+      <Sections
+        sections={[f]}
+        fetcher={f._type === 'sectionCourseRail' ? exampleFetcher : undefined}
+      />
+    </div>
+  ))}
+</BaseLayout>

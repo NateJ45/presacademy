@@ -47,7 +47,9 @@
       "body": "\"Source Sans 3 Variable\", system-ui, -apple-system, sans-serif"
     },
     "icons": {
-      "tile": { "light": "#E9E1CC" },
+      "tile": {
+        "light": "#E9E1CC"
+      },
       "types": {
         "aboutPage": "overview",
         "accessibilityPage": "help",
@@ -87,6 +89,44 @@
         "term-setup": "times",
         "structure": "pages"
       }
+    },
+    "look": {
+      "marker": {
+        "src": "/studio-art/marker-cover.svg",
+        "width": 41,
+        "height": 34
+      },
+      "headingColor": "#222A25",
+      "markColors": ["#33503F", "#7A2A2C", "#3E4F5C", "#222A25"],
+      "stone": "square",
+      "connector": {
+        "kind": "line",
+        "color": "#C9A46A"
+      },
+      "tones": {
+        "note": "#3E4F5C",
+        "tip": "#C9A46A",
+        "careful": "#7A2A2C"
+      },
+      "motif": "/studio-art/cover-shelf.svg",
+      "motifNarrow": "/studio-art/cover-shelf-phone.svg",
+      "texture": "/studio-art/texture-endpaper.svg",
+      "edgeColors": [
+        "#33503F",
+        "#222A25",
+        "#F7F1E1",
+        "#7A2A2C",
+        "#C9A46A",
+        "#A9B9A7",
+        "#3E4F5C",
+        "#E4D3B4"
+      ],
+      "lettering": {
+        "family": "PA Fraunces Italic",
+        "src": "/studio-art/fraunces-italic-wght.woff2",
+        "colors": ["#C7A875"]
+      },
+      "motion": "lay"
     }
   }
 }

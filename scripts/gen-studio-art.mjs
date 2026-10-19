@@ -450,6 +450,55 @@ copyFileSync(
   join(outBanner, 'fraunces-italic-wght.woff2'),
 );
 
+// ---------------------------------------------------------------------------
+// The design language's art (PORTS.md card 128, brand.config.json studio.look)
+// ---------------------------------------------------------------------------
+// The section marker: a cover front with its ornament standing beside two
+// spines, the smallest piece of the shelf, set on the paper before each section
+// rule of the Site Guide (look.marker). Drawn for a light ground.
+{
+  const parts = [
+    `<rect x="0.5" y="0.5" width="23" height="33" rx="1" fill="${PAIRS.green.bg}"/>`,
+    `<rect x="4" y="5" width="16" height="0.8" fill="${PAIRS.green.fg}" opacity="0.6"/>`,
+    `<circle cx="12" cy="15.5" r="5.2" fill="${PAIRS.green.fg}"/>`,
+    `<rect x="4" y="25" width="12" height="1.8" fill="${PAIRS.green.fg}"/>`,
+    `<rect x="4" y="28.4" width="8" height="1.8" fill="${PAIRS.green.fg}"/>`,
+    `<rect x="26.5" y="3.5" width="6" height="30" rx="0.6" fill="${PAIRS.oxblood.bg}"/>`,
+    `<rect x="34.5" y="1.5" width="6" height="32" rx="0.6" fill="${PAIRS.brass.bg}"/>`,
+    `<rect x="28.6" y="8" width="1.8" height="1.8" fill="${PAIRS.oxblood.fg}"/>`,
+    `<rect x="36.6" y="6" width="1.8" height="1.8" fill="${PAIRS.brass.fg}"/>`,
+  ];
+  writeFileSync(
+    join(outBanner, 'marker-cover.svg'),
+    round(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 34" width="41" height="34">${parts.join('')}</svg>\n`,
+    ),
+  );
+}
+
+// The texture: an endpaper of the eight ornaments, cream on the deep green at a
+// whisper (4.5%), for the featured "Start here" panel (look.texture, tiled at 420px).
+{
+  const S = 420;
+  const cell = S / 4;
+  const box = cell * 0.34;
+  const parts = [];
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 4; c++) {
+      const kind = ORNAMENTS[(r * 3 + c * 5) % ORNAMENTS.length];
+      const off = r % 2 ? cell / 2 : 0;
+      const x = (c * cell + off + (cell - box) / 2) % S;
+      const y = r * cell + (cell - box) / 2;
+      parts.push(ornament(kind, x, y, box, box, CREAM));
+    }
+  writeFileSync(
+    join(outBanner, 'texture-endpaper.svg'),
+    round(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${S}" height="${S}"><g opacity="0.045">${parts.join('')}</g></svg>\n`,
+    ),
+  );
+}
+
 console.log(
-  `gen-studio-art: ${Object.keys(ICONS).length} icons and the wordmark in src/assets/brand; shelves, mark, fan, strip, 8 covers and 8 ornaments in public/studio-art`,
+  `gen-studio-art: ${Object.keys(ICONS).length} icons and the wordmark in src/assets/brand; shelves, mark, fan, strip, marker, endpaper, 8 covers and 8 ornaments in public/studio-art`,
 );

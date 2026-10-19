@@ -218,13 +218,6 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
-- **Studio art layer for starter card 128** (2026-10-19). When card 128 (the Studio design
-  language with a per-site art slot) merges in the starter, point its slot at
-  `public/studio-art/`: `mark-issue.svg` (the masthead's fanned covers), `cover-shelf.svg`
-  and `-phone` (issues standing on the spine strip), `issue-fan.svg` (the hero's fan),
-  `spine-strip.svg`, `cover-<colour>.svg`, `ornament-<name>.svg`, and Fraunces italic in
-  brass as the heading treatment (`fraunces-italic-wght.woff2`). All made by
-  `npm run gen:studio-art`.
 - **Earlier versions (card 125) is switched off** (2026-10-19). The Studio phone app came
   with the card 125 sync (`/studio/manifest.webmanifest`, `public/studio/sw.js`, the
   `icon-192/512/maskable-512.png` icons), but "Earlier versions" needs the nightly backup
@@ -399,11 +392,17 @@ the Westminster Standards and the Book of Confessions."`
 
 The shared mail code, `ncsMailTools` files and `migrations/0003_mail.sql` are synced byte-identical so `sync-check` stays clean. Nothing is switched on: no `ncsMailTools()` in `sanity.config.ts`, `features.mail` unset in `kit.config.ts`, no `/api/subscribe/`, `/api/rsvp/` or newsletter routes, no `newsletter` or `rsvpSection` schema, and no MAIL_SECRET, MAIL_FROM or RESEND_API_KEY. The one live change is the contact form's email step, which now goes through `src/lib/mail-send.ts` (same message, same Cloudflare binding; Resend becomes possible later). To adopt newsletter or RSVPs, follow the starter's card 127 "Adopting it in a site".
 
-### Guide icons are still emoji (starter card 128 carried)
+### Editors sign in once more (starter card 129)
 
-Card 128 (the Studio design language, `src/sanity/kit/ui/`, the redrawn Site Guide) is synced byte-identical and `GuideView.tsx` is now the thin wrapper. The guides in `src/sanity/guides/content.ts` still name emoji icons, which the new guide draws as the default guide icon; give each guide a meaning name (`icon: 'clock'`) and add a `studio.look` block to `brand/brand.config.json` when the Studio is redrawn in the school's language. `/kit-harness/` is dev-only and builds no page.
+`sanity.config.ts` now signs the Studio in by token (`auth: { loginMethod: 'token' }`), so the kit's `/api/studio/*` routes always get the Bearer token they check. After this deploys, each editor signs out from the Studio's user menu and signs in again, once. Until they do, a kit card that cannot load says so in those words.
+
+### The Studio look leans on four class names (card 128)
+
+`src/sanity/studioLook.css` sets Plex Mono on the kit's eyebrows, tags and stone numbers, draws the Site Guide's lists as a numbered contents page, and gives Home's "View the website" the site's brass pill. It targets the kit's class names (`.ui-eyebrow`, `.ui-tag`, `.ui-stone`, `.ui-card`, `.ncs-hb__go`). If a starter sync renames them the rules stop applying and the kit's own drawing shows; check `/kit-harness/guide/` after each sync. A `studio.look` key for numerals and a contents layout is proposed to the starter.
 
 ## Recently closed
+
+- 2026-10-19: **The Studio drawn in the Term Issue's language** (card 128): `studio.look` in `brand/brand.config.json` (cover marker, square stones, brass rule, the shelf, the endpaper texture, the eight-colour strip, "Site Guide" in brass Fraunces italic), guide icons are meaning names (no emoji anywhere in the Studio), and the four blank block pictures (ledger stats, numbered cards, course rail, ticker) are real captures.
 
 - 2026-10-13: **63 array items with no `_type`** (starter card 95). `npm run audit:data`
   found them on 13 documents: `sessionOutline` (courseSession) and `offerings`
