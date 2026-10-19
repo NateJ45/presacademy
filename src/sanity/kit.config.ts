@@ -380,6 +380,19 @@ export const kitConfig: KitConfig = {
       src: '/studio-art/fraunces-italic-wght.woff2',
       colors: ['#C7A875'],
     },
+    // Card 135: the "View the website" button as the site's own pill, brass on the green band.
+    style: {
+      chip: {
+        shape: 'pill',
+        bg: '#c7a875',
+        fg: '#222a25',
+        hoverBg: '#d9c79f',
+        size: '13px',
+        weight: 700,
+        tracking: '0.1em',
+        case: 'upper',
+      },
+    },
   },
 
   // Home's big buttons (card 110): the jobs staff do most. Keep it to four.

@@ -4,7 +4,7 @@
    brand/brand.config.json `studio.look` sets the devices the kit knows about (the
    cover marker, square stones, the brass rule, the shelf along the banner foot, the
    endpaper texture, the eight-colour strip, "Site Guide" in brass Fraunces italic).
-   Three things the public site does that the look has no key for yet live here,
+   Two things the public site does that the look has no key for yet live here,
    written against the kit's class names (src/sanity/kit/ui/css.ts), so if those
    change these rules simply stop applying and the kit's own drawing shows:
 
@@ -12,8 +12,8 @@
       codes and the site its small details (.cover__code, .mono-detail).
    2. The Site Guide's lists read as the issue's contents page: numbered entries
       on hairline rules (N°01, N°02 ...) instead of boxed cards.
-   3. Home's "View the website" button in the site's own button: the pill, the
-      small tracked capitals, brass on the green band.
+   Home's "View the website" button is not here any more: it is `homeBanner.style.chip` in
+   kit.config.ts (card 135).
 
    Imported by studioFonts.css, so the Studio and the kit bench both load it. */
 
@@ -84,24 +84,4 @@
     width: 44px !important;
     height: 44px !important;
   }
-}
-
-/* 3. "View the website" as the site's button. */
-.ncs-hb__go a[data-ui='Button'] {
-  background: #c7a875 !important;
-  border-radius: 999px !important;
-  box-shadow: none !important;
-}
-.ncs-hb__go a[data-ui='Button'] [data-ui='Text'],
-.ncs-hb__go a[data-ui='Button'] svg {
-  color: #222a25 !important;
-}
-.ncs-hb__go a[data-ui='Button'] [data-ui='Text'] {
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.ncs-hb__go a[data-ui='Button']:hover {
-  background: #d9c79f !important;
 }

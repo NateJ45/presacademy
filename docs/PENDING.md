@@ -400,7 +400,7 @@ The shared mail code, `ncsMailTools` files and `migrations/0003_mail.sql` are sy
 
 ### The Studio look leans on four class names (card 128)
 
-`src/sanity/studioLook.css` sets Plex Mono on the kit's eyebrows, tags and stone numbers, draws the Site Guide's lists as a numbered contents page, and gives Home's "View the website" the site's brass pill. It targets the kit's class names (`.ui-eyebrow`, `.ui-tag`, `.ui-stone`, `.ui-card`, `.ncs-hb__go`). If a starter sync renames them the rules stop applying and the kit's own drawing shows; check `/kit-harness/guide/` after each sync. A `studio.look` key for numerals and a contents layout is proposed to the starter.
+`src/sanity/studioLook.css` sets Plex Mono on the kit's eyebrows, tags and stone numbers and draws the Site Guide's lists as a numbered contents page (Home's brass pill "View the website" moved to `homeBanner.style.chip` in `kit.config.ts`, card 135). It targets the kit's class names (`.ui-eyebrow`, `.ui-tag`, `.ui-stone`, `.ui-card`). If a starter sync renames them the rules stop applying and the kit's own drawing shows; check `/kit-harness/guide/` after each sync. A `studio.look` key for numerals and a contents layout is proposed to the starter.
 
 ## Recently closed
 
