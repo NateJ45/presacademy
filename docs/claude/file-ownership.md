@@ -28,7 +28,7 @@ Files a maintainer can change without risk of breaking the architecture:
 - React islands: `MobileNav.tsx`, `ThemeToggle.tsx`, `BackToTop.tsx`, `CourseFilters.tsx`, `FacultyFilter.tsx`, `FaqAccordion.tsx`, `FormRenderer.tsx`, `NewsletterSignup.tsx`, `CopyEmailButton.tsx`, `PortableText.tsx`, `Embed.tsx`.
 - Astro components: `Header.astro`, `MastheadNav.astro`, `Footer.astro`, `Hero.astro`, `HeroBackground.astro`, `HeroSlideshow.astro`, `Sections.astro` (the block renderer), `SectionShell.astro`, `SectionHeading.astro`, `SanityImage.astro`, `PortableTextStatic.astro`, `CourseCard.astro`, `FacultyCard.astro`, `PricingTierCards.astro`, `FinalCta.astro`, `CtaLink.astro`, `ShowcaseMedia.astro`, `EmbedBlock.astro`, `FormBlock.astro`, `SingletonPage.astro` (the one renderer all 13 singletons run through), `PageHeader.astro`, `home/HomeHero.astro`, the pinned code regions in `src/components/pinned/`, plus the block components in `src/components/blocks/` (the 19 tone-adaptive ones and the 15 ported Rule & Ledger ones).
 - `src/components/ui/` shadcn primitives (see gotcha #12 for `accordion.tsx`).
-- `scripts/generate-*.mjs`, `scripts/optimize-logo-files.mjs`, `scripts/lib/`.
+- `scripts/generate-*.mjs`, `scripts/lib/`.
 - `astro.config.mjs`, `wrangler.jsonc`, `package.json`, `tsconfig.json`, `components.json`, `public/_headers` (see gotcha #10), `public/llms.txt`.
 
 If a change requires editing the foundation set, do it deliberately and update this doc when the architecture shifts.

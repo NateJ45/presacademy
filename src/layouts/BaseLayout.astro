@@ -159,8 +159,11 @@ const announcement = await getActiveAnnouncement().catch(() => null);
         has chosen dark, so the browser bar follows the APP theme, not the OS. */}
     <meta name="theme-color" content="#ECE4DA" id="theme-color-meta" />
 
+    {/* The crisp SVG mark first, unless an editor set their own favicon in Site Settings. */}
+    {!siteSettings?.favicon?.asset && <link rel="icon" type="image/svg+xml" href="/favicon.svg" />}
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={appleTouchHref} />
+    <link rel="manifest" href="/site.webmanifest" />
     {/* Web fonts (Fraunces + Source Sans 3) come from the @fontsource imports
         in globals.css with font-display: swap. They are deliberately NOT
         preloaded: the metric-matched "Fallback" @font-face rules at the top

@@ -10,7 +10,7 @@
 //
 //   - src/assets/brand/icon-<meaning>.svg: list-row and desk icons, each a tiny
 //     cover with its ornament (wired in src/sanity/brandIconArt.tsx).
-//   - public/studio-banner/cover-shelf.svg (and -phone): a shelf of covers
+//   - public/studio-art/cover-shelf.svg (and -phone): a shelf of covers
 //     along the foot of the Studio Home banner (kit.config.ts homeBanner) and
 //     under the name on the /studio loading splash.
 //
@@ -175,11 +175,28 @@ function shelf(width, height, count) {
   );
 }
 
-const outBanner = join(root, 'public/studio-banner');
+const outBanner = join(root, 'public/studio-art');
 mkdirSync(outBanner, { recursive: true });
 writeFileSync(join(outBanner, 'cover-shelf.svg'), shelf(1000, 64, 24));
 writeFileSync(join(outBanner, 'cover-shelf-phone.svg'), shelf(390, 56, 10));
 
+// One cover per colour pair, and each ornament alone in currentColor: the
+// motif kit for the Studio's art slots (and starter card 128's art layer).
+ORNAMENTS.forEach((orn, i) => {
+  const color = COLORS[i];
+  const board = cover({ x: 1, y: 1, w: 58, h: 82, color, orn, hairline: 'rgba(31,27,24,0.3)' });
+  writeFileSync(
+    join(outBanner, `cover-${color}.svg`),
+    round(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 84">${board}</svg>\n`),
+  );
+  writeFileSync(
+    join(outBanner, `ornament-${orn}.svg`),
+    round(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">${ornament(orn, 4, 4, 32, 32, 'currentColor')}</svg>\n`,
+    ),
+  );
+});
+
 console.log(
-  `gen-studio-art: ${Object.keys(ICONS).length} icons in src/assets/brand, 2 shelves in public/studio-banner`,
+  `gen-studio-art: ${Object.keys(ICONS).length} icons in src/assets/brand, 2 shelves, 8 covers and 8 ornaments in public/studio-art`,
 );
