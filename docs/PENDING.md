@@ -395,6 +395,10 @@ the Westminster Standards and the Book of Confessions."`
   #10). Standing risk, not a task: any new embed origin needs a manual
   edit there.
 
+### Email backbone (starter card 127) is carried but OFF
+
+The shared mail code, `ncsMailTools` files and `migrations/0003_mail.sql` are synced byte-identical so `sync-check` stays clean. Nothing is switched on: no `ncsMailTools()` in `sanity.config.ts`, `features.mail` unset in `kit.config.ts`, no `/api/subscribe/`, `/api/rsvp/` or newsletter routes, no `newsletter` or `rsvpSection` schema, and no MAIL_SECRET, MAIL_FROM or RESEND_API_KEY. The one live change is the contact form's email step, which now goes through `src/lib/mail-send.ts` (same message, same Cloudflare binding; Resend becomes possible later). To adopt newsletter or RSVPs, follow the starter's card 127 "Adopting it in a site".
+
 ## Recently closed
 
 - 2026-10-13: **63 array items with no `_type`** (starter card 95). `npm run audit:data`

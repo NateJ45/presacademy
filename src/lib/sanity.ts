@@ -102,11 +102,34 @@ export const client: SanityClient = createClient({
  * stays `any`; pass `sanityFetch<Course[]>(q, {}, [])` to opt a call into a
  * real shape.
  */
+/** What an untyped GROQ projection returns: an object with unknown keys. */
+export type SanityResult = Record<string, any>;
+
+// Overloads (starter card 127): an EMPTY fallback (`null` for a singleton,
+// `[]` for a collection) must not be what T is inferred from, so an explicit
+// `sanityFetch<Issue>(q, {}, null)` returns `Issue | null` and
+// `sanityFetch<Issue>(q, {}, [])` returns `Issue[]`. Calls with a real
+// fallback keep the explicit-generic behaviour above.
 export async function sanityFetch<T = any>(
   query: string,
-  params: Record<string, unknown> = {},
+  params: Record<string, unknown> | undefined,
+  fallback: null,
+): Promise<T | null>;
+export async function sanityFetch<T = any>(
+  query: string,
+  params: Record<string, unknown> | undefined,
+  fallback: never[],
+): Promise<T[]>;
+export async function sanityFetch<T = any>(
+  query: string,
+  params: Record<string, unknown> | undefined,
   fallback: NoInfer<T>,
-): Promise<T> {
+): Promise<T>;
+export async function sanityFetch<T>(
+  query: string,
+  params: Record<string, unknown> = {},
+  fallback: unknown,
+): Promise<unknown> {
   if (isSanityUnconfigured) {
     return fallback;
   }
