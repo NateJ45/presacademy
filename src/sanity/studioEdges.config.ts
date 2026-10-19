@@ -11,6 +11,7 @@
 // =============================================================================
 
 import type { StudioWordingInput } from './studioWording';
+import type { StudioStart } from '../lib/studio-app';
 
 export interface StudioEdgesConfig extends StudioWordingInput {
   wordmark: {
@@ -19,12 +20,24 @@ export interface StudioEdgesConfig extends StudioWordingInput {
     /** Optional crop of an SVG logo, "x,y,width,height" in the file's own viewBox units. */
     view?: string | null;
   };
+  /**
+   * The Studio as a phone app (card 125): what the home-screen icon is called
+   * and where it opens. 'quick-update' needs the Quick update tool.
+   */
+  app?: {
+    /** Under the icon. About 12 characters fits every phone. */
+    shortName?: string;
+    start?: StudioStart;
+  };
 }
 
 export const studioEdges: StudioEdgesConfig = {
-  // "The Presbyterian Academy" in cream Fraunces (src/assets/brand/wordmark-dark.svg),
+  // "The Presbyterian" upright and "Academy" in brass italic, the masthead's
+  // nameplate (src/assets/brand/wordmark-dark.svg, made by scripts/gen-studio-art.mjs),
   // beside the green PA square.
   wordmark: { logo: 'dark' },
+  // The phone app (card 125): the name under its icon, opening on Home.
+  app: { shortName: 'PA Studio', start: 'home' },
   // Under "The Presbyterian Academy" on the sign-in card.
   loginSubtitle: 'Sign in to update the Academy website',
   words: {

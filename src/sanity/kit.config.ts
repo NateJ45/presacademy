@@ -353,21 +353,25 @@ export const kitConfig: KitConfig = {
     },
   ],
 
-  // Home's banner (card 118), drawn from the public site: the deep green of the
-  // masthead's chrome, the PA mark on a light disc, a shelf of the course covers
-  // along the foot (the Term Issue's covers, in their own colour pairs and
-  // ornaments: scripts/gen-studio-art.mjs), and "Academy" in brass, the way the
-  // site colours the accent word of a heading on a dark band (.heading-accent,
-  // --section-accent #C7A875). The editor's name takes the same brass.
+  // Home's banner (card 118), drawn from the public site's Term Issue: the deep
+  // green of the masthead's chrome; the masthead's own mark, the three fanned
+  // covers beside "Spring 2027 issue" (Header.astro .issue-fan), drawn bare for the
+  // dark ground; a shelf of the issues along the foot, fronts and spines with their
+  // numbers in Plex Mono, standing over the spine strip of the eight cover colours
+  // that runs across the top of every page (scripts/gen-studio-art.mjs); and
+  // "Academy" in Fraunces italic and brass, as the nameplate sets it and as the site
+  // colours the accent word of a heading on a dark band (.heading-accent, #C7A875).
+  // The editor's name takes the same brass.
   homeBanner: {
     mark: '/favicon.svg',
+    markOnDark: '/studio-art/mark-issue.svg',
     motif: '/studio-art/cover-shelf.svg',
     motifNarrow: '/studio-art/cover-shelf-phone.svg',
     accent: '#C7A875',
     lettering: {
       text: 'Academy',
-      family: 'PA Fraunces',
-      src: '/studio-art/fraunces-wght.woff2',
+      family: 'PA Fraunces Italic',
+      src: '/studio-art/fraunces-italic-wght.woff2',
       colors: ['#C7A875'],
     },
   },
@@ -446,6 +450,11 @@ export const kitConfig: KitConfig = {
     visitors: true,
     navbarStatus: true,
     helpPanel: true,
+    // Card 125's "Earlier versions" reads the nightly backups through
+    // /api/studio/earlier-versions/, which this site has not set up (no backup
+    // workflow or GITHUB_DEPLOY_TOKEN yet). Off, so no editor sees a button that
+    // cannot work; docs/PENDING.md has the steps to switch it on.
+    earlierVersions: false,
   },
 };
 

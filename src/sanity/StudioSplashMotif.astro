@@ -2,9 +2,29 @@
 // Safe to edit by hand
 // The site motif under the name on the /studio loading splash
 // (src/pages/studio/index.astro, PORTS.md card 120). NOT PORTABLE. For the
-// Academy: a short shelf of course covers in the cover colours, the same art as
-// the foot of the Studio Home banner (made by scripts/gen-studio-art.mjs).
-// Decorative only: the parent is aria-hidden.
+// Academy: the home page hero's fan of three course covers (ink, green in front,
+// cream), each with its issue number in Plex Mono, its ornament and its title
+// lines, standing on the spine strip of the eight cover colours that runs across
+// the top of every page. Made by scripts/gen-studio-art.mjs (issue-fan.svg).
+// The covers settle into their fan once, like the hero; no motion when the
+// visitor asks for less. Decorative only: the parent is aria-hidden.
 ---
 
-<img src="/studio-art/cover-shelf-phone.svg" alt="" width="280" height="40" />
+<img class="pa-fan" src="/studio-art/issue-fan.svg" alt="" width="280" height="176" />
+
+<style>
+  .pa-fan {
+    margin-top: 14px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pa-fan {
+      animation: pa-fan-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+  @keyframes pa-fan-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+</style>

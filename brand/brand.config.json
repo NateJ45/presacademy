@@ -47,6 +47,7 @@
       "body": "\"Source Sans 3 Variable\", system-ui, -apple-system, sans-serif"
     },
     "icons": {
+      "tile": { "light": "#E9E1CC" },
       "types": {
         "aboutPage": "overview",
         "accessibilityPage": "help",
