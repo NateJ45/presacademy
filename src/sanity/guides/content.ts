@@ -24,6 +24,7 @@
 // =============================================================================
 
 import type { BrandIconKey } from '../../lib/studio-icons';
+import type { FieldGuideMap } from '../../lib/studio-kit';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
@@ -1995,6 +1996,9 @@ for (const category of GUIDE_CATEGORIES) {
     throw new Error(`Guide category "${category}" has no guides.`);
   }
 }
+
+/** Card 134: the field-to-guide map (empty until a site maps its fields to guide sections). */
+export const GUIDE_FOR_FIELD: FieldGuideMap = {};
 
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
