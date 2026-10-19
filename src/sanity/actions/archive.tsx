@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { RemoveCircleIcon } from '@sanity/icons/RemoveCircle';
+import { RestoreIcon } from '@sanity/icons/Restore';
+import { TrashIcon } from '@sanity/icons/Trash';
 import { useClient, type DocumentActionComponent, type DocumentActionProps } from 'sanity';
 // useToast lives on the package root in @sanity/ui v3 (the `@sanity/ui/toast`
 // subpath is v4-only, and importing it here broke `sanity schema extract`).
@@ -75,7 +78,7 @@ export const ArchiveAction: DocumentActionComponent = (props: DocumentActionProp
   return {
     label: busy ? 'Moving to trash…' : 'Delete (move to trash)',
     tone: 'critical',
-    icon: () => '🗑️',
+    icon: TrashIcon,
     disabled: busy || !exists,
     onHandle: async () => {
       setBusy(true);
@@ -129,7 +132,7 @@ export const RestoreAction: DocumentActionComponent = (props: DocumentActionProp
   return {
     label: busy ? 'Restoring…' : 'Restore',
     tone: 'positive',
-    icon: () => '↩️',
+    icon: RestoreIcon,
     disabled: busy,
     onHandle: async () => {
       setBusy(true);
@@ -180,7 +183,7 @@ export const DeleteForeverAction: DocumentActionComponent = (props: DocumentActi
   return {
     label: 'Delete forever',
     tone: 'critical',
-    icon: () => '⛔',
+    icon: RemoveCircleIcon,
     disabled: busy,
     onHandle: () => setOpen(true),
     dialog: open && {

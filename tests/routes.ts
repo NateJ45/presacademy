@@ -27,6 +27,7 @@ export const routes = [
   '/privacy/',
   '/accessibility/',
   '/style-guide/',
+  '/style-guide/sections/',
   // The 404 page builds to a top-level 404.html file, not 404/index.html.
   // http-server has no not-found rewrite, so the file is addressed directly;
   // this also means the smoke test gets a genuine 200 for it.

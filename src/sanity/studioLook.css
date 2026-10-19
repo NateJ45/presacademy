@@ -1,0 +1,107 @@
+/* Safe to edit by hand.
+   The Term Issue's own details on the Studio's design language (PORTS.md card 128).
+
+   brand/brand.config.json `studio.look` sets the devices the kit knows about (the
+   cover marker, square stones, the brass rule, the shelf along the banner foot, the
+   endpaper texture, the eight-colour strip, "Site Guide" in brass Fraunces italic).
+   Three things the public site does that the look has no key for yet live here,
+   written against the kit's class names (src/sanity/kit/ui/css.ts), so if those
+   change these rules simply stop applying and the kit's own drawing shows:
+
+   1. Numbers and small labels in IBM Plex Mono, as the covers set their catalog
+      codes and the site its small details (.cover__code, .mono-detail).
+   2. The Site Guide's lists read as the issue's contents page: numbered entries
+      on hairline rules (N°01, N°02 ...) instead of boxed cards.
+   3. Home's "View the website" button in the site's own button: the pill, the
+      small tracked capitals, brass on the green band.
+
+   Imported by studioFonts.css, so the Studio and the kit bench both load it. */
+
+.ncs-ui {
+  --pa-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+/* 1. Plex Mono for eyebrows, tags and the numbers on the stones. The doubled
+   .ncs-ui outranks the kit's own rules, which load after this file. */
+.ncs-ui.ncs-ui .ui-eyebrow,
+.ncs-ui.ncs-ui .ui-tag {
+  font-family: var(--pa-mono);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+.ncs-ui.ncs-ui .ui-stone > b {
+  font-family: var(--pa-mono);
+  font-weight: 400;
+}
+
+/* 2. The contents page. The index numbers its guides through every group, the
+   way an issue numbers its pieces. */
+.ncs-ui:has(#site-guide) {
+  counter-reset: pa-guide;
+}
+.ncs-ui section[aria-labelledby^='guide-group-'] > div:last-child {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)) !important;
+  column-gap: 40px !important;
+  row-gap: 0 !important;
+  border-top: 1.5px solid var(--ui-heading);
+}
+.ncs-ui section[aria-labelledby^='guide-group-'] .ui-card {
+  counter-increment: pa-guide;
+  grid-template-columns: 3.6em 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 2px 18px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-rule);
+  border-radius: 0;
+  background: transparent;
+}
+.ncs-ui section[aria-labelledby^='guide-group-'] .ui-card::before {
+  content: 'N°' counter(pa-guide, decimal-leading-zero);
+  font-family: var(--pa-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding-top: 5px;
+  color: var(--ui-muted);
+}
+.ncs-ui section[aria-labelledby^='guide-group-'] .ui-card:hover,
+.ncs-ui section[aria-labelledby^='guide-group-'] .ui-card:focus-visible {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--ui-heading);
+}
+.ncs-ui section[aria-labelledby^='guide-group-'] .ui-card:hover .ui-card__title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+@media (max-width: 479px) {
+  .ncs-ui section[aria-labelledby^='guide-group-'] .ui-card {
+    grid-template-columns: 2.9em 44px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .ncs-ui section[aria-labelledby^='guide-group-'] .ui-card .ui-art {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+/* 3. "View the website" as the site's button. */
+.ncs-hb__go a[data-ui='Button'] {
+  background: #c7a875 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+.ncs-hb__go a[data-ui='Button'] [data-ui='Text'],
+.ncs-hb__go a[data-ui='Button'] svg {
+  color: #222a25 !important;
+}
+.ncs-hb__go a[data-ui='Button'] [data-ui='Text'] {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ncs-hb__go a[data-ui='Button']:hover {
+  background: #d9c79f !important;
+}

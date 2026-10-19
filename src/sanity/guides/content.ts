@@ -23,6 +23,8 @@
 //   - Site-specific values (contact details) live in SITE below.
 // =============================================================================
 
+import type { BrandIconKey } from '../../lib/studio-icons';
+
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
 // Where a "Where in the Studio" breadcrumb can LINK to, so the card is a door,
@@ -60,7 +62,8 @@ export interface Guide {
   slug: string;
   category: GuideCategory;
   title: string;
-  icon: string; // emoji, shown in the left nav
+  /** A meaning in the icon registry (src/lib/studio-icons.ts), so a typo or an emoji is a compile error. */
+  icon: BrandIconKey;
   lead: string;
   diy?: DiyLevel;
   body: GuideBlock[];
@@ -86,7 +89,7 @@ export const guides: Guide[] = [
     slug: 'start-here',
     category: 'Start here',
     title: 'Start here: how it all works',
-    icon: '👋',
+    icon: 'guide',
     lead: 'The big picture: what this Studio is, how your changes reach the live website, and how the left menu is organized.',
     diy: 'self',
     body: [
@@ -150,7 +153,7 @@ export const guides: Guide[] = [
     slug: 'glossary',
     category: 'Start here',
     title: "Words you'll see (a little glossary)",
-    icon: '📖',
+    icon: 'text',
     lead: 'The handful of Studio words worth knowing, each defined in plain English.',
     diy: 'self',
     body: [
@@ -195,7 +198,7 @@ export const guides: Guide[] = [
     slug: 'diy-vs-nathan',
     category: 'Start here',
     title: 'Do it yourself vs. ask for help',
-    icon: '🧭',
+    icon: 'help',
     lead: 'A quick map of what is safe to do on your own, what to bring to Nathan, and the one button never to click.',
     diy: 'mixed',
     body: [
@@ -253,7 +256,7 @@ export const guides: Guide[] = [
     slug: 'edit-page',
     category: 'Website pages & menus',
     title: "Edit a page's words & photos",
-    icon: '✏️',
+    icon: 'page',
     lead: 'Change the words and photos on any existing page, like Home, About, or Courses.',
     diy: 'self',
     body: [
@@ -307,7 +310,7 @@ export const guides: Guide[] = [
     slug: 'new-page',
     category: 'Website pages & menus',
     title: 'Build a brand-new page',
-    icon: '🧱',
+    icon: 'pages',
     lead: 'Create a new page from scratch, like a reading group or a special campaign, without a designer.',
     diy: 'self',
     body: [
@@ -356,7 +359,7 @@ export const guides: Guide[] = [
     slug: 'page-housekeeping',
     category: 'Website pages & menus',
     title: 'Copy, archive & restore a page',
-    icon: '🗂️',
+    icon: 'document',
     lead: 'Start a page from one you already have, take a page off the site without losing it, and bring it back.',
     diy: 'self',
     body: [
@@ -424,7 +427,7 @@ export const guides: Guide[] = [
     slug: 'rename-a-page',
     category: 'Website pages & menus',
     title: 'Renaming a page keeps old links working',
-    icon: '🔗',
+    icon: 'redirect',
     lead: "Change a page's web address and the old one keeps working. The Studio files the forward for you.",
     diy: 'self',
     body: [
@@ -481,7 +484,7 @@ export const guides: Guide[] = [
     slug: 'share-a-draft',
     category: 'Website pages & menus',
     title: 'Show someone a draft',
-    icon: '🔗',
+    icon: 'preview',
     lead: 'Send a page to somebody for a read before it goes live, without publishing it and without giving them a Studio login.',
     diy: 'self',
     body: [
@@ -530,7 +533,7 @@ export const guides: Guide[] = [
     slug: 'schedule-a-publish',
     category: 'Website pages & menus',
     title: 'Schedule something to publish itself',
-    icon: '⏰',
+    icon: 'times',
     lead: 'Write it now, have it go live at a time you choose, without being at your computer.',
     diy: 'self',
     body: [
@@ -574,7 +577,7 @@ export const guides: Guide[] = [
     slug: 'saved-sections',
     category: 'Website pages & menus',
     title: 'Save a section and reuse it',
-    icon: '📌',
+    icon: 'savedSection',
     lead: 'Keep a band you got right, then add it to any page: as a copy to change, or synced so one edit changes every page.',
     diy: 'self',
     body: [
@@ -635,7 +638,7 @@ export const guides: Guide[] = [
     slug: 'check-a-page',
     category: 'Website pages & menus',
     title: 'Check a page before you publish it',
-    icon: '🔎',
+    icon: 'checkup',
     lead: 'A quick second pair of eyes: missing photo descriptions, sections with nothing in them, and links that go nowhere.',
     diy: 'self',
     body: [
@@ -675,7 +678,7 @@ export const guides: Guide[] = [
     slug: 'sections',
     category: 'Website pages & menus',
     title: 'Add & arrange sections',
-    icon: '🧩',
+    icon: 'sections',
     lead: 'Sections are the building blocks of a page. Mix and match them, reorder them, and set their backgrounds, from the list or straight on the page picture.',
     diy: 'self',
     body: [
@@ -758,7 +761,7 @@ export const guides: Guide[] = [
     slug: 'undo-a-change',
     category: 'Website pages & menus',
     title: 'Undo a change',
-    icon: '↩️',
+    icon: 'publishing',
     lead: 'Dragged a section to the wrong place, removed the wrong one, or picked a background you regret? Step it back.',
     diy: 'self',
     body: [
@@ -820,7 +823,7 @@ export const guides: Guide[] = [
     slug: 'section-looks',
     category: 'Website pages & menus',
     title: 'Change how a section looks',
-    icon: '🎨',
+    icon: 'brandKit',
     lead: 'Give a section a different background, a different accent colour, a bolded word, one word of the heading picked out in colour, or a different arrangement. All of it from the page picture, all of it on-brand.',
     diy: 'self',
     body: [
@@ -954,7 +957,7 @@ export const guides: Guide[] = [
     slug: 'top-menu',
     category: 'Website pages & menus',
     title: 'Edit the top menu & footer',
-    icon: '🧭',
+    icon: 'link',
     lead: 'Add, rename, reorder, or remove the links in the website header, the phone menu and the footer index, including dropdown menus, the short notes in the phone menu, the header button and a logo.',
     diy: 'self',
     body: [
@@ -1073,7 +1076,7 @@ export const guides: Guide[] = [
     slug: 'search-sharing',
     category: 'Website pages & menus',
     title: 'How a page looks in Google',
-    icon: '🔎',
+    icon: 'search',
     lead: 'Set the line Google shows, the sentence under it, the picture people see when they share the page, and how to keep a page out of search altogether.',
     diy: 'self',
     body: [
@@ -1124,7 +1127,7 @@ export const guides: Guide[] = [
     slug: 'photos',
     category: 'Website pages & menus',
     title: 'Photos & images',
-    icon: '📷',
+    icon: 'image',
     lead: 'How to upload, crop, and describe photos so they look sharp and work for everyone.',
     diy: 'self',
     body: [
@@ -1169,7 +1172,7 @@ export const guides: Guide[] = [
     slug: 'courses',
     category: 'Courses, faculty & terms',
     title: 'Add or edit a course',
-    icon: '📚',
+    icon: 'scripture',
     lead: 'A course is the heart of the school. Here is how to add one, set when it runs, and put it on the home page.',
     diy: 'self',
     body: [
@@ -1263,7 +1266,7 @@ export const guides: Guide[] = [
     slug: 'faculty',
     category: 'Courses, faculty & terms',
     title: 'Add a faculty member',
-    icon: '👩‍🏫',
+    icon: 'person',
     lead: 'A faculty profile is a short, warm CV that gives a course its weight. Here is what each field is for.',
     diy: 'self',
     body: [
@@ -1337,7 +1340,7 @@ export const guides: Guide[] = [
     slug: 'terms',
     category: 'Courses, faculty & terms',
     title: 'Set up a term or cohort',
-    icon: '🗓️',
+    icon: 'times',
     lead: 'A term holds the real dates for a season, like Fall 2026. Every course that runs then points at it, so dates live in one place.',
     diy: 'self',
     body: [
@@ -1383,7 +1386,7 @@ export const guides: Guide[] = [
     slug: 'post-event',
     category: 'Events, notices & voices',
     title: 'Post or edit an event',
-    icon: '📅',
+    icon: 'event',
     lead: 'Add an info session, open lecture, workshop, or term start. Events show on the Events page automatically.',
     diy: 'self',
     body: [
@@ -1429,7 +1432,7 @@ export const guides: Guide[] = [
     slug: 'announcements',
     category: 'Events, notices & voices',
     title: 'Announcement banners',
-    icon: '📢',
+    icon: 'notice',
     lead: 'The slim banner at the very top of every page. Use it for short, timely notices.',
     diy: 'self',
     body: [
@@ -1479,7 +1482,7 @@ export const guides: Guide[] = [
     slug: 'testimonials',
     category: 'Events, notices & voices',
     title: 'Add a testimonial',
-    icon: '💬',
+    icon: 'testimonial',
     lead: 'A short quote from a student. Quote the kind of person you want to reach so a visitor sees themselves.',
     diy: 'self',
     body: [
@@ -1521,7 +1524,7 @@ export const guides: Guide[] = [
     slug: 'faqs',
     category: 'Events, notices & voices',
     title: 'Add or edit an FAQ',
-    icon: '❓',
+    icon: 'question',
     lead: 'The questions and answers on the FAQ page. Add new ones, edit answers, and control the order.',
     diy: 'self',
     body: [
@@ -1567,7 +1570,7 @@ export const guides: Guide[] = [
     slug: 'forms',
     category: 'Events, notices & voices',
     title: 'Forms & where messages go',
-    icon: '✉️',
+    icon: 'form',
     lead: 'The contact form and the "Request information" form. Change their questions here; every message lands with the Academy by email.',
     diy: 'self',
     body: [
@@ -1613,7 +1616,7 @@ export const guides: Guide[] = [
     slug: 'pricing',
     category: 'Money & pricing',
     title: 'Pricing & scholarships',
-    icon: '💵',
+    icon: 'give',
     lead: 'Set up the named price levels every course can use, and edit the wording on the Pricing & Scholarships page.',
     diy: 'self',
     body: [
@@ -1659,7 +1662,7 @@ export const guides: Guide[] = [
     slug: 'brand',
     category: 'Look, brand & housekeeping',
     title: 'The brand: colors & fonts',
-    icon: '🎨',
+    icon: 'brandKit',
     lead: 'Why the site always looks consistent, what you can change, and what is locked on purpose.',
     diy: 'mixed',
     body: [
@@ -1706,7 +1709,7 @@ export const guides: Guide[] = [
     slug: 'site-stats',
     category: 'Look, brand & housekeeping',
     title: 'How many people visit the website',
-    icon: '📈',
+    icon: 'people',
     lead: 'The Visitors card on Home: visits this week against last week, the most read pages, and how people found the site.',
     diy: 'self',
     body: [
@@ -1747,7 +1750,7 @@ export const guides: Guide[] = [
     slug: 'trash',
     category: 'Look, brand & housekeeping',
     title: 'Deleting things & the trash',
-    icon: '🗑️',
+    icon: 'trash',
     lead: 'Deleting is a soft landing here: things go to the Trash first, and one click brings them back.',
     diy: 'self',
     body: [
@@ -1816,7 +1819,7 @@ guides.push(
     slug: 'home-page',
     category: 'Start here',
     title: 'What the Home page shows you',
-    icon: '🏠',
+    icon: 'home',
     lead: 'Home opens first every time. Here is what each card is for, top to bottom.',
     diy: 'self',
     body: [
@@ -1850,7 +1853,7 @@ guides.push(
     slug: 'website-status',
     category: 'Start here',
     title: 'The line under the top bar',
-    icon: '🕒',
+    icon: 'overview',
     lead: 'A quiet answer to "is my change on the website yet?", wherever you are in the Studio.',
     diy: 'self',
     body: [
@@ -1873,7 +1876,7 @@ guides.push(
     slug: 'help-panel',
     category: 'Start here',
     title: 'Help for this page',
-    icon: '💡',
+    icon: 'help',
     lead: 'Help beside whatever you are editing, without leaving it.',
     diy: 'self',
     body: [
@@ -1895,7 +1898,7 @@ guides.push(
     slug: 'quick-update',
     category: 'Start here',
     title: 'Quick updates from your phone',
-    icon: '📱',
+    icon: 'quickUpdate',
     lead: 'Short forms for the jobs that cannot wait until you are at a desk.',
     diy: 'self',
     body: [
@@ -1924,7 +1927,7 @@ guides.push(
     slug: 'share-a-preview',
     category: 'Website pages & menus',
     title: 'Show someone a page before it goes live',
-    icon: '🔗',
+    icon: 'link',
     lead: 'A private link to your draft that works for a few days, no login needed.',
     diy: 'self',
     body: [
@@ -1959,7 +1962,7 @@ guides.push(
     slug: 'messages',
     category: 'Events, notices & voices',
     title: 'Read messages from the website',
-    icon: '✉️',
+    icon: 'message',
     lead: 'Every enquiry and expression of interest sent through the website, in one list.',
     diy: 'self',
     body: [

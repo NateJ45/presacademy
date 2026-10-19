@@ -61,15 +61,20 @@ export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
   // Pages and the sections they are built from.
   pages: Pages,
   page: Pages,
+  document: Pages,
+  text: Pages,
   sections: Pages,
   savedSection: Pages,
   // Questions on the FAQ page.
   question: Question,
   questionGroup: Question,
+  help: Question,
   // Forms (enquiries, express interest).
   form: Form,
   // Teaching areas.
   category: Area,
   // Resources and reading.
   download: Reading,
+  // The Site Guide: the shelf of how-to's (its banner, the featured guide).
+  guide: Reading,
 };

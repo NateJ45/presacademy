@@ -177,6 +177,8 @@ export const kitConfig: KitConfig = {
       title: 'Put up a notice',
       detail: 'A short line across the top of every page, until the day you pick.',
       icon: BellIcon,
+      // The oxblood cover with its pennant, the notice's art everywhere in the Studio.
+      meaning: 'notice',
       fields: [
         {
           name: 'message',
@@ -210,6 +212,8 @@ export const kitConfig: KitConfig = {
       title: 'Cancel or move a class',
       detail: 'A notice in red that takes itself down after the day you name.',
       icon: WarningOutlineIcon,
+      // The brass cover with its steps for the weeks: a session that moved.
+      meaning: 'times',
       fields: [
         {
           name: 'message',
@@ -237,6 +241,8 @@ export const kitConfig: KitConfig = {
       title: 'Add an info session or event',
       detail: 'An info night, an open lecture or a workshop, with its date and place.',
       icon: CalendarIcon,
+      // The parchment cover with its rising half-moon.
+      meaning: 'event',
       fields: [
         { name: 'title', title: 'What it is called', kind: 'string', required: true, max: 90 },
         { name: 'start', title: 'When it starts', kind: 'datetime', required: true },
