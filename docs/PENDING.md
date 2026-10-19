@@ -135,6 +135,8 @@ the Westminster Standards and the Book of Confessions."`
   workflow wants. Pick one: set the secret, or comment out the two
   `schedule:` lines until you do.
 
+- **Rerun the block thumbnails with a read token** (2026-10-19). Run `npm run thumbnails` with `SANITY_API_READ_TOKEN` in `.env`: an anonymous build drops the Home and Courses sections, so TermContents, CourseFinder, NextIssue and ForPastors still show placeholder pictures and FacultyRail and TestimonialRail keep older ones. Commit the regenerated pictures.
+
 - **Switch on the Studio kit's server half** (2026-10-18, starter cards 106 to 120).
   The kit is live without these; each piece says "not set up yet" in plain words
   until its setting exists. In order of value:
