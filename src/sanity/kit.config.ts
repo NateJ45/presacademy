@@ -19,7 +19,7 @@
 import type { KitConfig } from './kit/types';
 import type { PageRules } from '../lib/page-guardrails';
 import { genericRules } from '../lib/studio-checkup';
-import { guides, GUIDE_CATEGORIES, GUIDES_FOR_TYPE, SITE } from './guides/content';
+import { guides, GUIDE_CATEGORIES, GUIDE_FOR_FIELD, GUIDES_FOR_TYPE, SITE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
 import { AddDocumentIcon } from '@sanity/icons/AddDocument';
@@ -27,7 +27,14 @@ import { BellIcon } from '@sanity/icons/Bell';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { BookIcon } from '@sanity/icons/Book';
 import { WarningOutlineIcon } from '@sanity/icons/WarningOutline';
-import { buildEvent, buildNotice, daysFrom } from '../lib/quick-updates';
+import {
+  buildEnrollmentReminder,
+  buildEvent,
+  buildNotice,
+  daysFrom,
+  NEXT_TERM_QUERY,
+  type ReminderTerm,
+} from '../lib/quick-updates';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 import { schoolRules } from './schoolCheckup';
@@ -159,6 +166,25 @@ export const kitConfig: KitConfig = {
       targetLabel: 'Open the notices',
     },
     {
+      // Enrollment weeks: while a term is open for enrollment, a notice says so.
+      id: 'enrollment-notice',
+      title: 'While enrollment is open, a notice says so',
+      detail:
+        'When a term is set to Registration open, keep a notice up with the Apply by date. Quick update writes it for you.',
+      query: `count(*[_type == "term" && ${LIVE} && status == "open"]) == 0 || count(*[_type == "announcement" && ${LIVE} && enabled == true && (!defined(endDate) || endDate > $now)]) > 0`,
+      target: { tool: 'quick-update' },
+      targetLabel: 'Open Quick update',
+    },
+    {
+      id: 'seats',
+      title: 'Seats and waitlists are right',
+      detail:
+        'During enrollment, when a course fills, set its offering to Waitlist; when it can take nobody else, set it to Closed. Tick this when they match.',
+      manual: true,
+      target: { pane: 'catalog;course' },
+      targetLabel: 'Open the courses',
+    },
+    {
       id: 'checkup',
       title: 'Checkup is clear',
       detail: 'Nothing in the Checkup marked "Needs doing".',
@@ -208,6 +234,41 @@ export const kitConfig: KitConfig = {
         'The notice will be on the website in a few minutes, and it takes itself down after the day you picked.',
     },
     {
+      // Enrollment weeks (docs/agent/studio-plan.md): the reminder people need
+      // most, worded from the next term's own dates so nobody retypes them.
+      id: 'enrollment-reminder',
+      title: 'Remind people enrollment closes',
+      detail:
+        'A notice worded for you from the next term: when to apply by, with a link to sign up.',
+      icon: BookIcon,
+      // The sign-up form's cover: enrollment is a form people fill in.
+      meaning: 'form',
+      fields: [
+        {
+          name: 'message',
+          title: 'Your own words',
+          kind: 'text',
+          max: 160,
+          description:
+            'Leave it empty and the notice says, for example, "Enrollment for Spring 2027 closes December 15. Save your seat today."',
+        },
+        {
+          name: 'lastDay',
+          title: 'Last day to show it',
+          kind: 'date',
+          description: 'Leave it empty to show it until the Apply by date on the term.',
+        },
+      ],
+      build: async (v, { now, client }) => {
+        const today = daysFrom(now, 0);
+        const term = await client.fetch<ReminderTerm | null>(NEXT_TERM_QUERY, { today });
+        return buildEnrollmentReminder({ message: v.message, lastDay: v.lastDay }, term, today);
+      },
+      submitLabel: 'Put the reminder up',
+      doneMessage:
+        'The reminder will be across the top of every page in a few minutes, linking to Get started, and it takes itself down on the last day.',
+    },
+    {
       id: 'class-change',
       title: 'Cancel or move a class',
       detail: 'A notice in red that takes itself down after the day you name.',
@@ -239,7 +300,8 @@ export const kitConfig: KitConfig = {
     {
       id: 'event',
       title: 'Add an info session or event',
-      detail: 'An info night, an open lecture or a workshop, with its date and place.',
+      detail:
+        'An info night, an open lecture or a workshop, with its date, place and a sign-up link.',
       icon: CalendarIcon,
       // The parchment cover with its rising half-moon.
       meaning: 'event',
@@ -265,6 +327,13 @@ export const kitConfig: KitConfig = {
           kind: 'text',
           max: 240,
         },
+        {
+          name: 'registrationUrl',
+          title: 'Sign-up link',
+          kind: 'url',
+          description:
+            'Where people save a seat, starting https://. It shows as a "Save your seat" button.',
+        },
       ],
       build: (v) =>
         buildEvent({
@@ -273,9 +342,10 @@ export const kitConfig: KitConfig = {
           category: v.category,
           location: v.location,
           summary: v.summary,
+          registrationUrl: v.registrationUrl,
         }),
       doneMessage:
-        'The event will be on the Events page in a few minutes. Open it in the full editor to add a picture, a registration link or more detail.',
+        'The event will be on the Events page in a few minutes. Open it in the full editor to add a picture, a cost or more detail.',
     },
   ],
 
@@ -299,6 +369,8 @@ export const kitConfig: KitConfig = {
     view: makeGuideView,
     // "Help for this page" (card 110): which guides each document type shows.
     forType: GUIDES_FOR_TYPE,
+    // Card 134: a "How to" chip beside the fields staff most often get wrong.
+    forField: GUIDE_FOR_FIELD,
   },
 
   // Home's "Your pages" card (card 115): every page staff can change, in the
@@ -434,7 +506,11 @@ export const kitConfig: KitConfig = {
     },
     {
       title: 'Content is where you edit',
-      body: 'Click Content in the top bar to change any page, or to add a course, a term, a faculty member, an event or a notice.',
+      body: 'Click Content in the top bar to add a course, a term, a faculty member, an event or a notice, or to change any page. The things you change most are at the top.',
+    },
+    {
+      title: 'Quick update, for your phone',
+      body: 'A notice, an enrollment reminder, a class that moved or an info night, in a few taps. These go on the website straight away, so they are made for a phone.',
     },
     {
       title: 'Live preview shows the real page',

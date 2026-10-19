@@ -219,80 +219,8 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
 
       S.divider(),
 
-      // Pages: every page singleton lives here.
-      S.listItem()
-        .title('Pages')
-        .id('pages')
-        .icon(brandIcon('pages'))
-        .child(
-          S.list()
-            .id('pages')
-            .title('Pages')
-            .items([
-              singleton(S, 'homePage', 'Home'),
-              singleton(S, 'coursesPage', 'Courses'),
-              singleton(S, 'facultyPage', 'Faculty'),
-              singleton(S, 'aboutPage', 'About'),
-
-              S.divider(),
-
-              singleton(S, 'eventsPage', 'Events (the list page)'),
-              singleton(S, 'resourcesPage', 'Resources'),
-
-              S.divider(),
-
-              singleton(S, 'pricingPage', 'Pricing and scholarships'),
-              singleton(S, 'getStartedPage', 'Get started'),
-              singleton(S, 'forYouPage', 'For you'),
-
-              S.divider(),
-
-              singleton(S, 'faqPage', 'Questions (FAQ)'),
-              singleton(S, 'contactPage', 'Contact'),
-              singleton(S, 'notFoundPage', 'Page not found'),
-              singleton(S, 'privacyPage', 'Privacy policy'),
-              singleton(S, 'accessibilityPage', 'Accessibility'),
-
-              S.divider(),
-
-              // Custom pages (collection): build new pages at /<slug> with blocks.
-              collection(
-                S,
-                context,
-                'page',
-                'Custom pages (build your own)',
-                'Pages you build yourself, each with its own web address: an open lecture series, a page for a partner congregation, a reading list.',
-                'Build the first page',
-              ),
-
-              S.divider(),
-
-              // Saved sections: bands kept from one page, ready to drop on
-              // another. Made with "Save a section as preset..." in a page's
-              // publish menu; added from the Saved sections group beside the
-              // live preview.
-              collection(
-                S,
-                context,
-                'sectionPreset',
-                'Saved sections',
-                'Sections kept for reuse. Open a page, use "Save a section as preset..." in its publish menu, and it appears here.',
-              ),
-
-              S.divider(),
-
-              // Redirects: old address -> new address. Most entries are filed
-              // automatically when a page's web address changes on publish
-              // (components/slugRedirect.tsx); add one by hand for an address
-              // that never existed on this site (a printed card, an old link).
-              S.documentTypeListItem('redirect')
-                .title('Redirects (old links)')
-                .icon(typeIcon('redirect')),
-            ]),
-        ),
-
-      S.divider(),
-
+      // Weekly and term-time work first (docs/agent/studio-plan.md): the
+      // catalog, faculty, notices and events; the pages, which change less, after.
       // Catalog: the course library and what supports it.
       S.listItem()
         .title('Catalog')
@@ -415,6 +343,80 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
 
       // Events: info sessions, lectures, workshops, term starts shown on /events.
       yearScopedEvents(S),
+
+      S.divider(),
+
+      // Pages: every page singleton lives here.
+      S.listItem()
+        .title('Pages')
+        .id('pages')
+        .icon(brandIcon('pages'))
+        .child(
+          S.list()
+            .id('pages')
+            .title('Pages')
+            .items([
+              singleton(S, 'homePage', 'Home'),
+              singleton(S, 'coursesPage', 'Courses'),
+              singleton(S, 'facultyPage', 'Faculty'),
+              singleton(S, 'aboutPage', 'About'),
+
+              S.divider(),
+
+              singleton(S, 'eventsPage', 'Events (the list page)'),
+              singleton(S, 'resourcesPage', 'Resources'),
+
+              S.divider(),
+
+              singleton(S, 'pricingPage', 'Pricing and scholarships'),
+              singleton(S, 'getStartedPage', 'Get started'),
+              singleton(S, 'forYouPage', 'For you'),
+
+              S.divider(),
+
+              singleton(S, 'faqPage', 'Questions (FAQ)'),
+              singleton(S, 'contactPage', 'Contact'),
+              singleton(S, 'notFoundPage', 'Page not found'),
+              singleton(S, 'privacyPage', 'Privacy policy'),
+              singleton(S, 'accessibilityPage', 'Accessibility'),
+
+              S.divider(),
+
+              // Custom pages (collection): build new pages at /<slug> with blocks.
+              collection(
+                S,
+                context,
+                'page',
+                'Custom pages (build your own)',
+                'Pages you build yourself, each with its own web address: an open lecture series, a page for a partner congregation, a reading list.',
+                'Build the first page',
+              ),
+
+              S.divider(),
+
+              // Saved sections: bands kept from one page, ready to drop on
+              // another. Made with "Save a section as preset..." in a page's
+              // publish menu; added from the Saved sections group beside the
+              // live preview.
+              collection(
+                S,
+                context,
+                'sectionPreset',
+                'Saved sections',
+                'Sections kept for reuse. Open a page, use "Save a section as preset..." in its publish menu, and it appears here.',
+              ),
+
+              S.divider(),
+
+              // Redirects: old address -> new address. Most entries are filed
+              // automatically when a page's web address changes on publish
+              // (components/slugRedirect.tsx); add one by hand for an address
+              // that never existed on this site (a printed card, an old link).
+              S.documentTypeListItem('redirect')
+                .title('Redirects (old links)')
+                .icon(typeIcon('redirect')),
+            ]),
+        ),
 
       S.divider(),
 

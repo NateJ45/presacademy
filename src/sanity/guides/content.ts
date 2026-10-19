@@ -44,7 +44,10 @@ export type GuideBlock =
       title?: string;
       text: string;
     }
-  | { kind: 'seealso'; items: string[] };
+  | { kind: 'seealso'; items: string[] }
+  // A real picture of the Studio (card 130), by its key in ./shots.ts. A key with
+  // no capture yet draws the wireframe, captioned as a drawing.
+  | { kind: 'shot'; key: string; caption?: string };
 
 // The guide list groups guides under these headings (titled dividers in
 // ../structure.ts), in THIS order. A new guide must pick one of these; the
@@ -1233,6 +1236,7 @@ export const guides: Guide[] = [
           'Set the offering **Status** (Open, Waitlist, or Closed).',
         ],
       },
+      { kind: 'shot', key: 'offering-status' },
       {
         kind: 'callout',
         tone: 'primary',
@@ -1258,7 +1262,12 @@ export const guides: Guide[] = [
       },
       {
         kind: 'seealso',
-        items: ['Add a faculty member', 'Set up a term or cohort', 'Pricing & scholarships'],
+        items: [
+          'Add a faculty member',
+          'Set up a term or cohort',
+          'Enrollment season, week by week',
+          'Pricing & scholarships',
+        ],
       },
     ],
   },
@@ -1359,6 +1368,7 @@ export const guides: Guide[] = [
           '`Publish`.',
         ],
       },
+      { kind: 'shot', key: 'term-editor' },
       {
         kind: 'callout',
         tone: 'primary',
@@ -1376,7 +1386,7 @@ export const guides: Guide[] = [
         title: 'There is a checklist for the season change',
         text: 'When a new term is coming, the `New term` tool in the top bar walks the whole rollover in order: create the term, update the courses, check pricing, and post the term-start event.',
       },
-      { kind: 'seealso', items: ['Add or edit a course'] },
+      { kind: 'seealso', items: ['Add or edit a course', 'Open a new term', 'Close a term'] },
     ],
   },
 
@@ -1911,17 +1921,26 @@ guides.push(
         kind: 'bullets',
         items: [
           '**Put up a notice**: one line across the top of every page, until the day you pick.',
+          '**Remind people enrollment closes**: a notice the Studio words for you from the next term, with its Apply by date and a link to Get started.',
           '**Cancel or move a class**: a notice in red that takes itself down after the day you name.',
-          '**Add an event**: an info night, an open lecture or a workshop, with its date and place.',
+          '**Add an info session or event**: an info night, an open lecture or a workshop, with its date, place and a sign-up link.',
         ],
       },
+      { kind: 'shot', key: 'quick-update-tiles' },
       {
         kind: 'callout',
         tone: 'caution',
         title: 'These publish straight away.',
         text: 'A quick update goes on the website a few minutes after you press the button. Open it in the full editor afterwards to add a photo or more detail.',
       },
-      { kind: 'seealso', items: ['Announcement banners'] },
+      {
+        kind: 'seealso',
+        items: [
+          'Announcement banners',
+          'Enrollment season, week by week',
+          'Cancel or move a class',
+        ],
+      },
     ],
   },
   {
@@ -1989,6 +2008,184 @@ guides.push(
   },
 );
 
+// ── The Academy's term-time and enrollment jobs (docs/agent/studio-plan.md) ──
+// One guide per job in the plan that had none: the turn of a term, enrollment
+// weeks, a class that moves, and the end of a term.
+guides.push(
+  {
+    slug: 'new-term',
+    category: 'Courses, faculty & terms',
+    title: 'Open a new term',
+    icon: 'times',
+    lead: 'A new term is the biggest job of the season. The New term tool lays it out in order and ticks each step off as you go.',
+    diy: 'self',
+    body: [
+      { kind: 'path', items: ['New term (top bar)'], link: { tool: 'term-setup' } },
+      {
+        kind: 'p',
+        text: 'Do this six to eight weeks before the term begins, so people have time to enroll. The tool never changes anything by itself: each step has a button that opens the right place, and the step turns green once it is done and published.',
+      },
+      { kind: 'shot', key: 'new-term-tool' },
+      { kind: 'h', text: 'The steps, in order' },
+      {
+        kind: 'steps',
+        items: [
+          '**Create the new term.** Its name, like "Spring 2027", and the day it begins. The site works out "Next cohort begins" from that date.',
+          '**Set the enrollment status.** Upcoming while you get ready, then Registration open on the day people can sign up.',
+          '**Set when enrollment opens and closes.** Registration opens and Apply by. The enrollment reminder notice reads Apply by, so get it right.',
+          '**Point courses at the new term.** Open each course that runs this term, go to the `Schedule & cohorts` tab and add an offering for the new term.',
+          '**Check the pricing tiers.** If the cost has changed, change it on the tier, once, and every course on that tier follows.',
+          '**Post the term-start event,** so the first night shows on the Events page.',
+          '**Announce registration** with a notice. Quick update has a ready-made one: **Remind people enrollment closes**.',
+          '**Clear out old notices** and **re-read the home page** with the new term in mind.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'You can stop halfway',
+        text: 'The tool reads what is already on the website each time you open it, so you can do two steps today and the rest next week. Nothing is lost.',
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'One course, one offering per term',
+        text: 'Add a new offering for the new term; do not change the term on last term’s offering. Keeping the old one is how the site knows the course has run before.',
+      },
+      {
+        kind: 'seealso',
+        items: [
+          'Set up a term or cohort',
+          'Add or edit a course',
+          'Enrollment season, week by week',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'enrollment',
+    category: 'Courses, faculty & terms',
+    title: 'Enrollment season, week by week',
+    icon: 'form',
+    lead: 'The weeks between Registration open and Apply by have a rhythm: a reminder up, messages answered, seats kept honest.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Home’s **This week** card watches most of this for you. When a term is set to Registration open, it asks for a notice, and it keeps a line for seats and waitlists until you tick it.',
+      },
+      { kind: 'h', text: 'Every week while enrollment is open' },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Messages`. Answer each enquiry and expression of interest, then mark it **Replied** so nobody answers twice.',
+          'Check a notice is up. If not, open `Quick update` and press **Remind people enrollment closes**. Leave the words empty and it writes them from the term: "Enrollment for Spring 2027 closes December 15. Save your seat today."',
+          'Keep seats honest. When a course fills, open it, go to `Schedule & cohorts`, and set that term’s offering to **Waitlist**. When it can take nobody else, **Closed**. Change the **Seats note** too, like "Two seats left".',
+          'If an info night is coming, make sure it is on the Events page with a sign-up link (Quick update, **Add an info session or event**).',
+        ],
+      },
+      { kind: 'shot', key: 'quick-update-reminder' },
+      { kind: 'h', text: 'Seats and waitlists' },
+      {
+        kind: 'bullets',
+        items: [
+          '**Open**: people can enroll. The course card shows the term and the schedule.',
+          '**Waitlist**: the course is full, but people can still ask for a place.',
+          '**Closed**: no more places this term.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Change the offering, not the course',
+        text: 'The status sits on the offering for this term, inside the course. A course can be Closed this spring and Open again in the fall.',
+      },
+      { kind: 'h', text: 'When enrollment closes' },
+      {
+        kind: 'steps',
+        items: [
+          'Open the term and set its **Status** to **In session** on the first day of term.',
+          'The reminder notice takes itself down on its last day. If you put one up by hand, check it has an end date.',
+        ],
+      },
+      {
+        kind: 'seealso',
+        items: [
+          'Read messages from the website',
+          'Quick updates from your phone',
+          'Open a new term',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'cancel-a-class',
+    category: 'Events, notices & voices',
+    title: 'Cancel or move a class',
+    icon: 'times',
+    lead: 'Snow, illness or a room change: tell people in under a minute, from your phone.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Quick update', 'Cancel or move a class'],
+        link: { tool: 'quick-update' },
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Quick update` (on a phone, open the menu first).',
+          'Press **Cancel or move a class**.',
+          'Say which class and what to do, like "Tonight’s Romans class meets online instead. The link is in your email."',
+          'Pick the day to take it down. It starts as tomorrow; for a class moved to next week, pick the day after the new date.',
+          'Press the button. The red notice is on every page in a few minutes and comes down by itself.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Email the class too',
+        text: 'Not everyone checks the website before a class. The notice is for anyone who does; the people enrolled need an email.',
+      },
+      { kind: 'h', text: 'If it was on the Events page' },
+      {
+        kind: 'p',
+        text: 'An open lecture or info night that moves needs its event changed too. Open **Events**, open the event, change the **Start date & time** and the **Schedule** text, and `Publish`. If it is cancelled for good, open it and choose `Move to Trash`.',
+      },
+      { kind: 'seealso', items: ['Quick updates from your phone', 'Post or edit an event'] },
+    ],
+  },
+  {
+    slug: 'end-of-term',
+    category: 'Courses, faculty & terms',
+    title: 'Close a term',
+    icon: 'times',
+    lead: 'Twenty minutes at the end of a term keeps the website from saying something that is no longer true.',
+    diy: 'self',
+    body: [
+      { kind: 'path', items: ['Catalog', 'Terms'], link: { pane: 'catalog;term' } },
+      {
+        kind: 'steps',
+        items: [
+          'Open the term that just ended and set its **Status** to **Closed**. `Publish`.',
+          'You do not need to change the courses. Their offerings for that term stay as a record, and the site only shows terms that are still to come.',
+          'Open **Notices** and check nothing from the term is still switched on. Checkup lists any notice left past its end date.',
+          'Past events drop off the Events page on their own. They stay in the Studio under their school year, so there is nothing to delete.',
+          'Ask two or three people from the term for a sentence about it, and add the ones who say yes as **Testimonials**.',
+          'Then start the next one: see **Open a new term**.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Never delete an old term',
+        text: 'Courses point at their terms. A term that is Closed is simply not shown; a deleted one leaves those courses pointing at nothing.',
+      },
+      { kind: 'seealso', items: ['Open a new term', 'Add a testimonial', 'Announcement banners'] },
+    ],
+  },
+);
+
 // A category with zero guides would render as a dangling divider and usually
 // means a category was renamed without moving its guides — fail at load.
 for (const category of GUIDE_CATEGORIES) {
@@ -1998,7 +2195,22 @@ for (const category of GUIDE_CATEGORIES) {
 }
 
 /** Card 134: the field-to-guide map (empty until a site maps its fields to guide sections). */
-export const GUIDE_FOR_FIELD: FieldGuideMap = {};
+export const GUIDE_FOR_FIELD: FieldGuideMap = {
+  fields: {
+    // A course's terms: the offering is where dates, seats and waitlists live.
+    offerings: { guide: 'courses', section: 'Set when it runs (Schedule & cohorts tab)' },
+    // The enrollment reminder reads this date; a wrong one shows a wrong deadline.
+    registrationDeadline: { guide: 'terms', section: 'Add a term' },
+    // The cover's code and question are easy to over-fill.
+    courseCode: { guide: 'courses', section: 'Design its cover (Cover tab)' },
+    centralQuestion: { guide: 'courses', section: 'Design its cover (Cover tab)' },
+    priceTier: { guide: 'courses', section: 'Set the cost (Pricing tab)' },
+    // Recurring or one-time decides whether an event drops off after it passes.
+    eventType: { guide: 'post-event', section: 'Add an event' },
+    seoTitle: { guide: 'search-sharing', section: 'The four boxes' },
+    seoDescription: { guide: 'search-sharing', section: 'The four boxes' },
+  },
+};
 
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
@@ -2008,15 +2220,15 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-page', 'help-panel'],
   page: ['edit-page', 'new-page', 'share-a-preview', 'rename-a-page', 'search-sharing'],
   homePage: ['edit-page', 'sections', 'photos', 'search-sharing'],
-  course: ['courses', 'terms', 'photos'],
-  term: ['terms', 'courses'],
+  course: ['courses', 'enrollment', 'terms', 'photos'],
+  term: ['terms', 'new-term', 'enrollment', 'end-of-term'],
   facultyMember: ['faculty', 'photos'],
   teachingArea: ['courses'],
   pricingTier: ['pricing'],
   pricingPage: ['pricing', 'edit-page'],
   event: ['post-event'],
   eventsPage: ['post-event', 'edit-page'],
-  announcement: ['announcements', 'quick-update'],
+  announcement: ['announcements', 'quick-update', 'cancel-a-class'],
   testimonial: ['testimonials'],
   faqItem: ['faqs'],
   faqCategory: ['faqs'],

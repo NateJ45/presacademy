@@ -10,7 +10,9 @@
 //
 //   - a notice (`announcement`) that shows until a last day;
 //   - a class change or cancellation: the same notice in red;
-//   - a one-time event (`event`): an info night, open lecture or workshop.
+//   - a one-time event (`event`): an info night, open lecture or workshop,
+//     with an optional sign-up link;
+//   - an enrollment reminder: a notice worded from the next term's own dates.
 // =============================================================================
 
 import { slugify } from './slugify.ts';
@@ -68,6 +70,8 @@ export type EventDoc = {
   allDay: false;
   location?: string;
   summary?: string;
+  registrationUrl?: string;
+  registrationLabel?: string;
 };
 
 /**
@@ -81,6 +85,7 @@ export function buildEvent(v: {
   category?: string;
   location?: string;
   summary?: string;
+  registrationUrl?: string;
 }): EventDoc {
   const title = v.title.trim();
   const day = v.start.slice(0, 10);
@@ -98,6 +103,10 @@ export function buildEvent(v: {
   };
   if (v.location?.trim()) doc.location = v.location.trim();
   if (v.summary?.trim()) doc.summary = v.summary.trim().slice(0, 240);
+  if (v.registrationUrl?.trim()) {
+    doc.registrationUrl = v.registrationUrl.trim();
+    doc.registrationLabel = 'Save your seat';
+  }
   return doc;
 }
 
@@ -106,4 +115,64 @@ export function daysFrom(now: Date, days: number): string {
   const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days);
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/** "2027-03-01" -> "March 1". Read from the string, so no time zone can move the day. */
+export function spokenDate(date: string): string {
+  const [, m, d] = date.slice(0, 10).split('-').map(Number);
+  return `${MONTHS[(m || 1) - 1]} ${d || 1}`;
+}
+
+/** The next term as the enrollment reminder reads it (the term schema's own fields). */
+export type ReminderTerm = { title: string; startDate: string; registrationDeadline?: string };
+
+/** GROQ for the next term: published, not put away, starting after $today. */
+export const NEXT_TERM_QUERY = `*[_type == "term" && !(_id in path("drafts.**")) && archived != true && startDate > $today] | order(startDate asc)[0]{title, startDate, registrationDeadline}`;
+
+/**
+ * "Remind people enrollment closes": a notice worded from the next term.
+ * Before the Apply by date it names that date and shows until then; once it
+ * has passed (or there is none) it names the first day of term and shows until
+ * then. A message the editor typed wins over the made-up one, and a last day
+ * they picked wins over the term's. With no term and no message there is
+ * nothing sensible to say, so it stops with a plain reason.
+ */
+export function buildEnrollmentReminder(
+  v: { message?: string; lastDay?: string },
+  term: ReminderTerm | null,
+  today: string,
+): NoticeDoc {
+  const typed = v.message?.trim();
+  if (!term && !typed) {
+    throw new Error('There is no upcoming term on the website yet. Open New term first.');
+  }
+  let message = typed ?? '';
+  let lastDay = v.lastDay?.trim() ?? '';
+  if (term) {
+    const deadline = term.registrationDeadline?.slice(0, 10);
+    const open = deadline && deadline >= today;
+    if (!message) {
+      message = open
+        ? `Enrollment for ${term.title} closes ${spokenDate(deadline)}. Save your seat today.`
+        : `${term.title} begins ${spokenDate(term.startDate)}. There is still time to join.`;
+    }
+    if (!lastDay) lastDay = open ? deadline : term.startDate.slice(0, 10);
+  }
+  if (!lastDay) lastDay = today;
+  return buildNotice({ message, lastDay, link: '/get-started/' }, 'special');
 }
