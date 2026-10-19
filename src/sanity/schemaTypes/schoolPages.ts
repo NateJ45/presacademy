@@ -25,10 +25,11 @@
 // `detail*` fields the course DETAIL route renders.
 
 import { defineType, defineField } from 'sanity';
+import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import {
-  FLEXIBLE_SECTION_MEMBERS,
+  PAGE_SECTION_MEMBERS,
   FLEXIBLE_SECTIONS_DESCRIPTION,
-  FLEXIBLE_SECTIONS_OPTIONS,
+  PAGE_SECTIONS_OPTIONS,
 } from './blocks';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { SEO_GROUP, seoFields } from './seo';
@@ -110,9 +111,11 @@ export function definePageSingleton(
         type: 'array',
         group: 'sections',
         description: FLEXIBLE_SECTIONS_DESCRIPTION,
-        of: FLEXIBLE_SECTION_MEMBERS,
+        of: PAGE_SECTION_MEMBERS,
+        // "Insert a saved section" and the page warnings (card 109).
+        ...pageBuilderAuthoring,
 
-        options: FLEXIBLE_SECTIONS_OPTIONS,
+        options: PAGE_SECTIONS_OPTIONS,
       }),
       defineField({
         name: 'finalCta',

@@ -23,15 +23,13 @@ export const siteSettings = defineType({
   groups: [
     { name: 'identity', title: 'Identity & contact' },
     { name: 'navigation', title: 'Navigation (menus)' },
-    { name: 'worship', title: 'Worship times' },
-    { name: 'connect', title: 'Connect & integrations' },
     { name: 'social', title: 'Social & footer' },
     { name: 'newsletter', title: 'Newsletter' },
   ],
   fields: [
     defineField({
       name: 'title',
-      title: 'Church name',
+      title: 'School name',
       type: 'string',
       description: 'Used in the browser tab and search results.',
       initialValue: 'The Presbyterian Academy',
@@ -53,7 +51,7 @@ export const siteSettings = defineType({
       type: 'text',
       rows: 2,
       description:
-        'One-sentence mission shown in the footer. Example: "Serving and celebrating Jesus for the good of the world."',
+        'One sentence shown in the footer, before the funder line. Keep it to what the Academy is for, in plain words.',
       group: 'identity',
     }),
     defineField({
@@ -74,11 +72,12 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'pastorEmail',
-      title: 'Pastoral care email (optional)',
+      title: 'Second email (not used)',
       type: 'string',
-      description:
-        'Email for pastoral care, shown on the Contact, Pastors & Staff, and Use Our Space pages. Leave blank to use the public email above.',
       group: 'identity',
+      // Starter leftover (2026-10-18): a church "pastoral care" address. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'phone',
@@ -92,7 +91,7 @@ export const siteSettings = defineType({
       title: 'Office hours (optional)',
       type: 'string',
       description:
-        'Shown on the Contact page, in the footer and at the foot of the phone menu. Example: "Tuesday-Friday, 10am-2pm". Leave blank to hide.',
+        'Shown on the Contact page, in the footer and at the foot of the phone menu. Like "Monday to Thursday, 9am to 4pm". Leave blank to hide.',
       group: 'identity',
     }),
     defineField({
@@ -101,7 +100,7 @@ export const siteSettings = defineType({
       type: 'image',
       group: 'identity',
       description:
-        'The small icon shown in the browser tab and in bookmarks. Use a simple, roughly square logo mark, at least 128 by 128 pixels (fine detail disappears at tiny sizes). Leave blank to use the built-in church mark.',
+        'The small icon shown in the browser tab and in bookmarks. Use a simple, roughly square logo mark, at least 128 by 128 pixels (fine detail disappears at tiny sizes). Leave blank to use the built-in PA mark.',
       options: { hotspot: true },
     }),
     defineField({
@@ -403,11 +402,12 @@ export const siteSettings = defineType({
     // purpose, so the time never has to be repeated.
     defineField({
       name: 'worshipService',
-      title: 'Worship service time',
+      title: 'Service time (not used)',
       type: 'object',
-      group: 'worship',
-      description:
-        'The one place to set your Sunday service time. It updates the header, footer, home page, worship page, and your Google listing automatically. Leave a field blank to use the built-in default.',
+      group: 'identity',
+      // Starter leftover (2026-10-18): a church service time. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
       options: { collapsible: false },
       fields: [
         defineField({
@@ -444,50 +444,57 @@ export const siteSettings = defineType({
     // optional and only surfaces in the UI when set.
     defineField({
       name: 'watchUrl',
-      title: 'Livestream / Watch URL',
+      title: 'Livestream link (not used)',
       type: 'url',
-      description:
-        'Where "Watch Live" points (YouTube channel or livestream). Leave blank to use the Sermons page.',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a church livestream link. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'giveUrl',
-      title: 'Giving link',
+      title: 'Giving link (not used)',
       type: 'url',
-      description:
-        'Online giving portal (e.g. Vanco, Subsplash Giving). Leave blank to use the Give page.',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a church giving link. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'appUrl',
-      title: 'Church app link',
+      title: 'App link (not used)',
       type: 'url',
-      description: 'Link to your church app (e.g. Subsplash). Surfaces in the footer when set.',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a church app link. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'directoryUrl',
-      title: 'Member directory link',
+      title: 'Directory link (not used)',
       type: 'url',
-      description:
-        'Link to an online member directory (e.g. Planning Center, Instant Church Directory). Leave blank to hide.',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a church member directory. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'registrationBaseUrl',
-      title: 'Registration / sign-up base link',
+      title: 'Registration link (not used)',
       type: 'url',
-      description:
-        'Default place to register for events when an event has no link of its own (e.g. a Planning Center or Eventbrite organizer page).',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a default event sign-up link; each event carries its own. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
     defineField({
       name: 'prayerUrl',
-      title: 'Prayer / connection card link',
+      title: 'Prayer link (not used)',
       type: 'url',
-      description:
-        'Link to a prayer-request or connection-card form. Surfaces as a footer link when set.',
-      group: 'connect',
+      group: 'social',
+      // Starter leftover (2026-10-18): a church prayer-request link. The site never shows it and it holds
+      // no data, so it is hidden rather than removed (never remove a field).
+      hidden: true,
     }),
 
     // ── Social & footer ───────────────────────────────────────────────────────

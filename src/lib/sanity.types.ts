@@ -407,136 +407,6 @@ export type Redirect = {
   note?: string;
 };
 
-export type SectionPreset = {
-  _id: string;
-  _type: 'sectionPreset';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  sectionType?: string;
-  section?: Array<
-    | ({
-        _key: string;
-      } & SectionRichText)
-    | ({
-        _key: string;
-      } & SectionImageText)
-    | ({
-        _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
-      } & SectionStats)
-    | ({
-        _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
-      } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
-    | ({
-        _key: string;
-      } & SectionDynamicList)
-    | ({
-        _key: string;
-      } & SectionLogos)
-    | ({
-        _key: string;
-      } & SectionQuote)
-    | ({
-        _key: string;
-      } & SectionCtaBand)
-    | ({
-        _key: string;
-      } & SectionForm)
-    | ({
-        _key: string;
-      } & SectionFaqList)
-    | ({
-        _key: string;
-      } & SectionResources)
-    | ({
-        _key: string;
-      } & SectionKeyDates)
-    | ({
-        _key: string;
-      } & SectionPricingTiers)
-    | ({
-        _key: string;
-      } & Embed)
-    | ({
-        _key: string;
-      } & SectionLegalBody)
-    | ({
-        _key: string;
-      } & SectionNumberedCards)
-    | ({
-        _key: string;
-      } & SectionScholarship)
-    | ({
-        _key: string;
-      } & SectionLedgerStats)
-    | ({
-        _key: string;
-      } & SectionEditorialColumns)
-    | ({
-        _key: string;
-      } & SectionInlineBand)
-    | ({
-        _key: string;
-      } & SectionFaqGrouped)
-    | ({
-        _key: string;
-      } & SectionEventGrid)
-    | ({
-        _key: string;
-      } & SectionRuledList)
-    | ({
-        _key: string;
-      } & SectionContactDetails)
-    | ({
-        _key: string;
-      } & SectionRequestPanel)
-    | ({
-        _key: string;
-      } & SectionCourseRail)
-    | ({
-        _key: string;
-      } & SectionTicker)
-    | ({
-        _key: string;
-      } & SectionFacultyRail)
-    | ({
-        _key: string;
-      } & SectionTestimonialRail)
-    | ({
-        _key: string;
-      } & SectionTermContents)
-    | ({
-        _key: string;
-      } & SectionCourseFinder)
-    | ({
-        _key: string;
-      } & SectionNextIssue)
-    | ({
-        _key: string;
-      } & SectionForPastors)
-  >;
-  note?: string;
-};
-
 export type Testimonial = {
   _id: string;
   _type: 'testimonial';
@@ -1815,6 +1685,148 @@ export type SectionRichText = {
   background?: Background;
 };
 
+export type SectionPresetReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sectionPreset';
+};
+
+export type SyncedSection = {
+  _type: 'syncedSection';
+  preset?: SectionPresetReference;
+};
+
+export type SectionPreset = {
+  _id: string;
+  _type: 'sectionPreset';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sectionType?: string;
+  section?: Array<
+    | ({
+        _key: string;
+      } & SectionRichText)
+    | ({
+        _key: string;
+      } & SectionImageText)
+    | ({
+        _key: string;
+      } & SectionFeatureCards)
+    | ({
+        _key: string;
+      } & SectionCardGrid)
+    | ({
+        _key: string;
+      } & SectionStats)
+    | ({
+        _key: string;
+      } & SectionMediaShowcase)
+    | ({
+        _key: string;
+      } & SectionGallery)
+    | ({
+        _key: string;
+      } & SectionAccordion)
+    | ({
+        _key: string;
+      } & SectionMediaFeature)
+    | ({
+        _key: string;
+      } & SectionSteps)
+    | ({
+        _key: string;
+      } & SectionDynamicList)
+    | ({
+        _key: string;
+      } & SectionLogos)
+    | ({
+        _key: string;
+      } & SectionQuote)
+    | ({
+        _key: string;
+      } & SectionCtaBand)
+    | ({
+        _key: string;
+      } & SectionForm)
+    | ({
+        _key: string;
+      } & SectionFaqList)
+    | ({
+        _key: string;
+      } & SectionResources)
+    | ({
+        _key: string;
+      } & SectionKeyDates)
+    | ({
+        _key: string;
+      } & SectionPricingTiers)
+    | ({
+        _key: string;
+      } & Embed)
+    | ({
+        _key: string;
+      } & SectionLegalBody)
+    | ({
+        _key: string;
+      } & SectionNumberedCards)
+    | ({
+        _key: string;
+      } & SectionScholarship)
+    | ({
+        _key: string;
+      } & SectionLedgerStats)
+    | ({
+        _key: string;
+      } & SectionEditorialColumns)
+    | ({
+        _key: string;
+      } & SectionInlineBand)
+    | ({
+        _key: string;
+      } & SectionFaqGrouped)
+    | ({
+        _key: string;
+      } & SectionEventGrid)
+    | ({
+        _key: string;
+      } & SectionRuledList)
+    | ({
+        _key: string;
+      } & SectionContactDetails)
+    | ({
+        _key: string;
+      } & SectionRequestPanel)
+    | ({
+        _key: string;
+      } & SectionCourseRail)
+    | ({
+        _key: string;
+      } & SectionTicker)
+    | ({
+        _key: string;
+      } & SectionFacultyRail)
+    | ({
+        _key: string;
+      } & SectionTestimonialRail)
+    | ({
+        _key: string;
+      } & SectionTermContents)
+    | ({
+        _key: string;
+      } & SectionCourseFinder)
+    | ({
+        _key: string;
+      } & SectionNextIssue)
+    | ({
+        _key: string;
+      } & SectionForPastors)
+  >;
+  note?: string;
+};
+
 export type AccessibilityPage = {
   _id: string;
   _type: 'accessibilityPage';
@@ -1962,6 +1974,9 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   publishAt?: string;
 };
@@ -2113,6 +2128,9 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   publishAt?: string;
 };
@@ -2287,6 +2305,9 @@ export type Page = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -2449,6 +2470,9 @@ export type ResourcesPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2606,6 +2630,9 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2762,6 +2789,9 @@ export type GetStartedPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -2917,6 +2947,9 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3073,6 +3106,9 @@ export type FacultyPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3231,6 +3267,9 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCta?: CtaBlock;
   publishAt?: string;
@@ -3401,6 +3440,9 @@ export type EventsPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
 };
 
@@ -3557,6 +3599,9 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   publishAt?: string;
 };
@@ -3723,6 +3768,9 @@ export type FaqPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   publishAt?: string;
 };
@@ -3854,6 +3902,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -4020,6 +4071,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
   finalCtaEyebrow?: string;
   finalCtaHeadline?: string;
@@ -4388,7 +4442,6 @@ export type AllSanitySchemaTypes =
   | Question1
   | Question2
   | Redirect
-  | SectionPreset
   | Testimonial
   | SanityImageCrop
   | SanityImageHotspot
@@ -4458,6 +4511,9 @@ export type AllSanitySchemaTypes =
   | SectionCardGrid
   | SectionImageText
   | SectionRichText
+  | SectionPresetReference
+  | SyncedSection
+  | SectionPreset
   | AccessibilityPage
   | PrivacyPage
   | Embed

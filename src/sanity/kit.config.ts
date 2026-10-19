@@ -17,6 +17,7 @@
 // =============================================================================
 
 import type { KitConfig } from './kit/types';
+import type { PageRules } from '../lib/page-guardrails';
 import { genericRules } from '../lib/studio-checkup';
 import { guides, GUIDE_CATEGORIES, GUIDES_FOR_TYPE, SITE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
@@ -433,4 +434,22 @@ export const kitConfig: KitConfig = {
     navbarStatus: true,
     helpPanel: true,
   },
+};
+
+/**
+ * The Academy's page-builder rules (the authoring kit, PORTS.md card 109).
+ * Each one shows as a yellow WARNING beside a page's sections, never an error,
+ * so nothing here can stop Publish or break a page that is already live. The
+ * built-in warnings (an empty section, leftover "Example:" text, a synced
+ * section with nothing picked) apply everywhere whatever this says. Logic and
+ * tests: src/lib/page-guardrails.ts.
+ *
+ * A custom page here has its own hero above the sections (page.ts), so there
+ * is no "must start with" rule. One course finder and one "next issue" band
+ * per page is plenty, and past fifteen sections a page is usually two pages.
+ */
+export const pageRules: PageRules = {
+  appliesTo: ['page'],
+  atMostOnce: ['sectionCourseFinder', 'sectionNextIssue', 'sectionForm'],
+  maxSections: 15,
 };

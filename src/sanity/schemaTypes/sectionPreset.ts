@@ -5,7 +5,8 @@
 // band right, then wants the same band on four more pages and rebuilds it by
 // hand each time (or duplicates a whole page to get at one strip of it).
 //
-// THE SHAPE. `section` is an ARRAY of every section type, capped at one. A
+// THE SHAPE. `section` is an ARRAY of every section type, capped at twelve
+// (one band, or a whole pattern; card 109 raised it from one, 2026-10-18). A
 // single-object field would need a union type Sanity has no syntax for, and a
 // per-type field would mean thirty-five fields. The array gets us three things
 // for free: the same grouped "+ Add" picker the page builder uses (the shared
@@ -29,8 +30,9 @@
 // looking at. The "+ Add section" picker inside a page can only offer schema
 // TYPES, never documents, which is why the insert surface lives there.
 //
-// A preset is a COPY, not a link. Editing a preset never changes the pages it
-// was already added to, and editing one of those pages never changes the preset.
+// A preset goes in as a COPY (editing it never changes the pages it was added
+// to) or, through "Insert a saved section" on a page, SYNCED: a syncedSection
+// block that shows the preset as it is now (blocks.ts, card 109).
 //
 // No field groups on purpose: an undefined group name is a fatal Studio-runtime
 // error in Sanity 6.4 that a build does not catch, and four fields need none.
@@ -62,13 +64,15 @@ export const sectionPreset = defineType({
     }),
     defineField({
       name: 'section',
-      title: 'The section',
+      title: 'The sections',
       type: 'array',
       of: FLEXIBLE_SECTION_MEMBERS,
       options: FLEXIBLE_SECTIONS_OPTIONS,
       description:
-        'The saved section itself. Change it here and the next page you add it to gets the new version; pages that already have it are not touched.',
-      validation: (R) => R.max(1).error('A saved section holds one section. Remove the extra one.'),
+        'One section, or a group of up to twelve that go together (a notice band and the key dates, say). Change them here: a page that added this as a COPY keeps its own version, a page that added it SYNCED changes too once you publish.',
+      // Up to twelve (the authoring kit, PORTS.md card 109): a whole pattern, not just one band.
+      validation: (R) =>
+        R.max(12).error('A saved section holds up to twelve sections. Remove the extra ones.'),
     }),
     defineField({
       name: 'note',
@@ -79,11 +83,15 @@ export const sectionPreset = defineType({
     }),
   ],
   preview: {
-    select: { title: 'title', sectionType: 'sectionType', note: 'note' },
-    prepare({ title, sectionType, note }) {
+    select: { title: 'title', sectionType: 'sectionType', note: 'note', sections: 'section' },
+    prepare({ title, sectionType, note, sections }) {
+      const count = Array.isArray(sections) ? sections.length : 0;
       return {
         title: title || '(unnamed saved section)',
-        subtitle: [sectionType ? prettySectionType(sectionType) : null, note]
+        subtitle: [
+          count > 1 ? `${count} sections` : sectionType ? prettySectionType(sectionType) : null,
+          note,
+        ]
           .filter(Boolean)
           .join(' · '),
       };

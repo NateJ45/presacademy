@@ -126,7 +126,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           '**Site Settings**: the site-wide basics (name, contact details, menus).',
-          '**Pages**: the fixed pages of your site (Home, About, Courses, and so on). One of each, plus **Custom Pages** you build yourself.',
+          '**Pages**: the fixed pages of your site (Home, About, Courses, and so on). One of each, plus **Custom pages** you build yourself.',
           '**Catalog**: the course library and what supports it (Courses, Terms, Teaching Areas, Pricing Tiers).',
           '**Faculty**: the people who teach, each with a short scholarly profile.',
           '**Content**: reusable lists you add to over time (Testimonials, FAQ, Forms, Announcements).',
@@ -208,7 +208,7 @@ export const guides: Guide[] = [
           'Add and edit faculty profiles.',
           'Set up terms and pricing tiers.',
           'Add testimonials, events, FAQs, and announcement banners.',
-          'Add, reorder, and remove sections on a page, and build new Custom Pages.',
+          'Add, reorder, and remove sections on a page, and build new custom pages.',
           'Add, rename, and reorder the top menu and footer links.',
           'Change section background tones and images.',
           'Delete something by mistake and bring it back from the **Trash**.',
@@ -313,20 +313,26 @@ export const guides: Guide[] = [
     body: [
       {
         kind: 'path',
-        items: ['Pages', 'Custom Pages', '+ New page'],
+        items: ['Content', 'Pages', 'Custom pages (build your own)', '+'],
         link: { pane: 'pages;page' },
       },
       { kind: 'h', text: 'Build a page' },
       {
         kind: 'steps',
         items: [
-          'Open **Pages**, then **Custom Pages**, then the `+` button.',
-          'Pick a **starting layout** if one fits: _Simple text page_ or _Info page with questions_. Each comes pre-filled with sections and [bracketed] placeholder text to replace. The plain **Page** option starts blank.',
+          'Open **Pages**, then **Custom pages (build your own)**, then the `+` button.',
+          'Pick a **template**. They are grouped: _Basics_ (a blank page, a simple text page, information with questions, a photo story), _Enrollment_ (a term announcement, an info session invitation, how to enroll), _Teaching_ (a lecture or study series, a reading list, a faculty spotlight) and _Partners_ (for congregations, scholarships and support). Each comes with sections already in place and words that start **Example:** for you to replace.',
           'Give it a **Title**.',
           'Set the **Slug**, which is the web address. A slug of "reading-group" makes the page live at yoursite.org/reading-group. Lowercase letters and dashes, no spaces.',
           'Add **Sections** to build the body (see the next guide).',
           '`Publish`. Your page is now live at its web address.',
         ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Replace every "Example:"',
+        text: 'Anything that still starts **Example:** is a stand-in, not something true about the Academy. A yellow note beside the sections says so until every one is replaced. It never stops you publishing, so check before you do.',
       },
       { kind: 'h', text: 'Linking to your new page' },
       {
@@ -569,7 +575,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Save a section and reuse it',
     icon: '📌',
-    lead: 'Keep a band you got right, then drop a copy of it onto any other page.',
+    lead: 'Keep a band you got right, then add it to any page: as a copy to change, or synced so one edit changes every page.',
     diy: 'self',
     body: [
       {
@@ -578,7 +584,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'You spent twenty minutes getting a "Request information" band exactly right and you want the same band on three more pages. Save it once, add it wherever you like.',
+        text: 'You got a "Request information" band exactly right and want the same band on three more pages. Save it once, add it wherever you like.',
       },
       { kind: 'h', text: 'Save one' },
       {
@@ -590,29 +596,38 @@ export const guides: Guide[] = [
           'Give it a name you will recognise later, then **Save section**.',
         ],
       },
-      { kind: 'h', text: 'Add it to another page' },
+      {
+        kind: 'p',
+        text: 'A saved section can hold up to twelve sections that go together, like a notice band and the key dates. Open it under **Content, Pages, Saved sections** to add more.',
+      },
+      { kind: 'h', text: 'Add it to a page' },
       {
         kind: 'steps',
         items: [
-          'Open **Preview** (the eye icon at the top) and click the page you want it on.',
-          'At the bottom of the page list, open **Saved sections**.',
-          'Click the `+` beside the one you want. It lands at the bottom of that page as a draft.',
-          'Drag it up to where it belongs, change whatever is different, then `Publish`.',
+          'Open the page and scroll to its **Sections**.',
+          'Under the list, click **Insert a saved section** and find the one you want.',
+          '**Add a copy** puts its sections on this page, yours to change. **Add synced** shows the saved section as it is, and keeps it that way.',
+          'New sections go at the bottom. Drag them where they belong, then `Publish`.',
         ],
       },
       {
         kind: 'callout',
         tone: 'positive',
-        title: 'It is a copy, not a link',
-        text: 'Changing the saved section later never changes the pages you already added it to, and changing one of those pages never changes the saved section. So you can adjust the wording page by page without breaking anything.',
+        title: 'Copy or synced?',
+        text: 'A copy never changes again unless you change it on that page. A synced section changes on every page using it whenever you edit and publish the saved section. Use synced for things that must say the same everywhere, like "Enrollment is open" on Home, Courses and Pricing.',
+      },
+      { kind: 'h', text: 'The seasonal ones' },
+      {
+        kind: 'p',
+        text: 'The list starts with sections for the moments every term brings round: enrollment is open, apply by soon, an info session, the term begins, the first week, the term has ended, between terms, a course is full, help with the cost, an Advent or Lent study, and sharing with a congregation. Their words start **Example:**. Replace them, publish the saved section, then add it synced where it belongs. When the season is over, remove it from the pages, or change its words for next time.',
       },
       {
         kind: 'callout',
         tone: 'default',
         title: 'Where they live',
-        text: 'Under **Pages**, at the bottom, as **Saved Sections**. Open one there to rename it, edit it, or throw it away. They are a tool for you, not part of the website, so nothing you do to them appears to visitors.',
+        text: 'Under **Pages**, near the bottom, as **Saved sections**. Open one there to rename it, edit it, or move it to the Trash. Nothing in that list appears on the website until a page uses it.',
       },
-      { kind: 'seealso', items: ['Add & arrange sections', 'Copy, archive & restore a page'] },
+      { kind: 'seealso', items: ['Add & arrange sections', 'Build a brand-new page'] },
     ],
   },
 
