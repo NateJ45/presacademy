@@ -246,7 +246,7 @@ export const kitConfig: KitConfig = {
       fields: [
         {
           name: 'message',
-          title: 'Your own words (optional)',
+          title: 'Your own words',
           kind: 'text',
           max: 160,
           description:
@@ -254,7 +254,7 @@ export const kitConfig: KitConfig = {
         },
         {
           name: 'lastDay',
-          title: 'Last day to show it (optional)',
+          title: 'Last day to show it',
           kind: 'date',
           description: 'Leave it empty to show it until the Apply by date on the term.',
         },
@@ -300,7 +300,8 @@ export const kitConfig: KitConfig = {
     {
       id: 'event',
       title: 'Add an info session or event',
-      detail: 'An info night, an open lecture or a workshop, with its date and place.',
+      detail:
+        'An info night, an open lecture or a workshop, with its date, place and a sign-up link.',
       icon: CalendarIcon,
       // The parchment cover with its rising half-moon.
       meaning: 'event',
@@ -328,7 +329,7 @@ export const kitConfig: KitConfig = {
         },
         {
           name: 'registrationUrl',
-          title: 'Sign-up link (optional)',
+          title: 'Sign-up link',
           kind: 'url',
           description:
             'Where people save a seat, starting https://. It shows as a "Save your seat" button.',
