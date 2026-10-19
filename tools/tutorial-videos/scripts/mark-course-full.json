@@ -1,0 +1,96 @@
+{
+  "slug": "mark-course-full",
+  "title": "Mark a course full or waitlisted",
+  "start": "/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "steps": [
+    {
+      "do": "caption",
+      "text": "A course has filled. Tell the website in a few taps.",
+      "ms": 2800,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/quick-update",
+      "caption": "Open Quick update.",
+      "ms": 2200
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-quick=\"seats\"]"
+    },
+    {
+      "do": "click",
+      "target": "[data-quick=\"seats\"]",
+      "caption": "Press Mark a course full or waitlisted.",
+      "ms": 900
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-tour=\"quick-pick\"]"
+    },
+    {
+      "do": "ring",
+      "target": "text:Romans: The Gospel Unfolded",
+      "caption": "Pick the course from the list.",
+      "ms": 2600,
+      "hold": 2200
+    },
+    {
+      "do": "click",
+      "target": "text:Romans: The Gospel Unfolded",
+      "ms": 1200
+    },
+    {
+      "do": "waitFor",
+      "target": "#quick-seatsNow"
+    },
+    {
+      "do": "click",
+      "target": "#quick-seatsNow",
+      "caption": "Choose Waitlist, or Full if there is no room.",
+      "ms": 700
+    },
+    {
+      "do": "type",
+      "target": "#quick-seatsNow",
+      "text": "Waitlist",
+      "ms": 400
+    },
+    {
+      "do": "press",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "type",
+      "target": "#quick-seatsNowNote",
+      "text": "Waitlist only",
+      "caption": "Add a short note if you like.",
+      "ms": 1800
+    },
+    {
+      "do": "scroll",
+      "target": "text:Save the seats"
+    },
+    {
+      "do": "ring",
+      "target": "text:Save the seats",
+      "caption": "Press Save. The course card changes in a few minutes.",
+      "ms": 3200,
+      "hold": 2800
+    },
+    {
+      "do": "caption",
+      "text": "To set it back later, choose Open here again.",
+      "ms": 3200
+    }
+  ]
+}

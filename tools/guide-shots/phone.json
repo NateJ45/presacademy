@@ -1,0 +1,77 @@
+{
+  "base": "http://localhost:4321/kit-harness/studio",
+  "viewport": {
+    "width": 560,
+    "height": 1500
+  },
+  "shots": [
+    {
+      "key": "quick-update-tiles",
+      "path": "/quick-update",
+      "waitFor": "[data-tour=\"quick-list\"]",
+      "clip": "[data-tour=\"quick-list\"]",
+      "pad": 12,
+      "measure": {
+        "Mark a course full or waitlisted: pick it, then Open, Waitlist or Full.": "[data-quick=\"seats\"]"
+      }
+    },
+    {
+      "key": "seats-form",
+      "path": "/quick-update",
+      "steps": [
+        {
+          "do": "waitFor",
+          "target": "[data-quick=\"seats\"]"
+        },
+        {
+          "do": "click",
+          "target": "[data-quick=\"seats\"]",
+          "ms": 1200
+        },
+        {
+          "do": "click",
+          "target": "text:Romans: The Gospel Unfolded",
+          "ms": 1500
+        },
+        {
+          "do": "waitFor",
+          "target": "#quick-seatsNow"
+        },
+        {
+          "do": "click",
+          "target": "#quick-seatsNow",
+          "ms": 500
+        },
+        {
+          "do": "type",
+          "target": "#quick-seatsNow",
+          "text": "Waitlist",
+          "ms": 300
+        },
+        {
+          "do": "press",
+          "key": "Enter"
+        },
+        {
+          "do": "type",
+          "target": "#quick-seatsNowNote",
+          "text": "Waitlist only",
+          "ms": 500
+        }
+      ],
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 560,
+        "height": 760
+      },
+      "pad": 12
+    }
+  ],
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "slug": "new-term",
+  "title": "Open a new term",
+  "start": "/",
+  "steps": [
+    {
+      "do": "caption",
+      "text": "A new term has its own checklist.",
+      "ms": 2600,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/term-setup",
+      "caption": "Open New term in the top bar.",
+      "ms": 2800
+    },
+    {
+      "do": "waitFor",
+      "target": ".pa-setup-card"
+    },
+    {
+      "do": "ring",
+      "target": ".pa-setup-card",
+      "caption": "It lays out the start of every term, in order.",
+      "ms": 3400,
+      "hold": 3000
+    },
+    {
+      "do": "caption",
+      "text": "Each card opens the right place to make the change.",
+      "ms": 3400
+    },
+    {
+      "do": "caption",
+      "text": "Create the term, then set when enrollment opens and closes.",
+      "ms": 3600
+    },
+    {
+      "do": "caption",
+      "text": "Then point each course at the new term, and post the term-start event.",
+      "ms": 3800
+    },
+    {
+      "do": "caption",
+      "text": "It reads the website each time, so you can stop halfway.",
+      "ms": 3400
+    },
+    {
+      "do": "caption",
+      "text": "Come back and press Check again. Done steps turn green.",
+      "ms": 3400
+    }
+  ]
+}

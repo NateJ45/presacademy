@@ -4179,6 +4179,8 @@ export type Course = {
     _type: 'courseOffering';
     _key: string;
   }>;
+  seatsNow?: 'open' | 'waitlist' | 'closed';
+  seatsNowNote?: string;
   priceTier?: PricingTierReference;
   priceNote?: string;
   featured?: boolean;
