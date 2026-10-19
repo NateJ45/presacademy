@@ -1,0 +1,82 @@
+{
+  "slug": "add-info-session",
+  "title": "Add an info session with a sign-up link",
+  "start": "/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "steps": [
+    {
+      "do": "caption",
+      "text": "An info night, an open lecture or a workshop.",
+      "ms": 2800,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/quick-update",
+      "caption": "Open Quick update.",
+      "ms": 2200
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-quick=\"event\"]"
+    },
+    {
+      "do": "click",
+      "target": "[data-quick=\"event\"]",
+      "caption": "Press Add an info session or event.",
+      "ms": 900
+    },
+    {
+      "do": "waitFor",
+      "target": "#quick-title"
+    },
+    {
+      "do": "type",
+      "target": "#quick-title",
+      "text": "Spring info night",
+      "caption": "What it is called, and when it starts.",
+      "ms": 1400
+    },
+    {
+      "do": "type",
+      "target": "#quick-start",
+      "text": "010520270700PM",
+      "ms": 1500
+    },
+    {
+      "do": "ring",
+      "target": "#quick-category",
+      "caption": "Leave the kind on Choose one for an info session.",
+      "ms": 3000,
+      "hold": 2600
+    },
+    {
+      "do": "type",
+      "target": "#quick-summary",
+      "text": "Meet the faculty and ask your questions.",
+      "caption": "One or two sentences about it.",
+      "ms": 1600
+    },
+    {
+      "do": "type",
+      "target": "#quick-registrationUrl",
+      "text": "https://example.org/rsvp",
+      "caption": "A sign-up link becomes a Save your seat button.",
+      "ms": 2400
+    },
+    {
+      "do": "scroll",
+      "target": "text:Put it on the website"
+    },
+    {
+      "do": "ring",
+      "target": "text:Put it on the website",
+      "caption": "It is on the Events page in a few minutes.",
+      "ms": 3200,
+      "hold": 2800
+    }
+  ]
+}

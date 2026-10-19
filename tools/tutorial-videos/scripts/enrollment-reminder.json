@@ -1,0 +1,60 @@
+{
+  "slug": "enrollment-reminder",
+  "title": "Remind people enrollment closes",
+  "start": "/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "steps": [
+    {
+      "do": "caption",
+      "text": "While enrollment is open, a reminder helps.",
+      "ms": 2800,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/quick-update",
+      "caption": "Open Quick update.",
+      "ms": 2200
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-quick=\"enrollment-reminder\"]"
+    },
+    {
+      "do": "click",
+      "target": "[data-quick=\"enrollment-reminder\"]",
+      "caption": "Press Remind people enrollment closes.",
+      "ms": 900
+    },
+    {
+      "do": "waitFor",
+      "target": "#quick-message"
+    },
+    {
+      "do": "caption",
+      "text": "This one words the notice for you from the next term.",
+      "ms": 3200
+    },
+    {
+      "do": "ring",
+      "target": "#quick-message",
+      "caption": "Leave both boxes empty to use the term’s own dates.",
+      "ms": 3200,
+      "hold": 2800
+    },
+    {
+      "do": "scroll",
+      "target": "text:Put the reminder up"
+    },
+    {
+      "do": "ring",
+      "target": "text:Put the reminder up",
+      "caption": "It links to Get started and comes down after Apply by.",
+      "ms": 3400,
+      "hold": 3000
+    }
+  ]
+}

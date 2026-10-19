@@ -47,7 +47,9 @@ export type GuideBlock =
   | { kind: 'seealso'; items: string[] }
   // A real picture of the Studio (card 130), by its key in ./shots.ts. A key with
   // no capture yet draws the wireframe, captioned as a drawing.
-  | { kind: 'shot'; key: string; caption?: string };
+  | { kind: 'shot'; key: string; caption?: string }
+  // One of the site's recorded clips (card 137), by its key in ./videos.ts.
+  | { kind: 'video'; key: string; caption?: string };
 
 // The guide list groups guides under these headings (titled dividers in
 // ../structure.ts), in THIS order. A new guide must pick one of these; the
@@ -1238,6 +1240,10 @@ export const guides: Guide[] = [
       },
       { kind: 'shot', key: 'offering-status' },
       {
+        kind: 'p',
+        text: 'A course that fills mid-enrollment is quicker from a phone: see **Mark a course full or waitlisted**.',
+      },
+      {
         kind: 'callout',
         tone: 'primary',
         title: 'Where "next cohort" comes from',
@@ -1420,6 +1426,11 @@ export const guides: Guide[] = [
           'Want it on the home page too? Turn on **Feature on the home page**.',
           'Click `Publish`. It now appears on the Events page (yoursite.org/events).',
         ],
+      },
+      { kind: 'h', text: 'Add an info session from your phone' },
+      {
+        kind: 'p',
+        text: 'For an info night or a lecture you only need a name, a time and a sign-up link: open `Quick update`, press **Add an info session or event**, choose the kind, and press the button. Move one later with **Change an event’s time or place**.',
       },
       { kind: 'h', text: 'Edit or take down an event' },
       {
@@ -1922,8 +1933,13 @@ guides.push(
         items: [
           '**Put up a notice**: one line across the top of every page, until the day you pick.',
           '**Remind people enrollment closes**: a notice the Studio words for you from the next term, with its Apply by date and a link to Get started.',
+          '**Mark a course full or waitlisted**: pick the course, then Open, Waitlist or Full. The course card changes at once.',
           '**Cancel or move a class**: a notice in red that takes itself down after the day you name.',
           '**Add an info session or event**: an info night, an open lecture or a workshop, with its date, place and a sign-up link.',
+          '**Change an event\u2019s time or place**: pick an upcoming event and change when, where or the sign-up link.',
+          '**Open or close enrollment for a term**: say whether a term is Upcoming, Registration open, In session or Closed.',
+          '**Answer this week\u2019s messages**: a shortcut to the Messages tool.',
+          'In their season, **Announce the holiday break** and **Announce the summer break** appear too.',
         ],
       },
       { kind: 'shot', key: 'quick-update-tiles' },
@@ -1938,6 +1954,7 @@ guides.push(
         items: [
           'Announcement banners',
           'Enrollment season, week by week',
+          'Mark a course full or waitlisted',
           'Cancel or move a class',
         ],
       },
@@ -2080,7 +2097,7 @@ guides.push(
         items: [
           'Open `Messages`. Answer each enquiry and expression of interest, then mark it **Replied** so nobody answers twice.',
           'Check a notice is up. If not, open `Quick update` and press **Remind people enrollment closes**. Leave the words empty and it writes them from the term: "Enrollment for Spring 2027 closes December 15. Save your seat today."',
-          'Keep seats honest. When a course fills, open it, go to `Schedule & cohorts`, and set that term’s offering to **Waitlist**. When it can take nobody else, **Closed**. Change the **Seats note** too, like "Two seats left".',
+          'Keep seats honest. When a course fills, open `Quick update`, press **Mark a course full or waitlisted**, pick the course and choose **Waitlist**. When it can take nobody else, choose **Full**. Add a note like "Two seats left" if you like.',
           'If an info night is coming, make sure it is on the Events page with a sign-up link (Quick update, **Add an info session or event**).',
         ],
       },
@@ -2091,15 +2108,16 @@ guides.push(
         items: [
           '**Open**: people can enroll. The course card shows the term and the schedule.',
           '**Waitlist**: the course is full, but people can still ask for a place.',
-          '**Closed**: no more places this term.',
+          '**Full** (Closed in the full editor): no more places this term.',
         ],
       },
       {
         kind: 'callout',
         tone: 'primary',
-        title: 'Change the offering, not the course',
-        text: 'The status sits on the offering for this term, inside the course. A course can be Closed this spring and Open again in the fall.',
+        title: 'Two places, one rule',
+        text: 'Quick update sets **Seats right now** on the course, and it wins over the status on the term’s offering. Choose nothing and the offering decides again. Checkup lists any course whose seats you set by hand, so you remember to set them back when a new term opens.',
       },
+      { kind: 'seealso', items: ['Mark a course full or waitlisted'] },
       { kind: 'h', text: 'When enrollment closes' },
       {
         kind: 'steps',
@@ -2114,6 +2132,62 @@ guides.push(
           'Read messages from the website',
           'Quick updates from your phone',
           'Open a new term',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'seats',
+    category: 'Courses, faculty & terms',
+    title: 'Mark a course full or waitlisted',
+    icon: 'people',
+    lead: 'When a course fills, tell the website in a few taps from your phone. When a seat opens up, set it back.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Quick update (top bar)', 'Mark a course full or waitlisted'],
+        link: { tool: 'quick-update' },
+      },
+      {
+        kind: 'p',
+        text: 'People deciding on a course look at its card. **Waitlist** tells them it is full but they can still ask for a place. **Full** tells them there is no room this term. Open says people can enroll.',
+      },
+      { kind: 'h', text: 'From your phone' },
+      {
+        kind: 'steps',
+        items: [
+          'Click `Quick update` in the top bar (on a phone, open the menu first).',
+          'Press **Mark a course full or waitlisted**, then pick the course from the list.',
+          'Under **Seats right now**, choose **Open**, **Waitlist** or **Full**.',
+          'Add a short note if you like, such as "Waitlist only" or "Two seats left". It shows on the course page.',
+          'Press `Save the seats`. The course card and page say so in a few minutes.',
+        ],
+      },
+      { kind: 'shot', key: 'seats-form' },
+      { kind: 'h', text: 'When a new term opens' },
+      {
+        kind: 'p',
+        text: 'Seats right now stays until you change it, and it applies to whatever term the course runs in next. When a new term opens, open the same form, pick the course and set it back to **Open**, or leave **Seats right now** on Choose one so the term decides again. Checkup lists every course you set by hand.',
+      },
+      { kind: 'h', text: 'At a desk' },
+      {
+        kind: 'p',
+        text: 'The full editor does the same thing a different way: open the course, go to the `Schedule & cohorts` tab, and set that term’s offering to Waitlist or Closed. Use it when you want a different status for each term a course runs in.',
+      },
+      { kind: 'shot', key: 'offering-status' },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'This goes on the website straight away',
+        text: 'It does not wait for Publish. If you marked the wrong course, open the form again and set it right.',
+      },
+      {
+        kind: 'seealso',
+        items: [
+          'Enrollment season, week by week',
+          'Add or edit a course',
+          'Quick updates from your phone',
         ],
       },
     ],
@@ -2199,6 +2273,8 @@ export const GUIDE_FOR_FIELD: FieldGuideMap = {
   fields: {
     // A course's terms: the offering is where dates, seats and waitlists live.
     offerings: { guide: 'courses', section: 'Set when it runs (Schedule & cohorts tab)' },
+    // The hand-set seats that win over the offering (Quick update's seats job).
+    seatsNow: { guide: 'seats', section: 'When a new term opens' },
     // The enrollment reminder reads this date; a wrong one shows a wrong deadline.
     registrationDeadline: { guide: 'terms', section: 'Add a term' },
     // The cover's code and question are easy to over-fill.
@@ -2220,7 +2296,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-page', 'help-panel'],
   page: ['edit-page', 'new-page', 'share-a-preview', 'rename-a-page', 'search-sharing'],
   homePage: ['edit-page', 'sections', 'photos', 'search-sharing'],
-  course: ['courses', 'enrollment', 'terms', 'photos'],
+  course: ['courses', 'seats', 'enrollment', 'terms', 'photos'],
   term: ['terms', 'new-term', 'enrollment', 'end-of-term'],
   facultyMember: ['faculty', 'photos'],
   teachingArea: ['courses'],

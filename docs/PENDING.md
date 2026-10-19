@@ -220,15 +220,15 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
-- **Wire the Studio tours and videos once starter card 137 lands** (2026-10-19, studio-complete
-  Phase A). The jobs and surfaces are in `docs/agent/studio-plan.md`. Waiting on 137: merge
-  `origin/main`, resync the PORTABLE files, map `src/sanity/guides/tours.ts` onto 137's tour
-  config, record the seven clips scripted in `docs/agent/studio-videos.md` with the tutorial-video
-  pipeline (sample data only), set each guide's `video`, and check every caption frame. Capture
-  the two shots still drawn as the wireframe (`term-editor`, `offering-status` in
-  `src/sanity/guides/shots.ts`): the harness cannot open an editor without a read token. Two job
-  types are noted for 137 in the plan (a form that changes an existing document, so "Mark a
-  course full" can move to Quick update; a `select` field kind for the event form).
+- **Check the Studio tours and the new Quick update jobs signed in** (2026-10-19, studio-complete
+  Phase B). Tours, the extra jobs, six clips and the pictures are wired (`docs/agent/studio-plan.md`,
+  `docs/agent/studio-videos.md`) and were checked against the harness with invented sample data, not
+  the real Studio. Signed in once: run the first tour (Home, This week, Quick update, Content, New
+  term, Publish, Help) and each "How this screen works" and watch that every spotlight lands on its
+  control; try **Mark a course full or waitlisted** on a real course and see the card change after the
+  rebuild; and set it back. If a spotlight misses, fix the anchor in `src/sanity/studio-tours.ts`.
+  Still open: record the six clips (`docs/agent/studio-videos.md`, scripts ready), capture the `offering-status` picture (its step timing in `tools/guide-shots/shots.json` still times out), a video for swapping a seasonal section (`saved-sections`), and a clip of the desk way
+  to mark a course full. Both need the editors on screen.
 
 - **Earlier versions (card 125) is switched off** (2026-10-19). The Studio phone app came
   with the card 125 sync (`/studio/manifest.webmanifest`, `public/studio/sw.js`, the

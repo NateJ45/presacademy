@@ -1,97 +1,71 @@
-# Studio tutorial videos: scripts
+# Studio tutorial videos
 
-Shot-by-shot scripts for the Academy's guide videos, ready for the tutorial-video pipeline
-(starter card 137, ported from Theology Matters: Playwright against the LOCAL Studio with
-sample data, captions burned in, mp4 and webm, each caption frame checked). Each finished clip
-goes in `public/guides/<slug>.mp4` and is named in that guide's `video` field in
-`src/sanity/guides/content.ts`; Home's "Watch how it is done" row then shows it.
+**Status (2026-10-19): the six scripts and the sample data are written and the pipeline runs, but no clip has been recorded yet.** `src/sanity/guides/videos.ts` is empty and no guide names a `video`. After recording, add `video: '<key>'` to each guide in the table.
 
-Rules for every recording:
+Six short clips show the jobs people ask about most. Each one is a "Watch how it is done" button
+on its guide and a card in Home's row. They are recorded by script, not by hand, so they can be
+made again when the Studio changes.
 
-- **Sample data only**, never the live dataset and never a real person. Use the names below.
-  Sample people: "Jordan Example" (a student), "Dr. Sample Teacher" (faculty). Sample courses:
-  "Romans: The Gospel Unfolded" (code SCR 201), "Reading the Psalms" (SCR 110). Sample terms:
-  "Spring 2027" (begins January 11, Apply by December 15), "Fall 2027".
-- Phone clips at 390 x 844, desk clips at 1440 x 900, light appearance.
-- Cover the account avatar and the greeting's name (the pipeline's mask step).
-- Captions: one line, under 70 characters, US spelling, no em-dashes, on screen at least
-  2.5 seconds. Pause on the result for 2 seconds before the clip ends.
-- 30 to 75 seconds each. No music under captions that carry the instructions.
+| Key                   | Guide (slug)                                   | Screen | What it shows                                             |
+| --------------------- | ---------------------------------------------- | ------ | --------------------------------------------------------- |
+| `quick-updates`       | Quick updates from your phone (`quick-update`) | Phone  | The tiles, then a notice from the first tap to the button |
+| `mark-course-full`    | Mark a course full or waitlisted (`seats`)     | Phone  | Pick the course, choose Waitlist, add a note              |
+| `enrollment-reminder` | Enrollment season (`enrollment`)               | Phone  | The reminder that words itself from the next term         |
+| `cancel-a-class`      | Cancel or move a class (`cancel-a-class`)      | Phone  | A red notice that comes down by itself                    |
+| `add-info-session`    | Post or edit an event (`post-event`)           | Phone  | An info night with a sign-up link                         |
+| `new-term`            | Open a new term (`new-term`)                   | Desk   | The New term checklist                                    |
 
-## 1. Quick updates from your phone (`quick-update`), phone, about 40 s
+Still to script, if they are asked for: Swap a seasonal section on Home (`saved-sections`) and
+Mark a course full at a desk (the offering inside the course). Both need the editors, which the
+sample data below can open but which have more to get wrong on screen.
 
-| #   | Shot                                                       | Caption                                        |
-| --- | ---------------------------------------------------------- | ---------------------------------------------- |
-| 1   | Home on a phone; tap the menu, then Quick update           | Quick update is for the jobs that cannot wait. |
-| 2   | The four tiles, held still                                 | Four short forms, a few taps each.             |
-| 3   | Tap "Put up a notice"; type "The office is closed Monday." | Type the notice in one or two sentences.       |
-| 4   | The last-day picker opens; pick a date a week out          | Pick the last day. It comes down by itself.    |
-| 5   | Tap the button; the Done card with Saved, then Building    | It is on the website in a few minutes.         |
+## How a clip is made
 
-## 2. Remind people enrollment closes (`enrollment`), phone, about 35 s
+The scripts are `tools/tutorial-videos/scripts/<key>.json`, written by
+`tools/tutorial-videos/make-scripts.mjs` (edit that, not the JSON). A script is a list of steps
+(go to a screen, ring a control, type, press a key) with a caption on most of them. The recorder
+(`tools/tutorial-videos/record.mjs`, from the starter) plays it in a browser against the LOCAL
+Studio, records the screen, trims the Studio's boot, writes an mp4 and a webm, the captions as a
+`.vtt` file and a poster.
 
-Sample data first: term "Spring 2027", Status Registration open, Apply by December 15.
+Every write to Sanity is refused while recording, so a script ends with a ring on the last
+button and never presses it.
 
-| #   | Shot                                                                      | Caption                                                      |
-| --- | ------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| 1   | Home's This week, "While enrollment is open, a notice says so" not ticked | Home notices enrollment is open with no reminder up.         |
-| 2   | Tap Open Quick update, then "Remind people enrollment closes"             | This one writes the words for you.                           |
-| 3   | Both boxes left empty; scroll to the button                               | Leave both boxes empty to use the term's own dates.          |
-| 4   | Tap "Put the reminder up"; Done card                                      | Done. It links to Get started and comes down after Apply by. |
-| 5   | The site's header in a second tab, the notice in place                    | "Enrollment for Spring 2027 closes December 15."             |
-| 6   | Back on Home, the line now ticked                                         | This week ticks itself.                                      |
+**Sample data.** The Academy's real dataset holds only its pages, so there is nothing to show in
+Quick update or the editors, and a clip must never carry a real person. Run the scripts with the
+sample-data module preloaded: `tools/studio-media/sample-data.mjs` answers the Studio's reads
+from `tools/studio-media/sample-data.json` (an invented teacher, three courses, two terms, two
+events and a notice) and nothing is sent to Sanity for them. Edit that JSON to change what a
+clip shows.
 
-## 3. Cancel or move a class (`cancel-a-class`), phone, about 35 s
+```
+node --import ./tools/studio-media/sample-data.mjs tools/tutorial-videos/record.mjs \
+     tools/tutorial-videos/scripts/<key>.json --serve --music <the track, outside the repo>
+node tools/tutorial-videos/checkframes.mjs <key>
+```
 
-| #   | Shot                                                | Caption                                                |
-| --- | --------------------------------------------------- | ------------------------------------------------------ |
-| 1   | Quick update, tap "Cancel or move a class"          | A class moved? Tell people in under a minute.          |
-| 2   | Type "Tonight's Romans class meets online instead." | Say which class and what to do.                        |
-| 3   | The date shows tomorrow; leave it                   | It comes down by itself after the day you pick.        |
-| 4   | Tap the button; the Done card                       | It is on every page in a few minutes, in red.          |
-| 5   | Hold on the Done card's line about email            | Then email the class: not everyone checks the website. |
+On Nathan's PC wrap the recorder in the machine build lock, one recording at a time. The music
+is `C:\Users\natha\Documents\Claude\Projects\_assets\video-music\playerzero-flow.mp3`: a quiet bed
+under the captions, never committed (the repo is public; `*.mp3` under `tools/` is git-ignored).
 
-## 4. Add an info session with a sign-up link (`post-event`), phone, about 45 s
+`checkframes.mjs` tiles one frame per caption into `tools/tutorial-videos/chk/`: look at every
+one. The caption must match the screen, and no name or avatar may show. Then paste the entry the
+recorder printed into `src/sanity/guides/videos.ts`, and name the key in the guide's `video`.
 
-| #   | Shot                                                              | Caption                                           |
-| --- | ----------------------------------------------------------------- | ------------------------------------------------- |
-| 1   | Quick update, tap "Add an info session or event"                  | An info night, an open lecture or a workshop.     |
-| 2   | Type "Spring info night"; pick January 5, 7:00 pm                 | What it is called, and when it starts.            |
-| 3   | Leave "Kind of event" and "Where" empty                           | Leave these empty for an info session on campus.  |
-| 4   | Type a one-line summary                                           | One or two sentences about it.                    |
-| 5   | Paste https://example.org/rsvp in "Sign-up link"                  | A sign-up link becomes a "Save your seat" button. |
-| 6   | Tap the button; Done card; then the Events page with the new card | It is on the Events page in a few minutes.        |
+## Rules for every clip
 
-## 5. Open a new term (`new-term`), desk, about 75 s
+- Sample data only, never the live dataset and never a real person.
+- Captions: plain, second person, US spelling, no em-dashes, at most two short lines.
+- 30 to 75 seconds. Phone clips are 390 by 844, the desk clip 1280 by 800, light appearance.
+- Re-record a clip when its screen changes: a new tile, a renamed button, a new field.
 
-Sample data: "Fall 2026" Closed; no "Spring 2027" yet; two sample courses.
+## Pictures
 
-| #   | Shot                                                                     | Caption                                                      |
-| --- | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1   | Click New term in the top bar; the checklist, most steps "To do"         | New term lays out the start of every term, in order.         |
-| 2   | Click "Create the new term"; type Spring 2027, January 11                | First the term: its name and the day it begins.              |
-| 3   | Set Registration opens and Apply by (December 15); Status Upcoming       | Then when enrollment opens and closes.                       |
-| 4   | Publish; back on New term, the first steps now green                     | Publish, and the checklist ticks itself.                     |
-| 5   | Click "Point courses at the new term"; open "Romans"; Schedule & cohorts | Each course that runs gets an offering for the new term.     |
-| 6   | Add item, choose Spring 2027, type "Tuesdays, 7 to 9pm, 8 weeks"         | Pick the term. The term holds the dates.                     |
-| 7   | Publish; back on New term                                                | Do the same for each course, then post the term-start event. |
-| 8   | Hold on the remaining steps                                              | You can stop halfway. It picks up where you left off.        |
+`tools/guide-shots/capture.mjs` makes the Site Guide's screenshots the same way, from
+`tools/guide-shots/shots.json` (desk) and `phone.json` (a narrow screen), with the same sample
+data. It prints the entry for `src/sanity/guides/shots.ts`; write the alt text yourself.
 
-## 6. Mark a course full (`courses`, section Schedule & cohorts), desk, about 40 s
-
-| #   | Shot                                                                        | Caption                                                   |
-| --- | --------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 1   | Content, Catalog, Courses; click "Romans: The Gospel Unfolded"              | A course has filled. Open it.                             |
-| 2   | Click the Schedule & cohorts tab                                            | Each term it runs in is an offering here.                 |
-| 3   | Open the Spring 2027 offering; Status: Waitlist; Seats note "Waitlist only" | Set it to Waitlist, or Closed if it can take nobody else. |
-| 4   | Publish; the course card on the site after the rebuild                      | The course card changes in a few minutes.                 |
-
-## 7. Swap a seasonal section on Home (`saved-sections`), desk, about 60 s
-
-| #   | Shot                                                           | Caption                                              |
-| --- | -------------------------------------------------------------- | ---------------------------------------------------- |
-| 1   | Pages, Home; scroll to the sections                            | Home is built from sections, like blocks.            |
-| 2   | Click "Insert a saved section"; pick the spring enrollment one | Saved sections are ready-made for each season.       |
-| 3   | Choose "A copy"; drag it above the old one                     | A copy is yours to change. Drag it where it belongs. |
-| 4   | Remove last season's section; Live preview                     | Take last season's out and look before you publish.  |
-| 5   | Publish                                                        | Publish when it reads right.                         |
+```
+node --import ./tools/studio-media/sample-data.mjs tools/guide-shots/capture.mjs --serve
+node --import ./tools/studio-media/sample-data.mjs tools/guide-shots/capture.mjs --config tools/guide-shots/phone.json --serve
+```

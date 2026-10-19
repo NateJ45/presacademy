@@ -7,7 +7,9 @@ import {
   type ReactNode,
 } from 'react';
 import { useClient, useWorkspace } from 'sanity';
-import { ToolHeading } from '../kit/shared';
+import { ToolHeading, useStaffView } from '../kit/shared';
+import { TourButton } from '../kit/StudioTour';
+import { kitConfig } from '../kit.config';
 import { brandIcon } from '../brandIcons';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { EditIcon } from '@sanity/icons/Edit';
@@ -287,6 +289,7 @@ function StepCard({ step }: { step: Step }) {
 export function SetupWizard() {
   const client = useClient({ apiVersion: '2025-01-01' });
   const { basePath } = useWorkspace();
+  const { staffView } = useStaffView(kitConfig);
   const [data, setData] = useState<SetupData | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -340,7 +343,7 @@ export function SetupWizard() {
           )}
         </Stack>
 
-        <Flex>
+        <Flex gap={3} align="center" wrap="wrap">
           <button
             type="button"
             onClick={() => void load()}
@@ -357,6 +360,8 @@ export function SetupWizard() {
           >
             {busy ? 'Checking...' : 'Check again'}
           </button>
+          {/* Card 137: "How this screen works", the tour named for this tool in studio-tours.ts. */}
+          <TourButton tool="term-setup" staff={staffView} />
         </Flex>
 
         {data === null ? (

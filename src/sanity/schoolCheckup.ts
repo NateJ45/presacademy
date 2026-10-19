@@ -196,6 +196,25 @@ const loneQuestions: CheckupRule = {
   },
 };
 
+/** Courses marked full or waitlisted by hand (Quick update): easy to forget when a new term opens. */
+const seatsByHand: CheckupRule = {
+  id: 'seats-by-hand',
+  run: ({ published, nameOf }) => {
+    const set = live(published, 'course').filter((d) => !isEmptyText(d.seatsNow));
+    if (!set.length) return null;
+    return {
+      severity: 'For information',
+      label: `${plural(set.length, 'course')} with seats set by hand`,
+      detail:
+        'Marked Open, Waitlist or Full from Quick update, and it stays that way until you change it. When a new term opens, set each one back to Open, or clear it so the term decides.',
+      target: { tool: 'quick-update' },
+      targetLabel: 'Open Quick update',
+      items: itemsOf(set, nameOf, () => 'seatsNow'),
+      itemLabel: 'Change the seats',
+    };
+  },
+};
+
 export const schoolRules: CheckupRule[] = [
   emptyNextTerm,
   staleTerms,
@@ -206,4 +225,5 @@ export const schoolRules: CheckupRule[] = [
   expiredNotices,
   loneQuestions,
   pastEvents,
+  seatsByHand,
 ];

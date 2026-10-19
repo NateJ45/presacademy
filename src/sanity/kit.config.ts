@@ -25,6 +25,9 @@ import { envVal } from './urls';
 import { AddDocumentIcon } from '@sanity/icons/AddDocument';
 import { BellIcon } from '@sanity/icons/Bell';
 import { CalendarIcon } from '@sanity/icons/Calendar';
+import { EditIcon } from '@sanity/icons/Edit';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
+import { UsersIcon } from '@sanity/icons/Users';
 import { BookIcon } from '@sanity/icons/Book';
 import { WarningOutlineIcon } from '@sanity/icons/WarningOutline';
 import {
@@ -36,6 +39,7 @@ import {
   type ReminderTerm,
 } from '../lib/quick-updates';
 import { runPageCheck } from './actions/checkPage';
+import { TOURS, WELCOME, WHATS_NEW } from './studio-tours';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 import { schoolRules } from './schoolCheckup';
 import { exampleTextRule } from '../lib/studio-prepublish';
@@ -179,10 +183,10 @@ export const kitConfig: KitConfig = {
       id: 'seats',
       title: 'Seats and waitlists are right',
       detail:
-        'During enrollment, when a course fills, set its offering to Waitlist; when it can take nobody else, set it to Closed. Tick this when they match.',
+        'During enrollment, when a course fills, mark it Waitlist; when it can take nobody else, mark it Full. Quick update does it from a phone. Tick this when the website matches.',
       manual: true,
-      target: { pane: 'catalog;course' },
-      targetLabel: 'Open the courses',
+      target: { tool: 'quick-update' },
+      targetLabel: 'Open Quick update',
     },
     {
       id: 'checkup',
@@ -269,6 +273,51 @@ export const kitConfig: KitConfig = {
         'The reminder will be across the top of every page in a few minutes, linking to Get started, and it takes itself down on the last day.',
     },
     {
+      // Enrollment weeks: the job the administrator does most often at the desk, now
+      // a few taps. An edit job changes top-level fields, so the course keeps its
+      // own "Seats right now" (course.ts) that wins over the offering's status.
+      id: 'seats',
+      title: 'Mark a course full or waitlisted',
+      detail: 'Pick the course, then Open, Waitlist or Full. The course card changes at once.',
+      icon: UsersIcon,
+      meaning: 'people',
+      job: {
+        kind: 'edit',
+        pick: {
+          type: 'course',
+          filter: 'archived != true',
+          order: 'title asc',
+          titleField: 'title',
+          label: 'Which course?',
+        },
+      },
+      fields: [
+        {
+          name: 'seatsNow',
+          title: 'Seats right now',
+          kind: 'select',
+          options: [
+            { title: 'Open', value: 'open' },
+            { title: 'Waitlist', value: 'waitlist' },
+            { title: 'Full', value: 'closed' },
+          ],
+          description:
+            'Leave it on Choose one to let the term decide again, for example when a new term opens.',
+        },
+        {
+          name: 'seatsNowNote',
+          title: 'A note for the course page',
+          kind: 'string',
+          max: 60,
+          description: 'Like "Waitlist only" or "Two seats left". Optional.',
+        },
+      ],
+      submitLabel: 'Save the seats',
+      doneTitle: 'The seats are saved.',
+      doneMessage:
+        'The course card and page will say so in a few minutes. Tick "Seats and waitlists are right" on Home.',
+    },
+    {
       id: 'class-change',
       title: 'Cancel or move a class',
       detail: 'A notice in red that takes itself down after the day you name.',
@@ -311,9 +360,13 @@ export const kitConfig: KitConfig = {
         {
           name: 'category',
           title: 'Kind of event',
-          kind: 'string',
-          description:
-            'Info session, Open lecture or Workshop. Leave it empty for an info session.',
+          kind: 'select',
+          options: [
+            { title: 'Info session', value: 'Info session' },
+            { title: 'Open lecture', value: 'Open lecture' },
+            { title: 'Workshop', value: 'Workshop' },
+          ],
+          description: 'Leave it on Choose one for an info session.',
         },
         {
           name: 'location',
@@ -346,6 +399,145 @@ export const kitConfig: KitConfig = {
         }),
       doneMessage:
         'The event will be on the Events page in a few minutes. Open it in the full editor to add a picture, a cost or more detail.',
+    },
+    {
+      id: 'change-event',
+      title: 'Change an event’s time or place',
+      detail: 'Pick an upcoming event, then change when, where or the sign-up link.',
+      icon: EditIcon,
+      meaning: 'event',
+      job: {
+        kind: 'edit',
+        pick: {
+          type: 'event',
+          filter: 'archived != true && eventType == "oneTime" && start > now()',
+          order: 'start asc',
+          titleField: 'title',
+          label: 'Which event?',
+        },
+      },
+      fields: [
+        { name: 'start', title: 'When it starts', kind: 'datetime', required: true },
+        {
+          name: 'location',
+          title: 'Where',
+          kind: 'string',
+          description: 'Leave it empty to use the campus address.',
+        },
+        {
+          name: 'registrationUrl',
+          title: 'Sign-up link',
+          kind: 'url',
+          description: 'Starting https://. Empty takes the Save your seat button away.',
+        },
+      ],
+      submitLabel: 'Save the changes',
+      doneTitle: 'The event is changed.',
+      doneMessage:
+        'The Events page will show the new time or place in a few minutes. If it moved a long way, a notice helps too.',
+    },
+    {
+      id: 'term-status',
+      title: 'Open or close enrollment for a term',
+      detail:
+        'Pick the term and say where it is: Upcoming, Registration open, In session or Closed.',
+      icon: BookIcon,
+      meaning: 'times',
+      job: {
+        kind: 'edit',
+        pick: {
+          type: 'term',
+          filter: 'archived != true && status != "closed"',
+          order: 'startDate asc',
+          titleField: 'title',
+          label: 'Which term?',
+        },
+      },
+      fields: [
+        {
+          name: 'status',
+          title: 'Where the term is',
+          kind: 'select',
+          required: true,
+          options: [
+            { title: 'Upcoming', value: 'upcoming' },
+            { title: 'Registration open', value: 'open' },
+            { title: 'In session', value: 'inSession' },
+            { title: 'Closed', value: 'closed' },
+          ],
+          description: 'Registration open turns on the enrollment notices and the Apply by lines.',
+        },
+      ],
+      submitLabel: 'Save the status',
+      doneTitle: 'The term is updated.',
+      doneMessage:
+        'The website will say so in a few minutes. Quick update can word a reminder for you next.',
+    },
+    {
+      // A shortcut: Messages has its own tool, with Replied marks and filters.
+      id: 'messages',
+      title: 'Answer this week’s messages',
+      detail: 'Enquiries and expressions of interest from the website.',
+      icon: EnvelopeIcon,
+      meaning: 'question',
+      job: { kind: 'link', target: { tool: 'messages' } },
+    },
+    {
+      // Seasonal: the school's two long breaks. Shown only in their season.
+      id: 'holiday-break',
+      title: 'Announce the holiday break',
+      detail: 'A notice for the weeks around the holidays, down by the day you pick.',
+      icon: BellIcon,
+      meaning: 'notice',
+      when: { from: '11-15', to: '01-10' },
+      fields: [
+        {
+          name: 'message',
+          title: 'The notice',
+          kind: 'text',
+          required: true,
+          max: 160,
+          description: 'Say when classes pause and when they come back.',
+        },
+        {
+          name: 'lastDay',
+          title: 'Last day to show it',
+          kind: 'date',
+          required: true,
+          initial: (now) => daysFrom(now, 21),
+        },
+      ],
+      build: (v) => buildNotice({ message: v.message, lastDay: v.lastDay }, 'special'),
+      doneMessage:
+        'The notice will be on the website in a few minutes and comes down by itself after the day you picked.',
+    },
+    {
+      id: 'summer-break',
+      title: 'Announce the summer break',
+      detail: 'A notice for the summer, with when the office and the next term return.',
+      icon: BellIcon,
+      meaning: 'notice',
+      when: { from: '05-01', to: '08-31' },
+      fields: [
+        {
+          name: 'message',
+          title: 'The notice',
+          kind: 'text',
+          required: true,
+          max: 160,
+          description: 'Say when the next term begins and how to reach the office meanwhile.',
+        },
+        {
+          name: 'lastDay',
+          title: 'Last day to show it',
+          kind: 'date',
+          required: true,
+          initial: (now) => daysFrom(now, 30),
+        },
+      ],
+      build: (v) => buildNotice({ message: v.message, lastDay: v.lastDay }, 'special'),
+      doneMessage:
+        'The notice will be on the website in a few minutes and comes down by itself after the day you picked.',
     },
   ],
 
@@ -499,36 +691,13 @@ export const kitConfig: KitConfig = {
   // the "Check this page..." action, on the page-builder types.
   pageCheck: { types: [...PAGE_BUILDER_TYPES], run: (doc, client) => runPageCheck(client, doc) },
 
-  tourSteps: [
-    {
-      title: 'This is Home',
-      body: 'Home opens first every time. It shows what to do this week, whether your last change is on the website yet, and anything that needs fixing.',
-    },
-    {
-      title: 'Content is where you edit',
-      body: 'Click Content in the top bar to add a course, a term, a faculty member, an event or a notice, or to change any page. The things you change most are at the top.',
-    },
-    {
-      title: 'Quick update, for your phone',
-      body: 'A notice, an enrollment reminder, a class that moved or an info night, in a few taps. These go on the website straight away, so they are made for a phone.',
-    },
-    {
-      title: 'Live preview shows the real page',
-      body: 'Live preview shows the website as visitors will see it, with your unpublished changes in place. Click any words on it to edit them right there.',
-    },
-    {
-      title: 'Nothing is public until you press Publish',
-      body: 'Your changes are private until you press Publish. After that the website updates itself in a few minutes. Changed your mind? Use Undo, or move a thing to the Trash and bring it back later.',
-    },
-    {
-      title: 'A new term has its own checklist',
-      body: 'New term in the top bar walks the start of every term in order: the dates, the courses that run, the rates and the term-start event.',
-    },
-    {
-      title: 'Help is always one click away',
-      body: `Site Guide in the top bar has step-by-step help for every job, and you can print any of it. Stuck? Home has a card for asking ${SITE.contactName}.`,
-    },
-  ],
+  // Card 137: spotlight tours, the welcome and "What's new" (src/sanity/studio-tours.ts).
+  tours: TOURS,
+  welcome: WELCOME,
+  whatsNew: WHATS_NEW,
+
+  // Card 106's one stepped dialog; card 137's `tours` replaces it.
+  tourSteps: [],
 
   liveSlowAfterMinutes: 15,
 

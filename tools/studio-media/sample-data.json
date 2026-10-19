@@ -1,0 +1,213 @@
+{
+  "note": "Invented people, courses and dates for pictures and videos. Nothing here is real.",
+  "documents": [
+    {
+      "_id": "term-fall-2026",
+      "_type": "term",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Fall 2026",
+      "slug": {
+        "_type": "slug",
+        "current": "fall-2026"
+      },
+      "startDate": "2026-09-14",
+      "endDate": "2026-12-11",
+      "registrationDeadline": "2026-09-01",
+      "status": "inSession"
+    },
+    {
+      "_id": "term-spring-2027",
+      "_type": "term",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Spring 2027",
+      "slug": {
+        "_type": "slug",
+        "current": "spring-2027"
+      },
+      "startDate": "2027-01-11",
+      "endDate": "2027-04-23",
+      "registrationOpens": "2026-10-15",
+      "registrationDeadline": "2026-12-15",
+      "status": "open"
+    },
+    {
+      "_id": "faculty-sample-teacher",
+      "_type": "facultyMember",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "name": "Sample Teacher",
+      "honorific": "Dr.",
+      "slug": {
+        "_type": "slug",
+        "current": "sample-teacher"
+      },
+      "title": "Professor of Biblical Studies"
+    },
+    {
+      "_id": "course-romans",
+      "_type": "course",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Romans: The Gospel Unfolded",
+      "slug": {
+        "_type": "slug",
+        "current": "romans"
+      },
+      "courseCode": "SCR 201",
+      "summary": "A close reading of Paul’s letter, from the guilt of all to the hope of glory.",
+      "level": "Intermediate",
+      "format": "Live online",
+      "instructors": [
+        {
+          "_type": "reference",
+          "_ref": "faculty-sample-teacher",
+          "_key": "i1"
+        }
+      ],
+      "archived": false,
+      "offerings": [
+        {
+          "_key": "o1",
+          "_type": "courseOffering",
+          "term": {
+            "_type": "reference",
+            "_ref": "term-spring-2027"
+          },
+          "schedule": "Tuesdays, 7 to 9pm, 8 weeks",
+          "sessions": 8,
+          "seatsNote": "A few seats left",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "_id": "course-psalms",
+      "_type": "course",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Reading the Psalms",
+      "slug": {
+        "_type": "slug",
+        "current": "psalms"
+      },
+      "courseCode": "SCR 110",
+      "summary": "The prayer book of the Bible, one psalm at a time.",
+      "level": "Introductory",
+      "format": "Live online",
+      "instructors": [
+        {
+          "_type": "reference",
+          "_ref": "faculty-sample-teacher",
+          "_key": "i1"
+        }
+      ],
+      "archived": false,
+      "offerings": [
+        {
+          "_key": "o1",
+          "_type": "courseOffering",
+          "term": {
+            "_type": "reference",
+            "_ref": "term-spring-2027"
+          },
+          "schedule": "Thursdays, 7 to 9pm, 8 weeks",
+          "sessions": 8,
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "_id": "course-history",
+      "_type": "course",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "The Early Church",
+      "slug": {
+        "_type": "slug",
+        "current": "early-church"
+      },
+      "courseCode": "HIS 101",
+      "summary": "The first five centuries, from the apostles to Chalcedon.",
+      "level": "Introductory",
+      "format": "Live online",
+      "instructors": [
+        {
+          "_type": "reference",
+          "_ref": "faculty-sample-teacher",
+          "_key": "i1"
+        }
+      ],
+      "archived": false,
+      "offerings": [
+        {
+          "_key": "o1",
+          "_type": "courseOffering",
+          "term": {
+            "_type": "reference",
+            "_ref": "term-spring-2027"
+          },
+          "schedule": "Mondays, 7 to 9pm, 8 weeks",
+          "sessions": 8,
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "_id": "event-info-night",
+      "_type": "event",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Spring info night",
+      "slug": {
+        "_type": "slug",
+        "current": "spring-info-night-2027-01-05"
+      },
+      "eventType": "oneTime",
+      "category": "Info session",
+      "start": "2027-01-05T19:00:00.000Z",
+      "allDay": false,
+      "location": "Online",
+      "summary": "Meet the faculty and ask your questions.",
+      "archived": false
+    },
+    {
+      "_id": "event-open-lecture",
+      "_type": "event",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Open lecture: Reading Romans",
+      "slug": {
+        "_type": "slug",
+        "current": "open-lecture-2027-01-19"
+      },
+      "eventType": "oneTime",
+      "category": "Open lecture",
+      "start": "2027-01-19T19:00:00.000Z",
+      "allDay": false,
+      "archived": false
+    },
+    {
+      "_id": "announcement-sample",
+      "_type": "announcement",
+      "_rev": "sample",
+      "_createdAt": "2026-10-01T12:00:00.000Z",
+      "_updatedAt": "2026-10-01T12:00:00.000Z",
+      "title": "Enrollment for Spring 2027 closes December 15 (until 2026-12-15)",
+      "message": "Enrollment for Spring 2027 closes December 15. Save your seat today.",
+      "style": "special",
+      "enabled": true,
+      "endDate": "2026-12-15T23:59:00.000Z",
+      "archived": false
+    }
+  ]
+}

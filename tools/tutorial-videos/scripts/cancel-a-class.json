@@ -1,0 +1,67 @@
+{
+  "slug": "cancel-a-class",
+  "title": "Cancel or move a class",
+  "start": "/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "steps": [
+    {
+      "do": "caption",
+      "text": "A class moved? Tell people in under a minute.",
+      "ms": 2800,
+      "poster": true
+    },
+    {
+      "do": "goto",
+      "path": "/quick-update",
+      "caption": "Open Quick update.",
+      "ms": 2200
+    },
+    {
+      "do": "waitFor",
+      "target": "[data-quick=\"class-change\"]"
+    },
+    {
+      "do": "click",
+      "target": "[data-quick=\"class-change\"]",
+      "caption": "Press Cancel or move a class.",
+      "ms": 900
+    },
+    {
+      "do": "waitFor",
+      "target": "#quick-message"
+    },
+    {
+      "do": "type",
+      "target": "#quick-message",
+      "text": "Tonight’s Romans class meets online instead.",
+      "caption": "Say which class and what to do.",
+      "ms": 1800
+    },
+    {
+      "do": "ring",
+      "target": "#quick-lastDay",
+      "caption": "It comes down by itself after the day you pick.",
+      "ms": 3000,
+      "hold": 2600
+    },
+    {
+      "do": "scroll",
+      "target": "text:Put it on the website"
+    },
+    {
+      "do": "ring",
+      "target": "text:Put it on the website",
+      "caption": "It shows in red across every page in a few minutes.",
+      "ms": 3200,
+      "hold": 2800
+    },
+    {
+      "do": "caption",
+      "text": "Then email the class: not everyone checks the website.",
+      "ms": 3400
+    }
+  ]
+}
