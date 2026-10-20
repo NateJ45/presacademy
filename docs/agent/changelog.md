@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter card 138 adopted (CI snapshot wrapper)._ `scripts/snapshot.mjs`, `scripts/live-watch.mjs`, the snapshot-aware Sanity client in `src/lib/sanity.ts` and the OG script, the build wrapper in `ci.yml` and `lighthouse.yml`, `live-watch.yml` (idle until `SITE_URL` is set), and `groq-js` as a dev dependency. No snapshot file is committed because CI already builds with no project id.
+
 _2026-10-19: Studio tutorial clips._ Six phone and desk clips are recorded from sample data (`public/guide-videos/`, registered in `src/sanity/guides/videos.ts`) and named by their guides, the `offering-status` picture is captured, and the sample-data module now loads on any dev port. Recording steps: `docs/agent/studio-videos.md`.
 
 _2026-10-19: Live-page redirect guard adopted (starter PORTS.md card 22 addendum; `fix/redirect-live-page-guard`)._ A redirect whose old address is where a published page lives now (a rename and a rename back, or a hand-filed redirect over a real page) made a loop on another family site on 2026-10-19, because Cloudflare applies redirects before it serves files. `src/lib/redirect-guard.ts` (+ test, byte-identical to the starter) now drops such entries at build time and logs them; the `redirect` document stays in the Studio. `astro.config.mjs` wires it with `LIVE_PATH_BY_TYPE` for `page`, `event`, `course` and `facultyMember`, read through `fetchLiveDocs()` in `scripts/lib/redirects.mjs`.

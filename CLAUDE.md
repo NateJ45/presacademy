@@ -39,6 +39,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 ## Branch, CI and deploy
 
 - Git workflow: `main` is the only branch (staging abandoned 2026-10-03). Work on short-lived branches, open a PR to `main`, CI must be green (required checks `build` and `test`, now aggregator jobs over parallel `static` / `site` / sharded `e2e` with weighted blocks, `PWTEST_SHARD_WEIGHTS` in `ci.yml`, re-cut when tests are added in bulk, see `docs/agent/ci-cd-and-ops.md`; Lighthouse is scheduled and path-filtered, not required), merge = production deploy (Cloudflare watches `main`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
+- CI never reads live content (starter card 138, adopted 2026-10-20): `ci.yml` and `lighthouse.yml` run the build through `node scripts/snapshot.mjs run --`. This site builds with no Sanity project id, so there is no snapshot file and the wrapper just runs the build; `live-watch.yml` is a non-blocking daily check of the real site, off until the `SITE_URL` repo variable is set and its schedule is uncommented.
 - The PUBLIC site is statically built; a Sanity edit reaches visitors only after a rebuild (gotcha #7).
 
 ## Never-break rules (numbered gotchas)
