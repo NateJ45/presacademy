@@ -1,7 +1,8 @@
 {
   "slug": "mark-course-full",
   "title": "Mark a course full or waitlisted",
-  "start": "/",
+  "start": "/quick-update",
+  "ready": "[data-quick=\"seats\"]",
   "viewport": {
     "width": 390,
     "height": 844
@@ -14,9 +15,8 @@
       "poster": true
     },
     {
-      "do": "goto",
-      "path": "/quick-update",
-      "caption": "Open Quick update.",
+      "do": "caption",
+      "text": "Open Quick update.",
       "ms": 2200
     },
     {
@@ -92,5 +92,11 @@
       "text": "To set it back later, choose Open here again.",
       "ms": 3200
     }
-  ]
+  ],
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  }
 }

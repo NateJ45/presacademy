@@ -20,6 +20,13 @@ mkdirSync(OUT, { recursive: true });
 
 // A phone: the Studio's own narrow layout. A desk: the default size.
 const PHONE = { width: 390, height: 844 };
+// Sanity's "What's new" toast and the permission banner are covered on screen.
+const COVER = {
+  selectors: [
+    'div[data-ui="Popover__wrapper"]:has([data-ui="whats-new-root"])',
+    '[data-testid="permission-check-banner"]',
+  ],
+};
 
 const cap = (text, ms = 2600, extra = {}) => ({ do: 'caption', text, ms, ...extra });
 const go = (path, caption, ms) => ({
@@ -64,11 +71,12 @@ const scripts = [
   {
     slug: 'quick-updates',
     title: 'Quick updates from your phone',
-    start: '/',
+    start: '/quick-update',
+    ready: tile('notice'),
     viewport: PHONE,
     steps: [
       cap('Quick update is for the jobs that cannot wait.', 2800, { poster: true }),
-      go('/quick-update', 'On a phone, open the menu and choose Quick update.', 2800),
+      cap('On a phone, open the menu and choose Quick update.', 2800),
       waitFor(tile('notice')),
       ring('[data-tour="quick-list"]', 'Each big button is one job, a few taps each.', 3200, 2800),
       click(tile('notice'), 'Try the first one: put up a notice.', 900),
@@ -92,11 +100,12 @@ const scripts = [
   {
     slug: 'mark-course-full',
     title: 'Mark a course full or waitlisted',
-    start: '/',
+    start: '/quick-update',
+    ready: tile('seats'),
     viewport: PHONE,
     steps: [
       cap('A course has filled. Tell the website in a few taps.', 2800, { poster: true }),
-      go('/quick-update', 'Open Quick update.', 2200),
+      cap('Open Quick update.', 2200),
       waitFor(tile('seats')),
       click(tile('seats'), 'Press Mark a course full or waitlisted.', 900),
       waitFor('[data-tour="quick-pick"]'),
@@ -118,11 +127,12 @@ const scripts = [
   {
     slug: 'enrollment-reminder',
     title: 'Remind people enrollment closes',
-    start: '/',
+    start: '/quick-update',
+    ready: tile('enrollment-reminder'),
     viewport: PHONE,
     steps: [
       cap('While enrollment is open, a reminder helps.', 2800, { poster: true }),
-      go('/quick-update', 'Open Quick update.', 2200),
+      cap('Open Quick update.', 2200),
       waitFor(tile('enrollment-reminder')),
       click(tile('enrollment-reminder'), 'Press Remind people enrollment closes.', 900),
       waitFor('#quick-message'),
@@ -140,11 +150,12 @@ const scripts = [
   {
     slug: 'cancel-a-class',
     title: 'Cancel or move a class',
-    start: '/',
+    start: '/quick-update',
+    ready: tile('class-change'),
     viewport: PHONE,
     steps: [
       cap('A class moved? Tell people in under a minute.', 2800, { poster: true }),
-      go('/quick-update', 'Open Quick update.', 2200),
+      cap('Open Quick update.', 2200),
       waitFor(tile('class-change')),
       click(tile('class-change'), 'Press Cancel or move a class.', 900),
       waitFor('#quick-message'),
@@ -168,16 +179,20 @@ const scripts = [
   {
     slug: 'add-info-session',
     title: 'Add an info session with a sign-up link',
-    start: '/',
+    start: '/quick-update',
+    ready: tile('event'),
     viewport: PHONE,
     steps: [
       cap('An info night, an open lecture or a workshop.', 2800, { poster: true }),
-      go('/quick-update', 'Open Quick update.', 2200),
+      cap('Open Quick update.', 2200),
       waitFor(tile('event')),
       click(tile('event'), 'Press Add an info session or event.', 900),
       waitFor('#quick-title'),
       type('#quick-title', 'Spring info night', 'What it is called, and when it starts.', 1400),
-      type('#quick-start', '010520270700PM', undefined, 1500),
+      type('#quick-start', '01052027', undefined, 600),
+      key('ArrowRight'),
+      ...[...'0700PM'].map(key),
+      { do: 'wait', ms: 900 },
       ring('#quick-category', 'Leave the kind on Choose one for an info session.', 3000, 2600),
       type(
         '#quick-summary',
@@ -198,10 +213,11 @@ const scripts = [
   {
     slug: 'new-term',
     title: 'Open a new term',
-    start: '/',
+    start: '/term-setup',
+    ready: '.pa-setup-card',
     steps: [
       cap('A new term has its own checklist.', 2600, { poster: true }),
-      go('/term-setup', 'Open New term in the top bar.', 2800),
+      cap('Open New term in the top bar.', 2800),
       waitFor('.pa-setup-card'),
       ring('.pa-setup-card', 'It lays out the start of every term, in order.', 3400, 3000),
       cap('Each card opens the right place to make the change.', 3400),
@@ -214,6 +230,9 @@ const scripts = [
 ];
 
 for (const s of scripts) {
-  writeFileSync(join(OUT, `${s.slug}.json`), JSON.stringify(s, null, 2) + '\n');
+  writeFileSync(
+    join(OUT, `${s.slug}.json`),
+    JSON.stringify({ ...s, cover: COVER }, null, 2) + '\n',
+  );
 }
 console.log(`Wrote ${scripts.length} scripts to ${OUT}`);

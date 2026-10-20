@@ -227,7 +227,7 @@ the Westminster Standards and the Book of Confessions."`
   term, Publish, Help) and each "How this screen works" and watch that every spotlight lands on its
   control; try **Mark a course full or waitlisted** on a real course and see the card change after the
   rebuild; and set it back. If a spotlight misses, fix the anchor in `src/sanity/studio-tours.ts`.
-  Still open: record the six clips (`docs/agent/studio-videos.md`, scripts ready), capture the `offering-status` picture (its step timing in `tools/guide-shots/shots.json` still times out), a video for swapping a seasonal section (`saved-sections`), and a clip of the desk way
+  Still open: a video for swapping a seasonal section (`saved-sections`), and a clip of the desk way
   to mark a course full. Both need the editors on screen.
 
 - **Earlier versions (card 125) is switched off** (2026-10-19). The Studio phone app came

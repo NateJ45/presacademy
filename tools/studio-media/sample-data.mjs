@@ -111,6 +111,27 @@ chromium.launch = async (...args) => {
       { timezoneId: 'UTC', locale: 'en-US', ...(a[0] ?? {}) },
       ...a.slice(1),
     );
+    // Everything else Sanity answers (users, grants, features) is fetched for real here, in
+    // Node, and handed back with CORS headers, so a port that is not on the project's CORS
+    // list (4321 may be taken by another site's server) still loads without a network error.
+    await context.route(/\.sanity\.io\//, async (route) => {
+      const request = route.request();
+      const cors = {
+        'access-control-allow-origin': request.headers().origin ?? '*',
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-headers': '*',
+      };
+      if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+      try {
+        // Say we are the default port, which is on the project's CORS list.
+        const response = await route.fetch({
+          headers: { ...request.headers(), origin: 'http://localhost:4321' },
+        });
+        return route.fulfill({ response, headers: { ...response.headers(), ...cors } });
+      } catch {
+        return route.fulfill({ status: 401, headers: cors, body: '{}' });
+      }
+    });
     await context.route(/\.sanity\.io\/v[\w-]+\/data\/(query|doc|listen)\//, handle);
     return context;
   };

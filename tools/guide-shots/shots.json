@@ -14,25 +14,17 @@
     {
       "key": "offering-status",
       "path": "/structure/catalog;course;course-romans",
-      "waitFor": "[data-testid=\"field-title\"]",
+      "waitFor": "[data-testid=\"nested-object-dialog\"]",
       "steps": [
         {
           "do": "click",
-          "target": "role:tab|Schedule & cohorts",
-          "ms": 1500
-        },
-        {
-          "do": "waitFor",
-          "target": "[data-testid=\"field-offerings\"]"
-        },
-        {
-          "do": "wait",
-          "ms": 7000
+          "target": "role:tab|Schedule",
+          "ms": 4000
         },
         {
           "do": "click",
           "target": "text:Spring 2027",
-          "ms": 9000
+          "ms": 6000
         }
       ],
       "clip": "[data-testid=\"nested-object-dialog\"]",
@@ -40,7 +32,7 @@
       "measure": {
         "Set the Status for this term here.": "[data-testid='field-offerings[_key==\"o1\"].status']"
       },
-      "settle": 7000
+      "settle": 10000
     },
     {
       "key": "term-editor",

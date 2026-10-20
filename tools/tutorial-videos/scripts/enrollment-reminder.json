@@ -1,7 +1,8 @@
 {
   "slug": "enrollment-reminder",
   "title": "Remind people enrollment closes",
-  "start": "/",
+  "start": "/quick-update",
+  "ready": "[data-quick=\"enrollment-reminder\"]",
   "viewport": {
     "width": 390,
     "height": 844
@@ -14,9 +15,8 @@
       "poster": true
     },
     {
-      "do": "goto",
-      "path": "/quick-update",
-      "caption": "Open Quick update.",
+      "do": "caption",
+      "text": "Open Quick update.",
       "ms": 2200
     },
     {
@@ -56,5 +56,11 @@
       "ms": 3400,
       "hold": 3000
     }
-  ]
+  ],
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  }
 }

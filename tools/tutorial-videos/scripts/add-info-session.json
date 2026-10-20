@@ -1,7 +1,8 @@
 {
   "slug": "add-info-session",
   "title": "Add an info session with a sign-up link",
-  "start": "/",
+  "start": "/quick-update",
+  "ready": "[data-quick=\"event\"]",
   "viewport": {
     "width": 390,
     "height": 844
@@ -14,9 +15,8 @@
       "poster": true
     },
     {
-      "do": "goto",
-      "path": "/quick-update",
-      "caption": "Open Quick update.",
+      "do": "caption",
+      "text": "Open Quick update.",
       "ms": 2200
     },
     {
@@ -43,8 +43,40 @@
     {
       "do": "type",
       "target": "#quick-start",
-      "text": "010520270700PM",
-      "ms": 1500
+      "text": "01052027",
+      "ms": 600
+    },
+    {
+      "do": "press",
+      "key": "ArrowRight"
+    },
+    {
+      "do": "press",
+      "key": "0"
+    },
+    {
+      "do": "press",
+      "key": "7"
+    },
+    {
+      "do": "press",
+      "key": "0"
+    },
+    {
+      "do": "press",
+      "key": "0"
+    },
+    {
+      "do": "press",
+      "key": "P"
+    },
+    {
+      "do": "press",
+      "key": "M"
+    },
+    {
+      "do": "wait",
+      "ms": 900
     },
     {
       "do": "ring",
@@ -78,5 +110,11 @@
       "ms": 3200,
       "hold": 2800
     }
-  ]
+  ],
+  "cover": {
+    "selectors": [
+      "div[data-ui=\"Popover__wrapper\"]:has([data-ui=\"whats-new-root\"])",
+      "[data-testid=\"permission-check-banner\"]"
+    ]
+  }
 }

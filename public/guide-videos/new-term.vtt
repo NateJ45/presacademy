@@ -1,0 +1,39 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.630
+A new term has its own checklist.
+
+2
+00:00:02.630 --> 00:00:05.949
+Open New term in the top bar.
+
+3
+00:00:05.949 --> 00:00:09.889
+It lays out the start of
+every term, in order.
+
+4
+00:00:09.889 --> 00:00:13.304
+Each card opens the right
+place to make the change.
+
+5
+00:00:13.304 --> 00:00:16.906
+Create the term, then set when
+enrollment opens and closes.
+
+6
+00:00:16.906 --> 00:00:20.706
+Then point each course at the new
+term, and post the term-start event.
+
+7
+00:00:20.706 --> 00:00:24.111
+It reads the website each
+time, so you can stop halfway.
+
+8
+00:00:24.111 --> 00:00:29.027
+Come back and press Check
+again. Done steps turn green.
