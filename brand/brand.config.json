@@ -100,7 +100,7 @@
       "markColors": ["#33503F", "#7A2A2C", "#3E4F5C", "#222A25"],
       "stone": "square",
       "connector": {
-        "kind": "line",
+        "kind": "dots",
         "color": "#C9A46A"
       },
       "tones": {
