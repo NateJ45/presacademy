@@ -30,6 +30,7 @@ import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { ARCHIVABLE_TYPES, NOT_ARCHIVED } from './schemaTypes/archived';
 import { staffDesk } from './kit/shared';
 import { emptyAwareList } from './kit/emptyList';
+import { trashListItem } from './kit/trash';
 import { brandIcon, typeIcon } from './brandIcons';
 import { WEEK_TYPE } from '../lib/studio-kit';
 import { TRASH_TYPE } from '../lib/studio-trash';
@@ -422,16 +423,8 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
 
       // The Studio kit's Trash (card 106): copies of deleted things, one click
       // to bring each back. Id 'trash' is load-bearing (the Checkup links here).
-      S.listItem()
-        .id('trash')
-        .title('Trash (bring things back)')
-        .icon(brandIcon('trash'))
-        .child(
-          S.documentTypeList(TRASH_TYPE)
-            .id('trash-list')
-            .title('Trash')
-            .defaultOrdering([{ field: 'deletedAt', direction: 'desc' }]),
-        ),
+      // Card 146: an empty Trash shows a page of its own instead of a bare list.
+      trashListItem(S, context, brandIcon('trash')),
       // Documents soft-deleted before the kit's Trash (archived == true), and
       // pages put away with Archive. Restore and Delete forever live here.
       S.listItem()

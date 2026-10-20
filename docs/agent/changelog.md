@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter cards 144 to 146 adopted._ Home is a full-width dashboard with a status rail (145), and an empty Trash has a page of its own (144/146: `structure.ts` now uses `trashListItem`). Marked kit files copied byte-identical from the starter.
+
 _2026-10-20: The Studio's connector is brass dot leaders._ The last neutral device in `brand.config.json` `studio.look` (`connector`) is now `dots` in the brass `#C9A46A`, like the leaders in a table of contents, so `npm run check:look` is quiet. The school's look is the cover marker, square stone, shelf strip, endpaper texture, italic lettering, `lay` motion and these leaders. Checked at 1280, 375 and 320; at 320 only Sanity's own cards run 12px wide, the kit does not.
 
 _2026-10-20: Starter cards 141 to 143 adopted._ Quick update's yes/no is a drawn switch (141), date and datetime fields get the How-to chip (142), and the photo post can add to a room story's own list (143, unused here). Marked kit files copied byte-identical from the starter.
