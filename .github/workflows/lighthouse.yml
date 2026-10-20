@@ -65,7 +65,8 @@ jobs:
       - name: Build
         env:
           PUBLIC_SANITY_PROJECT_ID: ''
-        run: npm run build
+        # Through the snapshot wrapper like ci.yml (PORTS.md card 138); a plain build here.
+        run: node scripts/snapshot.mjs run -- npm run build
 
       # Reads ./lighthouserc.json. Accessibility is a hard gate (minScore 1),
       # LCP and CLS assert as errors; performance / best-practices / SEO are
