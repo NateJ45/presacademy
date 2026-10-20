@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter cards 141 to 143 adopted._ Quick update's yes/no is a drawn switch (141), date and datetime fields get the How-to chip (142), and the photo post can add to a room story's own list (143, unused here). Marked kit files copied byte-identical from the starter.
+
 _2026-10-20: Starter cards 139 and 140 adopted._ Success toasts carry the Is-it-live stones, and `npm run check:look` warns when `studio.look` still has a neutral device (today: the connector). The marked kit files, `scripts/check-studio-look.mjs` and `docs/agent/studio-kit.md` are copied from the starter byte-identical.
 
 _2026-10-20: Starter card 138 adopted (CI snapshot wrapper)._ `scripts/snapshot.mjs`, `scripts/live-watch.mjs`, the snapshot-aware Sanity client in `src/lib/sanity.ts` and the OG script, the build wrapper in `ci.yml` and `lighthouse.yml`, `live-watch.yml` (idle until `SITE_URL` is set), and `groq-js` as a dev dependency. No snapshot file is committed because CI already builds with no project id.
