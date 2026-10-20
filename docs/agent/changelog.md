@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter card 148 adopted._ Quick update uses a wide pane: the tile grid, and a "How this goes" rail beside an open form from 860px; phones are unchanged. Marked kit files copied byte-identical from the starter.
+
 _2026-10-20: Starter card 147 adopted._ The Checkup uses the whole pane (a count strip, the levels as columns). Marked kit files copied byte-identical from the starter.
 
 _2026-10-20: Starter cards 144 to 146 adopted._ Home is a full-width dashboard with a status rail (145), and an empty Trash has a page of its own (144/146: `structure.ts` now uses `trashListItem`). Marked kit files copied byte-identical from the starter.
