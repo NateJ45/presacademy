@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter card 150 adopted._ Quick update tiles keep their colour edge flush at the top. `kit/ui/css.ts` and `studio-kit.md` copied byte-identical from the starter.
+
 _2026-10-20: Starter card 149 adopted (the parts this site has)._ The kit harness's Surfaces gallery and `studio-kit.md` are copied byte-identical. The harness imports the writing helper card, so its files (`src/sanity/ai/`, `src/lib/studio-ai.ts` and its test) are copied too, unwired: this site does not turn the writing helper on. The private-page password callout is not in this site. `docs/claude/communication-style.md` (the family wording rules, which the helper's test reads) is added too.
 
 _2026-10-20: Starter card 148 adopted._ Quick update uses a wide pane: the tile grid, and a "How this goes" rail beside an open form from 860px; phones are unchanged. Marked kit files copied byte-identical from the starter.
