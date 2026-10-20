@@ -35,6 +35,7 @@
     "serve:dist": "http-server dist/client -p 4321 -s -c-1 --silent",
     "check:links": "linkinator ./dist/client --recurse --skip \"^https?://(?!127\\.0\\.0\\.1)\" --skip \"/studio\" --skip \"/preview\" --skip \"/api\"",
     "sync-check": "node scripts/sync-check.mjs",
+    "check:look": "node --experimental-strip-types scripts/check-studio-look.mjs",
     "audit:data": "node scripts/audit-data-vs-schema.mjs",
     "contact:migration": "node --experimental-strip-types scripts/gen-contact-migration.mjs"
   },
