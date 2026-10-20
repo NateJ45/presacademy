@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-20: Starter cards 139 and 140 adopted._ Success toasts carry the Is-it-live stones, and `npm run check:look` warns when `studio.look` still has a neutral device (today: the connector). The marked kit files, `scripts/check-studio-look.mjs` and `docs/agent/studio-kit.md` are copied from the starter byte-identical.
+
 _2026-10-20: Starter card 138 adopted (CI snapshot wrapper)._ `scripts/snapshot.mjs`, `scripts/live-watch.mjs`, the snapshot-aware Sanity client in `src/lib/sanity.ts` and the OG script, the build wrapper in `ci.yml` and `lighthouse.yml`, `live-watch.yml` (idle until `SITE_URL` is set), and `groq-js` as a dev dependency. No snapshot file is committed because CI already builds with no project id.
 
 _2026-10-19: Studio tutorial clips._ Six phone and desk clips are recorded from sample data (`public/guide-videos/`, registered in `src/sanity/guides/videos.ts`) and named by their guides, the `offering-status` picture is captured, and the sample-data module now loads on any dev port. Recording steps: `docs/agent/studio-videos.md`.
