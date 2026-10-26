@@ -88,7 +88,7 @@ export default function ThemeToggle({ variant = 'bar' }: Props) {
   };
 
   return (
-    <div role="group" aria-label="Colour theme" className={`theme-seg theme-seg--${variant}`}>
+    <div role="group" aria-label="Color theme" className={`theme-seg theme-seg--${variant}`}>
       {(['light', 'dark'] as const).map((mode) => (
         <button
           key={mode}

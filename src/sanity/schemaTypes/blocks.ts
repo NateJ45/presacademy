@@ -77,7 +77,7 @@ export function bgField() {
         name: 'tone',
         title: 'Surface',
         type: 'string',
-        description: 'Pick a background. The text colour comes with it.',
+        description: 'Pick a background. The text color comes with it.',
         options: { list: SURFACE_OPTIONS, layout: 'radio' },
         initialValue: 'default',
         components: { input: SurfaceSwatchInput },
@@ -88,9 +88,9 @@ export function bgField() {
       // so leaving this alone changes nothing.
       defineField({
         name: 'accent',
-        title: 'Accent colour',
+        title: 'Accent color',
         type: 'string',
-        description: 'The small colour inside the section: eyebrow rule, accent word, button.',
+        description: 'The small color inside the section: eyebrow rule, accent word, button.',
         options: { list: ACCENT_OPTIONS, layout: 'radio' },
         initialValue: 'green',
         components: { input: AccentSwatchInput },
@@ -203,7 +203,7 @@ function headingAccentField() {
     title: 'Accent word in the heading',
     type: 'string',
     description:
-      'Optional. Type a word or short phrase from the heading above and it is set in the section accent colour. Leave it blank for a plain heading.',
+      'Optional. Type a word or short phrase from the heading above and it is set in the section accent color. Leave it blank for a plain heading.',
   });
 }
 
@@ -2535,7 +2535,7 @@ export const sectionCourseFinder = defineType({
       title: 'Intro',
       type: 'string',
       description:
-        'One line under the heading. Leave empty for "Tick one answer for each. We will suggest a single place to start."',
+        'One line under the heading. Leave empty for "Check one answer for each. We will suggest a single place to start."',
     }),
     finderQuestion('question1', 'Question 1'),
     finderQuestion('question2', 'Question 2 (wins when both are answered)'),
@@ -2551,7 +2551,7 @@ export const sectionCourseFinder = defineType({
       type: 'reference',
       to: [{ type: 'course' }],
       description:
-        'Suggested before anyone ticks an answer, and when an answer points nowhere. The section hides if neither this nor any answer points at a course.',
+        'Suggested before anyone checks an answer, and when an answer points nowhere. The section hides if neither this nor any answer points at a course.',
     }),
     defineField({
       name: 'resultLabel',

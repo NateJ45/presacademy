@@ -44,7 +44,7 @@ export const announcement = defineType({
       title: 'Style',
       type: 'string',
       description:
-        'Info = calm green. Special = gold, for good news like enrollment opening. Urgent = red, for a cancelled or moved class.',
+        'Info = calm green. Special = gold, for good news like enrollment opening. Urgent = red, for a canceled or moved class.',
       options: {
         list: [
           { title: 'Info', value: 'info' },

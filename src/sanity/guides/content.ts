@@ -602,7 +602,7 @@ export const guides: Guide[] = [
           'Open the page that has the section on it.',
           'Click the small arrow beside `Publish`, then **Save a section as preset...**',
           'Pick the section from the list. They are numbered the same way they are on the page.',
-          'Give it a name you will recognise later, then **Save section**.',
+          'Give it a name you will recognize later, then **Save section**.',
         ],
       },
       {
@@ -668,7 +668,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'positive',
         title: 'It never stops you publishing',
-        text: 'Nothing here blocks the `Publish` button and nothing gets changed for you. Every line is a suggestion. A page can be perfectly fine and still be listed, so read it, use your judgement, and publish when you are happy.',
+        text: 'Nothing here blocks the `Publish` button and nothing gets changed for you. Every line is a suggestion. A page can be perfectly fine and still be listed, so read it, use your judgment, and publish when you are happy.',
       },
       {
         kind: 'callout',
@@ -744,7 +744,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: "Change a section's background" },
       {
         kind: 'p',
-        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent colour, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). In **Preview** you can skip the panel: every section that has a background shows a small palette button in its top corner, and clicking it brings up the colour dots on the page itself. All of it is walked through in its own guide, "Change how a section looks".',
+        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent color, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). In **Preview** you can skip the panel: every section that has a background shows a small palette button in its top corner, and clicking it brings up the color dots on the page itself. All of it is walked through in its own guide, "Change how a section looks".',
       },
       { kind: 'h', text: 'The dashed box on a new section' },
       {
@@ -830,7 +830,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Change how a section looks',
     icon: 'brandKit',
-    lead: 'Give a section a different background, a different accent colour, a bolded word, one word of the heading picked out in colour, or a different arrangement. All of it from the page picture, all of it on-brand.',
+    lead: 'Give a section a different background, a different accent color, a bolded word, one word of the heading picked out in color, or a different arrangement. All of it from the page picture, all of it on-brand.',
     diy: 'self',
     body: [
       {
@@ -848,7 +848,7 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'The surface: pick a background' },
       {
         kind: 'p',
-        text: 'Open **Section background** and you will see a row of colour dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a colour. There are six. The same six dots, and the three accent dots beside them, also appear in **Preview** when you click the small palette button in a section’s top corner, so you can try a background without opening anything.',
+        text: 'Open **Section background** and you will see a row of color dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a color. There are six. The same six dots, and the three accent dots beside them, also appear in **Preview** when you click the small palette button in a section’s top corner, so you can try a background without opening anything.',
       },
       {
         kind: 'bullets',
@@ -865,24 +865,24 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'positive',
         title: 'You cannot make it unreadable',
-        text: 'Every one of the six is a background and a text colour that were designed as one unit and are checked against the accessibility contrast standard by an automatic test. There is no colour picker here on purpose. Whatever you pick, the words stay readable, in light mode and in dark mode.',
+        text: 'Every one of the six is a background and a text color that were designed as one unit and are checked against the accessibility contrast standard by an automatic test. There is no color picker here on purpose. Whatever you pick, the words stay readable, in light mode and in dark mode.',
       },
       {
         kind: 'p',
-        text: 'Some dots are split down the diagonal. That means the surface follows the reader’s own light or dark setting, and the two halves are the two versions. A dot in one solid colour is a fixed band: it looks the same either way.',
+        text: 'Some dots are split down the diagonal. That means the surface follows the reader’s own light or dark setting, and the two halves are the two versions. A dot in one solid color is a fixed band: it looks the same either way.',
       },
 
-      { kind: 'h', text: 'The accent: the small colour inside' },
+      { kind: 'h', text: 'The accent: the small color inside' },
       {
         kind: 'p',
-        text: 'Just under the surface row is **Accent colour**, three dots. This is the section’s small colour: the short rule before an eyebrow label, an accent word in the heading, and the fill on a button inside the section.',
+        text: 'Just under the surface row is **Accent color**, three dots. This is the section’s small color: the short rule before an eyebrow label, an accent word in the heading, and the fill on a button inside the section.',
       },
       {
         kind: 'bullets',
         items: [
           '**Green**: the house accent. This is what a section uses if you leave it alone.',
           '**Brass**: warmer and more formal. It suits a green or ink band.',
-          '**Ink**: no colour at all, the quietest option.',
+          '**Ink**: no color at all, the quietest option.',
         ],
       },
 
@@ -902,10 +902,10 @@ export const guides: Guide[] = [
         text: 'Bold one phrase, not a sentence. If everything is emphasised, nothing is. Headlines are deliberately left out of this: they have their own device, below.',
       },
 
-      { kind: 'h', text: 'One word of the heading in colour' },
+      { kind: 'h', text: 'One word of the heading in color' },
       {
         kind: 'p',
-        text: 'Sections with a big heading have a box called **Accent word in the heading**. Type a word or a short phrase that already appears in the heading, and it is set in the section’s accent colour on the page. Leave it blank and the heading is plain. Easier still: click the heading in **Preview**, press `Colour a word`, and click the word you want, which cannot be misspelled because you are picking it out of the heading itself.',
+        text: 'Sections with a big heading have a box called **Accent word in the heading**. Type a word or a short phrase that already appears in the heading, and it is set in the section’s accent color on the page. Leave it blank and the heading is plain. Easier still: click the heading in **Preview**, press `Color a word`, and click the word you want, which cannot be misspelled because you are picking it out of the heading itself.',
       },
       {
         kind: 'steps',
@@ -919,13 +919,13 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'caution',
         title: 'One accent per heading',
-        text: 'The first match is the one that gets coloured, and one is the limit by design. Two coloured words in one heading stop reading as emphasis and start reading as decoration.',
+        text: 'The first match is the one that gets colored, and one is the limit by design. Two colored words in one heading stop reading as emphasis and start reading as decoration.',
       },
 
       { kind: 'h', text: 'Layout: how the section is arranged' },
       {
         kind: 'p',
-        text: 'Two more controls sit on the section itself rather than in the background panel, and they change the arrangement rather than the colour. Not every section has them, because not every section has more than one arrangement that we are happy to put your name on.',
+        text: 'Two more controls sit on the section itself rather than in the background panel, and they change the arrangement rather than the color. Not every section has them, because not every section has more than one arrangement that we are happy to put your name on.',
       },
       {
         kind: 'bullets',
@@ -1010,7 +1010,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'caution',
         title: 'Six is the limit',
-        text: 'The header fits six links. Once there are six, **Add to menu** greys out and says so. Take something out first, either with **Remove from menu** on its row or in Site Settings.',
+        text: 'The header fits six links. Once there are six, **Add to menu** grays out and says so. Take something out first, either with **Remove from menu** on its row or in Site Settings.',
       },
       { kind: 'h', text: 'Build a dropdown menu' },
       {
@@ -1215,9 +1215,9 @@ export const guides: Guide[] = [
       {
         kind: 'steps',
         items: [
-          'Every course shows on the site as a small book cover: a colour, a simple shape, the title and the teacher. Open the `Cover` tab to set it.',
+          'Every course shows on the site as a small book cover: a color, a simple shape, the title and the teacher. Open the `Cover` tab to set it.',
           'Add a **Course code** if you want one, like "SCR 101": a few capital letters, a space, three digits. It is optional; leave it empty and the cover shows just the subject.',
-          'Pick a **Cover colour** and a **Cover ornament**. Both are optional. Leave them empty and the site picks them for you, and courses in the same subject get the same colour.',
+          'Pick a **Cover color** and a **Cover ornament**. Both are optional. Leave them empty and the site picks them for you, and courses in the same subject get the same color.',
           'Write **The question**: the one question this course asks, in plain words, like "Is the Bible one book or sixty-six?" Keep it under 90 characters. It shows on the back of the cover. Leave it empty and the summary stands in.',
           'The cover is also the course’s **share picture**: when someone texts or posts the course page, it shows the cover beside the title and the question. It is redrawn at every publish. To use a photo instead, set the course’s social share image.',
         ],
@@ -1854,7 +1854,7 @@ guides.push(
         kind: 'bullets',
         items: [
           '**The big buttons**: the jobs you do most, like opening a new term, adding a course or posting a notice.',
-          '**This week**: the small jobs that keep the website current. Most tick themselves when the work is done; the ones the website cannot see you tick by hand. The list starts fresh every Monday.',
+          '**This week**: the small jobs that keep the website current. Most check themselves when the work is done; the ones the website cannot see you check by hand. The list starts fresh every Monday.',
           '**Coming up**: pages, notices and events set to publish by themselves, soonest first. To schedule one, fill in **Publish automatically at** under Publishing and leave it as a draft.',
           '**Is it live?**: whether your last published change is on the website yet.',
           '**Fix-it list**: what the Checkup found, by name, like a course with no summary or a photo with no description. `Edit` opens it at the right spot.',
@@ -2002,7 +2002,7 @@ guides.push(
     category: 'Events, notices & voices',
     title: 'Read messages from the website',
     icon: 'message',
-    lead: 'Every enquiry and expression of interest sent through the website, in one list.',
+    lead: 'Every inquiry and expression of interest sent through the website, in one list.',
     diy: 'self',
     body: [
       {
@@ -2036,7 +2036,7 @@ guides.push(
     category: 'Courses, faculty & terms',
     title: 'Open a new term',
     icon: 'times',
-    lead: 'A new term is the biggest job of the season. The New term tool lays it out in order and ticks each step off as you go.',
+    lead: 'A new term is the biggest job of the season. The New term tool lays it out in order and checks each step off as you go.',
     diy: 'self',
     video: 'new-term',
     body: [
@@ -2097,13 +2097,13 @@ guides.push(
     body: [
       {
         kind: 'p',
-        text: 'Home’s **This week** card watches most of this for you. When a term is set to Registration open, it asks for a notice, and it keeps a line for seats and waitlists until you tick it.',
+        text: 'Home’s **This week** card watches most of this for you. When a term is set to Registration open, it asks for a notice, and it keeps a line for seats and waitlists until you check it.',
       },
       { kind: 'h', text: 'Every week while enrollment is open' },
       {
         kind: 'steps',
         items: [
-          'Open `Messages`. Answer each enquiry and expression of interest, then mark it **Replied** so nobody answers twice.',
+          'Open `Messages`. Answer each inquiry and expression of interest, then mark it **Replied** so nobody answers twice.',
           'Check a notice is up. If not, open `Quick update` and press **Remind people enrollment closes**. Leave the words empty and it writes them from the term: "Enrollment for Spring 2027 closes December 15. Save your seat today."',
           'Keep seats honest. When a course fills, open `Quick update`, press **Mark a course full or waitlisted**, pick the course and choose **Waitlist**. When it can take nobody else, choose **Full**. Add a note like "Two seats left" if you like.',
           'If an info night is coming, make sure it is on the Events page with a sign-up link (Quick update, **Add an info session or event**).',
@@ -2234,7 +2234,7 @@ guides.push(
       { kind: 'h', text: 'If it was on the Events page' },
       {
         kind: 'p',
-        text: 'An open lecture or info night that moves needs its event changed too. Open **Events**, open the event, change the **Start date & time** and the **Schedule** text, and `Publish`. If it is cancelled for good, open it and choose `Move to Trash`.',
+        text: 'An open lecture or info night that moves needs its event changed too. Open **Events**, open the event, change the **Start date & time** and the **Schedule** text, and `Publish`. If it is canceled for good, open it and choose `Move to Trash`.',
       },
       { kind: 'seealso', items: ['Quick updates from your phone', 'Post or edit an event'] },
     ],

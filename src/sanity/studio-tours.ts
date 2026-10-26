@@ -43,7 +43,7 @@ export const TOURS: TourDef[] = [
         title: 'This week',
         short: 'This week',
         meaning: 'step',
-        body: 'The jobs that come round every week. Most tick themselves when the website shows they are done; tick the others by hand.',
+        body: 'The jobs that come round every week. Most check themselves when the website shows they are done; check the others by hand.',
       },
       {
         anchor: 'tool:quick-update',
@@ -64,7 +64,7 @@ export const TOURS: TourDef[] = [
         title: 'A new term has its own checklist',
         short: 'New term',
         meaning: 'times',
-        body: 'New term walks the start of every term in order and ticks each step off as you go.',
+        body: 'New term walks the start of every term in order and checks each step off as you go.',
       },
       {
         title: 'Nothing is public until you press Publish',
@@ -90,7 +90,7 @@ export const TOURS: TourDef[] = [
         anchor: 'home-this-week',
         title: 'This week',
         meaning: 'step',
-        body: 'The jobs that come round every week. Each one ticks itself when it is done, or you tick it by hand.',
+        body: 'The jobs that come round every week. Each one checks itself when it is done, or you check it by hand.',
       },
       {
         anchor: 'home-is-it-live',

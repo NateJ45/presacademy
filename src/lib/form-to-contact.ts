@@ -152,7 +152,7 @@ export function validateFormValues(
   for (const f of fields) {
     const v = values[f.name];
     if (f.type === 'checkbox') {
-      if (f.required && !v) errors[f.name] = `Please tick "${f.label}" to continue.`;
+      if (f.required && !v) errors[f.name] = `Please check "${f.label}" to continue.`;
       continue;
     }
     const text = formatValue(v);

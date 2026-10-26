@@ -138,7 +138,7 @@ export const kitConfig: KitConfig = {
       id: 'messages',
       title: 'Answer this week’s messages',
       detail:
-        'Enquiries and expressions of interest from the website. Mark each one Replied when it is answered.',
+        'Inquiries and expressions of interest from the website. Mark each one Replied when it is answered.',
       manual: true,
       target: { tool: 'messages' },
       targetLabel: 'Open Messages',
@@ -183,7 +183,7 @@ export const kitConfig: KitConfig = {
       id: 'seats',
       title: 'Seats and waitlists are right',
       detail:
-        'During enrollment, when a course fills, mark it Waitlist; when it can take nobody else, mark it Full. Quick update does it from a phone. Tick this when the website matches.',
+        'During enrollment, when a course fills, mark it Waitlist; when it can take nobody else, mark it Full. Quick update does it from a phone. Check this when the website matches.',
       manual: true,
       target: { tool: 'quick-update' },
       targetLabel: 'Open Quick update',
@@ -315,7 +315,7 @@ export const kitConfig: KitConfig = {
       submitLabel: 'Save the seats',
       doneTitle: 'The seats are saved.',
       doneMessage:
-        'The course card and page will say so in a few minutes. Tick "Seats and waitlists are right" on Home.',
+        'The course card and page will say so in a few minutes. Check "Seats and waitlists are right" on Home.',
     },
     {
       id: 'class-change',
@@ -477,7 +477,7 @@ export const kitConfig: KitConfig = {
       // A shortcut: Messages has its own tool, with Replied marks and filters.
       id: 'messages',
       title: 'Answer this week’s messages',
-      detail: 'Enquiries and expressions of interest from the website.',
+      detail: 'Inquiries and expressions of interest from the website.',
       icon: EnvelopeIcon,
       meaning: 'question',
       job: { kind: 'link', target: { tool: 'messages' } },

@@ -414,7 +414,7 @@ export const DEFAULT_SECTIONS: Record<string, any[]> = {
       kicker: 'Reply card',
       heading: 'Three questions, one course',
       headingId: 'finder',
-      intro: 'Tick one answer for each. We will suggest a single place to start.',
+      intro: 'Check one answer for each. We will suggest a single place to start.',
       question1: {
         question: 'What do you do at church?',
         options: [

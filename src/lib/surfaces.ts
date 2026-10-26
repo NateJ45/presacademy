@@ -221,7 +221,7 @@ export const SECTION_ACCENTS: AccentChoice[] = [
   {
     value: 'ink',
     title: 'Ink',
-    hint: 'No colour at all. The quietest option.',
+    hint: 'No color at all. The quietest option.',
     className: 'accent-ink',
     ruleToken: '--foreground',
     dot: '#1F1B18',

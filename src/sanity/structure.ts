@@ -335,7 +335,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 context,
                 'form',
                 'Forms',
-                'Forms people fill in on the website, like an enquiry or an expression of interest. What they send arrives in Messages.',
+                'Forms people fill in on the website, like an inquiry or an expression of interest. What they send arrives in Messages.',
               ),
             ]),
         ),
