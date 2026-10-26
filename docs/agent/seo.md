@@ -99,3 +99,10 @@ See the [Image guidelines for editors](images.md#image-guidelines-for-editors) s
 - [ ] All Sanity image alt text is meaningful (no "image1" placeholders, no empty strings)
 - [ ] Sitemap submitted to Google Search Console
 - [ ] Canonical URL points at the production domain on every page
+
+An OLD address that looks like a file (`/index.htm`, `/about.php`) needs one more step
+(card 160). With `trailingSlash: 'always'` Astro writes it as `/index.htm/`, and the host
+only adds a trailing slash to extensionless paths, so the visitor would get a 404. The
+`fileStyleRedirects()` integration in `astro.config.mjs` puts an exact slashless rule for
+each one at the top of `dist/client/_redirects` after the build (the build log says
+`added N slashless rule(s)`). Check one with curl on `wrangler dev`, not a static server.
