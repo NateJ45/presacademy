@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.
+
 _2026-10-20: Starter card 150 adopted._ Quick update tiles keep their colour edge flush at the top. `kit/ui/css.ts` and `studio-kit.md` copied byte-identical from the starter.
 
 _2026-10-20: Starter card 149 adopted (the parts this site has)._ The kit harness's Surfaces gallery and `studio-kit.md` are copied byte-identical. The harness imports the writing helper card, so its files (`src/sanity/ai/`, `src/lib/studio-ai.ts` and its test) are copied too, unwired: this site does not turn the writing helper on. The private-page password callout is not in this site. `docs/claude/communication-style.md` (the family wording rules, which the helper's test reads) is added too.

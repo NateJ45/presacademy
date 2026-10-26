@@ -105,10 +105,10 @@ export const course = defineType({
     }),
     defineField({
       name: 'coverColor',
-      title: 'Cover colour',
+      title: 'Cover color',
       type: 'string',
       description:
-        'The colour of the cover. Leave empty and one is picked from the teaching area, so courses in the same subject match.',
+        'The color of the cover. Leave empty and one is picked from the teaching area, so courses in the same subject match.',
       options: {
         list: COVER_COLORS.map((value) => ({ title: COVER_COLOR_TITLES[value], value })),
         layout: 'radio',

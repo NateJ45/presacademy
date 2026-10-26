@@ -108,7 +108,7 @@ export default function HeadingAccentPicker(props: OverlayComponentProps): React
             setOpen((was) => !was);
           }}
         >
-          {loaded.accent ? 'Change the coloured word' : 'Colour a word'}
+          {loaded.accent ? 'Change the colored word' : 'Color a word'}
         </button>
       </PointerEvents>
 
@@ -117,7 +117,7 @@ export default function HeadingAccentPicker(props: OverlayComponentProps): React
           <div
             ref={cardRef}
             role="dialog"
-            aria-label="Choose a word to colour"
+            aria-label="Choose a word to color"
             tabIndex={-1}
             style={{ ...card, position: 'static' }}
             onKeyDown={onKeyDown}
@@ -153,8 +153,8 @@ export default function HeadingAccentPicker(props: OverlayComponentProps): React
             </div>
             <p style={{ margin: '10px 0 0', color: TOOL.muted, fontSize: '12px' }}>
               {loaded.accent
-                ? 'Click the coloured word again to make the heading plain.'
-                : 'One word per heading. It takes the section’s accent colour.'}
+                ? 'Click the colored word again to make the heading plain.'
+                : 'One word per heading. It takes the section’s accent color.'}
             </p>
           </div>
         </PointerEvents>
