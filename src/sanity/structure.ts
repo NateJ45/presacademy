@@ -32,7 +32,7 @@ import { staffDesk } from './kit/shared';
 import { emptyAwareList } from './kit/emptyList';
 import { trashListItem } from './kit/trash';
 import { brandIcon, typeIcon } from './brandIcons';
-import { WEEK_TYPE } from '../lib/studio-kit';
+import { STAFF_TYPE, WEEK_TYPE } from '../lib/studio-kit';
 import { TRASH_TYPE } from '../lib/studio-trash';
 import { tableListItem } from './workflow';
 import { TABLES } from './tables.config';
@@ -83,6 +83,8 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   TRASH_TYPE,
   // The kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
   WEEK_TYPE,
+  // The kit's staff-view marks (card 175): written by the People tool, never edited here.
+  STAFF_TYPE,
   // Private preview link records (card 117): managed from "Share a preview" only.
   'previewShare',
 ]);
