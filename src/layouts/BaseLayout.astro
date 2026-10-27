@@ -19,6 +19,7 @@ import Footer from '@/components/Footer.astro';
 import AnnouncementBar from '@/components/AnnouncementBar.astro';
 import Analytics from '@/components/Analytics.astro';
 import BackToTop from '@/components/BackToTop';
+import ClientNotes from '@/components/ClientNotes.astro';
 import { layout } from '@/data/layout';
 import { layoutAttrs } from '@/lib/site-layout';
 import '@/styles/globals.css';
@@ -291,6 +292,10 @@ const htmlLayoutAttrs = layoutAttrs(layout);
     </main>
 
     <Footer siteSettings={siteSettings} />
+
+    {/* The client review layer (starter card 195): renders nothing unless CLIENT_NOTES_ON is true in
+        src/data/client-notes.ts AND the site is on a pre-launch address. The Academy is live, so it is off. */}
+    <ClientNotes />
 
     {/*
       BackToTop was previously `client:load`, which forced the JS to

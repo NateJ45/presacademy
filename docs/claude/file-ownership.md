@@ -8,6 +8,7 @@ Files a maintainer can change without risk of breaking the architecture:
 
 - Inline **fallback** copy inside `src/pages/*.astro` (the safety net, NOT the live content; live copy is edited in Studio).
 - `src/data/site.ts` static identity constants (site name, domain, derived storage keys).
+- `src/data/client-notes.ts` and `src/data/shot-list.ts`: the client review layer's switch (off; the site is live), notes and shots (starter card 195, `docs/agent/client-notes.md`).
 - The design seam:
   - `src/styles/globals.css` `@theme` block: palette tokens, font-family tokens.
   - Font imports at the top of `globals.css` (`@fontsource-variable/fraunces`, `@fontsource-variable/source-sans-3`).
