@@ -12,10 +12,13 @@
 //     of the Academy's blocks are SELF-CONTAINED there (they paint their own
 //     band), so it assigns no surface and draws no divider between them today;
 //   - named anchors (src/lib/section-anchors.ts, starter card 158) sit behind
-//     the `anchors` prop. 'numbered' (the default for now) changes nothing,
-//     because the Academy's blocks already carry their own ids.
-// Everything below the frontmatter renders exactly what Sections.astro did, so
-// the live HTML is unchanged; scripts/page-parity.mjs holds that line.
+//     the `anchors` prop. 'named' (the default since phase A2) keeps every id
+//     a block already draws and names only the headings that had none;
+//   - the accent budget (src/lib/cta-budget.ts, cards 158 and 187, phase A2):
+//     one filled pill per page body, the first that does not repeat the
+//     header's button; every other one is outlined (src/lib/pill-variant.ts).
+// Everything below the frontmatter renders what Sections.astro did, plus the
+// anchor and the button variant above.
 //
 // Shell-aware blocks (the newer, tone-adaptive ones) render their inner content
 // only and are wrapped in <SectionShell> so a single editor control sets their
@@ -30,6 +33,9 @@ import type { SurfaceValue } from '@/lib/surfaces';
 import { expandSyncedSections } from '@/lib/authoring';
 import { classifySections } from '@/lib/sectionCadence';
 import { sectionAnchors, sectionHeadingText } from '@/lib/section-anchors';
+import { primaryBudget, repeatsHeaderCta } from '@/lib/cta-budget';
+import { getSiteSettings } from '@/lib/queries';
+import { resolveSiteSettings } from '@/lib/siteSettings';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -111,9 +117,10 @@ interface Props {
   /** Prefix for the cadence's numbered ids, so two renderers on a page do not collide. */
   idPrefix?: string;
   /**
-   * 'numbered' (the default for now): every block keeps the id it draws itself
-   * (an editor-set `headingId`, or the block's built-in one), exactly as before.
-   * 'named': a section whose block draws its heading WITHOUT an id takes one
+   * 'numbered': every block keeps the id it draws itself (an editor-set
+   * `headingId`, or the block's built-in one) and nothing more. Pages that draw
+   * several renderers (the style guide's fixtures) pass it so ids stay unique.
+   * 'named' (the default): as numbered, and a section whose block draws its heading WITHOUT an id takes one
    * made from the heading, so /about/#our-story links to it (starter card 158).
    * Ids a block already draws are never renamed, so no published link breaks.
    */
@@ -126,7 +133,7 @@ const {
   fetcher,
   editDoc,
   idPrefix = 'section',
-  anchors = 'numbered',
+  anchors = 'named',
 } = Astro.props;
 
 const MAP: Record<string, any> = {
@@ -232,7 +239,10 @@ const OWN_ANCHOR: Record<string, string> = {
 // Ids the page chrome around the renderer draws (the closing band, the back cover).
 const CHROME_IDS = ['final-cta', 'bc-colophon', 'bc-issue', 'bc-index'];
 const ownAnchor = (b: any): string | undefined =>
-  (typeof b?.headingId === 'string' && b.headingId.trim()) || OWN_ANCHOR[b?._type];
+  (typeof b?.headingId === 'string' && b.headingId.trim()) ||
+  OWN_ANCHOR[b?._type] ||
+  // The Term Issue rates box draws its own 'rates' id (PricingTiersBlock).
+  (b?._type === 'sectionPricingTiers' && b?.surface === 'rates' ? 'rates' : undefined);
 const named =
   anchors === 'named'
     ? sectionAnchors(
@@ -253,9 +263,37 @@ const rows = classified.map((row, i) => {
   if (!named || ownAnchor(row.block) || !sectionHeadingText(row.block)) return row;
   return { ...row, block: { ...row.block, headingId: named[i] } };
 });
+
+// One filled pill per page body (src/lib/cta-budget.ts, cards 158 and 187),
+// adapted to the Academy's blocks: the first block whose main button is a
+// filled pill keeps it; every later one draws the outlined pill. A button that
+// goes where the header's button goes ("Request information") repeats it, so
+// it is outlined without spending the budget. The page's hero and closing
+// band are drawn outside this renderer and are not counted. Form submit
+// buttons are not calls to action and are never counted or changed.
+const headerCta = resolveSiteSettings(await getSiteSettings()).headerCta;
+const own = (href: unknown) => typeof href === 'string' && !repeatsHeaderCta(href, headerCta);
+const ctaVariant = primaryBudget(rows, ({ block }: { block: any }) => {
+  switch (block?._type) {
+    case 'sectionInlineBand':
+      return !!block.headline && own(block.ctaUrl || '/faculty/');
+    case 'sectionPricingTiers':
+      return block.surface === 'rates' && own(block.couponCtaHref || '/get-started/');
+    case 'sectionRequestPanel':
+      // Its intro button: Calendly, or an email when no booking link is set.
+      return true;
+    case 'sectionCtaBand':
+      return !!block.headline && !!block.ctaLabel && own(block.ctaUrl);
+    case 'sectionImageText':
+    case 'sectionMediaFeature':
+      return !!block.ctaLabel && own(block.ctaUrl);
+    default:
+      return false;
+  }
+});
 ---
 
-{rows.map(({ block }: { block: any }) => {
+{rows.map(({ block }: { block: any }, rowIndex: number) => {
   // Synced sections (the authoring kit, PORTS.md card 109) were swapped above
   // for the sections their saved copy holds; each carries `_editKey`, the
   // synced block's own key, so the preview's controls act on the block that
@@ -279,7 +317,12 @@ const rows = classified.map((row, i) => {
     <SectionCoach name={coach.name} hint={coach.hint} />
   ) : SHELL_AWARE.has(block._type) && block.surface !== 'ledger' && block.surface !== 'rates' ? (
     <SectionShell background={block.background} defaultTone={dt}>
-      <Cmp block={block} defaultTone={dt} fallbackEmail={fallbackEmail} />
+      <Cmp
+        block={block}
+        defaultTone={dt}
+        fallbackEmail={fallbackEmail}
+        primaryVariant={ctaVariant(rowIndex)}
+      />
     </SectionShell>
   ) : (
     // `fetcher` reaches the ported/auto types only. The shell-wrapped blocks
@@ -289,6 +332,7 @@ const rows = classified.map((row, i) => {
       fallbackEmail={fallbackEmail}
       fallbackPhone={fallbackPhone}
       fetcher={fetcher}
+      primaryVariant={ctaVariant(rowIndex)}
     />
   );
   // Preview only (2026-08-27): the section-level edit target. The wrapper is a

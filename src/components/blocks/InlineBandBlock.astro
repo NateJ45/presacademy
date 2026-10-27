@@ -11,12 +11,20 @@
 // The button is hand-written markup rather than <CtaLink>, because the band's
 // pill is the page's own and CtaLink renders a different element. That is why
 // the schema takes a plain label + URL here instead of the shared ctaBlock.
+import { pillClasses, type PillVariant } from '@/lib/pill-variant';
+
 interface Props {
   block: any;
+  /** The page's accent budget (SectionRenderer, src/lib/pill-variant.ts). */
+  primaryVariant?: PillVariant;
 }
-const { block } = Astro.props as Props;
+const { block, primaryVariant } = Astro.props as Props;
 
 const href = block?.ctaUrl || '/faculty/';
+const pill = pillClasses(
+  'press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase hover:bg-primary-dark',
+  primaryVariant,
+);
 ---
 
 {block?.headline && (
@@ -30,10 +38,7 @@ const href = block?.ctaUrl || '/faculty/';
         )}
         <p class="mt-2 max-w-xl font-display text-h4 text-foreground">{block.headline}</p>
       </div>
-      <a
-        href={href}
-        class="press-tactile inline-flex min-h-[44px] items-center rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase hover:bg-primary-dark"
-      >
+      <a href={href} class={pill}>
         {block.ctaLabel}
       </a>
     </div>

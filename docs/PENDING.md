@@ -222,8 +222,8 @@ the Westminster Standards and the Book of Confessions."`
 
 - **Re-founding on the starter, phases A2 to E** (2026-10-27). Phase A (the renderer
   layer, cadence, anchors switch, layout slots, rule-9 gate) is done with no visible
-  change; see `docs/agent/page-architecture.md`, "The starter's foundations". Next: A2
-  turns on the accent budget and named anchors (visible on purpose), B brings the
+  change, and A2 (named anchors and the accent budget on) is done; see
+  `docs/agent/page-architecture.md`, "The starter's foundations". Next: B brings the
   starter's builder kit with Academy templates and patterns, C hides the older blocks
   the starter's replace and their background controls, D the visual cards, E deletes
   what nothing reads (the `bgField()` controls only after a fresh data count shows 0).

@@ -32,8 +32,14 @@
 // `bg-background` with `pb-section-md` and no top padding. Close is not parity.
 import PricingTierCards from '@/components/PricingTierCards.astro';
 import { getPricingTiers } from '@/lib/queries';
+import { pillClasses, type PillVariant } from '@/lib/pill-variant';
 
-const { block, fetcher } = Astro.props as { block: any; fetcher?: any };
+// primaryVariant: the page's accent budget (SectionRenderer, src/lib/pill-variant.ts).
+const { block, fetcher, primaryVariant } = Astro.props as {
+  block: any;
+  fetcher?: any;
+  primaryVariant?: PillVariant;
+};
 const tiers = (await getPricingTiers(fetcher).catch(() => [])) ?? [];
 const ctaLabel = block?.ctaLabel || 'Express interest';
 const ctaUrl = block?.ctaUrl || '/get-started/';
@@ -120,7 +126,10 @@ const hasHeader = Boolean(block?.eyebrow || block?.heading || block?.intro);
             <p class="text-[0.9375rem] text-foreground/80">{r.couponBody}</p>
             <a
               href={r.couponCtaHref}
-              class="press-tactile mt-1 inline-flex min-h-[44px] items-center justify-center self-start rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-primary-dark"
+              class={pillClasses(
+                'press-tactile mt-1 inline-flex min-h-[44px] items-center justify-center self-start rounded-full bg-primary px-l py-s text-xs font-semibold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-primary-dark',
+                primaryVariant,
+              )}
             >
               {r.couponCtaLabel}
             </a>

@@ -104,6 +104,7 @@ const fixtures: any[] = [
     <div data-thumb={f._type}>
       <SectionRenderer
         sections={[f]}
+        anchors="numbered"
         fetcher={f._type === 'sectionCourseRail' ? exampleFetcher : undefined}
       />
     </div>
