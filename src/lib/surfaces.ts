@@ -161,9 +161,28 @@ export const SURFACE_BY_VALUE: Record<string, SurfacePair> = Object.fromEntries(
   SECTION_SURFACES.map((s) => [s.value, s]),
 );
 
-/** The class list SectionShell emits for a stored tone value. */
+/**
+ * The classes for a surface the starter's cadence hands a CONTENT block (the
+ * builder kit, refoundation phase B, 2026-10-27). Standard alternates Paper and
+ * Warm, the Academy's own two page surfaces; Feature is the forest green band,
+ * drawn by `.surface-feature` (src/styles/builder-blocks-academy.css), which
+ * re-points the theme tokens so the blocks inside need no colour of their own.
+ */
+const CADENCE_CLASS: Record<CadenceSurface, string> = {
+  background: SURFACE_BY_VALUE.default.className,
+  muted: SURFACE_BY_VALUE.warm.className,
+  feature: 'surface-feature',
+};
+
+/**
+ * The class list for a stored tone value (SectionShell) or a cadence surface
+ * (the builder kit). The two vocabularies share no word, so one reader serves
+ * both.
+ */
 export function surfaceClass(value?: string | null): string {
-  return (SURFACE_BY_VALUE[String(value ?? '')] ?? SURFACE_BY_VALUE.default).className;
+  const key = String(value ?? '');
+  if (key in CADENCE_CLASS) return CADENCE_CLASS[key as CadenceSurface];
+  return (SURFACE_BY_VALUE[key] ?? SURFACE_BY_VALUE.default).className;
 }
 
 // -----------------------------------------------------------------------------

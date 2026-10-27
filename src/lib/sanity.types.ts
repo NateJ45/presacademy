@@ -395,6 +395,42 @@ export type Question2 = {
   }>;
 };
 
+export type TimelineEntryImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "timelineEntry.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
+export type PhotoCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "photoCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
+export type IconCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "iconCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
+export type HubCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "hubCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type Redirect = {
   _id: string;
   _type: 'redirect';
@@ -946,6 +982,602 @@ export type NavLink = {
   externalUrl?: string;
   href?: string;
   menuNote?: string;
+};
+
+export type HubSection = {
+  _type: 'hubSection';
+  heading?: string;
+  intro?: string;
+  groups?: Array<{
+    title?: string;
+    line?: string;
+    cards?: Array<{
+      image?: HubCardImage;
+      icon?:
+        | 'home'
+        | 'heart'
+        | 'star'
+        | 'calendar'
+        | 'clock'
+        | 'map-pin'
+        | 'phone'
+        | 'mail'
+        | 'chat'
+        | 'users'
+        | 'book'
+        | 'coffee'
+        | 'gift'
+        | 'leaf'
+        | 'tool'
+        | 'door'
+        | 'check';
+      title?: string;
+      label?: string;
+      when?: string;
+      place?: string;
+      body?: string;
+      link?: CtaBlock;
+      _type: 'hubCard';
+      _key: string;
+    }>;
+    _type: 'hubGroup';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet';
+};
+
+export type StepsRailSection = {
+  _type: 'stepsRailSection';
+  heading?: string;
+  intro?: string;
+  steps?: Array<{
+    icon?:
+      | 'home'
+      | 'heart'
+      | 'star'
+      | 'calendar'
+      | 'clock'
+      | 'map-pin'
+      | 'phone'
+      | 'mail'
+      | 'chat'
+      | 'users'
+      | 'book'
+      | 'coffee'
+      | 'gift'
+      | 'leaf'
+      | 'tool'
+      | 'door'
+      | 'check';
+    title?: string;
+    body?: string;
+    link?: CtaBlock;
+    _type: 'railStep';
+    _key: string;
+  }>;
+  firstStepCard?: boolean;
+  endHeading?: string;
+  link?: CtaBlock;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type IconCardsSection = {
+  _type: 'iconCardsSection';
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    icon?:
+      | 'home'
+      | 'heart'
+      | 'star'
+      | 'calendar'
+      | 'clock'
+      | 'map-pin'
+      | 'phone'
+      | 'mail'
+      | 'chat'
+      | 'users'
+      | 'book'
+      | 'coffee'
+      | 'gift'
+      | 'leaf'
+      | 'tool'
+      | 'door'
+      | 'check';
+    image?: IconCardImage;
+    title?: string;
+    body?: string;
+    note?: string;
+    link?: CtaBlock;
+    _type: 'iconCard';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type CalendarSubscribeSection = {
+  _type: 'calendarSubscribeSection';
+  heading?: string;
+  intro?: string;
+  feed?: string;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type ContactCardSection = {
+  _type: 'contactCardSection';
+  heading?: string;
+  intro?: string;
+  callButtons?: boolean;
+  phone?: string;
+  email?: string;
+  address?: string;
+  hours?: string;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type PhotoCardsSection = {
+  _type: 'photoCardsSection';
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    image?: PhotoCardImage;
+    title?: string;
+    body?: string;
+    link?: CtaBlock;
+    _type: 'photoCard';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type ScheduleSection = {
+  _type: 'scheduleSection';
+  heading?: string;
+  intro?: string;
+  days?: Array<{
+    title?: string;
+    items?: Array<{
+      startTime?:
+        | '06:00'
+        | '06:15'
+        | '06:30'
+        | '06:45'
+        | '07:00'
+        | '07:15'
+        | '07:30'
+        | '07:45'
+        | '08:00'
+        | '08:15'
+        | '08:30'
+        | '08:45'
+        | '09:00'
+        | '09:15'
+        | '09:30'
+        | '09:45'
+        | '10:00'
+        | '10:15'
+        | '10:30'
+        | '10:45'
+        | '11:00'
+        | '11:15'
+        | '11:30'
+        | '11:45'
+        | '12:00'
+        | '12:15'
+        | '12:30'
+        | '12:45'
+        | '13:00'
+        | '13:15'
+        | '13:30'
+        | '13:45'
+        | '14:00'
+        | '14:15'
+        | '14:30'
+        | '14:45'
+        | '15:00'
+        | '15:15'
+        | '15:30'
+        | '15:45'
+        | '16:00'
+        | '16:15'
+        | '16:30'
+        | '16:45'
+        | '17:00'
+        | '17:15'
+        | '17:30'
+        | '17:45'
+        | '18:00'
+        | '18:15'
+        | '18:30'
+        | '18:45'
+        | '19:00'
+        | '19:15'
+        | '19:30'
+        | '19:45'
+        | '20:00'
+        | '20:15'
+        | '20:30'
+        | '20:45'
+        | '21:00'
+        | '21:15'
+        | '21:30'
+        | '21:45'
+        | '22:00'
+        | '22:15'
+        | '22:30'
+        | '22:45'
+        | '23:00'
+        | '23:15'
+        | '23:30'
+        | '23:45';
+      title?: string;
+      note?: string;
+      _type: 'scheduleItem';
+      _key: string;
+    }>;
+    _type: 'scheduleDay';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type EventDetailsSection = {
+  _type: 'eventDetailsSection';
+  eyebrow?: string;
+  title?: string;
+  occurrences?: Array<{
+    date?: string;
+    startTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    endTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    label?: string;
+    _type: 'eventDate';
+    _key: string;
+  }>;
+  place?: string;
+  note?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  button?: CtaBlock;
+  showCalendar?: boolean;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type LetterSection = {
+  _type: 'letterSection';
+  eyebrow?: string;
+  greeting?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  signOff?: string;
+  signature?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  name?: string;
+  role?: string;
+  link?: CtaBlock;
+  look?: 'standard' | 'quiet';
+};
+
+export type TimelineSection = {
+  _type: 'timelineSection';
+  heading?: string;
+  intro?: string;
+  entries?: Array<{
+    year?: string;
+    title?: string;
+    text?: string;
+    image?: TimelineEntryImage;
+    _type: 'timelineEntry';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type NoticeSection = {
+  _type: 'noticeSection';
+  message?: string;
+  urgency?: 'info' | 'urgent';
+  label?: string;
+  link?: CtaBlock;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type CountdownSection = {
+  _type: 'countdownSection';
+  eventName?: string;
+  startDate?: string;
+  endDate?: string;
+  intro?: string;
+  duringText?: string;
+  afterText?: string;
+  link?: CtaBlock;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type TabsSection = {
+  _type: 'tabsSection';
+  heading?: string;
+  intro?: string;
+  tabs?: Array<{
+    label?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: 'span';
+        _key: string;
+      }>;
+      style?: 'normal';
+      listItem?: 'bullet' | 'number';
+      markDefs?: Array<{
+        href?: string;
+        _type: 'link';
+        _key: string;
+      }>;
+      level?: number;
+      _type: 'block';
+      _key: string;
+    }>;
+    _type: 'tabPanel';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type AccordionSection = {
+  _type: 'accordionSection';
+  heading?: string;
+  intro?: string;
+  items?: Array<{
+    question?: string;
+    answer?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: 'span';
+        _key: string;
+      }>;
+      style?: 'normal';
+      listItem?: 'bullet' | 'number';
+      markDefs?: Array<{
+        href?: string;
+        _type: 'link';
+        _key: string;
+      }>;
+      level?: number;
+      _type: 'block';
+      _key: string;
+    }>;
+    _type: 'accordionItem';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type PhotoSection = {
+  _type: 'photoSection';
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  caption?: string;
+  look?: 'standard' | 'quiet';
+};
+
+export type ButtonRowSection = {
+  _type: 'buttonRowSection';
+  heading?: string;
+  intro?: string;
+  layout?: 'buttons' | 'cards';
+  links?: Array<{
+    link?: CtaBlock;
+    note?: string;
+    _type: 'quickLink';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type ColumnsSection = {
+  _type: 'columnsSection';
+  heading?: string;
+  intro?: string;
+  textColumns?: Array<{
+    heading?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: 'span';
+        _key: string;
+      }>;
+      style?: 'normal';
+      listItem?: 'bullet' | 'number';
+      markDefs?: Array<{
+        href?: string;
+        _type: 'link';
+        _key: string;
+      }>;
+      level?: number;
+      _type: 'block';
+      _key: string;
+    }>;
+    _type: 'textColumn';
+    _key: string;
+  }>;
+  look?: 'standard' | 'quiet' | 'feature';
 };
 
 export type SectionForPastors = {
@@ -1823,6 +2455,57 @@ export type SectionPreset = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
   >;
   note?: string;
 };
@@ -1974,6 +2657,57 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2128,6 +2862,57 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2307,6 +3092,57 @@ export type Page = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
   seoTitle?: string;
@@ -2472,6 +3308,57 @@ export type ResourcesPage = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
   finalCta?: CtaBlock;
@@ -2630,6 +3517,57 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2791,6 +3729,57 @@ export type GetStartedPage = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
   finalCta?: CtaBlock;
@@ -2947,6 +3936,57 @@ export type PricingPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3108,6 +4148,57 @@ export type FacultyPage = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
   finalCta?: CtaBlock;
@@ -3267,6 +4358,57 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3442,6 +4584,57 @@ export type EventsPage = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -3599,6 +4792,57 @@ export type ContactPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3770,6 +5014,57 @@ export type FaqPage = {
       } & SectionForPastors)
     | ({
         _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
   publishAt?: string;
@@ -3902,6 +5197,57 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4071,6 +5417,57 @@ export type HomePage = {
     | ({
         _key: string;
       } & SectionForPastors)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & HubSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4452,6 +5849,10 @@ export type AllSanitySchemaTypes =
   | CourseReference
   | Question1
   | Question2
+  | TimelineEntryImage
+  | PhotoCardImage
+  | IconCardImage
+  | HubCardImage
   | Redirect
   | Testimonial
   | SanityImageCrop
@@ -4481,6 +5882,23 @@ export type AllSanitySchemaTypes =
   | ResourcesPageReference
   | PageReference
   | NavLink
+  | HubSection
+  | StepsRailSection
+  | IconCardsSection
+  | CalendarSubscribeSection
+  | ContactCardSection
+  | PhotoCardsSection
+  | ScheduleSection
+  | EventDetailsSection
+  | LetterSection
+  | TimelineSection
+  | NoticeSection
+  | CountdownSection
+  | TabsSection
+  | AccordionSection
+  | PhotoSection
+  | ButtonRowSection
+  | ColumnsSection
   | SectionForPastors
   | SectionNextIssue
   | SectionCourseFinder

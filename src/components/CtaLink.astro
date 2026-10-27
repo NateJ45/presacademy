@@ -20,7 +20,7 @@
 //
 // Both variants share generous padding, uppercase tracking, and a 44×44 minimum tap target.
 
-import { withTrailingSlash } from '@/lib/href';
+import { ctaHref } from '@/lib/cta-href';
 
 interface CtaBlock {
   label?: string;
@@ -53,57 +53,15 @@ const {
   class: extraClass = '',
 } = Astro.props as Props;
 
-// Map Sanity document _type to its route. Mirrors the routes in src/pages/.
-// Singletons go to a fixed path; slug-based types (page, journalEntry) are
-// handled in the switch below with the slug appended.
+// The href rules (singleton table, /<slug>/ pages, mailto:, tel:) live in
+// src/lib/cta-href.ts since 2026-10-27, so the builder kit's hub resolves a
+// button the same way.
 //
-// Keep this table in sync with ctaBlock.ts `internalLink.to[]` — every type
-// listed there must have an entry here (or a slug-based case in the switch)
-// or the link silently falls back to fallbackHref.
-const TYPE_TO_PATH: Record<string, string> = {
-  // Core singletons
-  homePage: '/',
-  aboutPage: '/about/',
-  faqPage: '/faq/',
-  contactPage: '/contact/',
-  eventsPage: '/events/',
-  resourcesPage: '/resources/',
-  // School page singletons
-  coursesPage: '/courses/',
-  facultyPage: '/faculty/',
-  pricingPage: '/pricing/',
-  getStartedPage: '/get-started/',
-  forYouPage: '/for-you/',
-};
-
-function resolveHref(c?: CtaBlock | null): string {
-  if (!c?.linkType) return fallbackHref;
-  switch (c.linkType) {
-    case 'internal': {
-      const t = c.internalLink?._type;
-      if (!t) return fallbackHref;
-      // Slug-based types need the slug appended. Singletons use the fixed path
-      // table above. The generic `page` type resolves to /[slug].
-      if (t === 'journalEntry' && c.internalLink?.slug) {
-        return `/journal/${c.internalLink.slug}/`;
-      }
-      if (t === 'page' && c.internalLink?.slug) {
-        return `/${c.internalLink.slug}/`;
-      }
-      return TYPE_TO_PATH[t] ?? fallbackHref;
-    }
-    case 'external':
-      return withTrailingSlash(c.externalUrl ?? fallbackHref);
-    case 'email':
-      return c.emailAddress ? `mailto:${c.emailAddress}` : fallbackHref;
-    case 'phone':
-      return c.phoneNumber ? `tel:${c.phoneNumber.replace(/[^\d+]/g, '')}` : fallbackHref;
-    default:
-      return fallbackHref;
-  }
-}
-
-const href = resolveHref(cta);
+// A button object with nothing filled in (an optional button left empty)
+// draws nothing, rather than the fallback label (starter card 178). No cta at
+// all still takes the fallbacks.
+const isEmpty = cta != null && !cta.label && !cta.linkType;
+const href = cta?.linkType ? ctaHref(cta, fallbackHref) : fallbackHref;
 const label = cta?.label ?? fallbackLabel;
 const isExternal = cta?.linkType === 'external';
 // Only open a new tab for ABSOLUTE external URLs (http/https). Relative
@@ -136,11 +94,13 @@ const variantClasses = (() => {
 })();
 ---
 
-<a
-  href={href}
-  class:list={[baseClasses, variantClasses, extraClass]}
-  target={newTab ? '_blank' : undefined}
-  rel={newTab ? 'noopener noreferrer' : undefined}
->
-  {label}
-</a>
+{!isEmpty && (
+  <a
+    href={href}
+    class:list={[baseClasses, variantClasses, extraClass]}
+    target={newTab ? '_blank' : undefined}
+    rel={newTab ? 'noopener noreferrer' : undefined}
+  >
+    {label}
+  </a>
+)}

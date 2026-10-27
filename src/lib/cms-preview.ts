@@ -120,6 +120,16 @@ const NON_STEGA_FIELDS = new Set([
   // string too (the invisible stega characters sit around the text, not inside
   // the braces).
   'scope',
+  // The starter's builder kit (refoundation phase B, 2026-10-27, cards 173 and
+  // 193). `layout` and `icon` are above already. `look` picks the cadence
+  // surface, `urgency` the notice's band, the two times are looked up in the
+  // quarter-hour list, and `unit` is the progress block's (left out here, kept
+  // for parity with the starter's list).
+  'look',
+  'urgency',
+  'startTime',
+  'endTime',
+  'unit',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

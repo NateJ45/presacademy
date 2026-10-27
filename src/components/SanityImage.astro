@@ -25,8 +25,8 @@ interface SanityImageObject {
   // both the same.
   asset?: { _ref?: string; _id?: string } | null;
   alt?: string | null;
-  hotspot?: { x: number; y: number; height: number; width: number };
-  crop?: { top: number; bottom: number; left: number; right: number };
+  hotspot?: { x?: number; y?: number; height?: number; width?: number };
+  crop?: { top?: number; bottom?: number; left?: number; right?: number };
 }
 
 interface Props {

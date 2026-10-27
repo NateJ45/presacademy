@@ -109,8 +109,17 @@ async function sectionTypes() {
   if (!members) throw new Error('Could not find FLEXIBLE_SECTION_MEMBERS in blocks.ts');
   const names = [...members[1].matchAll(/type:\s*'([A-Za-z]+)'/g)].map((m) => m[1]);
 
+  // The builder kit (refoundation phase B, 2026-10-27) is spread into the
+  // members from builderSections.ts, so its names and titles come from there.
+  const kitSrc = await readFile(BLOCKS.replace(/blocks\.ts$/, 'builderSections.ts'), 'utf8');
+  if (members[1].includes('...builderSectionSchemas')) {
+    for (const m of kitSrc.matchAll(/^ {2}name: '(\w+Section)',$/gm)) names.push(m[1]);
+  }
+
   const titles = new Map();
-  for (const m of src.matchAll(/name:\s*'([A-Za-z]+)',\s*\r?\n\s*title:\s*'([^']+)'/g)) {
+  for (const m of (src + '\n' + kitSrc).matchAll(
+    /name:\s*'([A-Za-z]+)',\s*\r?\n\s*title:\s*'([^']+)'/g,
+  )) {
     if (!titles.has(m[1])) titles.set(m[1], m[2]);
   }
 

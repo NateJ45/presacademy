@@ -21,6 +21,11 @@
       "_why": "The contact form island loads React, the form libraries and Turnstile (2104 KB decoded when measured, 2026-10-27).",
       "maxScriptKb": 2650
     },
+    "/style-guide/sections/": {
+      "_why": "The internal wall of example sections, one of every builder-kit block (104 KB of HTML), with the kit's styles written inline once (23 KB) because no live page links them (2026-10-27).",
+      "maxHtmlKb": 130,
+      "maxInlineCssKb": 30
+    },
     "/style-guide/": {
       "_why": "The style guide draws every token and component on one page (71 KB of HTML when measured, 2026-10-27).",
       "maxHtmlKb": 90

@@ -36,6 +36,35 @@ const EXAMPLE_COURSES = [
 }));
 const exampleFetcher = async () => EXAMPLE_COURSES;
 
+// Helpers for the builder kit's fixtures (phase B, 2026-10-27).
+// The photos are the Academy's own placeholder photographs in the dataset, so a
+// thumbnail made from this page shows a real picture.
+const ACAD_LIBRARY = 'image-16c3baefc5e816d60543c8438d5a7014fa3da728-2000x1500-jpg';
+const ACAD_WRITING = 'image-3d5cfe2ed997e9a8ee8da6983e77491c446f3a70-3680x2456-jpg';
+const ACAD_READING = 'image-31debe7ec80d7138792f7d0460087e3fdb7e451e-960x640-jpg';
+const ACAD_GROUP = 'image-474529d4b824e963f3a982262e5e13dff7ff017f-1600x1067-jpg';
+const image = (ref: string, alt: string) => ({
+  _type: 'image',
+  alt,
+  asset: { _type: 'reference', _ref: ref },
+});
+const para = (key: string, text: string) => ({
+  _type: 'block',
+  _key: key,
+  style: 'normal',
+  markDefs: [],
+  children: [{ _type: 'span', _key: `${key}-s`, marks: [], text }],
+});
+/** A calendar day `n` days after the build, as YYYY-MM-DD. */
+const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
+/** A button that goes nowhere: the fixtures are pictures, not pages. */
+const cta = (label: string) => ({
+  _type: 'ctaBlock',
+  label,
+  linkType: 'external',
+  externalUrl: '#',
+});
+
 // The section types this page holds, in order. scripts/studio-thumbs.mjs reads
 // the [data-thumb] attributes, so a new fixture needs nothing else.
 const fixtures: any[] = [
@@ -91,6 +120,244 @@ const fixtures: any[] = [
       'Example: a fifth topic',
     ],
   },
+  // ── The starter's builder kit (cards 173 and 193; phase B, 2026-10-27) ──────
+  // Dated blocks take dates relative to the build day, so the countdown always
+  // reads "12 days to go" and the event's dates are always still to come. The
+  // photos are the Academy's own placeholder photographs from the dataset.
+  {
+    _type: 'columnsSection',
+    _key: 'fxColumns',
+    heading: 'Example: how a term works',
+    textColumns: ['Example: read', 'Example: meet', 'Example: talk it over'].map((heading, i) => ({
+      _key: `col${i}`,
+      heading,
+      body: [
+        para(`col${i}p`, 'Example: a few sentences about this part of the week, in plain words.'),
+      ],
+    })),
+  },
+  {
+    _type: 'buttonRowSection',
+    _key: 'fxButtons',
+    heading: 'Example: where would you like to start?',
+    layout: 'cards',
+    links: [
+      ['Example: the courses', 'Example: what is on this term.'],
+      ['Example: the teachers', 'Example: who teaches, and what.'],
+      ['Example: ask a question', 'Example: we answer every message.'],
+    ].map(([label, note], i) => ({ _key: `ql${i}`, link: cta(label), note })),
+  },
+  {
+    _type: 'photoSection',
+    _key: 'fxPhoto',
+    image: image(ACAD_LIBRARY, 'Example: a reading room with shelves of books'),
+    caption: 'Example: a caption under the photo.',
+  },
+  {
+    _type: 'accordionSection',
+    _key: 'fxAccordion',
+    heading: 'Example: good to know',
+    items: [
+      'Example: do I need to be a member of a church?',
+      'Example: how much reading is there?',
+      'Example: can I join partway through a term?',
+    ].map((question, i) => ({
+      _key: `qa${i}`,
+      question,
+      answer: [para(`qa${i}a`, 'Example: a short, friendly answer.')],
+    })),
+  },
+  {
+    _type: 'tabsSection',
+    _key: 'fxTabs',
+    heading: 'Example: pick what fits',
+    tabs: ['Example: weeknights', 'Example: Saturdays', 'Example: online'].map((label, i) => ({
+      _key: `tab${i}`,
+      label,
+      body: [
+        para(`tab${i}p`, 'Example: what a class looks like at this time, in a few sentences.'),
+      ],
+    })),
+  },
+  {
+    _type: 'countdownSection',
+    _key: 'fxCountdown',
+    // The one fixture on the Feature look, so the green band is on the wall too.
+    look: 'feature',
+    eventName: 'Example: enrollment for the new term closes',
+    startDate: inDays(12),
+    intro: 'Example: there is still time to save your seat.',
+    duringText: 'Example: enrollment closes today.',
+    afterText: 'Example: enrollment for this term has closed.',
+    link: cta('Example: see the courses'),
+  },
+  {
+    _type: 'noticeSection',
+    _key: 'fxNotice',
+    message: 'Example: Tuesday evening classes meet online this week.',
+    urgency: 'urgent',
+  },
+  {
+    _type: 'timelineSection',
+    _key: 'fxTimeline',
+    heading: 'Example: the term, step by step',
+    entries: [
+      ['Example: week 1', 'Example: the opening class', 'Example: one line about it.'],
+      ['Example: week 4', 'Example: a reading week', 'Example: one line about it.'],
+      ['Example: week 8', 'Example: the last class', 'Example: one line about it.'],
+    ].map(([year, title, text], i) => ({ _key: `tl${i}`, year, title, text })),
+  },
+  {
+    _type: 'letterSection',
+    _key: 'fxLetter',
+    eyebrow: 'Example: a note from the director',
+    greeting: 'Example: Dear friends,',
+    body: [
+      para('lt0', 'Example: a few sentences of welcome, in the director’s own words.'),
+      para('lt1', 'Example: a second short paragraph, and an invitation to write back.'),
+    ],
+    signOff: 'Example: With thanks,',
+    name: 'Example: the director’s name',
+    role: 'Example: Director',
+  },
+  {
+    _type: 'eventDetailsSection',
+    _key: 'fxEvent',
+    eyebrow: 'Example: save the date',
+    title: 'Example: course information night',
+    occurrences: [
+      {
+        _key: 'ev0',
+        date: inDays(30),
+        startTime: '19:00',
+        endTime: '20:30',
+        label: 'Example: in person',
+      },
+      {
+        _key: 'ev1',
+        date: inDays(37),
+        startTime: '19:00',
+        endTime: '20:00',
+        label: 'Example: online',
+      },
+    ],
+    place: 'Example: the room and the building\nExample: the street and the town',
+    note: 'Example: meet the teachers, hear about the courses and ask anything.',
+    button: cta('Example: save a seat'),
+    showCalendar: true,
+  },
+  {
+    _type: 'scheduleSection',
+    _key: 'fxSchedule',
+    heading: 'Example: the evening',
+    days: [
+      {
+        _key: 'sd0',
+        title: 'Example: the information night',
+        items: [
+          ['19:00', 'Example: welcome', 'Example: coffee and a seat'],
+          ['19:15', 'Example: the courses this term', ''],
+          ['20:00', 'Example: questions', 'Example: ask anything'],
+        ].map(([startTime, title, note], i) => ({ _key: `si0${i}`, startTime, title, note })),
+      },
+    ],
+  },
+  {
+    _type: 'photoCardsSection',
+    _key: 'fxPhotoCards',
+    heading: 'Example: what a class is like',
+    cards: [
+      [ACAD_WRITING, 'Example: close reading', 'Example: one line about it.'],
+      [ACAD_READING, 'Example: time to think', 'Example: one line about it.'],
+      [ACAD_GROUP, 'Example: good conversation', 'Example: one line about it.'],
+    ].map(([ref, title, body], i) => ({
+      _key: `pc${i}`,
+      image: image(ref, title),
+      title,
+      body,
+      link: cta('Example: read more'),
+    })),
+  },
+  {
+    _type: 'contactCardSection',
+    _key: 'fxContact',
+    heading: 'Example: get in touch',
+    callButtons: true,
+    phone: '(555) 555-0100',
+    email: 'example@example.com',
+    hours: 'Example: Tuesdays, 4 pm to 6 pm',
+  },
+  {
+    _type: 'calendarSubscribeSection',
+    _key: 'fxSubscribe',
+    heading: 'Example: never miss a date',
+    intro: 'Example: add the calendar once and new dates arrive on their own.',
+    feed: 'https://example.com/calendar/events.ics',
+  },
+  {
+    _type: 'iconCardsSection',
+    _key: 'fxIconCards',
+    heading: 'Example: what you will find here',
+    intro: 'Example: three things in plain words.',
+    cards: [
+      [
+        'book',
+        'Example: real reading',
+        'Example: one or two lines about it.',
+        'Example: every week',
+      ],
+      ['users', 'Example: a small class', 'Example: one or two lines about it.', ''],
+      ['chat', 'Example: room for questions', 'Example: one or two lines about it.', ''],
+    ].map(([icon, title, body, note], i) => ({
+      _key: `ic${i}`,
+      icon,
+      title,
+      body,
+      note,
+      link: i === 0 ? cta('Example: read more') : undefined,
+    })),
+  },
+  {
+    _type: 'stepsRailSection',
+    _key: 'fxSteps',
+    heading: 'Example: how to enroll',
+    intro: 'Example: three steps, start to finish.',
+    firstStepCard: true,
+    steps: [
+      ['book', 'Example: choose a course', 'Example: one or two lines about this step.'],
+      ['chat', 'Example: ask us anything', 'Example: one or two lines about this step.'],
+      ['check', 'Example: save your seat', 'Example: one or two lines about this step.'],
+    ].map(([icon, title, body], i) => ({ _key: `st${i}`, icon, title, body })),
+    endHeading: 'Example: ready when you are.',
+    link: cta('Example: start here'),
+  },
+  {
+    _type: 'hubSection',
+    _key: 'fxHub',
+    heading: 'Example: find the right course',
+    intro: 'Example: every course, by who it suits.',
+    groups: [
+      ['Example: for new students', ['Example: a first course', 'Example: an evening class']],
+      [
+        'Example: for elders and teachers',
+        ['Example: a deeper course', 'Example: a reading group'],
+      ],
+    ].map(([title, cards], gi) => ({
+      _key: `hg${gi}`,
+      title,
+      line: 'Example: a short line about this group.',
+      cards: (cards as string[]).map((card, ci) => ({
+        _key: `hc${gi}${ci}`,
+        title: card,
+        label: 'Example: open to all',
+        when: ci === 0 ? 'Example: Tuesdays, 7 pm' : undefined,
+        body: 'Example: a sentence or two about the course and who it suits.',
+        icon: ['book', 'users', 'star', 'chat'][gi * 2 + ci],
+        image: gi === 0 && ci === 0 ? image(ACAD_GROUP, card) : undefined,
+        link: ci === 0 ? cta('Example: find out more') : undefined,
+      })),
+    })),
+  },
 ];
 ---
 
@@ -100,11 +367,12 @@ const fixtures: any[] = [
   noindex
 >
   <h1 class="sr-only">Example sections</h1>
-  {fixtures.map((f) => (
+  {fixtures.map((f, i) => (
     <div data-thumb={f._type}>
       <SectionRenderer
         sections={[f]}
         anchors="numbered"
+        idPrefix={`fixture-${i}`}
         fetcher={f._type === 'sectionCourseRail' ? exampleFetcher : undefined}
       />
     </div>

@@ -438,6 +438,36 @@ test('rule 9: a look only ever arrives through lookField(), never hand-written',
   }
 });
 
+// The starter's builder kit (builderSections.ts, cards 173 and 193; phase B,
+// 2026-10-27) is in the gate too, with no allowlist at all: no colour field,
+// no background control, and every block but the self-contained notice takes
+// its one appearance field through lookField().
+const KIT_BODIES = schemaTypeBodies(
+  readFileSync(
+    fileURLToPath(new URL('../sanity/schemaTypes/builderSections.ts', import.meta.url)),
+    'utf8',
+  ),
+);
+
+test('rule 9: the builder kit was parsed, and carries no colour field or background control', () => {
+  assert.ok(KIT_BODIES.size >= 17, `only found ${KIT_BODIES.size} types in builderSections.ts`);
+  for (const [name, body] of KIT_BODIES) {
+    for (const field of COLOUR_FIELD_NAMES) {
+      assert.ok(!body.includes(`name: '${field}'`), `${name} declares a '${field}' field`);
+    }
+    assert.ok(!/type:\s*'color'/.test(body), `${name} declares a colour picker`);
+    assert.ok(!body.includes('bgField('), `${name} takes a background control`);
+    assert.ok(!body.includes(`name: 'look'`), `${name} writes its own 'look' field`);
+  }
+});
+
+test('rule 9: every builder-kit block but the notice offers a look', () => {
+  for (const [name, body] of KIT_BODIES) {
+    if (name === 'noticeSection') continue;
+    assert.ok(body.includes(`lookField('${name}')`), `${name} has no look field`);
+  }
+});
+
 // =============================================================================
 // The surface handle in SectionRenderer.astro
 // =============================================================================

@@ -80,6 +80,9 @@ export const SELF_FILLING_SECTIONS = [
   'sectionTestimonialRail',
   // A synced section's words live in its saved section (card 109).
   'syncedSection',
+  // The builder kit's contact card fills its email and phone from Site settings
+  // (card 193, phase B 2026-10-27), so a fresh one is not empty.
+  'contactCardSection',
 ];
 
 export const PAGE_CHECK_CONFIG: PageCheckConfig = {
@@ -103,7 +106,22 @@ export const PAGE_CHECK_CONFIG: PageCheckConfig = {
   // `padding` and `tone` live inside every block's `background` object,
   // `imageSide` / `mediaSide` choose which way a two-column block faces, and
   // `surface` is the per-instance opt-out of the shared section shell.
-  extraSettingKeys: ['accent', 'imageSide', 'mediaSide', 'padding', 'surface'],
+  extraSettingKeys: [
+    'accent',
+    'imageSide',
+    'mediaSide',
+    'padding',
+    'surface',
+    // The builder kit (cards 173 and 193): settings that arrive set, so an
+    // untouched block still reads as empty.
+    'urgency',
+    'duringText',
+    'afterText',
+    'greeting',
+    'signOff',
+    'callButtons',
+    'firstStepCard',
+  ],
   // Every address the SITE CODE owns rather than the page builder, plus the
   // folders the build writes into. A link to /courses or /events/harvest is
   // fine even though no `page` document holds that slug. Compare with
