@@ -40,7 +40,8 @@ import HomeHero from '@/components/home/HomeHero.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
 import CoursesCatalog from '@/components/pinned/CoursesCatalog.astro';
 import FacultyRoster from '@/components/pinned/FacultyRoster.astro';
-import { previewFetch } from '@/lib/cms-preview';
+import { previewFetch, previewFetchPostedDraft } from '@/lib/cms-preview';
+import { readPostedDraft } from '@/lib/preview-posted-draft';
 import { SHARE_PARAM } from '@/lib/preview-share';
 import { sharedPreviewAccess, sharedPreviewFetch } from '@/lib/preview-share-server';
 import { resolveSiteSettings } from '@/lib/siteSettings';
@@ -151,6 +152,40 @@ const draftFetch = (
 ): Promise<any> =>
   (share ? sharedPreviewFetch(q, p) : previewFetch(draftMode, q, p)).catch(() => fallback);
 
+// THE STUDIO'S OWN COPY OF THE DRAFT (2026-10-26, PORTS.md card 184). The
+// soft refresh POSTs the newest draft the Studio holds, so a structural edit
+// (a new section, a toggle) renders without waiting for the autosave and the
+// query index. Same cookie gate (draftMode), same one request: the projection
+// runs over the posted draft and resolves references from the dataset. Used
+// only when it is THIS path's document (its own draft id and type, checked
+// again against what the filter resolves to); anything else reads the stored
+// draft as before. src/lib/preview-posted-draft.ts has the checks and the stega.
+const posted = draftMode ? await readPostedDraft(Astro.request, Astro.url.origin) : null;
+
+// This site's converted singletons read through their own query functions in
+// src/lib/queries.ts (`*[_type == "<type>"][0]{...}`), not through one route
+// query, so the posted draft goes in at the fetcher: the ONE call whose query
+// is this singleton's own filter runs over the posted draft; every other call
+// (site settings, collections, the next term) and any failure or mismatch read
+// the stored drafts exactly as before. The draft must be `drafts.<type>`, the
+// fixed id the overlay and editDoc use for a converted singleton.
+const singletonFilter = (type: string) => `*[_type == "${type}"]`;
+const pageDraftFetch = (
+  q: string,
+  p: Record<string, unknown> = {},
+  fallback: any = null,
+): Promise<any> => {
+  const filter = singletonType ? singletonFilter(singletonType) : null;
+  const own = filter ? `${filter}[0]` : null;
+  const fields = own && q.trimStart().startsWith(own) ? q.trimStart().slice(own.length) : null;
+  if (!posted || !filter || fields === null || posted._id !== `drafts.${singletonType}`) {
+    return draftFetch(q, p, fallback);
+  }
+  return previewFetchPostedDraft<any>(filter, fields, p, posted, singletonType!)
+    .catch(() => null)
+    .then((doc) => doc ?? draftFetch(q, p, fallback));
+};
+
 // ---------------------------------------------------------------------------
 // CONVERTED SINGLETONS: full-fidelity preview (2026-08-26). All thirteen.
 // A page that has moved to the builder renders through SingletonPage here, with
@@ -200,7 +235,7 @@ const CONVERTED_PAGE_FETCHERS: Record<string, (fetcher: any) => Promise<any>> = 
 let converted: { page: any; settings: any } | null = null;
 if (singletonType && CONVERTED_PAGE_FETCHERS[singletonType]) {
   const [page, siteSettings] = await Promise.all([
-    CONVERTED_PAGE_FETCHERS[singletonType](draftFetch),
+    CONVERTED_PAGE_FETCHERS[singletonType](pageDraftFetch),
     getSiteSettings(draftFetch),
   ]);
   converted = { page, settings: resolveSiteSettings(siteSettings) };
@@ -241,14 +276,25 @@ if (converted && singletonType === 'coursesPage') {
   pinned = { faculty, areas };
 }
 
-const doc: PreviewDoc | null = converted
-  ? null
-  : await draftFetch(
-      singletonType
-        ? `*[_type == $type][0]${PREVIEW_FIELDS}`
-        : `*[_type == "page" && slug.current == $slug][0]${PREVIEW_FIELDS}`,
-      singletonType ? { type: singletonType } : { slug },
-    );
+// The generic branch (404, custom `page` docs): the route's own filter, split
+// out so the posted draft (card 184) can run the same projection.
+const pageFilter = singletonType
+  ? '*[_type == $type]'
+  : '*[_type == "page" && slug.current == $slug]';
+const docParams = singletonType ? { type: singletonType } : { slug };
+let doc: PreviewDoc | null = null;
+if (!converted) {
+  doc = posted
+    ? await previewFetchPostedDraft<PreviewDoc>(
+        pageFilter,
+        PREVIEW_FIELDS,
+        docParams,
+        posted,
+        singletonType ?? 'page',
+      ).catch(() => null)
+    : null;
+  doc ??= await draftFetch(`${pageFilter}[0]${PREVIEW_FIELDS}`, docParams);
+}
 
 if (!converted && !doc) {
   return new Response(`No document found for "${slug || 'home'}"`, { status: 404 });
