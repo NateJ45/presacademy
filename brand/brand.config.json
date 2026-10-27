@@ -128,5 +128,12 @@
       },
       "motion": "lay"
     }
+  },
+  "layout": {
+    "header": "inline",
+    "hero": "bleed",
+    "density": "standard",
+    "cards": "standard",
+    "motion": "reveal"
   }
 }

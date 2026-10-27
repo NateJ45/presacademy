@@ -12,7 +12,7 @@
 // remove, drag to reorder). That is the Squarespace feel.
 //
 // PREVIEW SURFACES ONLY. The live site never renders these attributes: the
-// static pages pass no `editDoc`, so `Sections.astro` emits no wrapper and no
+// static pages pass no `editDoc`, so `SectionRenderer.astro` emits no wrapper and no
 // attribute there. `scripts/page-parity.mjs` is the gate on that promise.
 //
 // The attribute must sit on a REAL block box. The overlay outlines the

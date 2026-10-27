@@ -74,7 +74,7 @@ const SECTION_ARMS = `
   }`;
 
 // A synced section holds only a reference to a saved section; resolve it into
-// `sections` here, and Sections.astro swaps the block for them in place
+// `sections` here, and SectionRenderer.astro swaps the block for them in place
 // (expandSyncedSections in src/lib/authoring.ts). One level only: a saved
 // section cannot hold a synced section. A missing one resolves to null and
 // renders nothing.

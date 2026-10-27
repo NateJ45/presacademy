@@ -1243,7 +1243,7 @@ export const sectionPricingTiers = defineType({
 //      the pixels cannot drift from what the page looked like before it
 //      converted. Editors control WHICH sections appear IN WHAT ORDER, never
 //      how a section is painted.
-//   2. They render OUTSIDE SectionShell (Sections.astro keeps them out of the
+//   2. They render OUTSIDE SectionShell (SectionRenderer.astro keeps them out of the
 //      SHELL_AWARE set), because the shell's tone-adaptive colors and these
 //      pages' fixed Rule & Ledger surfaces are mutually exclusive.
 //
@@ -2731,7 +2731,7 @@ export const sectionForPastors = defineType({
 // and Pricing at once). A plain copy ("Add a copy" in the picker) never changes.
 //
 // Rendering: SECTION_MEMBERS in src/lib/queries.ts resolves the reference into a
-// `sections` array and Sections.astro expands it in place
+// `sections` array and SectionRenderer.astro expands it in place
 // (expandSyncedSections in src/lib/authoring.ts). Like every block it carries no
 // colour field of its own; the sections inside keep theirs.
 //

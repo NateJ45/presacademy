@@ -6,7 +6,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPageBySlug, getAllPageSlugs, getSiteSettings } from '@/lib/queries';
 import Hero from '@/components/Hero.astro';
-import Sections from '@/components/Sections.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import { site } from '@/data/site';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import heroFallback from '@/assets/placeholders/acad-study-overhead.jpg';
@@ -79,5 +79,5 @@ const description = page?.seoDescription ?? '';
     headingId="page-hero"
     size="short"
   />
-  <Sections sections={page?.sections} fallbackEmail={settings.email} />
+  <SectionRenderer sections={page?.sections} fallbackEmail={settings.email} />
 </BaseLayout>

@@ -6,7 +6,7 @@
 //      and a section holding its content must NOT.
 //   2. Hints stay in house style: short, one sentence, no em-dash.
 //   3. The registry stays in step with what the site actually renders. The
-//      renderer (src/components/Sections.astro) is the single source of the
+//      renderer (src/components/SectionRenderer.astro) is the single source of the
 //      section list, so the test reads it and asserts that every rendered type
 //      is either coached or on the self-filling list, and never both.
 // =============================================================================
@@ -25,7 +25,10 @@ const fresh = (type: string): SectionData => ({ _type: type, _key: 'k1' });
 
 /** The `_type` keys of the renderer's MAP, read straight out of the component. */
 function renderedSectionTypes(): string[] {
-  const source = readFileSync(new URL('../components/Sections.astro', import.meta.url), 'utf-8');
+  const source = readFileSync(
+    new URL('../components/SectionRenderer.astro', import.meta.url),
+    'utf-8',
+  );
   const map = source.slice(
     source.indexOf('const MAP: Record<string, any> = {'),
     source.indexOf('// Blocks that render inner content only'),
