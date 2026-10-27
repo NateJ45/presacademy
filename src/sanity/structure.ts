@@ -83,7 +83,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   TRASH_TYPE,
   // The kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
   WEEK_TYPE,
-  // The kit's "Simple view" marks (card 175): written by the People tool only.
+  // The kit's staff-view marks (card 175): written by the People tool, never edited here.
   STAFF_TYPE,
   // Private preview link records (card 117): managed from "Share a preview" only.
   'previewShare',
