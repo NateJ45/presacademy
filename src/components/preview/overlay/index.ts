@@ -31,8 +31,10 @@
 // =============================================================================
 import type { OverlayComponent, OverlayComponentResolver } from '@sanity/visual-editing';
 import { overlayControlsForPath, type OverlayControl } from '../../../lib/section-fields.ts';
+import { classifyInlinePath } from '../../../lib/preview-inline-edit.ts';
 import SurfaceChips from './SurfaceChips.tsx';
 import HeadingAccentPicker from './HeadingAccentPicker.tsx';
+import InlineText from './InlineText.tsx';
 import TextPopover from './TextPopover.tsx';
 
 const BY_CONTROL: Record<OverlayControl, OverlayComponent> = {
@@ -43,13 +45,15 @@ const BY_CONTROL: Record<OverlayControl, OverlayComponent> = {
 
 /**
  * Hand every hovered element the controls its path makes it a candidate for.
- * Returning undefined — the common case, for every element that is not a
- * section, a heading or a curated line — leaves the host's own overlay exactly
- * as it was.
+ * Returning undefined leaves the host's own overlay exactly as it was.
+ *
+ * Card 185: every text field (a string, a text, or a span in portable text)
+ * also gets InlineText, which draws nothing and makes the words typeable in
+ * place once it has proved the element shows exactly the stored value.
  */
 export const inCanvasControls: OverlayComponentResolver = (context) => {
   const path = (context.node as { path?: string } | undefined)?.path;
-  const controls = overlayControlsForPath(path);
-  if (controls.length === 0) return undefined;
-  return controls.map((name) => BY_CONTROL[name]);
+  const controls: OverlayComponent[] = overlayControlsForPath(path).map((name) => BY_CONTROL[name]);
+  if (classifyInlinePath(path, context.type)) controls.push(InlineText as OverlayComponent);
+  return controls.length ? controls : undefined;
 };
