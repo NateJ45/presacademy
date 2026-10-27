@@ -21,8 +21,36 @@
 /* IBM Plex Mono, regular 400 only (2026-10-13, Term Issue): the catalog voice
    on the course covers (codes, subjects, status tags). One weight, no italic. */
 @import '@fontsource/ibm-plex-mono/400.css';
+/* The flow layer (src/scripts/flow.ts), PORTABLE, starter card 192. Every rule is keyed on
+   html[data-motion] or a class the script adds. The Academy runs layout.motion 'fade' (2026-10-27):
+   one 200ms fade as each block below the first screen arrives, in place of the older reveals. */
+@import './flow.css';
 
 @custom-variant dark (&:is(.dark *));
+
+/* ---------- Motion (starter card 192) ---------------------------------- */
+/* The flow layer's timings and distances (brand.config.json layout.motion, src/styles/flow.css,
+   src/scripts/flow.ts, which reads the durations). The Academy's motion is 'fade', so only the
+   first two lines are drawn: one 200ms, 8px fade, 40ms apart for blocks arriving together. The
+   rest are the starter's values, kept so a later switch to 'flow' needs no new tokens. */
+:root {
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out: fast start, long settle */
+  --motion-fade: 200ms; /* calm pages: one short fade */
+  --motion-fade-distance: 8px;
+  --motion-stagger-calm: 40ms;
+  --motion-rise: 600ms; /* full pages: a fade-up */
+  --motion-rise-distance: 16px;
+  --motion-stagger: 60ms; /* between units arriving together */
+  --motion-line: 800ms; /* a heading line rising out of its mask */
+  --motion-line-stagger: 80ms;
+  --motion-photo: 900ms; /* a photo settling from a slight zoom */
+  --motion-photo-zoom: 1.06;
+  --motion-side: 800ms; /* a [data-flow='side'] piece sliding in */
+  --motion-side-distance: 32px;
+  --motion-page-out: 120ms; /* page to page (motion 'flow' only) */
+  --motion-page-in: 260ms;
+  --motion-page-distance: 12px;
+}
 
 /* ---------- Metric-matched fallback faces ------------------------------ */
 /* The @fontsource faces above are font-display: swap, so the first paint uses
@@ -3199,6 +3227,24 @@ html.motion [data-reveal]:not(.is-visible) .eyebrow::before {
 }
 [data-reveal].is-visible .eyebrow::before {
   transform: scaleX(1);
+}
+
+/* Under the flow layer (layout.motion 'fade', starter card 192, 2026-10-27) the choreography above
+   steps aside with the base reveal (src/styles/flow.css): once flow.ts has armed the page, the
+   directional slides, the mask-rise and the self-drawing rubric show at rest, so the one 200ms fade
+   is the only entrance. Reduced motion and JS off never arm the page, as before. */
+html.motion.flow-armed [data-reveal].reveal-l,
+html.motion.flow-armed [data-reveal].reveal-r {
+  translate: none;
+}
+html.motion.flow-armed [data-reveal] .reveal-rise {
+  clip-path: none;
+  transform: none;
+  transition: none;
+}
+html.motion.flow-armed [data-reveal] .eyebrow::before {
+  transform: scaleX(1);
+  transition: none;
 }
 
 /* Per-word headline rise — the hero signature. Each word sits in an

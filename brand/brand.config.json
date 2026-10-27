@@ -134,6 +134,6 @@
     "hero": "bleed",
     "density": "standard",
     "cards": "standard",
-    "motion": "reveal"
+    "motion": "fade"
   }
 }

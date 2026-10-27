@@ -162,6 +162,7 @@ export default defineConfig({
         if (
           page.includes('/404') ||
           page.includes('/style-guide') ||
+          page.includes('/styleguide') ||
           page.includes('/preview') ||
           page.includes('/studio')
         ) {

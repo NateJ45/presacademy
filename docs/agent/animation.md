@@ -6,6 +6,8 @@ Non-animation polish (brand stripe, card-lift, surface-warm, reading-progress, s
 
 > **Refined kinetic editorial (2026-06-14, PR #9, commit 864d173).** A CSS-first motion pass layered the "academic notebook" idioms below onto the existing reveal system: the graph-paper hero atmosphere, the kinetic hero headline, choreographed directional reveals + a self-drawing eyebrow rubric, the topics ticker, the stat count-up, and a scroll-driven image parallax. Everything is transform / opacity / clip-path only (zero CLS) and is neutralized by a dedicated `prefers-reduced-motion` reset block at the end of the motion section in `globals.css`. The full writeup is the [Refined kinetic editorial motion system](#refined-kinetic-editorial-motion-system) section below; `src/styles/globals.css` and `BaseLayout.astro` are the source of truth.
 
+> **The flow layer, motion 'fade' (2026-10-27, starter card 192).** The Academy's `layout.motion` is `fade`: below the first screen, every block arrives with one 200ms, 8px fade, and the older reveals (`[data-reveal]`, the directional slides, the mask-rise, the self-drawing rubric, the image curtain) show at rest instead. See [The flow layer](#the-flow-layer-motion-fade-starter-card-192). Under reduced motion or with JavaScript off nothing moves, as before.
+
 ## Scrolling (native, no smooth-scroll library)
 
 Lenis smooth scroll was removed on 2026-10-13 at Nathan's request. Scrolling is the browser's own everywhere: wheel, touch, keyboard and in-page anchors. Programmatic scrolls (the home hero scroll cue) call `window.scrollTo({ behavior: 'smooth' })`, which the reduced-motion reset in `globals.css` turns into an instant jump via `scroll-behavior: auto`.
@@ -128,6 +130,29 @@ Each slide is `position: absolute`, `opacity: 0` with a `1.5s` opacity transitio
 - Never starts under `prefers-reduced-motion`.
 
 The first slide stays the eager `fetchpriority="high"` LCP image; the rest lazy-load. The first slide carries its descriptive alt; the additional slides use empty alt so they are decorative.
+
+---
+
+## The flow layer (motion 'fade', starter card 192)
+
+Taken from the starter on 2026-10-27 (re-founding phase D). The Academy picked the quiet setting: `brand/brand.config.json` `layout.motion` is `"fade"`, kept in step by hand with `src/data/layout.ts` (`site-layout.test.ts` fails if they differ). `<html>` carries `data-motion="fade"` and BaseLayout renders `src/components/FlowMotion.astro`, which loads `src/scripts/flow.ts` on every `astro:page-load`.
+
+| `layout.motion`      | What moves                                                                                                                                                                                                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reveal`             | The older reveals below, the plain cross-fade between pages. No flow script.                                                                                                                                                                                                                |
+| `fade` (the Academy) | Every unit below the first screen (`h1` to `h4`, `p`, `li`, `dl`, `blockquote`, `figure`, `form`, `iframe`, `table`, pictures, video) fades up 8px over 200ms as it arrives, 40ms apart when several arrive together. Nothing is split or zoomed. The plain cross-fade between pages stays. |
+| `flow`               | Auburn's fuller motion on pages passing `flow="full"` (lines rising, photos settling); not used here.                                                                                                                                                                                       |
+| `none`               | Nothing moves; the head script never adds `html.motion`.                                                                                                                                                                                                                                    |
+
+**Files.** `src/scripts/flow.ts`, `src/styles/flow.css` (imported by `globals.css`), `src/lib/flow-split.ts` (+ test), `src/components/FlowMotion.astro` and `tests/flow-motion.spec.ts` are PORTABLE, byte-identical to the starter. The timings are the `--motion-*` tokens in the "Motion" `:root` block near the top of `globals.css` (`docs/agent/design-tokens.md`).
+
+**What the Academy changed around it.** Once the layer has armed a page (`html.flow-armed`), `flow.css` rests `[data-reveal]`, `[data-stagger-grid]` children and `.img-curtain`; a short block after the eyebrow rules in `globals.css` also rests the Academy's own choreography (`.reveal-l` / `.reveal-r`, `.reveal-rise`, the rubric draw), so nothing plays twice. Left as they were: the home hero's kinetic headline (first screen, never touched), the topics ticker, the stat count-up and the image parallax.
+
+**Safety rules (from the starter).** The first screen shows as it is at every width, so LCP does not move. Hidden states are the first frames of paused animations on classes the script adds: JavaScript off, a failed script or reduced motion leaves everything visible. Only opacity and `translate` move (CLS 0). Units shed their classes once landed. Keyboard focus lands a unit at once. Native scroll only (gotcha #6): no scroll library, no scroll listener. Live preview never splits. Printing drops `html.motion`.
+
+**The motion wall.** `/styleguide/motion/full/` and `/styleguide/motion/fade/` (`src/pages/styleguide/motion/[level].astro`, noindex, out of the sitemap, `styleguide` a reserved slug) override the motion for themselves so `tests/flow-motion.spec.ts` can drive both levels on any build.
+
+**Measured** (Playwright, three loads each, walking the whole page; LCP ms, CLS): live before the change, Home 375 LCP 304-352 CLS 0.0001, Home 1280 LCP 296-312 CLS 0.0013, a course page 375 LCP 220-320 CLS 0.0003, 1280 LCP 236-244 CLS 0.0025. The PR records the after numbers.
 
 ---
 

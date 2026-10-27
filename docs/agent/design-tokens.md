@@ -51,6 +51,10 @@ If you ever suspect this regressed, the diagnostic is: open the page in the dev 
 
 ---
 
+## Motion tokens (starter card 192, 2026-10-27)
+
+A `:root` block "Motion" near the top of `src/styles/globals.css` holds the flow layer's timings: `--motion-ease`, `--motion-fade` (200ms) and `--motion-fade-distance` (8px), `--motion-stagger-calm` (40ms), and the fuller `flow` values (`--motion-rise`, `--motion-line`, `--motion-photo`, `--motion-side`, `--motion-page-*`) at the starter's numbers. The Academy runs `layout.motion: fade`, so only the first four are drawn; `src/scripts/flow.ts` reads the durations from them. Detail: `animation.md`, "The flow layer".
+
 ## Color tokens
 
 See `theme-and-color.md` for the full palette reference, the `--tint-rgb` token, and the light/dark discipline. The brand anchor is Geneva Green (`#33503F`) as of the Direction A evolution; `bg-primary`, `text-link`, and the `chapel` bands all resolve to green. A short summary of what to use in component code:

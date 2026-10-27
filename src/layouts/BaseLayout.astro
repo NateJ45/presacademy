@@ -21,7 +21,8 @@ import Analytics from '@/components/Analytics.astro';
 import BackToTop from '@/components/BackToTop';
 import ClientNotes from '@/components/ClientNotes.astro';
 import { layout } from '@/data/layout';
-import { layoutAttrs } from '@/lib/site-layout';
+import { layoutAttrs, hasFlow, type SiteLayout } from '@/lib/site-layout';
+import FlowMotion from '@/components/FlowMotion.astro';
 import '@/styles/globals.css';
 
 interface Props {
@@ -39,6 +40,10 @@ interface Props {
   noindex?: boolean;
   /** The page's own "Hide this page from search engines" switch (hideFromSearch in Sanity). Stronger than `noindex`: it asks search engines not to index the page AND not to follow its links, and the page is dropped from the sitemap (astro.config.mjs). Defaults to false. */
   hideFromSearch?: boolean;
+  /** The flow layer's full level for this page (starter card 192): 'full' marks <main> data-flow-full when the site's motion is 'flow' (Home and the 404 pass it). Ignored under any other motion; the Academy runs 'fade'. */
+  flow?: 'full';
+  /** Override brand.config.json layout.motion for this page only. For the motion wall (/styleguide/motion/), so every motion can be tested from one build. */
+  motion?: SiteLayout['motion'];
 }
 
 const {
@@ -50,7 +55,14 @@ const {
   siteSettings = null,
   noindex = false,
   hideFromSearch = false,
+  flow,
+  motion,
 } = Astro.props as Props;
+
+// Motion (starter card 192): the site's layout.motion ('fade' for the Academy, 2026-10-27), or this
+// page's override. The flow layer's script is rendered only when it runs (flow or fade).
+const pageLayout: SiteLayout = motion ? { ...layout, motion } : layout;
+const flowFull = flow === 'full' && pageLayout.motion === 'flow';
 
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 
@@ -133,7 +145,7 @@ const announcement = await getActiveAnnouncement().catch(() => null);
 // brand.config.json `layout` block as data-* attributes on <html>. Every slot
 // is at its default today, and a default emits nothing, so this adds no
 // attribute until the Academy picks a variant (src/lib/site-layout.ts).
-const htmlLayoutAttrs = layoutAttrs(layout);
+const htmlLayoutAttrs = layoutAttrs(pageLayout);
 ---
 
 <!doctype html>
@@ -215,13 +227,16 @@ const htmlLayoutAttrs = layoutAttrs(layout);
         state in globals.css ([data-reveal], [data-stagger-grid], .img-curtain)
         is scoped to it, so with JavaScript off the page renders finished.
         Reduced-motion visitors never get the class, so they see the page at
-        rest too. The swap resets className, so it rides the same re-apply. */}
+        rest too. The swap resets className, so it rides the same re-apply.
+        A site whose layout.motion is 'none' (html[data-motion=none], card 192)
+        never gets it either. */}
     <script is:inline define:vars={{ key: site.themeStorageKey }}>
       (function () {
         function applyTheme() {
           document.documentElement.classList.toggle(
             'motion',
-            !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+            !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+              document.documentElement.getAttribute('data-motion') !== 'none',
           );
           let dark = false;
           try {
@@ -287,7 +302,7 @@ const htmlLayoutAttrs = layoutAttrs(layout);
 
     <Header siteSettings={siteSettings} />
 
-    <main id="main" class="flex-1">
+    <main id="main" class="flex-1" data-flow-full={flowFull ? '' : undefined}>
       <slot />
     </main>
 
@@ -296,6 +311,10 @@ const htmlLayoutAttrs = layoutAttrs(layout);
     {/* The client review layer (starter card 195): renders nothing unless CLIENT_NOTES_ON is true in
         src/data/client-notes.ts AND the site is on a pre-launch address. The Academy is live, so it is off. */}
     <ClientNotes />
+
+    {/* The flow layer (starter card 192): only when layout.motion is flow or fade. The Academy
+        runs 'fade': one 200ms fade as each block below the first screen arrives. */}
+    {hasFlow(pageLayout) && <FlowMotion />}
 
     {/*
       BackToTop was previously `client:load`, which forced the JS to
