@@ -6,13 +6,17 @@
 import InlineRich from '@/components/InlineRich.astro';
 import { hasInlineRich } from '@/lib/inline-rich';
 import { splitHeadingAccent } from '@/lib/heading-accent';
+import { pillClasses, type PillVariant } from '@/lib/pill-variant';
 
-const { block } = Astro.props as { block: any };
+// primaryVariant: the page's accent budget (SectionRenderer, src/lib/pill-variant.ts).
+const { block, primaryVariant } = Astro.props as { block: any; primaryVariant?: PillVariant };
 const isExternal = typeof block?.ctaUrl === 'string' && /^https?:\/\//.test(block.ctaUrl);
 const ha = splitHeadingAccent(block?.headline, block?.headingAccent);
 const richSubhead = hasInlineRich(block?.subheadRich);
-const pill =
-  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors';
+const pill = pillClasses(
+  'press-tactile inline-flex items-center justify-center min-h-[44px] px-l py-s rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-primary text-primary-foreground hover:bg-primary-dark transition-colors',
+  primaryVariant,
+);
 ---
 
 {block?.headline && (
