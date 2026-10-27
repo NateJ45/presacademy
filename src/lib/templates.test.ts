@@ -19,7 +19,17 @@ type Rec = Record<string, unknown>;
 const blocksSrc = readFileSync(new URL('../sanity/schemaTypes/blocks.ts', import.meta.url), 'utf8');
 const membersBlock =
   /export const FLEXIBLE_SECTION_MEMBERS = \[([\s\S]*?)\];/.exec(blocksSrc)?.[1] ?? '';
-const ALLOWED = new Set([...membersBlock.matchAll(/type: '([A-Za-z]+)'/g)].map((m) => m[1]));
+// The builder kit's blocks are spread into the members from builderSections.ts
+// (refoundation phase B, 2026-10-27), so their names are read from that file.
+const kitSrc = readFileSync(
+  new URL('../sanity/schemaTypes/builderSections.ts', import.meta.url),
+  'utf8',
+);
+const KIT_TYPES = [...kitSrc.matchAll(/^ {2}name: '(\w+Section)',$/gm)].map((m) => m[1]);
+const ALLOWED = new Set([
+  ...[...membersBlock.matchAll(/type: '([A-Za-z]+)'/g)].map((m) => m[1]),
+  ...(membersBlock.includes('...builderSectionSchemas') ? KIT_TYPES : []),
+]);
 
 // Fields that hold a setting, an address or a button word, not page copy.
 const NOT_COPY = new Set([
@@ -34,6 +44,17 @@ const NOT_COPY = new Set([
   'ctaLabel',
   'ctaUrl',
   'marks',
+  // The builder kit: settings, dates, times and button addresses.
+  'linkType',
+  'externalUrl',
+  'layout',
+  'urgency',
+  'date',
+  'startDate',
+  'endDate',
+  'startTime',
+  'endTime',
+  'icon',
 ]);
 
 /** Every copy string in a value, with its path. */
@@ -65,6 +86,10 @@ const everySectionList = [
 describe('page templates and saved sections', () => {
   it('found the page section types in blocks.ts', () => {
     assert.ok(ALLOWED.size > 20, `only ${ALLOWED.size} section types parsed`);
+    assert.ok(
+      KIT_TYPES.length >= 17 && ALLOWED.has('eventDetailsSection'),
+      'builder kit not found',
+    );
   });
 
   for (const { name, make } of everySectionList) {
@@ -97,6 +122,10 @@ describe('page templates and saved sections', () => {
         if (s._type === 'sectionCtaBand') assert.ok(s.headline, name);
         if (s._type === 'sectionScholarship') assert.ok(s.headline, name);
         if (s._type === 'sectionCourseRail') assert.ok(s.source && s.variant && s.heading, name);
+        if (s._type === 'eventDetailsSection')
+          assert.ok(s.title && s.place && (s.occurrences as Rec[]).every((o) => o.date), name);
+        if (s._type === 'noticeSection') assert.ok(s.message, name);
+        if (s._type === 'countdownSection') assert.ok(s.eventName && s.startDate, name);
         if (s._type === 'sectionSteps')
           assert.ok(
             (s.steps as Rec[]).every((st) => st.title),

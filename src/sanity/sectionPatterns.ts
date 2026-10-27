@@ -17,6 +17,7 @@
 // =============================================================================
 
 import { example, freshKeys } from '../lib/authoring.ts';
+import * as kit from './templateBlocks.ts';
 
 type Rec = Record<string, unknown>;
 
@@ -62,6 +63,14 @@ const richText = (heading: string, ...paras: string[]): Rec => ({
 
 const pattern = (...sections: Rec[]) => freshKeys(sections);
 
+/** A button to a page on this site (the builder kit's buttons are ctaBlocks). */
+const go = (label: string, path: string): Rec => ({
+  _type: 'ctaBlock',
+  label: example(label),
+  linkType: 'external',
+  externalUrl: path,
+});
+
 export const SECTION_PATTERNS: SectionPattern[] = [
   {
     id: 'enrollment-open',
@@ -98,6 +107,48 @@ export const SECTION_PATTERNS: SectionPattern[] = [
           '/events/',
         ),
         { _type: 'sectionDynamicList', source: 'upcomingEvents', heading: example('Coming up') },
+      ),
+  },
+  // The builder kit (starter cards 173 and 193; refoundation phase B, 2026-10-27).
+  {
+    id: 'enrollment-closing',
+    title: 'Season: Enrollment closes soon',
+    note: 'A dated notice and a countdown to the last day. Set the dates once; both hide themselves after the day.',
+    sections: () =>
+      pattern(
+        kit.notice(example('Enrollment for this term closes soon. [Placeholder: the last day]'), {
+          urgency: 'urgent',
+        }),
+        kit.countdown({
+          eventName: example('Enrollment for this term closes'),
+          startDate: kit.daysFromNow(14),
+          duringText: example('Enrollment closes today.'),
+          afterText: example('Enrollment for this term has closed.'),
+          link: go('See the courses', '/courses/'),
+        }),
+      ),
+  },
+  {
+    id: 'info-session-evening',
+    title: 'Season: Info session, with the evening',
+    note: 'Event details with "Add to my calendar" and the evening hour by hour. Change the date, time and place.',
+    sections: () =>
+      pattern(
+        kit.eventDetails({
+          eyebrow: example('Save the date'),
+          title: example('An information session'),
+          dates: [kit.eventDate(kit.daysFromNow(21), { startTime: '19:00', endTime: '20:30' })],
+          place: example('[Placeholder: the room, the building and the town]'),
+          note: example('Meet the teachers, hear about the courses and ask anything.'),
+          button: go('Save a seat', '/get-started/'),
+        }),
+        kit.schedule(example('The evening'), [
+          kit.scheduleDay('', [
+            kit.slot('19:00', example('Welcome')),
+            kit.slot('19:15', example('The courses this term')),
+            kit.slot('20:00', example('Your questions')),
+          ]),
+        ]),
       ),
   },
   {

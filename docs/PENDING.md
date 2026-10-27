@@ -220,13 +220,20 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
-- **Re-founding on the starter, phases A2 to E** (2026-10-27). Phase A (the renderer
+- **Re-founding on the starter, phases C to E** (2026-10-27). Phase A (the renderer
   layer, cadence, anchors switch, layout slots, rule-9 gate) is done with no visible
-  change, and A2 (named anchors and the accent budget on) is done; see
-  `docs/agent/page-architecture.md`, "The starter's foundations". Next: B brings the
-  starter's builder kit with Academy templates and patterns, C hides the older blocks
-  the starter's replace and their background controls, D the visual cards, E deletes
-  what nothing reads (the `bgField()` controls only after a fresh data count shows 0).
+  change, A2 (named anchors and the accent budget on) is done, and B (the starter's
+  builder kit, seventeen blocks, with Academy templates, saved sections and insert
+  groups) is done with no live page changed; see `docs/agent/page-architecture.md`,
+  "The starter's foundations" and "The builder kit". Next: C hides the older blocks the
+  starter's replace (`sectionAccordion` beside "Fold-out questions" first) and their
+  background controls, D the visual cards (188's scale replaces the stand-in tokens in
+  `src/styles/builder-blocks-academy.css`), E deletes what nothing reads (the
+  `bgField()` controls only after a fresh data count shows 0).
+- **Two new saved sections are not seeded yet** (phase B, 2026-10-27): "Season:
+  Enrollment closes soon" and "Season: Info session, with the evening" are in
+  `src/sanity/sectionPatterns.ts`. `node scripts/seed-section-patterns.mjs` (dry first)
+  writes them as drafts when Nathan says so.
 
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the

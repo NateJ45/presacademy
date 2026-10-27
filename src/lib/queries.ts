@@ -71,6 +71,30 @@ const SECTION_ARMS = `
   // insert PDF, resolved so the block can print its link with type and size.
   _type == "sectionForPastors" => {
     insertPdf{ asset->{ url, originalFilename, size, extension, mimeType } }
+  },
+  // The starter's builder kit (src/sanity/schemaTypes/builderSections.ts, PORTS.md
+  // cards 173 and 193; refoundation phase B, 2026-10-27). Columns, fold-outs, tabs,
+  // the schedule, the contact card and the calendar buttons carry no image or
+  // button, so they need no arm.
+  _type == "buttonRowSection" => { links[]{ ..., link${CTA_PROJECTION} } },
+  _type == "photoSection" => { image${IMAGE_PROJECTION} },
+  _type == "countdownSection" => { link${CTA_PROJECTION} },
+  _type == "noticeSection" => { link${CTA_PROJECTION} },
+  _type == "timelineSection" => { entries[]{ ..., image${IMAGE_PROJECTION} } },
+  _type == "letterSection" => { signature${IMAGE_PROJECTION}, link${CTA_PROJECTION} },
+  _type == "eventDetailsSection" => { image${IMAGE_PROJECTION}, button${CTA_PROJECTION} },
+  _type == "photoCardsSection" => {
+    cards[]{ ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} }
+  },
+  _type == "iconCardsSection" => {
+    cards[]{ ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} }
+  },
+  _type == "stepsRailSection" => {
+    steps[]{ ..., link${CTA_PROJECTION} },
+    link${CTA_PROJECTION}
+  },
+  _type == "hubSection" => {
+    groups[]{ ..., cards[]{ ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} } }
   }`;
 
 // A synced section holds only a reference to a saved section; resolve it into

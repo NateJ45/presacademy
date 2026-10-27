@@ -43,6 +43,11 @@ export const site = {
   // Change to match the site's primary language if not English.
   lang: 'en',
 
+  // IANA time zone the Academy's calendar runs on (Cincinnati, US Eastern):
+  // which day "today" is for a dated notice, a countdown or an event's past
+  // dates in the builder kit (starter card 173, refoundation phase B).
+  timeZone: 'America/New_York',
+
   // The text wordmark rendered in the header, footer, and mobile menu.
   // Two stacked lines (e.g. "The Presbyterian" / "Academy").
   // Set line2 to an empty string for a single-line wordmark.

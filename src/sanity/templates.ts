@@ -20,6 +20,7 @@
 
 import type { Template } from 'sanity';
 import { example, freshKeys } from '../lib/authoring.ts';
+import * as kit from './templateBlocks.ts';
 
 type Rec = Record<string, unknown>;
 
@@ -142,6 +143,30 @@ const courseCovers = (heading: string): Rec => ({
 const page = (...sections: Rec[]) => freshKeys(sections);
 
 // ---------------------------------------------------------------------------
+// The builder kit (starter cards 173 and 193; refoundation phase B, 2026-10-27)
+// ---------------------------------------------------------------------------
+// Builders for the starter's smaller blocks are in templateBlocks.ts. These
+// wrap them in the Academy's example rule: every word goes through example(),
+// and anything only the Academy can say (a room, a date, a time) is a
+// "[Placeholder: ...]" inside it, so Publish-time warnings point straight at it.
+
+/** A button to a page on this site, by its address. */
+const go = (label: string, path: string): Rec => ({
+  _type: 'ctaBlock',
+  label: example(label),
+  linkType: 'external',
+  externalUrl: path,
+});
+
+const ask = (q: string, a: string): Rec => kit.qa(example(q), example(a));
+
+const fold = (heading: string, items: [string, string][]): Rec =>
+  kit.accordion(
+    example(heading),
+    items.map(([q, a]) => ask(q, a)),
+  );
+
+// ---------------------------------------------------------------------------
 // The page templates
 // ---------------------------------------------------------------------------
 
@@ -184,6 +209,61 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           ['Another common question?', 'The plain answer.'],
         ]),
         cta('Still have a question?', 'We are glad to help.', 'Contact us', '/contact/'),
+      ),
+  },
+  {
+    id: 'page-simple',
+    group: 'Basics',
+    title: 'Simple page',
+    description: 'Text in two columns and a row of buttons. Built from the newer blocks.',
+    hero: { headline: 'Page headline', subhead: 'One sentence on what this page covers.' },
+    sections: () =>
+      page(
+        kit.columns(example('A section heading'), [
+          kit.column(
+            example('The first part'),
+            example('Two or three sentences. Say who this is for.'),
+          ),
+          kit.column(
+            example('The second part'),
+            example('Two or three sentences. Say what happens next.'),
+          ),
+        ]),
+        kit.buttonRow(
+          example('Where to next'),
+          [
+            kit.link(go('See the courses', '/courses/'), example('What is on this term.')),
+            kit.link(go('Ask a question', '/contact/'), example('We answer every message.')),
+          ],
+          { layout: 'cards' },
+        ),
+      ),
+  },
+  {
+    id: 'page-questions',
+    group: 'Basics',
+    title: 'Questions page',
+    description: 'Questions people ask, in tabs by topic, each one folding open.',
+    hero: { headline: 'Your questions', subhead: 'One sentence inviting people to ask more.' },
+    sections: () =>
+      page(
+        kit.tabs(example('Questions by topic'), [
+          kit.tab(
+            example('Courses'),
+            example('A short answer, or a word on what this topic covers.'),
+          ),
+          kit.tab(example('Cost'), example('A short answer, or a word on what this topic covers.')),
+          kit.tab(
+            example('Getting here'),
+            example('A short answer, or a word on what this topic covers.'),
+          ),
+        ]),
+        fold('Questions people ask', [
+          ['A question people ask', 'A short, friendly answer.'],
+          ['Another question', 'A short, friendly answer.'],
+          ['A third question', 'A short, friendly answer.'],
+        ]),
+        kit.buttonRow(example('Still wondering?'), [kit.link(go('Ask us', '/contact/'))]),
       ),
   },
   {
@@ -247,6 +327,70 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           ['Can I bring a friend from church?', 'The plain answer.'],
         ]),
         cta('Cannot make it?', 'One line on another way to talk to us.', 'Contact us', '/contact/'),
+      ),
+  },
+  {
+    id: 'page-course-info-night',
+    group: 'Enrollment',
+    title: 'Course info night',
+    description:
+      'One evening to meet the teachers: the date, time and place, the evening hour by hour, questions.',
+    hero: {
+      headline: 'Come to a course information night',
+      subhead: 'One sentence on what happens and who should come.',
+    },
+    sections: () =>
+      page(
+        kit.eventDetails({
+          eyebrow: example('Save the date'),
+          title: example('Course information night'),
+          // Three weeks out, so a new page opens with a date still to come.
+          dates: [kit.eventDate(kit.daysFromNow(21), { startTime: '19:00', endTime: '20:30' })],
+          place: example('[Placeholder: the room, the building and the town]'),
+          note: example('Meet the teachers, hear about the courses this term and ask anything.'),
+          button: go('Save a seat', '/get-started/'),
+        }),
+        kit.schedule(example('The evening'), [
+          kit.scheduleDay('', [
+            kit.slot('19:00', example('Welcome'), example('[Placeholder: coffee, or not]')),
+            kit.slot('19:15', example('The courses this term')),
+            kit.slot('20:00', example('Your questions')),
+          ]),
+        ]),
+        fold('Before you come', [
+          ['Do I need to sign up?', 'A short answer.'],
+          ['Is there a cost?', 'A short answer.'],
+          ['Can I bring someone?', 'A short answer.'],
+        ]),
+      ),
+  },
+  {
+    id: 'page-term-notice',
+    group: 'Enrollment',
+    title: 'Term notice',
+    description:
+      'A notice for the term (a change of room, a class online), what it means, and the days left to enroll.',
+    hero: {
+      headline: 'A note about this term',
+      subhead: 'One sentence on what has changed.',
+    },
+    sections: () =>
+      page(
+        kit.notice(example('[Placeholder: what has changed, in one sentence]'), {
+          urgency: 'info',
+        }),
+        kit.columns(example('What it means for you'), [
+          kit.column(example('If you are enrolled'), example('Two or three sentences.')),
+          kit.column(example('If you are thinking of joining'), example('Two or three sentences.')),
+        ]),
+        kit.countdown({
+          eventName: example('Enrollment for this term closes'),
+          // Two weeks out; change it to the real last day.
+          startDate: kit.daysFromNow(14),
+          duringText: example('Enrollment closes today.'),
+          afterText: example('Enrollment for this term has closed.'),
+          link: go('See the courses', '/courses/'),
+        }),
       ),
   },
   {

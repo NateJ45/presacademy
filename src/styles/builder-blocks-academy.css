@@ -1,0 +1,148 @@
+/* Safe to edit by hand
+   =============================================================================
+   The builder kit in the Academy's "Rule & Ledger" dress (refoundation phase B,
+   2026-10-27)
+   =============================================================================
+   builder-blocks.css and builder-blocks-more.css are the starter's copies,
+   kept close to it on purpose so the next port is a plain diff. This file sits
+   after them (BuilderBlock.astro imports it last) and does two jobs:
+
+   1. THE SCALE. The starter's blocks size themselves from card 188's scale
+      (--fs-*, --radius-card, --pad-card, --gap-grid, --tracking-label). The
+      Academy takes that card later (phase D, on its own), so the names are
+      defined here from the Academy's own tokens. When card 188 lands, delete
+      this block and let globals.css own them.
+   2. THE LOOK. The Academy's sections are square, ruled and bookish: a hairline
+      border with a two-pixel brass top on a card (the Numbered cards block), the
+      eyebrow rubric, Fraunces titles, IBM Plex Mono for small catalog labels,
+      quiet rounding on photos (--arch-radius). The overrides below dress the
+      kit's cards, dates and labels the same way, and `.surface-feature` makes
+      the Feature look the forest green band the Academy uses for its big
+      moments. Light and dark both read: every colour is a theme token, or a
+      static band colour the way bg-chapel is static.
+   ========================================================================== */
+
+/* ---- 1. The scale, from the Academy's tokens ---- */
+:root {
+  --fs-tag: 0.75rem;
+  --fs-small: 0.875rem;
+  --fs-body: 1rem;
+  --fs-lead: 1.125rem;
+  --fs-title: var(--text-h4);
+  --fs-title-sm: var(--text-h5);
+  --fs-numeral: var(--text-h3);
+  --lh-title: 1.2;
+  --tracking-label: var(--tracking-eyebrow);
+  --radius-card: 0;
+  --radius-inner: 0;
+  --radius-pill: 9999px;
+  --pad-card: var(--spacing-l);
+  --gap-grid: var(--spacing-l);
+  /* The urgent notice: a warm amber band, as in the starter. */
+  --warning: #f3e3b3;
+  --warning-foreground: #5c3d0e;
+}
+.dark {
+  --warning: #3a2c12;
+  --warning-foreground: #f3e3b3;
+}
+
+/* ---- 2. The Feature look: the forest green band ---- */
+.surface-feature {
+  --background: var(--color-chapel);
+  --foreground: var(--color-chapel-foreground);
+  --muted: var(--color-chapel-deep);
+  --muted-foreground: rgb(241 234 217 / 0.8);
+  --card: var(--color-chapel-deep);
+  --card-foreground: var(--color-chapel-foreground);
+  --link: var(--color-chapel-foreground);
+  --primary: var(--color-chapel-foreground);
+  --primary-foreground: var(--color-chapel);
+  --ring: var(--color-chapel-foreground);
+  --border: rgb(241 234 217 / 0.22);
+  --border-soft: rgb(241 234 217 / 0.22);
+  --section-accent: #c7a875;
+  background-color: var(--color-chapel);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(241, 234, 217, 0.05), transparent 70%),
+    linear-gradient(to bottom, var(--color-chapel), var(--color-chapel-deep));
+  color: var(--color-chapel-foreground);
+}
+/* The site's pill (CtaLink) fills with static brand hexes, not theme tokens, so
+   on the green band it would vanish. Cream fill with green words, and a cream
+   outline, the way the closing band draws its buttons. */
+.surface-feature a.press-tactile.bg-primary-dark {
+  background-color: var(--color-chapel-foreground);
+  color: var(--color-chapel-deep);
+}
+.surface-feature a.press-tactile.border-primary {
+  border-color: rgb(241 234 217 / 0.7);
+  color: var(--color-chapel-foreground);
+}
+.surface-feature a.press-tactile:hover {
+  background-color: rgb(241 234 217 / 0.12);
+  color: var(--color-chapel-foreground);
+}
+
+/* ---- 3. Rule & Ledger: cards, labels, photos ---- */
+
+/* The heading takes the eyebrow-and-Fraunces rhythm of the Academy's sections. */
+.bb .bb-head {
+  margin-bottom: var(--spacing-l);
+}
+
+/* The one text/picture split (the starter's rule 17, `.split` in its
+   globals.css). The Academy's own blocks set their columns with utilities, so
+   the class is defined here for the kit's event details and countdown only. */
+.bb-event.split,
+.split.bb-countdown {
+  display: grid;
+  gap: var(--spacing-l);
+}
+@media (width >= 64rem) {
+  .bb-event.split,
+  .split.bb-countdown {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+}
+
+/* Cards: square, a hairline all round and the brass top rule (the Academy's
+   Numbered cards). The photo cards stay open, like the course covers' text. */
+.bb-card,
+.bb-letter,
+.bb-rail__step--card .bb-rail__body {
+  border-radius: 0;
+  border: 1px solid var(--border-soft, var(--border));
+  border-top: 2px solid var(--color-gold);
+  box-shadow: none;
+}
+.bb-card.bb-stretch:hover {
+  border-color: var(--border-soft, var(--border));
+  border-top-color: var(--primary);
+}
+
+/* Small catalog labels in the mono voice (codes, dates, tags). */
+.bb-moment__year,
+.bb-event__month,
+.bb-sched__time,
+.bb-notice__tag,
+.bb-countdown__label,
+.bb-letter__role {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+/* Photos: the Academy's quiet rounding. */
+.bb-photo img,
+.bb-moment__photo,
+.bb-moment__photo img,
+.bb-event__media img,
+.bb-pcard img {
+  border-radius: var(--arch-radius);
+}
+
+/* Timeline dots in brass, the hairline accent. */
+.bb-moment__dot {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+}

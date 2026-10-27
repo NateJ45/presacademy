@@ -13,6 +13,8 @@ import { hasInlineRich } from '../../lib/inline-rich';
 import { ACCENT_OPTIONS, SURFACE_OPTIONS } from '../../lib/surfaces';
 import { columnFallback, columnOptions, sideOptions } from '../../lib/layout-variants';
 import { AccentSwatchInput, SurfaceSwatchInput } from '../components/SwatchInput';
+import { BUILDER_INSERT_GROUPS, builderSectionSchemas } from './builderSections';
+import { withSiteGroups } from '../../lib/insert-groups';
 
 // Reusable rich-text body (paragraphs, headings, lists, links).
 const richBody = {
@@ -2819,6 +2821,9 @@ export const sectionBlocks = [
   // Term Issue PR 4, 2026-10-13 (home, the back page).
   sectionNextIssue,
   sectionForPastors,
+  // The starter's builder kit (builderSections.ts, PORTS.md cards 173 and 193),
+  // refoundation phase B, 2026-10-27.
+  ...builderSectionSchemas,
 ];
 
 // The array members allowed in a saved section (sectionPreset) and, with a
@@ -2875,6 +2880,10 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   // Term Issue PR 4, 2026-10-13 (home, the back page).
   { type: 'sectionNextIssue' },
   { type: 'sectionForPastors' },
+  // The starter's builder kit (refoundation phase B, 2026-10-27). Additive: no
+  // stored section changes. Blocks that do not suit the Academy (opening hours,
+  // map, progress, newsletter) are left out of builderSections.ts altogether.
+  ...builderSectionSchemas.map((t) => ({ type: t.name })),
 ];
 
 // =============================================================================
@@ -2885,7 +2894,7 @@ export const FLEXIBLE_SECTION_MEMBERS = [
 // FLEXIBLE_SECTION_MEMBERS must appear in exactly one group — the dev-time
 // check below throws at Studio load if a new section is added without a group,
 // so the picker can never silently hide a section.
-const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
+const ACADEMY_INSERT_GROUPS: { name: string; title: string; of: string[] }[] = [
   {
     name: 'words',
     title: 'Words, photos & video',
@@ -2901,15 +2910,26 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
   {
     name: 'facts',
     title: 'Cards, facts & lists',
-    of: [
-      'sectionCardGrid',
-      'sectionFeatureCards',
-      'sectionStats',
-      'sectionSteps',
-      'sectionAccordion',
-      'sectionKeyDates',
-      'sectionLogos',
-    ],
+    of: ['sectionCardGrid', 'sectionFeatureCards', 'sectionStats', 'sectionSteps', 'sectionLogos'],
+  },
+  // Refoundation phase B (2026-10-27): three groups named for what the Academy
+  // builds with them. The Academy's own course, date and fold-out blocks moved
+  // here from the groups above and below; builderSections.ts adds the starter's
+  // blocks to the same groups by name (withSiteGroups, below).
+  {
+    name: 'courses',
+    title: 'Courses and terms',
+    of: ['sectionCourseRail', 'sectionCourseFinder', 'sectionTermContents', 'sectionFacultyRail'],
+  },
+  {
+    name: 'dates',
+    title: 'Events and notices',
+    of: ['sectionEventGrid', 'sectionKeyDates'],
+  },
+  {
+    name: 'folding',
+    title: 'Fold-outs and tabs',
+    of: ['sectionAccordion'],
   },
   {
     name: 'catalog',
@@ -2945,21 +2965,19 @@ const INSERT_MENU_GROUPS: { name: string; title: string; of: string[] }[] = [
       'sectionEditorialColumns',
       'sectionInlineBand',
       'sectionFaqGrouped',
-      'sectionEventGrid',
       'sectionRuledList',
       'sectionContactDetails',
       'sectionRequestPanel',
-      'sectionCourseRail',
       'sectionTicker',
-      'sectionFacultyRail',
       'sectionTestimonialRail',
-      'sectionTermContents',
-      'sectionCourseFinder',
       'sectionNextIssue',
       'sectionForPastors',
     ],
   },
 ];
+
+// The Academy's groups with the builder kit merged in by name.
+const INSERT_MENU_GROUPS = withSiteGroups(ACADEMY_INSERT_GROUPS, BUILDER_INSERT_GROUPS);
 
 // Fail loudly at Studio load when the groups and the palette drift apart.
 {
