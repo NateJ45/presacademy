@@ -14,6 +14,7 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 | **Product strategy (register, users, anti-references, design principles)**         | `PRODUCT.md` (root); companion to `design.md`, read by the Impeccable design skill |
 | Stack detail + astro.config landmines                                              | `docs/agent/stack-and-config.md`                                                   |
 | Page + section architecture, nav, visibility toggles                               | `docs/agent/page-architecture.md`                                                  |
+| Client review layer (notes pill, shot list; off on this live site)                 | `docs/agent/client-notes.md`                                                       |
 | Brand colors + theme system (light/dark discipline)                                | `docs/agent/theme-and-color.md`                                                    |
 | Polish layer (card-lift, scroll, script accents)                                   | `docs/agent/polish-layer.md`                                                       |
 | Animation layer (native scroll, motion, scroll-reveal, Ken Burns hero)             | `docs/agent/animation.md`                                                          |

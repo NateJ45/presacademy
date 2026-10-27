@@ -5,6 +5,9 @@
 import SanityImage from '@/components/SanityImage.astro';
 import PortableText from '@/components/PortableText';
 import { pillClasses, type PillVariant } from '@/lib/pill-variant';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 
 // primaryVariant: the page's accent budget (SectionRenderer, src/lib/pill-variant.ts).
 const {
@@ -14,6 +17,12 @@ const {
 } = Astro.props as { block: any; defaultTone?: string; primaryVariant?: PillVariant };
 const imageRight = (block?.imageSide ?? 'right') !== 'left';
 const hasImage = !!block?.image?.asset;
+// While the client review layer is on (starter card 195, off on this live site), an empty or
+// stand-in picture shows a "Photo needed" box naming the shot (src/data/shot-list.ts, keyed by
+// page and heading). With it off this is always null and the block draws as before.
+const shot = block
+  ? shotFor(Astro.url.pathname, splitStega(block.heading ?? '').cleaned, 0, block.image)
+  : null;
 const tone = block?.background?.tone ?? defaultTone;
 // Every fixed dark surface has to be listed here, or the body keeps its
 // light-mode ink on a dark slab. "ink" joined the two greens on 2026-08-28
@@ -50,18 +59,24 @@ const pill = pillClasses(
         </div>
       )}
     </div>
-    {hasImage && (
+    {shot ? (
       <div class={imageRight ? 'md:order-2' : 'md:order-1'}>
-        <div class="group img-zoom aspect-[4/5] overflow-hidden rounded-md shadow-sm ring-1 ring-primary/40 dark:ring-[#C7A875]/40">
-          <SanityImage
-            source={block.image}
-            width={900}
-            sizes="(min-width: 768px) 45vw, 90vw"
-            alt={block.image?.alt || block.heading || ''}
-            class="h-full w-full object-cover"
-          />
-        </div>
+        <ShotRequest shot={shot} class="shot--tall" />
       </div>
+    ) : (
+      hasImage && (
+        <div class={imageRight ? 'md:order-2' : 'md:order-1'}>
+          <div class="group img-zoom aspect-[4/5] overflow-hidden rounded-md shadow-sm ring-1 ring-primary/40 dark:ring-[#C7A875]/40">
+            <SanityImage
+              source={block.image}
+              width={900}
+              sizes="(min-width: 768px) 45vw, 90vw"
+              alt={block.image?.alt || block.heading || ''}
+              class="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      )
     )}
   </div>
 )}

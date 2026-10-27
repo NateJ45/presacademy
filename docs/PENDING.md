@@ -238,9 +238,10 @@ the Westminster Standards and the Book of Confessions."`
   key dates) once the kit grows equivalents; phase C kept them.
 
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
+  Phase D is taking them one PR at a time; card 195 (client notes, switched off) is in.
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the
   builder block library (steps rail, hub, contact card), business facts (office hours, term-break
-  closures), client notes, the main pages as page builders and the documents library all build on
+  closures), the main pages as page builders and the documents library all build on
   starter pieces this repo never took after it left the starter (2026-08-25). Taking them means
   adopting `SectionRenderer`, `sections.ts` and `site-layout.ts` first: a planned piece of work,
   Nathan's call. Office facts also wait on real values (the seed is placeholder). The SVG path
