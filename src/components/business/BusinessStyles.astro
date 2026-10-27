@@ -1,0 +1,20 @@
+---
+// Safe to edit by hand
+// Writes the office facts' styles (src/styles/business.css, starter card 196)
+// into the page ONCE, and only on a page that shows one of the pieces.
+//
+// THE ACADEMY'S WAY (as the builder kit does, BuilderBlock.astro). A plain
+// `import '@/styles/business.css'` in these components would make Astro link
+// the sheet from every page whose module graph reaches them, which is every
+// page (the footer imports OpenStatus), even while no hours exist. `?inline`
+// hands back the processed CSS as a string instead, and the first piece a page
+// draws writes it as a <style> (the CSP allows inline styles). Astro.locals is a
+// fresh object for every page render, so "once" is per page.
+import businessCss from '@/styles/business.css?inline';
+
+const locals = Astro.locals as { businessCss?: boolean };
+const write = !locals.businessCss;
+locals.businessCss = true;
+---
+
+{write && <style is:inline set:html={businessCss} />}

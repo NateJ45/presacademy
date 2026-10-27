@@ -9,6 +9,9 @@
 
 import { site } from '@/data/site';
 import { resolveSiteSettings, type RawSiteSettings } from './siteSettings';
+import { officeFactsFrom, type RawOfficeFacts } from './business-data';
+import { resolveBusinessFacts } from './business-facts';
+import { openingHoursSpecification, zonedClock } from './business-hours';
 
 // ---------- Types (loose — Sanity provides the actual document shapes) ----
 
@@ -31,19 +34,26 @@ interface Breadcrumb {
 
 // ---------- LocalBusiness (site-wide, BaseLayout injects on every page) ----
 
-export function organizationSchema(settings: RawSiteSettings | null | undefined): string {
+export function organizationSchema(
+  settings: RawSiteSettings | null | undefined,
+  now: Date = new Date(),
+): string {
   // Resolve through the shared helper so the JSON-LD identity matches what the
   // header and footer render.
   const s = resolveSiteSettings(settings);
+  // The office facts (starter card 196): a fact whose Confirmed box is unticked
+  // never reaches search engines, and only confirmed office hours by day do.
+  const facts = resolveBusinessFacts(officeFactsFrom(settings as RawOfficeFacts | null));
+  const raw = (settings ?? {}) as RawOfficeFacts;
 
   // Build the address object only with fields that are actually known.
   // Omit addressLocality / addressRegion / postalCode when cityStateZip cannot
   // be parsed (rather than emitting placeholder West Chester Township values).
   const address: Record<string, string> = { '@type': 'PostalAddress' };
-  if (s.addressLine) address.streetAddress = s.addressLine;
+  if (s.addressLine && raw.addressConfirmed !== false) address.streetAddress = s.addressLine;
   if (s.addressLocality) address.addressLocality = s.addressLocality;
   if (s.addressRegion) address.addressRegion = s.addressRegion;
-  if (s.postalCode) address.postalCode = s.postalCode;
+  if (s.postalCode && raw.addressConfirmed !== false) address.postalCode = s.postalCode;
   address.addressCountry = 'US';
 
   const schema: Record<string, any> = {
@@ -53,8 +63,8 @@ export function organizationSchema(settings: RawSiteSettings | null | undefined)
     name: s.brandName,
     url: site.url,
     image: `${site.url}${site.assets.ogDefault}`,
-    email: s.email || undefined,
-    telephone: s.phone || undefined,
+    email: s.email && raw.emailConfirmed !== false ? s.email : undefined,
+    telephone: s.phone && raw.phoneConfirmed !== false ? s.phone : undefined,
     address: Object.keys(address).length > 2 ? address : undefined,
     // Geo block is emitted only when both lat and lng are set in Sanity
     // (Studio: right-click your building in Google Maps → copy the coordinates).
@@ -70,6 +80,15 @@ export function organizationSchema(settings: RawSiteSettings | null | undefined)
       : {}),
     sameAs: [s.social.instagram, s.social.facebook, s.social.youtube].filter(Boolean),
   };
+
+  // Office hours (card 196): confirmed rows only, plus the closures still to
+  // come as dated specials. openingHoursSpecification belongs to a place, so the
+  // Academy is typed as a LocalBusiness too, and only once it has hours.
+  const hours = openingHoursSpecification(facts.hours, zonedClock(now, site.timeZone).date);
+  if (hours.length > 0) {
+    schema['@type'] = ['EducationalOrganization', 'LocalBusiness'];
+    schema.openingHoursSpecification = hours;
+  }
 
   // Strip top-level undefined values so the emitted JSON is clean.
   return JSON.stringify(schema, (_key, value) => (value === undefined ? undefined : value));

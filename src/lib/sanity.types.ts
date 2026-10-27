@@ -640,9 +640,415 @@ export type SiteSettings = {
   mission?: string;
   funder?: string;
   email?: string;
+  emailConfirmed?: boolean;
   pastorEmail?: string;
   phone?: string;
+  phoneConfirmed?: boolean;
   officeHours?: string;
+  openingHours?: Array<{
+    days?: Array<string>;
+    opens?:
+      | '00:00'
+      | '00:15'
+      | '00:30'
+      | '00:45'
+      | '01:00'
+      | '01:15'
+      | '01:30'
+      | '01:45'
+      | '02:00'
+      | '02:15'
+      | '02:30'
+      | '02:45'
+      | '03:00'
+      | '03:15'
+      | '03:30'
+      | '03:45'
+      | '04:00'
+      | '04:15'
+      | '04:30'
+      | '04:45'
+      | '05:00'
+      | '05:15'
+      | '05:30'
+      | '05:45'
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    closes?:
+      | '00:00'
+      | '00:15'
+      | '00:30'
+      | '00:45'
+      | '01:00'
+      | '01:15'
+      | '01:30'
+      | '01:45'
+      | '02:00'
+      | '02:15'
+      | '02:30'
+      | '02:45'
+      | '03:00'
+      | '03:15'
+      | '03:30'
+      | '03:45'
+      | '04:00'
+      | '04:15'
+      | '04:30'
+      | '04:45'
+      | '05:00'
+      | '05:15'
+      | '05:30'
+      | '05:45'
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    label?: string;
+    confirmed?: boolean;
+    _type: 'openingHoursRow';
+    _key: string;
+  }>;
+  hoursNote?: string;
+  hoursChanges?: Array<{
+    date?: string;
+    endDate?: string;
+    kind?: 'closed' | 'hours';
+    opens?:
+      | '00:00'
+      | '00:15'
+      | '00:30'
+      | '00:45'
+      | '01:00'
+      | '01:15'
+      | '01:30'
+      | '01:45'
+      | '02:00'
+      | '02:15'
+      | '02:30'
+      | '02:45'
+      | '03:00'
+      | '03:15'
+      | '03:30'
+      | '03:45'
+      | '04:00'
+      | '04:15'
+      | '04:30'
+      | '04:45'
+      | '05:00'
+      | '05:15'
+      | '05:30'
+      | '05:45'
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    closes?:
+      | '00:00'
+      | '00:15'
+      | '00:30'
+      | '00:45'
+      | '01:00'
+      | '01:15'
+      | '01:30'
+      | '01:45'
+      | '02:00'
+      | '02:15'
+      | '02:30'
+      | '02:45'
+      | '03:00'
+      | '03:15'
+      | '03:30'
+      | '03:45'
+      | '04:00'
+      | '04:15'
+      | '04:30'
+      | '04:45'
+      | '05:00'
+      | '05:15'
+      | '05:30'
+      | '05:45'
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    note?: string;
+    _type: 'hoursChange';
+    _key: string;
+  }>;
   favicon?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -660,6 +1066,8 @@ export type SiteSettings = {
   };
   addressLine?: string;
   cityStateZip?: string;
+  addressConfirmed?: boolean;
+  findUs?: string;
   geoLat?: number;
   geoLng?: number;
   navItems?: Array<
@@ -941,6 +1349,24 @@ export type StepsRailSection = {
   firstStepCard?: boolean;
   endHeading?: string;
   link?: CtaBlock;
+  look?: 'standard' | 'quiet' | 'feature';
+};
+
+export type MapSection = {
+  _type: 'mapSection';
+  heading?: string;
+  intro?: string;
+  showHours?: boolean;
+  look?: 'standard' | 'quiet';
+};
+
+export type HoursSection = {
+  _type: 'hoursSection';
+  heading?: string;
+  intro?: string;
+  layout?: 'card' | 'band';
+  showAddress?: boolean;
+  showChanges?: boolean;
   look?: 'standard' | 'quiet' | 'feature';
 };
 
@@ -2458,6 +2884,12 @@ export type SectionPreset = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -2640,6 +3072,12 @@ export type AccessibilityPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -2827,6 +3265,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -3039,6 +3483,12 @@ export type Page = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -3237,6 +3687,12 @@ export type ResourcesPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -3428,6 +3884,12 @@ export type ForYouPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -3622,6 +4084,12 @@ export type GetStartedPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -3811,6 +4279,12 @@ export type PricingPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -4005,6 +4479,12 @@ export type FacultyPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -4197,6 +4677,12 @@ export type CoursesPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -4405,6 +4891,12 @@ export type EventsPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -4595,6 +5087,12 @@ export type ContactPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -4799,6 +5297,12 @@ export type FaqPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -4964,6 +5468,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -5166,6 +5676,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & HoursSection)
+    | ({
+        _key: string;
+      } & MapSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -5575,6 +6091,8 @@ export type AllSanitySchemaTypes =
   | NavLink
   | HubSection
   | StepsRailSection
+  | MapSection
+  | HoursSection
   | IconCardsSection
   | CalendarSubscribeSection
   | ContactCardSection

@@ -58,6 +58,23 @@ const para = (key: string, text: string) => ({
 /** A calendar day `n` days after the build, as YYYY-MM-DD. */
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
 /** A button that goes nowhere: the fixtures are pictures, not pages. */
+// Made-up office facts for the hours and map blocks and the self-filling contact
+// card (starter card 196), in the Site settings shape src/lib/business-data.ts
+// maps. Example values only: the closure is always ten days out, so the "Changes
+// coming up" line is on the thumbnail. A block on a real page never carries facts.
+const FIXTURE_FACTS = {
+  street: '100 Example Street',
+  city: 'Cincinnati',
+  state: 'OH',
+  zip: '45202',
+  findUs: 'Example: park behind the building and use the side door.',
+  openingHours: [
+    { _key: 'wk', days: ['mon', 'tue', 'wed', 'thu'], opens: '09:00', closes: '16:00' },
+    { _key: 'fri', days: ['fri'], opens: '09:00', closes: '12:00' },
+  ],
+  hoursChanges: [{ _key: 'brk', date: inDays(10), kind: 'closed', note: 'Example: term break' }],
+};
+
 const cta = (label: string) => ({
   _type: 'ctaBlock',
   label,
@@ -357,6 +374,37 @@ const fixtures: any[] = [
         link: ci === 0 ? cta('Example: find out more') : undefined,
       })),
     })),
+  },
+  // ── Office hours and location (card 196) ──────────────────────────────────
+  {
+    _type: 'hoursSection',
+    _key: 'fxHours',
+    heading: 'Example: office hours',
+    layout: 'card',
+    showAddress: true,
+    showChanges: true,
+    facts: FIXTURE_FACTS,
+  },
+  {
+    _type: 'mapSection',
+    _key: 'fxMap',
+    heading: 'Example: find us',
+    intro: 'Example: ten minutes from downtown, with parking at the back.',
+    showHours: true,
+    facts: FIXTURE_FACTS,
+  },
+  // Card 198: the contact card with nothing typed, filling itself from the
+  // office facts (here the fixture's; the phone still unconfirmed).
+  {
+    _type: 'contactCardSection',
+    _key: 'fxContactFacts',
+    heading: 'Example: visit or call',
+    facts: {
+      ...FIXTURE_FACTS,
+      phone: '(555) 555-0142',
+      phoneConfirmed: false,
+      email: 'office@example.com',
+    },
   },
 ];
 ---

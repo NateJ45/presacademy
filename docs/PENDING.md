@@ -238,10 +238,12 @@ the Westminster Standards and the Book of Confessions."`
   key dates) once the kit grows equivalents; phase C kept them.
 
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
-  Phase D is taking them one PR at a time; card 195 (client notes, switched off) is in.
+  Phase D is taking them one PR at a time; card 195 (client notes, switched off) and card 196
+  (office facts, empty until filled) are in. **Waiting on the Academy:** the real office hours by day,
+  and whether the stored address (9463 Cincinnati Columbus Rd) is the Academy's own; until then the
+  rows stay empty and the one-line office hours show.
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the
-  builder block library (steps rail, hub, contact card), business facts (office hours, term-break
-  closures), the main pages as page builders and the documents library all build on
+  builder block library (steps rail, hub, contact card), the main pages as page builders and the documents library all build on
   starter pieces this repo never took after it left the starter (2026-08-25). Taking them means
   adopting `SectionRenderer`, `sections.ts` and `site-layout.ts` first: a planned piece of work,
   Nathan's call. Office facts also wait on real values (the seed is placeholder). The SVG path

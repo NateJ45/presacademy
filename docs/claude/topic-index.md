@@ -15,6 +15,7 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 | Stack detail + astro.config landmines                                              | `docs/agent/stack-and-config.md`                                                   |
 | Page + section architecture, nav, visibility toggles                               | `docs/agent/page-architecture.md`                                                  |
 | Client review layer (notes pill, shot list; off on this live site)                 | `docs/agent/client-notes.md`                                                       |
+| Office facts: address, office hours by day, closures, To-confirm tags, JSON-LD     | `docs/agent/business-facts.md`                                                     |
 | Brand colors + theme system (light/dark discipline)                                | `docs/agent/theme-and-color.md`                                                    |
 | Polish layer (card-lift, scroll, script accents)                                   | `docs/agent/polish-layer.md`                                                       |
 | Animation layer (native scroll, motion, scroll-reveal, Ken Burns hero)             | `docs/agent/animation.md`                                                          |

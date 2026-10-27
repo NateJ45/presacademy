@@ -130,6 +130,13 @@ const NON_STEGA_FIELDS = new Set([
   'startTime',
   'endTime',
   'unit',
+  // Card 196 (phase D): the office hours by day and the closures. Each is
+  // parsed (a weekday key, an HH:MM time, a closed/hours switch), so an encoded
+  // value would drop the row and the preview would show the office closed.
+  'days',
+  'opens',
+  'closes',
+  'kind',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

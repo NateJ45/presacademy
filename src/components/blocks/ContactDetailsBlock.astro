@@ -25,13 +25,22 @@ import { getSiteSettings } from '@/lib/queries';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import { telHref } from '@/lib/phone';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import HoursTable from '@/components/business/HoursTable.astro';
+import OpenStatus from '@/components/business/OpenStatus.astro';
+import ToConfirm from '@/components/business/ToConfirm.astro';
+import { resolveOfficeFacts, type RawOfficeFacts } from '@/lib/business-data';
 
 interface Props {
   block: any;
 }
 const { block } = Astro.props as Props;
 
-const settings = resolveSiteSettings(await getSiteSettings().catch(() => null));
+const raw = (await getSiteSettings().catch(() => null)) as RawOfficeFacts | null;
+const settings = resolveSiteSettings(raw);
+// The office facts (starter card 196, src/lib/business-data.ts): a fact whose Confirmed box is
+// unticked carries the "To confirm" tag, and once the office hours by day have a row they replace
+// the one-line office hours with the week, "Open now" and any closures coming up.
+const facts = resolveOfficeFacts(raw);
 
 const addressLine = settings.addressLine;
 const cityStateZip = settings.cityStateZip;
@@ -63,6 +72,7 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
             {addressLine}
             <br />
             {cityStateZip}
+            <ToConfirm confirmed={facts.address?.confirmed} />
           </span>
         </li>
         {settings.phone && (
@@ -74,6 +84,7 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
             >
               {settings.phone}
             </a>
+            <ToConfirm confirmed={facts.phone?.confirmed} />
           </li>
         )}
         {settings.email && (
@@ -85,11 +96,19 @@ const reasons = block?.reasons?.length ? block.reasons : FALLBACK_REASONS;
             >
               {settings.email}
             </a>
+            <ToConfirm confirmed={facts.email?.confirmed} />
           </li>
         )}
         <li class="flex items-start gap-s">
           <Clock size={20} aria-hidden="true" className="mt-1 shrink-0 text-primary" />
-          <span>Office hours: {settings.officeHours}</span>
+          {facts.hasHours ? (
+            <div class="min-w-0 flex-1">
+              <OpenStatus facts={facts} />
+              <HoursTable facts={facts} class="mt-s text-base" />
+            </div>
+          ) : (
+            <span>Office hours: {settings.officeHours}</span>
+          )}
         </li>
       </ul>
 

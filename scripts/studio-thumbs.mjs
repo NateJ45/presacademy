@@ -105,7 +105,9 @@ const SINGLETON_PATHS = {
 async function sectionTypes() {
   const src = await readFile(BLOCKS, 'utf8');
 
-  const members = src.match(/export const FLEXIBLE_SECTION_MEMBERS = \[([\s\S]*?)\n\];/);
+  // Phase C (2026-10-27) renamed the full list ALL_FLEXIBLE_SECTION_MEMBERS (the insert menu
+  // filters the hidden blocks out of it); a hidden block keeps its picture, so read the full list.
+  const members = src.match(/const (?:ALL_)?FLEXIBLE_SECTION_MEMBERS = \[([\s\S]*?)\n\];/);
   if (!members) throw new Error('Could not find FLEXIBLE_SECTION_MEMBERS in blocks.ts');
   const names = [...members[1].matchAll(/type:\s*'([A-Za-z]+)'/g)].map((m) => m[1]);
 

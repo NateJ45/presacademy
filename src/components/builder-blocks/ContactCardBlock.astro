@@ -3,12 +3,14 @@
 // Contact details on one card (PORTS.md card 193, from FBC Auburn's contact block): phone,
 // email, address (with a directions link) and office hours, a column each on a wide screen.
 //
-// THE ACADEMY'S COPY (refoundation phase B, 2026-10-27). The starter's block reads business
-// facts (card 196), which the Academy does not keep. Here the phone and email default to Site
-// settings through resolveSiteSettings() (rule 15: typed once), so a bare block shows the
-// Academy's public email; a block can type its own for a teacher or an office and that wins.
-// The address and the hours are typed on the block only. Lines that are empty are left out,
-// and with none at all the block draws nothing.
+// THE ACADEMY'S COPY (phase B, 2026-10-27; card 196's facts since phase D). The phone, email,
+// address and office hours default to the Academy's office facts in Site settings, read through
+// src/lib/business-data.ts (rule 15: typed once), so a bare block shows the Academy's own; a
+// block can type its own for a teacher or an office and that wins. A fact whose Confirmed box is
+// unticked carries the "To confirm" tag (only when it came from Site settings). The hours come
+// from the office hours by day when they are filled in ("Today 9 am to 4 pm" plus "Open now"),
+// else from the one-line office hours. Lines that are empty are left out, and with none at all
+// the block draws nothing.
 //
 // "Lead with big Call and Email buttons" (callButtons) puts two large buttons above the details,
 // tel: and mailto: links built from the same two values. Call (or Email, when there is no phone)
@@ -16,6 +18,9 @@
 import BuilderBand from './BuilderBand.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import { eventPlace, plain, telHref } from '@/lib/builder-blocks';
+import OpenStatus from '@/components/business/OpenStatus.astro';
+import ToConfirm from '@/components/business/ToConfirm.astro';
+import { factsFor } from '@/lib/business-data';
 import { getSiteSettings } from '@/lib/queries';
 import { resolveSiteSettings } from '@/lib/siteSettings';
 import type { CadenceSurface } from '@/lib/surfaces';
@@ -29,18 +34,32 @@ interface Props {
 }
 const { block, surface, headingId, primaryVariant = 'secondary' } = Astro.props;
 
-const settings = resolveSiteSettings(await getSiteSettings());
-// Own words win; Site settings fill whatever is left empty.
-const phone = plain(block.phone) || settings.phone || '';
+const facts = await factsFor(block.facts);
+// The one-line office hours (the Academy's own field) when there are no hours by day.
+const officeLine = block.facts
+  ? ''
+  : (resolveSiteSettings(await getSiteSettings().catch(() => null)).officeHours ?? '');
+// Own words win; the office facts fill whatever is left empty.
+const ownPhone = plain(block.phone);
+const phone = ownPhone || facts.phone?.display || '';
 const tel = telHref(phone);
-const email = plain(block.email) || settings.email || '';
-const place = eventPlace(block.address);
-const hours = plain(block.hours)
+const phoneTag = !ownPhone && facts.phone ? facts.phone.confirmed : null;
+const ownEmail = plain(block.email);
+const email = ownEmail || facts.email?.address || '';
+const emailTag = !ownEmail && facts.email ? facts.email.confirmed : null;
+const ownPlace = eventPlace(block.address);
+const place =
+  ownPlace ??
+  (facts.address ? { lines: facts.address.lines, mapsUrl: facts.address.mapsUrl } : null);
+const placeTag = !ownPlace && facts.address ? facts.address.confirmed : null;
+const ownHours = plain(block.hours)
   .split(/\r?\n/)
   .map((l) => l.trim())
   .filter(Boolean);
+const factHours = ownHours.length === 0 && facts.hasHours;
+const hours = ownHours.length > 0 || factHours ? ownHours : officeLine ? [officeLine] : [];
 
-const count = [Boolean(tel), Boolean(email), Boolean(place), hours.length > 0].filter(
+const count = [Boolean(tel), Boolean(email), Boolean(place), hours.length > 0 || factHours].filter(
   Boolean,
 ).length;
 const big = block.callButtons === true;
@@ -80,6 +99,7 @@ const accent = primaryVariant === 'primary' ? 'primary' : 'secondary';
           <dt>Phone</dt>
           <dd>
             <a href={tel}>{phone}</a>
+            <ToConfirm confirmed={phoneTag} />
           </dd>
         </div>
       )}
@@ -88,6 +108,7 @@ const accent = primaryVariant === 'primary' ? 'primary' : 'secondary';
           <dt>Email</dt>
           <dd>
             <a href={`mailto:${email}`}>{email}</a>
+            <ToConfirm confirmed={emailTag} />
           </dd>
         </div>
       )}
@@ -98,19 +119,22 @@ const accent = primaryVariant === 'primary' ? 'primary' : 'secondary';
             {place.lines.map((line) => (
               <span class="bb-line">{line}</span>
             ))}
+            <ToConfirm confirmed={placeTag} />
             <a href={place.mapsUrl} target="_blank" rel="noopener noreferrer">
               Get directions<span class="sr-only"> (opens in a new tab)</span>
             </a>
           </dd>
         </div>
       )}
-      {hours.length > 0 && (
+      {(hours.length > 0 || factHours) && (
         <div class="bb-board__cell">
           <dt>Office hours</dt>
           <dd>
             {hours.map((line) => (
               <span class="bb-line">{line}</span>
             ))}
+            {factHours && <OpenStatus facts={facts} />}
+            {factHours && facts.hoursNote && <span class="bb-line">{facts.hoursNote}</span>}
           </dd>
         </div>
       )}

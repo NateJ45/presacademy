@@ -2199,6 +2199,49 @@ guides.push(
     ],
   },
   {
+    slug: 'office-hours',
+    category: 'Events, notices & voices',
+    title: 'Office hours, closures and the address',
+    icon: 'times',
+    lead: 'Typed once in Site settings, shown in the footer, on Contact and in the contact card.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site Settings', 'Identity & contact'],
+      },
+      {
+        kind: 'p',
+        text: 'The address, phone, email and office hours live in one place, `Identity & contact` in Site Settings. The footer, the Contact page, the contact card block and what search engines read all come from there, so a change is one edit.',
+      },
+      { kind: 'h', text: 'Office hours by day' },
+      {
+        kind: 'steps',
+        items: [
+          'Open **Office hours by day** (under the one-line office hours).',
+          'Add a row for each set of days with the same hours, like Monday to Thursday, 9 am to 4 pm. A day with no row shows as closed.',
+          '`Publish`. From then on the footer and the Contact page show the week with "Open now" or when the office next opens, instead of the one-line office hours.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Only the real hours',
+        text: 'Leave the rows empty until the hours are settled. While a row is a guess, untick **These hours are confirmed**: it shows with a small "To confirm" tag and stays out of search results. The address, phone and email have the same box.',
+      },
+      { kind: 'h', text: 'A holiday or a term break' },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Quick update` and press **Change the office hours for a day**.',
+          'Pick the day (and the last day, for a break of several days), and choose Closed all day or Different hours.',
+          'Add why, like "Winter break", if you like. The website shows it on those days and goes back to the usual hours by itself.',
+        ],
+      },
+      { kind: 'seealso', items: ['Quick updates from your phone'] },
+    ],
+  },
+  {
     slug: 'end-of-term',
     category: 'Courses, faculty & terms',
     title: 'Close a term',
