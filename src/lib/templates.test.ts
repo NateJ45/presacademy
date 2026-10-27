@@ -18,7 +18,7 @@ type Rec = Record<string, unknown>;
 // would pull in the whole Studio).
 const blocksSrc = readFileSync(new URL('../sanity/schemaTypes/blocks.ts', import.meta.url), 'utf8');
 const membersBlock =
-  /export const FLEXIBLE_SECTION_MEMBERS = \[([\s\S]*?)\];/.exec(blocksSrc)?.[1] ?? '';
+  /const ALL_FLEXIBLE_SECTION_MEMBERS = \[([\s\S]*?)\];/.exec(blocksSrc)?.[1] ?? '';
 // The builder kit's blocks are spread into the members from builderSections.ts
 // (refoundation phase B, 2026-10-27), so their names are read from that file.
 const kitSrc = readFileSync(
@@ -26,10 +26,15 @@ const kitSrc = readFileSync(
   'utf8',
 );
 const KIT_TYPES = [...kitSrc.matchAll(/^ {2}name: '(\w+Section)',$/gm)].map((m) => m[1]);
-const ALLOWED = new Set([
-  ...[...membersBlock.matchAll(/type: '([A-Za-z]+)'/g)].map((m) => m[1]),
-  ...(membersBlock.includes('...builderSectionSchemas') ? KIT_TYPES : []),
-]);
+// Phase C: the old blocks the kit replaces are no longer allowed on a page (HIDDEN_FROM_INSERT).
+const hiddenBlock = /export const HIDDEN_FROM_INSERT = \[([\s\S]*?)\]/.exec(blocksSrc)?.[1] ?? '';
+const HIDDEN = new Set([...hiddenBlock.matchAll(/'([A-Za-z]+)'/g)].map((m) => m[1]));
+const ALLOWED = new Set(
+  [
+    ...[...membersBlock.matchAll(/type: '([A-Za-z]+)'/g)].map((m) => m[1]),
+    ...(membersBlock.includes('...builderSectionSchemas') ? KIT_TYPES : []),
+  ].filter((t) => !HIDDEN.has(t)),
+);
 
 // Fields that hold a setting, an address or a button word, not page copy.
 const NOT_COPY = new Set([
@@ -126,7 +131,7 @@ describe('page templates and saved sections', () => {
           assert.ok(s.title && s.place && (s.occurrences as Rec[]).every((o) => o.date), name);
         if (s._type === 'noticeSection') assert.ok(s.message, name);
         if (s._type === 'countdownSection') assert.ok(s.eventName && s.startDate, name);
-        if (s._type === 'sectionSteps')
+        if (s._type === 'stepsRailSection')
           assert.ok(
             (s.steps as Rec[]).every((st) => st.title),
             name,

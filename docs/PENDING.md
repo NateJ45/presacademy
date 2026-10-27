@@ -225,15 +225,17 @@ the Westminster Standards and the Book of Confessions."`
   change, A2 (named anchors and the accent budget on) is done, and B (the starter's
   builder kit, seventeen blocks, with Academy templates, saved sections and insert
   groups) is done with no live page changed; see `docs/agent/page-architecture.md`,
-  "The starter's foundations" and "The builder kit". Next: C hides the older blocks the
-  starter's replace (`sectionAccordion` beside "Fold-out questions" first) and their
-  background controls, D the visual cards (188's scale replaces the stand-in tokens in
+  "The starter's foundations" and "The builder kit". C (2026-10-27) hid the six older blocks the kit
+  replaces and the background panel; next: D the visual cards (188's scale replaces the stand-in tokens in
   `src/styles/builder-blocks-academy.css`), E deletes what nothing reads (the
   `bgField()` controls only after a fresh data count shows 0).
-- **Two new saved sections are not seeded yet** (phase B, 2026-10-27): "Season:
-  Enrollment closes soon" and "Season: Info session, with the evening" are in
-  `src/sanity/sectionPatterns.ts`. `node scripts/seed-section-patterns.mjs` (dry first)
-  writes them as drafts when Nathan says so.
+- **The other eleven saved sections are still not seeded** (2026-10-27): phase C seeded only
+  "Season: Enrollment closes soon" and "Season: Info session, with the evening" as drafts
+  (`node --experimental-strip-types scripts/seed-section-patterns.mjs --only=enrollment-closing,info-session-evening`).
+  The rest are in `src/sanity/sectionPatterns.ts`; run the script without `--only` (dry first)
+  when Nathan says so. Phase E may hide the older blocks that have no kit equal (rich text,
+  image and text, quote, banner, stats, gallery, logos, from your catalog, FAQ list, resources,
+  key dates) once the kit grows equivalents; phase C kept them.
 
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the

@@ -84,30 +84,30 @@ const band = (headline: string, label: string, url: string): Rec => ({
 });
 
 const steps = (heading: string, items: [string, string][]): Rec => ({
-  _type: 'sectionSteps',
+  _type: 'stepsRailSection',
   heading: example(heading),
   steps: items.map(([title, body]) => ({
-    _type: 'step',
+    _type: 'railStep',
     title: example(title),
     body: example(body),
   })),
 });
 
 const questions = (heading: string, items: [string, string][]): Rec => ({
-  _type: 'sectionAccordion',
+  _type: 'accordionSection',
   heading: example(heading),
   items: items.map(([question, answer]) => ({
-    _type: 'qa',
+    _type: 'accordionItem',
     question: example(question),
-    answer: example(answer),
+    answer: [para(answer)],
   })),
 });
 
 const cards = (heading: string, items: [string, string][]): Rec => ({
-  _type: 'sectionFeatureCards',
+  _type: 'iconCardsSection',
   heading: example(heading),
   cards: items.map(([title, body]) => ({
-    _type: 'featureCard',
+    _type: 'iconCard',
     title: example(title),
     body: example(body),
   })),
