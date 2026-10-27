@@ -169,12 +169,16 @@ export const SECTION_PATTERNS: SectionPattern[] = [
     note: 'The steps for a new student. Change the steps to match how this term runs.',
     sections: () =>
       pattern({
-        _type: 'sectionSteps',
+        _type: 'stepsRailSection',
         heading: example('Your first week'),
         steps: [
-          { _type: 'step', title: example('Before the first class'), body: example('One line.') },
-          { _type: 'step', title: example('The first evening'), body: example('One line.') },
-          { _type: 'step', title: example('After class'), body: example('One line.') },
+          {
+            _type: 'railStep',
+            title: example('Before the first class'),
+            body: example('One line.'),
+          },
+          { _type: 'railStep', title: example('The first evening'), body: example('One line.') },
+          { _type: 'railStep', title: example('After class'), body: example('One line.') },
         ],
       }),
   },

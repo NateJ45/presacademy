@@ -66,6 +66,9 @@ export function bgField() {
     name: 'background',
     title: 'Section background',
     type: 'object',
+    // Hidden since refoundation phase C (2026-10-27): the page cadence owns the surface (rule 9).
+    // The field stays in the schema so stored values keep validating; production holds none.
+    hidden: true,
     options: { collapsible: true, collapsed: true },
     description:
       'Optional. Set a brand color tone, or drop in a background photo/video with a dark overlay so text stays readable.',
@@ -2829,7 +2832,7 @@ export const sectionBlocks = [
 // The array members allowed in a saved section (sectionPreset) and, with a
 // synced section added, in every page's sections field (PAGE_SECTION_MEMBERS
 // below). Includes the shared embed object.
-export const FLEXIBLE_SECTION_MEMBERS = [
+const ALL_FLEXIBLE_SECTION_MEMBERS = [
   { type: 'sectionRichText' },
   { type: 'sectionImageText' },
   { type: 'sectionFeatureCards' },
@@ -2886,6 +2889,30 @@ export const FLEXIBLE_SECTION_MEMBERS = [
   ...builderSectionSchemas.map((t) => ({ type: t.name })),
 ];
 
+/**
+ * Old Academy blocks the starter's builder kit now replaces (refoundation phase C,
+ * 2026-10-27). They are no longer in any page's "of" list, so they leave the "+ Add item"
+ * menu (it has no way to hide a member that is still allowed). The types stay REGISTERED
+ * (rule 1: never drop a type with data; production holds none, counted 2026-10-27), and the
+ * renderer still draws one if it turns up in a restored backup.
+ * Accordion -> accordionSection, Steps -> stepsRailSection, Feature cards -> iconCardsSection,
+ * Card grid -> photoCardsSection, Media feature and Media showcase -> photoSection.
+ * Kept because the kit has no equal: Rich text, Image and text, Quote, Banner, Stats, Gallery,
+ * Logos, From your catalog, FAQ list, Resources, Key dates.
+ */
+export const HIDDEN_FROM_INSERT = [
+  'sectionAccordion',
+  'sectionSteps',
+  'sectionFeatureCards',
+  'sectionCardGrid',
+  'sectionMediaFeature',
+  'sectionMediaShowcase',
+] as const;
+
+export const FLEXIBLE_SECTION_MEMBERS = ALL_FLEXIBLE_SECTION_MEMBERS.filter(
+  (m) => !(HIDDEN_FROM_INSERT as readonly string[]).includes(m.type),
+);
+
 // =============================================================================
 // The grouped "+ Add section" picker
 // =============================================================================
@@ -2898,19 +2925,12 @@ const ACADEMY_INSERT_GROUPS: { name: string; title: string; of: string[] }[] = [
   {
     name: 'words',
     title: 'Words, photos & video',
-    of: [
-      'sectionRichText',
-      'sectionImageText',
-      'sectionQuote',
-      'sectionGallery',
-      'sectionMediaFeature',
-      'sectionMediaShowcase',
-    ],
+    of: ['sectionRichText', 'sectionImageText', 'sectionQuote', 'sectionGallery'],
   },
   {
     name: 'facts',
     title: 'Cards, facts & lists',
-    of: ['sectionCardGrid', 'sectionFeatureCards', 'sectionStats', 'sectionSteps', 'sectionLogos'],
+    of: ['sectionStats', 'sectionLogos'],
   },
   // Refoundation phase B (2026-10-27): three groups named for what the Academy
   // builds with them. The Academy's own course, date and fold-out blocks moved
@@ -2929,7 +2949,7 @@ const ACADEMY_INSERT_GROUPS: { name: string; title: string; of: string[] }[] = [
   {
     name: 'folding',
     title: 'Fold-outs and tabs',
-    of: ['sectionAccordion'],
+    of: [],
   },
   {
     name: 'catalog',

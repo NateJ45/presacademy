@@ -296,7 +296,9 @@ export function overlayControlsForPath(path?: string | null): OverlayControl[] {
   // as a fallback: it can never fire, and a branch that can never fire is a
   // branch that will one day be trusted.
   const first = typeof section.rest[0] === 'string' ? section.rest[0] : '';
-  if (first === 'background' && section.rest.length === 1) return ['surface'];
+  // Phase C (2026-10-27): the background field is hidden in the Studio (the page cadence owns the
+  // surface, rule 9), so the swatch row is not offered either. SurfaceChips stays wired for a revert.
+  if (first === 'background' && section.rest.length === 1) return [];
   // The heading is `heading` on five of the six accent-word types and
   // `headline` on the CTA band; the control confirms the pairing by type.
   if (HEADING_FIELD_NAMES.has(first) && section.rest.length === 1) return ['headingAccent'];

@@ -236,9 +236,9 @@ test('the input is never mutated', () => {
 // What the in-canvas layer offers, from a path alone
 // =============================================================================
 
-test('the surface handle, not the section wrapper, gets the swatch row', () => {
-  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"].background'), ['surface']);
-  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].background'), ['surface']);
+test('the hidden background handle gets no swatch row (phase C)', () => {
+  assert.deepEqual(overlayControlsForPath('flexibleSections[_key=="k"].background'), []);
+  assert.deepEqual(overlayControlsForPath('sections[_key=="k"].background'), []);
 });
 
 test('a BARE array-item path gets nothing, because a custom component cannot mount there', () => {

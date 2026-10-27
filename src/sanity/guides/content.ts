@@ -219,7 +219,7 @@ export const guides: Guide[] = [
           'Add testimonials, events, FAQs, and announcement banners.',
           'Add, reorder, and remove sections on a page, and build new custom pages.',
           'Add, rename, and reorder the top menu and footer links.',
-          'Change section background tones and images.',
+          'Pick a section\u2019s look, and set the words and photos inside it.',
           'Delete something by mistake and bring it back from the **Trash**.',
         ],
       },
@@ -685,7 +685,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Add & arrange sections',
     icon: 'sections',
-    lead: 'Sections are the building blocks of a page. Mix and match them, reorder them, and set their backgrounds, from the list or straight on the page picture.',
+    lead: 'Sections are the building blocks of a page. Mix and match them and reorder them, from the list or straight on the page picture. The page sets the backgrounds for you.',
     diy: 'self',
     body: [
       { kind: 'path', items: ['Pages', '(any page)', 'Page sections'], link: { pane: 'pages' } },
@@ -716,8 +716,9 @@ export const guides: Guide[] = [
       {
         kind: 'bullets',
         items: [
-          '**Words, photos & video**: text, image + text, a quote or verse, a photo gallery, a media feature, and the arched showcase.',
-          '**Cards, facts & lists**: card grids, feature cards, big numbers, numbered steps, an inline FAQ accordion, key dates, and partner logos.',
+          '**Words, photos & video**: text, text in columns, image + text, a quote or verse, a letter, a photo gallery, a wide photo, and cards with photos or icons.',
+          '**Cards, facts & lists**: big numbers and partner logos. Cards with icons or photos are under Words, photos & video, and steps on a path under Courses and terms.',
+          '**Courses and terms**, **Events and notices** and **Fold-outs and tabs**: the course rail and finder, steps on a path, event details, schedules, countdowns, notices, timelines, the calendar button, fold-out questions and tabs.',
           '**From your catalog (auto-updating)**: the dynamic list (featured courses, upcoming events, faculty, testimonials), the FAQ list, and the pricing tiers. These keep themselves up to date from your other documents.',
           '**Banners, forms & extras**: the call-to-action band, a form, downloadable resources, and embeds.',
           '**Page sections (Rule & Ledger)**: the built-in parts of the site’s own pages. They come styled to match the page they belong to, so they have no background choice: you set what appears and in what order, and the design stays put. In this band: the legal statement body (Privacy, Accessibility), numbered cards (For You, About, Get Started, Home), the warm statement band and the ruled stat band (Pricing, Home), editorial columns and the inline band (About), the grouped FAQ (FAQ), upcoming events and recurring rhythms (Events), the contact details and map (Contact), the request panel (Get Started), the course rail (Courses and Home), which pulls the courses you have marked “Start here” or “Featured” straight from the catalog, Home’s own three: the topics ticker, the faculty strip (cards or contributors) and the testimonials (quote cards or letters), and the Term Issue sections: term contents, the course finder (reply card), next issue and for pastors. The course rail can also be the cover grid of every course, and the tuition tiers can be the home page’s rates box.',
@@ -741,10 +742,10 @@ export const guides: Guide[] = [
           'In **Preview**, do the same on the page itself: right-click a section for its menu (insert, duplicate, move, remove), or drag its corner tag to a new spot.',
         ],
       },
-      { kind: 'h', text: "Change a section's background" },
+      { kind: 'h', text: "A section's background" },
       {
         kind: 'p',
-        text: 'Most sections have a **Section background** control so they sit nicely on the page (the Rule & Ledger ones do not, by design). It holds the surface swatches, the accent color, a background photo or video with an **Overlay darkness** slider, and **Vertical spacing** (Compact, Normal or Spacious). In **Preview** you can skip the panel: every section that has a background shows a small palette button in its top corner, and clicking it brings up the color dots on the page itself. All of it is walked through in its own guide, "Change how a section looks".',
+        text: 'You do not set a section\u2019s background. The page works out the rhythm of paper, warm and green bands as you add and move sections, so a section looks right wherever you drop it. A few sections have a **Look** choice, a short list of designs made for them (for example a plain or a framed notice). All of it is walked through in its own guide, "Change how a section looks".',
       },
       { kind: 'h', text: 'The dashed box on a new section' },
       {
@@ -768,7 +769,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Undo a change',
     icon: 'publishing',
-    lead: 'Dragged a section to the wrong place, removed the wrong one, or picked a background you regret? Step it back.',
+    lead: 'Dragged a section to the wrong place, removed the wrong one, or picked a look you regret? Step it back.',
     diy: 'self',
     body: [
       {
@@ -801,7 +802,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           'It works on your **unpublished draft** only. The live website is never touched, so undo can never break what visitors see.',
-          'It covers everything, not just typing: sections added, dragged, duplicated or removed, photos swapped or cleared, backgrounds and options changed.',
+          'It covers everything, not just typing: sections added, dragged, duplicated or removed, photos swapped or cleared, and options changed.',
           'It **cannot undo a Publish**. Publishing is its own step. To take a published page back, use **Version history**.',
           'It forgets everything when you close or reload the tab. Undo is for the last few minutes, not for last week.',
         ],
@@ -830,7 +831,7 @@ export const guides: Guide[] = [
     category: 'Website pages & menus',
     title: 'Change how a section looks',
     icon: 'brandKit',
-    lead: 'Give a section a different background, a different accent color, a bolded word, one word of the heading picked out in color, or a different arrangement. All of it from the page picture, all of it on-brand.',
+    lead: 'Pick a section\u2019s look, bold a word, color one word of the heading, or change its arrangement. All of it from the page picture, all of it on-brand.',
     diy: 'self',
     body: [
       {
@@ -845,45 +846,14 @@ export const guides: Guide[] = [
         text: 'Open **Preview**, click the section you want to change, and the edit panel opens beside it. Every control below is in there, and the page picture updates as you go, so you are never guessing.',
       },
 
-      { kind: 'h', text: 'The surface: pick a background' },
+      { kind: 'h', text: 'Backgrounds: the page does it for you' },
       {
         kind: 'p',
-        text: 'Open **Section background** and you will see a row of color dots under **Surface**. Click one. The dot shows the background and the text that comes with it, because the two are designed together: you are choosing a pair, not a color. There are six. The same six dots, and the three accent dots beside them, also appear in **Preview** when you click the small palette button in a section’s top corner, so you can try a background without opening anything.',
-      },
-      {
-        kind: 'bullets',
-        items: [
-          '**Paper**: the ordinary page surface. This is what a section uses if you never touch it.',
-          '**Warm**: a quiet step away from the page. Good for a change of pace halfway down.',
-          '**Bright card**: the clean raised surface. It reads well directly above or below Warm.',
-          '**Forest green**: the signature green band, with cream text.',
-          '**Forest deep**: the deepest green, for a closing band you want to feel heavy.',
-          '**Ink**: a near-black band. Use it once on a page, not twice.',
-        ],
-      },
-      {
-        kind: 'callout',
-        tone: 'positive',
-        title: 'You cannot make it unreadable',
-        text: 'Every one of the six is a background and a text color that were designed as one unit and are checked against the accessibility contrast standard by an automatic test. There is no color picker here on purpose. Whatever you pick, the words stay readable, in light mode and in dark mode.',
+        text: 'You do not pick a section\u2019s background or its accent color. As you add and move sections, the page works out a steady rhythm of paper, warm and green bands, and keeps the text on each one readable. Drop a section anywhere and it looks right; move it and it adjusts. A section\u2019s old background panel is gone from the form, and sections made before still look exactly as they did.',
       },
       {
         kind: 'p',
-        text: 'Some dots are split down the diagonal. That means the surface follows the reader’s own light or dark setting, and the two halves are the two versions. A dot in one solid color is a fixed band: it looks the same either way.',
-      },
-
-      { kind: 'h', text: 'The accent: the small color inside' },
-      {
-        kind: 'p',
-        text: 'Just under the surface row is **Accent color**, three dots. This is the section’s small color: the short rule before an eyebrow label, an accent word in the heading, and the fill on a button inside the section.',
-      },
-      {
-        kind: 'bullets',
-        items: [
-          '**Green**: the house accent. This is what a section uses if you leave it alone.',
-          '**Brass**: warmer and more formal. It suits a green or ink band.',
-          '**Ink**: no color at all, the quietest option.',
-        ],
+        text: 'A few sections offer a **Look** instead, a short list of designs made for that section (for example a plain or a framed card, or a quiet or a loud notice). Pick one from the list on the section. There is no color picker on purpose: every look is checked against the accessibility contrast standard by an automatic test, so the words stay readable.',
       },
 
       { kind: 'h', text: 'Bold and italic in a subhead' },
@@ -893,7 +863,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'You will find it on the **Subhead** of the card grid and the call-to-action band, the **Intro** of feature cards, numbered steps, the FAQ accordion and the media showcase, and the **Body** of the media feature. In **Preview**, clicking one of those lines puts an `✎ Edit here` button on it, which opens a small box over the line with the same bold and italic buttons, so you can type it in place.',
+        text: 'You will find it on the **Subhead** of the call-to-action band and the **Intro** of the other sections that have one. In **Preview**, clicking one of those lines puts an `✎ Edit here` button on it, which opens a small box over the line with the same bold and italic buttons, so you can type it in place.',
       },
       {
         kind: 'callout',
@@ -925,13 +895,13 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'Layout: how the section is arranged' },
       {
         kind: 'p',
-        text: 'Two more controls sit on the section itself rather than in the background panel, and they change the arrangement rather than the color. Not every section has them, because not every section has more than one arrangement that we are happy to put your name on.',
+        text: 'Two more controls sit on the section itself, and they change the arrangement rather than the color. Not every section has them, because not every section has more than one arrangement that we are happy to put your name on.',
       },
       {
         kind: 'bullets',
         items: [
-          '**Which side is the picture on?** on the image + text section, and **Which side is the video or photo on?** on the media feature. Two choices, left or right. Use it to alternate down a long page so two picture sections in a row do not face the same way.',
-          '**How many across** on the card grid, feature cards, stats, the photo gallery, numbered steps and the dynamic list. Pick two, three or four (steps and the dynamic list offer two or three, because a step is a paragraph and does not survive a quarter-width column). Two is the one to reach for when a section holds exactly two things and a three-across row is leaving an empty gap.',
+          '**Which side is the picture on?** on the image + text section. Two choices, left or right. Use it to alternate down a long page so two picture sections in a row do not face the same way.',
+          '**How many across** on stats, the photo gallery and the dynamic list. Pick two, three or four (the dynamic list offers two or three). Two is the one to reach for when a section holds exactly two things and a three-across row is leaving an empty gap.',
         ],
       },
       {
@@ -941,19 +911,11 @@ export const guides: Guide[] = [
         text: 'Every one of these is about the widest screen. On a phone the words always come first and the picture underneath, and the grids always stack (the photo gallery always shows two across). So there is no setting here that can make the site awkward on a phone.',
       },
 
-      { kind: 'h', text: 'The rest of the background panel' },
-      {
-        kind: 'bullets',
-        items: [
-          '**Background image or video**: put a photo or a video behind the section. The **Overlay darkness** slider dims it so the words stay readable on top.',
-          '**Vertical spacing**: Compact, Normal or Spacious, to make the section shorter or taller. This is the density control: Compact when a short section is floating in too much room, Spacious for a band you want to feel like a pause.',
-        ],
-      },
       {
         kind: 'callout',
         tone: 'default',
-        title: 'Some sections have no background control',
-        text: 'The **Page sections (Rule & Ledger)** blocks come styled to match the page they belong to, so they have no surface or accent choice. That is deliberate, not a gap: those are the parts of the site that should never drift.',
+        title: 'Some sections have no choices at all',
+        text: 'The **Page sections (Rule & Ledger)** blocks come styled to match the page they belong to, so they have no look to pick. That is deliberate, not a gap: those are the parts of the site that should never drift.',
       },
       { kind: 'seealso', items: ['Add & arrange sections', 'The brand: colors & fonts'] },
     ],
@@ -1707,15 +1669,12 @@ export const guides: Guide[] = [
       { kind: 'h', text: 'You choose tones, not raw colors' },
       {
         kind: 'p',
-        text: 'When you set a section background, you pick a **tone** (Default (paper), Warm, Forest green, or Forest deep), not a color code. Each tone already knows the right text color to stay readable. That is why you cannot pick a random color, and why you do not need to.',
+        text: 'The page picks each section\u2019s background, and a few sections offer a short list of **looks**, not a color code. Each one already knows the right text color to stay readable. That is why you cannot pick a random color, and why you do not need to.',
       },
       { kind: 'h', text: 'What you can change yourself' },
       {
         kind: 'bullets',
-        items: [
-          'Section background tones, and background photos or videos.',
-          'All the words and photos, of course.',
-        ],
+        items: ['A section\u2019s look, where it has one.', 'All the words and photos, of course.'],
       },
       { kind: 'h', text: 'What is locked (and why)' },
       {

@@ -58,51 +58,6 @@ export type SectionImageTextBackgroundImage = {
   _type: 'image';
 };
 
-export type FeatureCardImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "featureCard.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
-export type SectionFeatureCardsBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionFeatureCardsBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionFeatureCardsBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionFeatureCards.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
-export type SectionCardGridBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionCardGridBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionCardGridBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionCardGrid.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
 export type SectionStatsBackground = {
   tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
   accent?: 'green' | 'brass' | 'ink';
@@ -121,24 +76,6 @@ export type SectionStatsBackgroundImage = {
   _type: 'image';
 };
 
-export type SectionMediaShowcaseBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionMediaShowcaseBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionMediaShowcaseBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionMediaShowcase.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
 export type SectionGalleryBackground = {
   tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
   accent?: 'green' | 'brass' | 'ink';
@@ -151,60 +88,6 @@ export type SectionGalleryBackground = {
 export type SectionGalleryBackgroundImage = {
   asset?: SanityImageAssetReference;
   media?: unknown; // Unable to locate the referenced type "sectionGallery.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
-export type SectionAccordionBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionAccordionBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionAccordionBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionAccordion.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
-export type SectionMediaFeatureBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionMediaFeatureBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionMediaFeatureBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionMediaFeature.background.image.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
-export type SectionStepsBackground = {
-  tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
-  accent?: 'green' | 'brass' | 'ink';
-  image?: SectionStepsBackgroundImage;
-  videoUrl?: string;
-  overlay?: number;
-  padding?: 'compact' | 'normal' | 'spacious';
-};
-
-export type SectionStepsBackgroundImage = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "sectionSteps.background.image.media" in schema
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
   alt?: string;
@@ -1948,7 +1831,21 @@ export type SectionMediaShowcase = {
     alt?: string;
     _type: 'image';
   };
-  background?: SectionMediaShowcaseBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionDynamicList = {
@@ -1994,7 +1891,21 @@ export type SectionMediaFeature = {
   };
   ctaLabel?: string;
   ctaUrl?: string;
-  background?: SectionMediaFeatureBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionLogos = {
@@ -2041,7 +1952,21 @@ export type SectionSteps = {
     _type: 'step';
     _key: string;
   }>;
-  background?: SectionStepsBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionGallery = {
@@ -2088,7 +2013,21 @@ export type SectionAccordion = {
     _type: 'qa';
     _key: string;
   }>;
-  background?: SectionAccordionBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionStats = {
@@ -2129,7 +2068,14 @@ export type SectionFeatureCards = {
   }>;
   columns?: '2' | '3' | '4';
   cards?: Array<{
-    image?: FeatureCardImage;
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
     eyebrow?: string;
     title?: string;
     body?: string;
@@ -2139,7 +2085,21 @@ export type SectionFeatureCards = {
     _type: 'featureCard';
     _key: string;
   }>;
-  background?: SectionFeatureCardsBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionForm = {
@@ -2249,7 +2209,21 @@ export type SectionCardGrid = {
     _type: 'card';
     _key: string;
   }>;
-  background?: SectionCardGridBackground;
+  background?: {
+    tone?: 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
+    accent?: 'green' | 'brass' | 'ink';
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
+    videoUrl?: string;
+    overlay?: number;
+    padding?: 'compact' | 'normal' | 'spacious';
+  };
 };
 
 export type SectionImageText = {
@@ -2346,28 +2320,10 @@ export type SectionPreset = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -2548,28 +2504,10 @@ export type AccessibilityPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -2753,28 +2691,10 @@ export type PrivacyPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -2981,28 +2901,10 @@ export type Page = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -3197,28 +3099,10 @@ export type ResourcesPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -3408,28 +3292,10 @@ export type ForYouPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -3618,28 +3484,10 @@ export type GetStartedPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -3827,28 +3675,10 @@ export type PricingPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -4037,28 +3867,10 @@ export type FacultyPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -4249,28 +4061,10 @@ export type CoursesPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -4473,28 +4267,10 @@ export type EventsPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -4683,28 +4459,10 @@ export type ContactPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -4903,28 +4661,10 @@ export type FaqPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -5088,28 +4828,10 @@ export type AboutPage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -5308,28 +5030,10 @@ export type HomePage = {
       } & SectionImageText)
     | ({
         _key: string;
-      } & SectionFeatureCards)
-    | ({
-        _key: string;
-      } & SectionCardGrid)
-    | ({
-        _key: string;
       } & SectionStats)
     | ({
         _key: string;
-      } & SectionMediaShowcase)
-    | ({
-        _key: string;
       } & SectionGallery)
-    | ({
-        _key: string;
-      } & SectionAccordion)
-    | ({
-        _key: string;
-      } & SectionMediaFeature)
-    | ({
-        _key: string;
-      } & SectionSteps)
     | ({
         _key: string;
       } & SectionDynamicList)
@@ -5811,23 +5515,10 @@ export type AllSanitySchemaTypes =
   | BackgroundImage
   | SectionImageTextBackground
   | SectionImageTextBackgroundImage
-  | FeatureCardImage
-  | SectionFeatureCardsBackground
-  | SectionFeatureCardsBackgroundImage
-  | SectionCardGridBackground
-  | SectionCardGridBackgroundImage
   | SectionStatsBackground
   | SectionStatsBackgroundImage
-  | SectionMediaShowcaseBackground
-  | SectionMediaShowcaseBackgroundImage
   | SectionGalleryBackground
   | SectionGalleryBackgroundImage
-  | SectionAccordionBackground
-  | SectionAccordionBackgroundImage
-  | SectionMediaFeatureBackground
-  | SectionMediaFeatureBackgroundImage
-  | SectionStepsBackground
-  | SectionStepsBackgroundImage
   | SectionDynamicListBackground
   | SectionDynamicListBackgroundImage
   | SectionLogosBackground

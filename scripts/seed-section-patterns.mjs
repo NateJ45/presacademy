@@ -26,7 +26,11 @@
 import { client, apply, done } from './lib/sanity-lib.mjs';
 import { SECTION_PATTERNS } from '../src/sanity/sectionPatterns.ts';
 
-const ids = SECTION_PATTERNS.map((p) => `pattern-${p.id}`);
+// --only=a,b limits the run to those pattern ids (phase C seeded just the two phase B patterns).
+const onlyArg = process.argv.find((a) => a.startsWith('--only='));
+const only = onlyArg ? new Set(onlyArg.slice(7).split(',')) : null;
+const PATTERNS = only ? SECTION_PATTERNS.filter((p) => only.has(p.id)) : SECTION_PATTERNS;
+const ids = PATTERNS.map((p) => `pattern-${p.id}`);
 // perspective 'raw': newer API versions read the published view by default, which hides the
 // drafts this script writes, so a rerun would report them as missing.
 const found = await client.withConfig({ perspective: 'raw' }).fetch('*[_id in $ids]._id', {
@@ -35,7 +39,7 @@ const found = await client.withConfig({ perspective: 'raw' }).fetch('*[_id in $i
 const existing = new Set(found.map((id) => id.replace(/^drafts\./, '')));
 
 let changes = 0;
-for (const pattern of SECTION_PATTERNS) {
+for (const pattern of PATTERNS) {
   const id = `pattern-${pattern.id}`;
   if (existing.has(id)) {
     console.log(`SKIP "${pattern.title}": already in the dataset, never overwritten.`);
