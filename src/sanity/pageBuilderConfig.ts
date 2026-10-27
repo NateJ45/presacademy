@@ -145,6 +145,7 @@ export const PAGE_CHECK_CONFIG: PageCheckConfig = {
     'privacy',
     'resources',
     'style-guide',
+    'styleguide',
     'preview',
     'studio',
     'og',

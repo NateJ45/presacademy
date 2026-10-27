@@ -239,7 +239,9 @@ the Westminster Standards and the Book of Confessions."`
 
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
   Phase D is taking them one PR at a time; card 195 (client notes, switched off), card 196
-  (office facts, empty until filled) and card 189 (the photo hero on inner pages, opt-in) are in. **Waiting on the Academy:** the real office hours by day,
+  (office facts, empty until filled), card 189 (the photo hero on inner pages, opt-in) and card 192
+  (the flow layer as `layout.motion: fade`, a 200ms fade below the first screen) are in; card 188 (the one
+  scale and the shape contract) is last. **Waiting on the Academy:** the real office hours by day,
   and whether the stored address (9463 Cincinnati Columbus Rd) is the Academy's own; until then the
   rows stay empty and the one-line office hours show.
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the
