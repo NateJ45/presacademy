@@ -19,7 +19,6 @@ import Footer from '@/components/Footer.astro';
 import AnnouncementBar from '@/components/AnnouncementBar.astro';
 import Analytics from '@/components/Analytics.astro';
 import BackToTop from '@/components/BackToTop';
-import { Toaster } from '@/components/ui/sonner';
 import '@/styles/globals.css';
 
 interface Props {
@@ -286,18 +285,18 @@ const announcement = await getActiveAnnouncement().catch(() => null);
     <Footer siteSettings={siteSettings} />
 
     {/*
-      Both islands were previously `client:load` which forced the JS to
-      execute before the first paint completed. Neither is interactive
+      BackToTop was previously `client:load`, which forced the JS to
+      execute before the first paint completed. It is not interactive
       until later in the page lifecycle (BackToTop only appears after the
-      visitor scrolls 600px; Toaster only mounts a region, the toast call
-      sites import it on demand). Hydrating with `client:idle` lets the
+      visitor scrolls 600px). Hydrating with `client:idle` lets the
       browser settle the main thread first and shifts ~10–20ms of TBT off
       the critical path on mobile.
     */}
     <BackToTop client:idle />
 
-    {/* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */}
-    <Toaster client:idle position="bottom-right" />
+    {/* No toast region (starter card 187, 2026-10-27): nothing on the site called a toast, so the
+        Sonner island only cost every page a React hydration. CopyEmailButton is now an Astro
+        component with its own live region. */}
 
     {/* Polish layer: the scroll-triggered reveal observers. They honor
         prefers-reduced-motion and re-init on astro:page-load so they survive
