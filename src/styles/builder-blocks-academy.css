@@ -8,10 +8,9 @@
    after them (BuilderBlock.astro imports it last) and does two jobs:
 
    1. THE SCALE. The starter's blocks size themselves from card 188's scale
-      (--fs-*, --radius-card, --pad-card, --gap-grid, --tracking-label). The
-      Academy takes that card later (phase D, on its own), so the names are
-      defined here from the Academy's own tokens. When card 188 lands, delete
-      this block and let globals.css own them.
+      (--fs-*, --radius-card, --pad-card, --gap-grid, --tracking-label). Since
+      phase D (2026-10-27) globals.css owns it ("The one scale"), with the same
+      values this block used to stand in with; only the warning band is left here.
    2. THE LOOK. The Academy's sections are square, ruled and bookish: a hairline
       border with a two-pixel brass top on a card (the Numbered cards block), the
       eyebrow rubric, Fraunces titles, IBM Plex Mono for small catalog labels,
@@ -22,22 +21,8 @@
       static band colour the way bg-chapel is static.
    ========================================================================== */
 
-/* ---- 1. The scale, from the Academy's tokens ---- */
+/* ---- 1. The warning band (the scale itself is in globals.css) ---- */
 :root {
-  --fs-tag: 0.75rem;
-  --fs-small: 0.875rem;
-  --fs-body: 1rem;
-  --fs-lead: 1.125rem;
-  --fs-title: var(--text-h4);
-  --fs-title-sm: var(--text-h5);
-  --fs-numeral: var(--text-h3);
-  --lh-title: 1.2;
-  --tracking-label: var(--tracking-eyebrow);
-  --radius-card: 0;
-  --radius-inner: 0;
-  --radius-pill: 9999px;
-  --pad-card: var(--spacing-l);
-  --gap-grid: var(--spacing-l);
   /* The urgent notice: a warm amber band, as in the starter. */
   --warning: #f3e3b3;
   --warning-foreground: #5c3d0e;

@@ -211,6 +211,13 @@
   --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;
 
   /* Fluid heading sizes */
+  /* Tailwind's small text sizes read the one scale (the :root block "The one scale", starter
+     card 188), so a utility and a stylesheet can never disagree. Same values as Tailwind's
+     defaults, so nothing moved. */
+  --text-xs: var(--fs-tag);
+  --text-sm: var(--fs-small);
+  --text-base: var(--fs-body);
+  --text-lg: var(--fs-lead);
   --text-h6: 1rem;
   --text-h5: clamp(1.125rem, 1.5vw, 1.25rem);
   --text-h4: clamp(1.25rem, 2vw, 1.5rem);
@@ -1550,6 +1557,102 @@
   --tint-rgb: 198, 160, 106;
 }
 
+/* ---------- The one scale (starter card 188, 2026-10-27) -----------------------------------
+   Every size, corner, gap, shadow and button measure a component or a block stylesheet asks for
+   comes from here. A value that is not on the scale is a bug: add a token before a one-off.
+   The values are the ones the Academy ALREADY drew (Tailwind's 12/14/16/18px text, the h4/h5/h3
+   heading sizes, Rule & Ledger's square cards, its fluid spacing, the .card-lift shadow, the
+   44px pill and 0.18em label tracking), so naming them moved nothing: every route was compared
+   at 375 and 1280 before and after. It replaced the stand-in block that the builder kit carried
+   in builder-blocks-academy.css (phase B). docs/agent/design-tokens.md, "The one scale". */
+:root {
+  /* Text. */
+  --fs-tag: 0.75rem; /* 12px: eyebrows, tags, pill buttons, captions */
+  --fs-small: 0.875rem; /* 14px: meta lines, labels, footnotes */
+  --fs-body: 1rem; /* 16px: reading text */
+  --fs-lead: 1.125rem; /* 18px: a page or band intro */
+  --fs-button: var(--fs-tag);
+  --fs-title: var(--text-h4); /* a card or block title */
+  --fs-title-sm: var(--text-h5); /* a row title in a list, an accordion question */
+  --fs-numeral: var(--text-h3); /* big figures: dates, stats */
+  --lh-body: 1.5;
+  --lh-title: 1.2;
+  --lh-heading: 1.1;
+  /* Figures. normal = the face's own, everywhere. Numbers that line up in a column or a
+     stat (the ledger stats, numbered cards, the course week list, the kit's dates and
+     countdowns) take --figures-numeral through the .figures-numeral utility below. */
+  --figures: normal;
+  --figures-numeral: lining-nums tabular-nums;
+
+  /* Corners. Rule & Ledger is square: cards, panels and a picture inside a card have no
+     rounding; a picture that stands alone takes the quiet --arch-radius (shapes below). */
+  --radius-control: calc(var(--radius) * 0.6); /* rounded-sm: fields, tabs */
+  --radius-card: 0; /* cards and panels: square, ruled */
+  --radius-inner: 0; /* a picture inside a card or a list row: the squared photo well */
+  --radius-tag: 0;
+  --radius-pill: 9999px; /* CtaLink pills */
+
+  /* Space inside things. The rhythm between bands is --spacing-section-md / -lg. */
+  --pad-card: var(--spacing-l);
+  --pad-panel: var(--spacing-l);
+  --gap-grid: var(--spacing-l);
+  --gap-heading: var(--spacing-l);
+
+  /* Shadows. */
+  --shadow-card: 0 16px 34px -18px rgba(42, 45, 49, 0.22); /* .card-lift on hover */
+  --shadow-raised: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Buttons (CtaLink). */
+  --btn-height: 44px; /* also the tap-target floor */
+  --tracking-label: var(--tracking-eyebrow); /* 0.18em: uppercase labels and eyebrows */
+  --btn-tracking: var(--tracking-label);
+
+  /* Focus: one ring. */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* The shape contract (src/styles/shapes.css, PORTABLE) in Rule & Ledger's forms. A
+     standalone picture: no cut, the quiet rounding the kit's photos already use. A card with
+     no photo, and the slab behind a standalone picture: the hatched photo well (.image-well). */
+  --shape-feature-clip: none;
+  --shape-feature-radius: var(--arch-radius);
+  --shape-tile: repeating-linear-gradient(
+      135deg,
+      rgba(168, 124, 62, 0.09) 0 1px,
+      transparent 1px 10px
+    )
+    var(--muted);
+  --shape-slab: repeating-linear-gradient(
+      135deg,
+      rgba(168, 124, 62, 0.09) 0 1px,
+      transparent 1px 10px
+    )
+    var(--muted);
+}
+.dark {
+  --shadow-card: 0 16px 34px -18px rgba(0, 0, 0, 0.6);
+  --shape-tile: repeating-linear-gradient(
+      135deg,
+      rgba(201, 160, 106, 0.08) 0 1px,
+      transparent 1px 10px
+    )
+    var(--muted);
+  --shape-slab: repeating-linear-gradient(
+      135deg,
+      rgba(201, 160, 106, 0.08) 0 1px,
+      transparent 1px 10px
+    )
+    var(--muted);
+}
+
+/* Figures: the root rule, inherited everywhere (normal), and the numeral utility. */
+html {
+  font-variant-numeric: var(--figures);
+}
+@utility figures-numeral {
+  font-variant-numeric: var(--figures-numeral);
+}
+
 /* ---------- Base resets and defaults ---------------------------------- */
 
 @layer base {
@@ -1605,7 +1708,7 @@
        base-heading-color-accent-is-the-hover-token). Inherit picks up the
        body ink, and the chapel / footer foreground inside dark bands. */
     color: inherit;
-    line-height: 1.1;
+    line-height: var(--lh-heading);
     letter-spacing: -0.01em;
     /* Balance multi-line display type so headlines never strand one word on
        the last line (the rag shifts with every Sanity copy edit otherwise).
@@ -2523,10 +2626,7 @@ html {
 }
 .card-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px -18px rgba(42, 45, 49, 0.22);
-}
-.dark .card-lift:hover {
-  box-shadow: 0 16px 34px -18px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-card); /* the one scale; its .dark twin is a token */
 }
 
 /* Slower lift for image cards. The home Featured Work / Featured Journal cards
