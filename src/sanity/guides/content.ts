@@ -1116,6 +1116,16 @@ export const guides: Guide[] = [
         title: 'Why it matters',
         text: 'Alt text is read aloud to blind visitors and read by Google. Describe what is in the photo, for example "Adult students discussing a text around a seminar table." Skip phrases like "photo of".',
       },
+      { kind: 'h', text: 'A photo behind the headline' },
+      {
+        kind: 'steps',
+        items: [
+          'On an inner page (not Home), open the **Hero** tab and add a **Hero background image**.',
+          'Set **Hero style** to **Photo behind the words**. The photo fills the band and the headline sits over it in white, under a green shade that keeps it readable on any photo.',
+          'Optional: fill the **Short-facts card** beside the words, like an open evening with its date and a link.',
+          '`Publish`. Set the style back to **Standard** to return to the usual hero.',
+        ],
+      },
       { kind: 'h', text: 'Good photos to use' },
       {
         kind: 'bullets',

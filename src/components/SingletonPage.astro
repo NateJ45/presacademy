@@ -26,6 +26,7 @@
    delete a page's h1, and the fields editors already know do not move.
    ========================================================================= */
 import PageHeader from '@/components/PageHeader.astro';
+import PhotoHeroAcademy from '@/components/PhotoHeroAcademy.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import { sectionsFor } from '@/lib/default-sections';
@@ -263,6 +264,18 @@ const sectionsEditDoc = sectionsAreFromDoc ? editDoc : undefined;
        <HomeHero> for home. See the CSS-graph note at the top of this file for
        why neither is rendered from here. */
   <slot name="hero" />
+) : hero?.kind === 'text' && page?.heroStyle === 'photo' && page?.heroImage?.asset ? (
+  /* "Photo behind the words" (starter card 189, phase D): opt-in per page in the Studio
+       (src/sanity/schemaTypes/heroStyle.ts), and only with the page's own hero photo. */
+  <PhotoHeroAcademy
+    eyebrow={heroEyebrow}
+    headline={heroHeadline}
+    subhead={heroSubhead}
+    image={page.heroImage}
+    headingId={hero.headingId ?? 'page-hero'}
+    size="short"
+    glance={page.heroGlance}
+  />
 ) : hero?.kind === 'text' ? (
   <PageHeader
     eyebrow={heroEyebrow}

@@ -1,0 +1,71 @@
+---
+// Safe to edit by hand
+// =============================================================================
+// /style-guide/photo-hero/: "Photo behind the words" on an inner page (card 189)
+// =============================================================================
+// The hero style an editor can pick on an inner page (Hero style, in the page's
+// Hero tab; src/sanity/schemaTypes/heroStyle.ts), drawn with fixed data so the
+// screenshots and tests/photo-hero-academy.spec.ts have something to look at
+// while no live page uses it. Two heroes: the short inner-page shape with a
+// short-facts card, then the same without a card. Every word is marked
+// "Example:" so nothing here reads as a statement about the school.
+//
+// Secret like /style-guide: noindex, out of the sitemap (astro.config.mjs
+// filters every /style-guide path), linked from nowhere.
+// =============================================================================
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PhotoHeroAcademy from '@/components/PhotoHeroAcademy.astro';
+
+// The Academy's own placeholder photograph in the dataset (the same one the
+// example sections page uses), so the hero shows a real picture.
+const ACAD_LIBRARY = 'image-16c3baefc5e816d60543c8438d5a7014fa3da728-2000x1500-jpg';
+const image = {
+  _type: 'image',
+  alt: 'Example: a reading room with shelves of books',
+  asset: { _type: 'reference', _ref: ACAD_LIBRARY },
+};
+const link = (label: string) => ({
+  _type: 'ctaBlock',
+  label,
+  linkType: 'external' as const,
+  externalUrl: '#',
+});
+---
+
+<BaseLayout
+  title="Photo hero (internal)"
+  description="The inner pages' photo hero, with example data."
+  noindex
+>
+  <div data-fixture="photo-card">
+    <PhotoHeroAcademy
+      eyebrow="Example: courses"
+      headline="Example: learn the faith with others"
+      subhead="Example: evening courses for every member, taught by pastors and elders."
+      image={image}
+      headingId="photo-hero-card"
+      size="short"
+      glance={{
+        title: 'Example: open evening',
+        lines: ['Example: Tuesday, January 12', 'Example: 7 pm, in the library'],
+        link: link('Example: save a seat'),
+      }}
+    />
+  </div>
+  <section class="mx-auto max-w-content px-m py-section-md">
+    <h2 class="font-display text-h3">Example: the page goes on here</h2>
+    <p class="mt-s max-w-prose">
+      Example: the sections an editor adds follow the hero, as on any inner page.
+    </p>
+  </section>
+  <div data-fixture="photo-plain">
+    <PhotoHeroAcademy
+      eyebrow="Example: questions"
+      headline="Example: what people ask us"
+      subhead="Example: the same style with no card."
+      image={image}
+      headingId="photo-hero-plain"
+      size="short"
+    />
+  </div>
+</BaseLayout>

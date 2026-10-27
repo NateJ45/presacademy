@@ -18,6 +18,7 @@ import {
 import { dropRedirectsOverLivePages } from './src/lib/redirect-guard.ts';
 import { fixSanityDedupeAlias } from './src/lib/sanity-dedupe-alias.ts';
 import { studioConfigModule } from './src/lib/studio-route.ts';
+import { photoHeroCssOnDemand } from './src/lib/photo-hero-css.ts';
 
 // Pages an editor switched "Hide this page from search engines" on, as
 // site-relative paths. Read once, here, because @astrojs/sitemap's filter is
@@ -188,7 +189,9 @@ export default defineConfig({
     // SANITY_ASTRO_DISABLE_MODULE_DEDUPE=1 (the Studio then fails to hydrate).
     // Full story: src/lib/sanity-dedupe-alias.ts and PORTS.md card 60.
     // studioConfigModule(): the `sanity:studio` module for /studio (see above).
-    plugins: [tailwindcss(), fixSanityDedupeAlias(), studioConfigModule()],
+    // photoHeroCssOnDemand(): the photo hero's stylesheet only on pages that draw it (card 189,
+    // src/lib/photo-hero-css.ts).
+    plugins: [tailwindcss(), fixSanityDedupeAlias(), studioConfigModule(), photoHeroCssOnDemand()],
     // Read by src/pages/build-info.json.ts (see BUILD_COMMIT above).
     define: { __NCS_BUILD_COMMIT__: JSON.stringify(BUILD_COMMIT) },
     // @sanity/ui ships an ESM build that Vite's dependency pre-bundler

@@ -137,6 +137,9 @@ const NON_STEGA_FIELDS = new Set([
   'opens',
   'closes',
   'kind',
+  // Card 189 (phase D): the inner pages' Hero style picks PhotoHeroAcademy over
+  // the standard hero; encoded, it would never equal 'photo' in the preview.
+  'heroStyle',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

@@ -1,0 +1,44 @@
+/* Safe to edit by hand
+   =============================================================================
+   "Photo behind the words" in the Academy's palette (starter card 189, phase D)
+   =============================================================================
+   photo-hero.css is the starter's PORTABLE sheet. This file is written after it
+   (PhotoHeroAcademy.astro writes both inline, once, only on a page whose hero
+   picks the style) and does two jobs:
+
+   1. THE SHADE. The scrim is the Academy's deepest forest green (the footer and
+      closing-band base, --color-chapel-deep #1f3227), not the starter's ink, at
+      the starter's strengths. src/lib/photo-hero-academy.test.ts reads this file
+      and globals.css and fails unless white words over a PURE WHITE photo under
+      the text strength stay at 4.5:1 or better (5.6:1 today). Never lower
+      --photo-scrim-text below what that test allows.
+   2. THE SCALE. The card uses card 188's scale names, which the Academy does
+      not carry yet (builder-blocks-academy.css defines them only on pages with
+      a kit block); they are set here from the Academy's own tokens. The card is
+      square with the brass top rule, like the Academy's other cards.
+   ========================================================================== */
+
+.ph-hero {
+  --photo-scrim: var(--color-chapel-deep);
+  --photo-scrim-deep: 88%;
+  --photo-scrim-text: 72%;
+  --photo-scrim-clear: 20%;
+
+  --fs-small: 0.875rem;
+  --fs-body: 1rem;
+  --fs-lead: 1.125rem;
+  --fs-title: var(--text-h4);
+  --pad-card: var(--spacing-l);
+  --radius-card: 0;
+}
+
+/* The eyebrow in the Academy's rubric spacing. */
+.ph-eyebrow {
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+/* The short-facts card: square, with the brass rule the Academy's cards carry. */
+.ph-card {
+  border-top: 2px solid #c9a46a;
+}

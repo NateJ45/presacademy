@@ -395,6 +395,8 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
           headline={converted.page?.heroHeadline ?? ''}
           subhead={converted.page?.heroSubhead ?? ''}
           backgroundImage={converted.page?.heroImage ?? null}
+          heroStyle={converted.page?.heroStyle}
+          glance={converted.page?.heroGlance}
           headingId="preview-hero"
           size="short"
         />

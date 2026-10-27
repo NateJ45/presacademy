@@ -2926,6 +2926,12 @@ export type AccessibilityPage = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
+  };
   heroScriptAccent?: string;
   flexibleSections?: Array<
     | ({
@@ -3091,6 +3097,29 @@ export type AccessibilityPage = {
   publishAt?: string;
 };
 
+export type CtaBlock = {
+  _type: 'ctaBlock';
+  label?: string;
+  linkType?: 'internal' | 'external' | 'email' | 'phone';
+  internalLink?:
+    | HomePageReference
+    | AboutPageReference
+    | FaqPageReference
+    | ContactPageReference
+    | EventsPageReference
+    | CoursesPageReference
+    | FacultyPageReference
+    | PricingPageReference
+    | GetStartedPageReference
+    | ForYouPageReference
+    | ResourcesPageReference
+    | PageReference;
+  externalUrl?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+  openInNewTab?: boolean;
+};
+
 export type PrivacyPage = {
   _id: string;
   _type: 'privacyPage';
@@ -3118,6 +3147,12 @@ export type PrivacyPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroScriptAccent?: string;
   flexibleSections?: Array<
@@ -3293,29 +3328,6 @@ export type Embed = {
   aspect?: string;
 };
 
-export type CtaBlock = {
-  _type: 'ctaBlock';
-  label?: string;
-  linkType?: 'internal' | 'external' | 'email' | 'phone';
-  internalLink?:
-    | HomePageReference
-    | AboutPageReference
-    | FaqPageReference
-    | ContactPageReference
-    | EventsPageReference
-    | CoursesPageReference
-    | FacultyPageReference
-    | PricingPageReference
-    | GetStartedPageReference
-    | ForYouPageReference
-    | ResourcesPageReference
-    | PageReference;
-  externalUrl?: string;
-  emailAddress?: string;
-  phoneNumber?: string;
-  openInNewTab?: boolean;
-};
-
 export type Page = {
   _id: string;
   _type: 'page';
@@ -3335,6 +3347,12 @@ export type Page = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   sections?: Array<
     | ({
@@ -3524,6 +3542,12 @@ export type ResourcesPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroEyebrow?: string;
   heroHeadline?: string;
@@ -3724,6 +3748,12 @@ export type ForYouPage = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
+  };
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -3922,6 +3952,12 @@ export type GetStartedPage = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
+  };
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -4118,6 +4154,12 @@ export type PricingPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroEyebrow?: string;
   heroHeadline?: string;
@@ -4316,6 +4358,12 @@ export type FacultyPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroEyebrow?: string;
   heroHeadline?: string;
@@ -4516,6 +4564,12 @@ export type CoursesPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroEyebrow?: string;
   heroHeadline?: string;
@@ -4734,6 +4788,12 @@ export type EventsPage = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
+  };
   specialEyebrow?: string;
   specialHeadline?: string;
   finalCtaEyebrow?: string;
@@ -4936,6 +4996,12 @@ export type ContactPage = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
+  };
   heroScriptAccent?: string;
   note?: string;
   finalCtaEyebrow?: string;
@@ -5134,6 +5200,12 @@ export type FaqPage = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: 'image';
+  };
+  heroStyle?: 'standard' | 'photo';
+  heroGlance?: {
+    title?: string;
+    lines?: Array<string>;
+    link?: CtaBlock;
   };
   heroScriptAccent?: string;
   finalCtaEyebrow?: string;
@@ -6153,9 +6225,9 @@ export type AllSanitySchemaTypes =
   | SyncedSection
   | SectionPreset
   | AccessibilityPage
+  | CtaBlock
   | PrivacyPage
   | Embed
-  | CtaBlock
   | Page
   | ResourcesPage
   | ForYouPage

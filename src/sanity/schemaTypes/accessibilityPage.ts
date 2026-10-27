@@ -20,6 +20,7 @@ import {
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
+import { heroStyleFields } from './heroStyle';
 
 export const accessibilityPage = defineType({
   name: 'accessibilityPage',
@@ -76,6 +77,8 @@ export const accessibilityPage = defineType({
         }),
       ],
     }),
+    // "Photo behind the words" (starter card 189, phase D): ./heroStyle.ts.
+    ...heroStyleFields('hero'),
     defineField({
       name: 'heroScriptAccent',
       title: 'Script-font accent word (optional)',
