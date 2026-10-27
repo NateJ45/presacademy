@@ -220,37 +220,13 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
-- **Re-founding on the starter, phases C to E** (2026-10-27). Phase A (the renderer
-  layer, cadence, anchors switch, layout slots, rule-9 gate) is done with no visible
-  change, A2 (named anchors and the accent budget on) is done, and B (the starter's
-  builder kit, seventeen blocks, with Academy templates, saved sections and insert
-  groups) is done with no live page changed; see `docs/agent/page-architecture.md`,
-  "The starter's foundations" and "The builder kit". C (2026-10-27) hid the six older blocks the kit
-  replaces and the background panel; D the visual cards is done (2026-10-27;
-  188's scale replaced the stand-in tokens in `src/styles/builder-blocks-academy.css`); next: E deletes what nothing reads (the
-  `bgField()` controls only after a fresh data count shows 0).
-- **The other eleven saved sections are still not seeded** (2026-10-27): phase C seeded only
-  "Season: Enrollment closes soon" and "Season: Info session, with the evening" as drafts
-  (`node --experimental-strip-types scripts/seed-section-patterns.mjs --only=enrollment-closing,info-session-evening`).
-  The rest are in `src/sanity/sectionPatterns.ts`; run the script without `--only` (dry first)
-  when Nathan says so. Phase E may hide the older blocks that have no kit equal (rich text,
-  image and text, quote, banner, stats, gallery, logos, from your catalog, FAQ list, resources,
-  key dates) once the kit grows equivalents; phase C kept them.
+- **Real office hours wanted** (2026-10-27, card 196). Site settings > office hours is empty, so the one-line hours show and the Office hours and Map blocks draw nothing new. Needs the Academy's hours by day and any closures.
+- **Confirm the office address** (2026-10-27). The stored address is 9463 Cincinnati Columbus Rd; if it is not the Academy's own, untick "confirmed" under Site settings so the "To confirm" tag shows.
+- **Decide whether to bring back the Academy's own entrance effects** (2026-10-27, card 192). `layout.motion: fade` replaced the older reveals (`.reveal-l`/`.reveal-r`, the cover fan-in) with one 200ms fade. They are at rest, not deleted; Nathan says whether the old motion returns (as a `motion` value) or stays retired.
+- **The other eleven saved sections are still not seeded** (2026-10-27): phase C seeded only "Season: Enrollment closes soon" and "Season: Info session, with the evening" as drafts. The rest are in `src/sanity/sectionPatterns.ts`; run `node --experimental-strip-types scripts/seed-section-patterns.mjs` without `--only` (dry first) when Nathan says so. Older blocks with no kit equal (rich text, image and text, quote, banner, stats, gallery, logos, from your catalog, FAQ list, resources, key dates) stay in the menu until the kit grows equivalents.
+- **Re-founding on the starter is done** (A to E, 2026-10-27, #146 to #155 and the cleanup PR). Left on purpose: `bgField()` controls and the six hidden block types stay registered (remove only after a fresh data count shows 0 and Nathan agrees); the two undeclared `siteSettings` fields (`admissionsEmail`, `denominationStatement`, see "Two orphan fields" above) still wait on his choice, and `audit:data` keeps flagging them.
 
-- **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
-  Phase D is taking them one PR at a time; card 195 (client notes, switched off), card 196
-  (office facts, empty until filled), card 189 (the photo hero on inner pages, opt-in) and card 192
-  (the flow layer as `layout.motion: fade`, a 200ms fade below the first screen) and card 188 (the one
-  scale and the shape contract, `hero: board` left off) are in. **Waiting on the Academy:** the real office hours by day,
-  and whether the stored address (9463 Cincinnati Columbus Rd) is the Academy's own; until then the
-  rows stay empty and the one-line office hours show.
-  The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the
-  builder block library (steps rail, hub, contact card), the main pages as page builders and the documents library all build on
-  starter pieces this repo never took after it left the starter (2026-08-25). Taking them means
-  adopting `SectionRenderer`, `sections.ts` and `site-layout.ts` first: a planned piece of work,
-  Nathan's call. Office facts also wait on real values (the seed is placeholder). The SVG path
-  compactor (card 197) waits on a starter fix: its test fails here on a `-0` coordinate in
-  `public/studio-art/cover-shelf-phone.svg`.
+- **Starter cards 188 to 197, what the Academy did not take** (2026-10-27). Taken: 188, 189 (inner pages), 192 (fade), 195 (off), 196 (empty). Not taken: 194 (the Academy keeps its own form), the documents library and video blocks (197's page-weight guard is in). Card 196 waits on real values (see "Real office hours wanted" and "Confirm the office address" above).
 
 - **Check the Studio tours and the new Quick update jobs signed in** (2026-10-19, studio-complete
   Phase B). Tours, the extra jobs, six clips and the pictures are wired (`docs/agent/studio-plan.md`,
