@@ -15,6 +15,7 @@ import {
 } from './blocks';
 import { SEO_GROUP, seoFields } from './seo';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
+import { heroStyleFields } from './heroStyle';
 
 export const faqPage = defineType({
   name: 'faqPage',
@@ -79,6 +80,8 @@ export const faqPage = defineType({
         }),
       ],
     }),
+    // "Photo behind the words" (starter card 189, phase D): ./heroStyle.ts.
+    ...heroStyleFields('hero'),
     defineField({
       name: 'heroScriptAccent',
       title: 'Script-font accent word (optional)',

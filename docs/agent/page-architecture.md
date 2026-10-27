@@ -63,6 +63,13 @@ Each page is a Sanity singleton whose built-in copy and images are editable fiel
 
 **Background cadence.** Built-in sections alternate `bg-background` / `bg-muted`, with deep chapel-green bands for the utility/CTA surfaces, so adjacent sections don't share a surface. Page-builder sections set their own background via the block's background control.
 
+**"Photo behind the words" on inner pages (refoundation phase D, 2026-10-27; starter card 189).** Every inner page with a hero photo field (the text-hero singletons in `schoolPages.ts`, Events, Contact, FAQ, Privacy, Accessibility and custom pages) has **Hero style** (`heroStyle`: Standard or "Photo behind the words") and an optional **Short-facts card** (`heroGlance`: title, up to four lines, a link), both from `src/sanity/schemaTypes/heroStyle.ts` and projected next to `heroImage` in `queries.ts`. Home never offers it (the Term Issue cover stays). Opt-in: with Standard, or with no Sanity photo (a local fallback photo does not count), the page draws exactly as before; parity proved every live route unchanged.
+
+- Who draws it: `Hero.astro` (the photo-hero pages and custom pages; a new `heroStyle`/`glance` prop pair) and `SingletonPage.astro` (the text-hero singletons), both through `src/components/PhotoHeroAcademy.astro`, which renders the starter's `PhotoHero.astro` (PORTABLE, with `HeroVideo.astro`, `photo-hero.css`, `hero-video.ts`, `photo-hero.ts` and their tests; no clip fields are offered here).
+- Styles only where drawn: Astro would link `photo-hero.css` from every page with a hero, so `src/lib/photo-hero-css.ts` (a Vite plugin in `astro.config.mjs`) answers PhotoHero's plain import with an empty module, and `PhotoHeroAcademy.astro` writes the sheet plus `src/styles/photo-hero-academy.css` inline, once per page.
+- The Academy's palette: the shade is `--color-chapel-deep` (#1f3227) at the starter's strengths; `src/lib/photo-hero-academy.test.ts` holds white over a pure white photo at 4.5:1 or better (5.6:1). The card is square with the brass top rule.
+- Fixture: `/style-guide/photo-hero/` (noindex), pinned by `tests/photo-hero-academy.spec.ts`; screenshots `docs/agent/img/photo-hero-375.png` and `photo-hero-1280.png`. `heroStyle` is in `NON_STEGA_FIELDS`.
+
 ### Empty-content behavior (no module toggles)
 
 **Sanity is the single source of truth for all content** (see `editor-vs-hardcoded.md`): every content field is populated, so the Studio mirrors the live site, and the inline strings in the templates are only a safety net. This build also does not use the starter's `sectionVisibility` module-toggle system -- there are no opt-in module sections to gate. Content degrades gracefully on its own:

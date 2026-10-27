@@ -9,6 +9,7 @@ import { archivedField } from './archived';
 import { PAGE_SECTION_MEMBERS, PAGE_SECTIONS_OPTIONS } from './blocks';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { SEO_GROUP, seoFields } from './seo';
+import { heroStyleFields } from './heroStyle';
 
 export const page = defineType({
   name: 'page',
@@ -64,6 +65,8 @@ export const page = defineType({
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
+    // "Photo behind the words" (starter card 189, phase D): ./heroStyle.ts.
+    ...heroStyleFields('hero'),
     defineField({
       name: 'sections',
       title: 'Sections',

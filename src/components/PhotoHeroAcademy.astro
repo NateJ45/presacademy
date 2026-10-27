@@ -1,0 +1,31 @@
+---
+// Safe to edit by hand
+// =============================================================================
+// PhotoHeroAcademy: "Photo behind the words" on the Academy's inner pages
+// (starter card 189, refoundation phase D, 2026-10-27)
+// =============================================================================
+// The starter's PhotoHero.astro (PORTABLE) imports its stylesheet the plain way,
+// which would make Astro link photo-hero.css from EVERY page that can reach it
+// (every page with a hero), although no live page uses the style. A Vite plugin
+// (src/lib/photo-hero-css.ts) answers that plain import with an empty module, and
+// this wrapper writes the starter's sheet plus the Academy's palette and scale
+// (src/styles/photo-hero-academy.css) inline, only on a page whose hero picks
+// the style. The same trick as the builder kit's styles (BuilderBlock.astro).
+//
+// Who draws it: Hero.astro (the photo pages and custom pages) and
+// SingletonPage.astro (the text-hero singletons), when the page's Hero style is
+// "photo" AND it has a hero photo. Home keeps its Term Issue cover and never
+// offers the style. Props are PhotoHero's own.
+import PhotoHero from '@/components/PhotoHero.astro';
+import photoHeroCss from '@/styles/photo-hero.css?inline';
+import academyCss from '@/styles/photo-hero-academy.css?inline';
+
+const props = Astro.props as Record<string, unknown>;
+// Once per page (Astro.locals is fresh for every page render).
+const locals = Astro.locals as { photoHeroCss?: boolean };
+const writeCss = !locals.photoHeroCss;
+locals.photoHeroCss = true;
+---
+
+{writeCss && <style is:inline set:html={photoHeroCss + academyCss} />}
+<PhotoHero {...(props as any)} />

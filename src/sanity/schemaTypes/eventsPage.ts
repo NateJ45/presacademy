@@ -15,6 +15,7 @@ import {
   PAGE_SECTIONS_OPTIONS,
 } from './blocks';
 import { seoFields } from './seo';
+import { heroStyleFields } from './heroStyle';
 
 export const eventsPage = defineType({
   name: 'eventsPage',
@@ -42,6 +43,8 @@ export const eventsPage = defineType({
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
+    // "Photo behind the words" (starter card 189, phase D): ./heroStyle.ts.
+    ...heroStyleFields(),
     defineField({ name: 'specialEyebrow', title: 'Special services eyebrow', type: 'string' }),
     defineField({ name: 'specialHeadline', title: 'Special services headline', type: 'string' }),
     defineField({ name: 'finalCtaEyebrow', title: 'Closing CTA eyebrow', type: 'string' }),

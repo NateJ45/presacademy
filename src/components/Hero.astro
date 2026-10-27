@@ -11,6 +11,8 @@
 // preloads inline. Don't add layout-shift animations to this section.
 
 import HeroBackground from '@/components/HeroBackground.astro';
+import PhotoHeroAcademy from '@/components/PhotoHeroAcademy.astro';
+import type { PhotoHeroGlance } from '@/components/PhotoHero.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import { splitHeadingAccent } from '@/lib/heading-accent';
@@ -79,6 +81,15 @@ interface Props {
    * both take precedence over the keyword if more than one is passed.
    */
   keyword?: string;
+  /**
+   * The page's Hero style (starter card 189, src/sanity/schemaTypes/heroStyle.ts). 'photo'
+   * ("Photo behind the words") draws PhotoHeroAcademy.astro instead, when the page has its own
+   * hero photo in Sanity and the hero is short (an inner page). Anything else, or no photo, draws
+   * this hero exactly as before.
+   */
+  heroStyle?: string | null;
+  /** The optional short-facts card beside the words, photo style only. */
+  glance?: PhotoHeroGlance | null;
 }
 
 const {
@@ -96,6 +107,8 @@ const {
   rotatingWords,
   scriptAccent,
   keyword,
+  heroStyle,
+  glance,
 } = Astro.props as Props;
 
 // Split the headline into a first word + the rest, so the rotator can swap
@@ -152,6 +165,9 @@ const heroImageList = (Array.isArray(backgroundImages) ? backgroundImages : []).
 );
 const effectiveImages =
   heroImageList.length > 0 ? heroImageList : backgroundImage?.asset ? [backgroundImage] : [];
+// "Photo behind the words" (card 189): inner pages only (never the tall home hero), and only
+// with the page's own Sanity photo (a local fallback photo does not count).
+const photoStyle = heroStyle === 'photo' && size !== 'tall' && !!effectiveImages[0];
 // An image hero renders when there's a Sanity image OR a local fallback photo.
 const hasImage = effectiveImages.length > 0 || !!localImage;
 
@@ -267,7 +283,19 @@ const wrapperHeight = size === 'tall' ? 'hero-fill' : 'min-h-[42svh] md:min-h-[5
   })();
 </script>
 
-{hasImage ? (
+{photoStyle ? (
+  <PhotoHeroAcademy
+    eyebrow={eyebrow}
+    headline={headline}
+    subhead={subhead}
+    image={effectiveImages[0]}
+    primaryCta={primaryCta}
+    secondaryCta={secondaryCta}
+    headingId={headingId}
+    size="short"
+    glance={glance}
+  />
+) : hasImage ? (
   <section
     class:list={[
       'relative flex flex-col justify-end overflow-hidden bg-accent-dark text-bg',

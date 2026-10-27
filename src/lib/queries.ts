@@ -373,6 +373,9 @@ export async function getFaqPage(fetcher = sanityFetch) {
     hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead, heroKeyword,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     heroScriptAccent,
     // coalesce: prefer the new categoryRef document title; fall back to the
     // legacy hardcoded string so existing items keep grouping correctly until
@@ -454,6 +457,9 @@ export async function getContactPage(fetcher = sanityFetch) {
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     flexibleSections[]${SECTION_MEMBERS}
   }`,
     {},
@@ -507,6 +513,9 @@ export async function getPageBySlug(slug: string) {
     title, "slug": slug.current,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoTitle, seoDescription, seoImage${IMAGE_PROJECTION},
     hideFromSearch,
     sections[]${SECTION_MEMBERS}
@@ -561,6 +570,9 @@ export async function getPrivacyPage(fetcher = sanityFetch) {
     hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     heroScriptAccent,
     flexibleSections[]${SECTION_MEMBERS}
   }`,
@@ -582,6 +594,9 @@ export async function getAccessibilityPage(fetcher = sanityFetch) {
     hideFromSearch,
     heroEyebrow, heroHeadline, heroSubhead,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     heroScriptAccent,
     flexibleSections[]${SECTION_MEMBERS}
   }`,
@@ -650,6 +665,9 @@ export async function getEventsPage(fetcher = sanityFetch) {
     ...,
     seoImage${IMAGE_PROJECTION},
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     flexibleSections[]${SECTION_MEMBERS}
   }`,
     {},
@@ -835,6 +853,9 @@ export async function getCoursesPage(fetcher = sanityFetch) {
     `*[_type == "coursesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
@@ -942,6 +963,9 @@ export async function getFacultyPage(fetcher = sanityFetch) {
     `*[_type == "facultyPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
@@ -1172,6 +1196,9 @@ export async function getPricingPage(fetcher = sanityFetch) {
     `*[_type == "pricingPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
@@ -1224,6 +1251,9 @@ export async function getGetStartedPage(fetcher = sanityFetch) {
     `*[_type == "getStartedPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
@@ -1239,6 +1269,9 @@ export async function getForYouPage(fetcher = sanityFetch) {
     `*[_type == "forYouPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
@@ -1254,6 +1287,9 @@ export async function getResourcesPage(fetcher = sanityFetch) {
     `*[_type == "resourcesPage"][0]{
     ...,
     heroImage${IMAGE_PROJECTION},
+    // Card 189 (phase D): the hero style and its short-facts card.
+    heroStyle,
+    heroGlance{ ..., link${CTA_PROJECTION} },
     seoImage${IMAGE_PROJECTION},
     finalCta${CTA_PROJECTION},
     flexibleSections[]${SECTION_MEMBERS}
