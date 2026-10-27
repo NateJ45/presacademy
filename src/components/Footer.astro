@@ -39,6 +39,9 @@ import { telHref } from '@/lib/phone';
 import { issueLine } from '@/lib/term-issue';
 import { withTrailingSlash } from '@/lib/href';
 import ActionBar from '@/components/ActionBar.astro';
+import OpenStatus from '@/components/business/OpenStatus.astro';
+import ToConfirm from '@/components/business/ToConfirm.astro';
+import { resolveOfficeFacts, type RawOfficeFacts } from '@/lib/business-data';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -65,6 +68,9 @@ interface Props {
 const { siteSettings } = Astro.props as Props;
 
 const settings = resolveSiteSettings(siteSettings);
+// The office facts (starter card 196, src/lib/business-data.ts): the confirmed flags and the
+// office hours by day. With no rows the one-line office hours show as before.
+const facts = resolveOfficeFacts(siteSettings as RawOfficeFacts | null | undefined);
 const brandName = settings.brandName;
 const email = settings.email;
 const phone = settings.phone;
@@ -164,6 +170,7 @@ const creditUrl = siteSettings?.footerCreditUrl ?? 'https://www.nixoncreativestu
             <dt>Where</dt>
             <dd>
               {settings.fullAddress}
+              <ToConfirm confirmed={facts.address?.confirmed} />
               <span class="hidden lg:inline" aria-hidden="true">
                 {' '}
                 ·{' '}
@@ -183,11 +190,21 @@ const creditUrl = siteSettings?.footerCreditUrl ?? 'https://www.nixoncreativestu
             </dd>
           </>
         )}
-        {officeHours && (
+        {facts.hasHours ? (
           <>
             <dt>Office</dt>
-            <dd>{officeHours}</dd>
+            <dd>
+              <OpenStatus facts={facts} />
+              {facts.hoursNote && <span class="block">{facts.hoursNote}</span>}
+            </dd>
           </>
+        ) : (
+          officeHours && (
+            <>
+              <dt>Office</dt>
+              <dd>{officeHours}</dd>
+            </>
+          )
         )}
         {(email || phone) && (
           <>
@@ -198,11 +215,13 @@ const creditUrl = siteSettings?.footerCreditUrl ?? 'https://www.nixoncreativestu
                   {email}
                 </a>
               )}
+              {email && <ToConfirm confirmed={facts.email?.confirmed} />}
               {phone && (
                 <a href={telHref(phone)} class="back-cover__link">
                   {phone}
                 </a>
               )}
+              {phone && <ToConfirm confirmed={facts.phone?.confirmed} />}
             </dd>
           </>
         )}

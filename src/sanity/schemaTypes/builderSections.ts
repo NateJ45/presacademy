@@ -58,6 +58,7 @@ import { ThListIcon } from '@sanity/icons/ThList';
 import { UsersIcon } from '@sanity/icons/Users';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { ClockIcon } from '@sanity/icons/Clock';
+import { PinIcon } from '@sanity/icons/Pin';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { ExpandIcon } from '@sanity/icons/Expand';
 import { ImageIcon } from '@sanity/icons/Image';
@@ -1277,6 +1278,91 @@ export const hubSection = defineType({
   },
 });
 
+// The Academy (phase D, card 196): the office hours and address live in Site
+// settings (src/lib/business-data.ts maps them), not a Business info document.
+// ── Opening hours (card 196) ─────────────────────────────────────────────────
+// Self-filling: the hours, the dated changes and the address come from
+// Site settings (src/lib/business-facts.ts), never typed here (rule 15). With
+// no hours set the block draws nothing.
+export const hoursSection = defineType({
+  name: 'hoursSection',
+  title: 'Office hours',
+  type: 'object',
+  icon: ClockIcon,
+  description:
+    'The office hours by day from Site settings, with "Open now" or when the office next opens, and any closures or term breaks coming up. Change the hours once in Site settings and every place updates. Draws nothing until the hours by day are filled in.',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Heading (optional)',
+      type: 'string',
+      initialValue: 'Office hours',
+    }),
+    introField(),
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Today beside the week', value: 'card' },
+          { title: 'One slim band', value: 'band' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'card',
+    }),
+    defineField({
+      name: 'showAddress',
+      title: 'Show the address and directions',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'showChanges',
+      title: 'Show closures and term breaks coming up',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    lookField('hoursSection'),
+  ],
+  preview: {
+    select: { heading: 'heading', layout: 'layout' },
+    prepare: ({ heading, layout }) => ({
+      title: heading || 'Office hours',
+      subtitle: layout === 'band' ? 'Office hours, one slim band' : 'Office hours',
+    }),
+  },
+});
+
+// ── Map and directions (card 196) ────────────────────────────────────────────
+// A drawn map card from the stored address: nothing loads from a map service
+// and nothing tracks a visitor until they choose a directions button. Draws
+// nothing without a street address in Site settings.
+export const mapSection = defineType({
+  name: 'mapSection',
+  title: 'Map and directions',
+  type: 'object',
+  icon: PinIcon,
+  description:
+    'The address of the Academy, from Site settings, with Directions and Apple Maps buttons. Change the address once in Site settings and every place updates.',
+  fields: [
+    headingField(),
+    introField(),
+    defineField({
+      name: 'showHours',
+      title: "Show today's office hours under the address",
+      type: 'boolean',
+      initialValue: true,
+    }),
+    lookField('mapSection'),
+  ],
+  preview: {
+    select: { heading: 'heading' },
+    prepare: ({ heading }) => ({ title: heading || 'Map and directions', subtitle: 'Map' }),
+  },
+});
+
 // ── Exports ──────────────────────────────────────────────────────────────────
 
 export const builderSectionSchemas = [
@@ -1295,6 +1381,8 @@ export const builderSectionSchemas = [
   contactCardSection,
   calendarSubscribeSection,
   iconCardsSection,
+  hoursSection,
+  mapSection,
   stepsRailSection,
   hubSection,
 ];
@@ -1337,6 +1425,8 @@ export const BUILDER_INSERT_GROUPS: InsertGroup[] = [
     ],
   },
   { name: 'folding', title: 'Fold-outs and tabs', of: ['accordionSection', 'tabsSection'] },
+  // Card 196: both fill themselves from Site settings.
+  { name: 'visit', title: 'Office hours and location', of: ['hoursSection', 'mapSection'] },
 ];
 
 /** Blocks that draw their own band (the notice); the rest take the page cadence. */

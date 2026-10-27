@@ -34,6 +34,8 @@ import EventDetailsBlock from './EventDetailsBlock.astro';
 import ScheduleBlock from './ScheduleBlock.astro';
 import PhotoCardsBlock from './PhotoCardsBlock.astro';
 import ContactCardBlock from './ContactCardBlock.astro';
+import HoursBlock from './HoursBlock.astro';
+import MapBlock from './MapBlock.astro';
 import CalendarSubscribeBlock from './CalendarSubscribeBlock.astro';
 import IconCardsBlock from './IconCardsBlock.astro';
 import StepsRailBlock from './StepsRailBlock.astro';
@@ -93,6 +95,10 @@ const KIT_STYLES = kitCss + kitMoreCss + shapesCss + academyCss;
   <ScheduleBlock block={b} {...common} />
 ) : b._type === 'photoCardsSection' ? (
   <PhotoCardsBlock block={b} {...common} isFirst={isFirst} />
+) : b._type === 'hoursSection' ? (
+  <HoursBlock block={b} {...common} />
+) : b._type === 'mapSection' ? (
+  <MapBlock block={b} {...common} />
 ) : b._type === 'contactCardSection' ? (
   <ContactCardBlock block={b} {...common} primaryVariant={primaryVariant} />
 ) : b._type === 'calendarSubscribeSection' ? (

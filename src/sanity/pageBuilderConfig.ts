@@ -83,6 +83,9 @@ export const SELF_FILLING_SECTIONS = [
   // The builder kit's contact card fills its email and phone from Site settings
   // (card 193, phase B 2026-10-27), so a fresh one is not empty.
   'contactCardSection',
+  // Card 196 (phase D): office hours and the map read Site settings.
+  'hoursSection',
+  'mapSection',
 ];
 
 export const PAGE_CHECK_CONFIG: PageCheckConfig = {

@@ -1,7 +1,8 @@
 // Safe to edit by hand
 // The Academy's copy (refoundation phase B, 2026-10-27): the starter's file
-// without Opening hours, Map, Progress and Newsletter, which the Academy does not
-// offer (no public address or hours; the Next Issue band carries the sign-up).
+// without Progress and Newsletter, which the Academy does not offer (the Next
+// Issue band carries the sign-up). Office hours and Map came in with card 196
+// (phase D).
 // The projected shapes of the builder kit's blocks (builderSections.ts, PORTS.md
 // card 173), as SectionRenderer receives them from sectionsProjection() in
 // queries.ts: images with their asset resolved and buttons with their page
@@ -9,6 +10,7 @@
 // projection reshapes those fields.
 
 import type { ProjectedCtaBlock, ProjectedImage } from './pageBuilder.types';
+import type { RawBusinessFacts } from './business-facts';
 
 /** Portable text as stored; rendered by PortableText. */
 type Blocks = unknown[];
@@ -140,6 +142,30 @@ export interface ProjectedPhotoCardsSection extends Base {
 
 // ── Card 193 ────────────────────────────────────────────────────────────────
 
+/** Opening hours (card 196). `facts` is set only by the example sections page's fixture. */
+export interface ProjectedHoursSection {
+  _type: 'hoursSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  layout?: 'card' | 'band';
+  showAddress?: boolean;
+  showChanges?: boolean;
+  look?: string;
+  facts?: RawBusinessFacts | null;
+}
+
+/** Map and directions (card 196). `facts` is set only by the example sections page's fixture. */
+export interface ProjectedMapSection {
+  _type: 'mapSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  showHours?: boolean;
+  look?: string;
+  facts?: RawBusinessFacts | null;
+}
+
 export interface ProjectedContactCardSection extends Base {
   _type: 'contactCardSection';
   callButtons?: boolean;
@@ -147,6 +173,8 @@ export interface ProjectedContactCardSection extends Base {
   email?: string;
   address?: string;
   hours?: string;
+  /** Set only by the example sections page's fixture (card 198). */
+  facts?: RawBusinessFacts | null;
 }
 
 export interface ProjectedCalendarSubscribeSection extends Base {
@@ -216,6 +244,8 @@ export type BuilderPageBlock =
   | ProjectedScheduleSection
   | ProjectedPhotoCardsSection
   | ProjectedContactCardSection
+  | ProjectedHoursSection
+  | ProjectedMapSection
   | ProjectedCalendarSubscribeSection
   | ProjectedIconCardsSection
   | ProjectedStepsRailSection
@@ -236,6 +266,8 @@ export const BUILDER_BLOCK_TYPES: ReadonlySet<string> = new Set<BuilderPageBlock
   'scheduleSection',
   'photoCardsSection',
   'contactCardSection',
+  'hoursSection',
+  'mapSection',
   'calendarSubscribeSection',
   'iconCardsSection',
   'stepsRailSection',

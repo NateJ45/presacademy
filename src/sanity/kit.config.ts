@@ -30,6 +30,8 @@ import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { UsersIcon } from '@sanity/icons/Users';
 import { BookIcon } from '@sanity/icons/Book';
 import { WarningOutlineIcon } from '@sanity/icons/WarningOutline';
+import { ClockIcon } from '@sanity/icons/Clock';
+import { HOURS_TIME_OPTIONS } from '../lib/business-hours';
 import {
   buildEnrollmentReminder,
   buildEvent,
@@ -345,6 +347,54 @@ export const kitConfig: KitConfig = {
       build: (v) => buildNotice({ message: v.message, lastDay: v.lastDay }, 'urgent'),
       doneMessage:
         'The notice will be on the website in a few minutes and comes down by itself after the day you named. Email the class too: not everyone checks the website.',
+    },
+    {
+      // Starter card 196 (phase D): a dated change to the office hours by day in
+      // Site settings. The usual week is never touched, and the change drops off
+      // by itself after its last day. Until the office hours by day are filled in,
+      // a change has no hours to change and the site shows nothing.
+      id: 'hours-change',
+      title: 'Change the office hours for a day',
+      detail: 'Closed for a holiday or a term break, or different hours. Back to normal after.',
+      icon: ClockIcon,
+      meaning: 'times',
+      job: {
+        kind: 'append',
+        doc: 'siteSettings',
+        array: 'hoursChanges',
+        itemType: 'hoursChange',
+        at: 'end',
+      },
+      fields: [
+        { name: 'date', title: 'Which day', kind: 'date', required: true },
+        { name: 'endDate', title: 'Last day, if more than one', kind: 'date' },
+        {
+          name: 'kind',
+          title: 'What is different',
+          kind: 'select',
+          required: true,
+          options: [
+            { title: 'Closed all day', value: 'closed' },
+            { title: 'Different hours', value: 'hours' },
+          ],
+          initial: () => 'closed',
+        },
+        {
+          name: 'opens',
+          title: 'Opens (for different hours)',
+          kind: 'select',
+          options: HOURS_TIME_OPTIONS,
+        },
+        {
+          name: 'closes',
+          title: 'Closes (for different hours)',
+          kind: 'select',
+          options: HOURS_TIME_OPTIONS,
+        },
+        { name: 'note', title: 'Why (optional)', kind: 'string', max: 60 },
+      ],
+      doneMessage:
+        'The website shows the change on those days and goes back to the usual office hours by itself.',
     },
     {
       id: 'event',
