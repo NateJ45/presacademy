@@ -226,8 +226,8 @@ the Westminster Standards and the Book of Confessions."`
   builder kit, seventeen blocks, with Academy templates, saved sections and insert
   groups) is done with no live page changed; see `docs/agent/page-architecture.md`,
   "The starter's foundations" and "The builder kit". C (2026-10-27) hid the six older blocks the kit
-  replaces and the background panel; next: D the visual cards (188's scale replaces the stand-in tokens in
-  `src/styles/builder-blocks-academy.css`), E deletes what nothing reads (the
+  replaces and the background panel; D the visual cards is done (2026-10-27;
+  188's scale replaced the stand-in tokens in `src/styles/builder-blocks-academy.css`); next: E deletes what nothing reads (the
   `bgField()` controls only after a fresh data count shows 0).
 - **The other eleven saved sections are still not seeded** (2026-10-27): phase C seeded only
   "Season: Enrollment closes soon" and "Season: Info session, with the evening" as drafts
@@ -240,8 +240,8 @@ the Westminster Standards and the Book of Confessions."`
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
   Phase D is taking them one PR at a time; card 195 (client notes, switched off), card 196
   (office facts, empty until filled), card 189 (the photo hero on inner pages, opt-in) and card 192
-  (the flow layer as `layout.motion: fade`, a 200ms fade below the first screen) are in; card 188 (the one
-  scale and the shape contract) is last. **Waiting on the Academy:** the real office hours by day,
+  (the flow layer as `layout.motion: fade`, a 200ms fade below the first screen) and card 188 (the one
+  scale and the shape contract, `hero: board` left off) are in. **Waiting on the Academy:** the real office hours by day,
   and whether the stored address (9463 Cincinnati Columbus Rd) is the Academy's own; until then the
   rows stay empty and the one-line office hours show.
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the

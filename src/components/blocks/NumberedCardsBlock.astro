@@ -94,7 +94,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
               i < cards.length - 1 && 'border-border-soft lg:border-r',
             ]}
           >
-            <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+            <span class="font-display text-sm tracking-[0.12em] text-gold-ink figures-numeral">
               {num(i)}
             </span>
             <h2 class="mt-2 font-display text-h4 text-foreground transition-colors group-hover:text-link">
@@ -126,7 +126,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
           {cards.map((c: any, i: number) => (
             <div class="border-t-2 border-gold pt-4">
-              <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+              <span class="font-display text-sm tracking-[0.12em] text-gold-ink figures-numeral">
                 {num(i)}
               </span>
               <h3 class="mt-2 font-display text-h4 text-foreground">{c.title}</h3>
@@ -152,7 +152,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <div class="mt-l grid grid-cols-1 gap-l md:grid-cols-3" data-stagger-grid>
           {cards.map((c: any, i: number) => (
             <div class="border-t-2 border-gold pt-4">
-              <span class="font-display text-lg text-gold-ink tabular-nums">{num(i)}</span>
+              <span class="font-display text-lg text-gold-ink figures-numeral">{num(i)}</span>
               <h3 class="mt-2 font-display text-h5 text-foreground">{c.title}</h3>
               {c.body && <p class="mt-1 text-sm text-foreground/75">{c.body}</p>}
             </div>
@@ -182,7 +182,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <ul class="grid grid-cols-1 gap-l md:grid-cols-2" data-stagger-grid>
           {cards.map((c: any, i: number) => (
             <li class={cardClass}>
-              <span class="font-display text-sm tracking-[0.12em] text-gold-ink tabular-nums">
+              <span class="font-display text-sm tracking-[0.12em] text-gold-ink figures-numeral">
                 {num(i)}
               </span>
               <CardHeading class="mt-2 font-display text-h3 text-foreground">{c.title}</CardHeading>
