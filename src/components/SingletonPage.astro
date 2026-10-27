@@ -26,7 +26,7 @@
    delete a page's h1, and the fields editors already know do not move.
    ========================================================================= */
 import PageHeader from '@/components/PageHeader.astro';
-import Sections from '@/components/Sections.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import { sectionsFor } from '@/lib/default-sections';
 import type { EditDoc } from '@/lib/preview-edit-attr';
@@ -204,7 +204,7 @@ interface Props {
    * (2026-08-26, Phase 4). Only the preview route passes one, and today only for
    * home, whose preview has always rendered draft courses, faculty and
    * testimonials. Undefined everywhere else, which leaves every query on its own
-   * `= sanityFetch` default, so the live build is unchanged. See Sections.astro.
+   * `= sanityFetch` default, so the live build is unchanged. See SectionRenderer.astro.
    */
   fetcher?: any;
   /**
@@ -276,7 +276,7 @@ const sectionsEditDoc = sectionsAreFromDoc ? editDoc : undefined;
   />
 ) : null}
 
-<Sections
+<SectionRenderer
   sections={sections}
   fallbackEmail={settings?.email}
   fallbackPhone={settings?.phone}

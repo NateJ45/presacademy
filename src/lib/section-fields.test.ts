@@ -366,7 +366,80 @@ test('stega markers never reach the box', () => {
 });
 
 // =============================================================================
-// The surface handle in Sections.astro
+// Rule 9 (the starter's colour-field gate), merged with the Academy's allowlist
+// =============================================================================
+// The starter's rule: a page-builder block carries no surface or colour field;
+// the renderer owns the band (src/lib/sectionCadence.ts), and the one exception
+// is `look`, an enum of designed looks (src/lib/section-looks.ts). The Academy
+// came to the starter's foundations late (refoundation phase A, 2026-10-27)
+// with eighteen older blocks that DO carry a background control, through
+// bgField(). They stay for now, frozen: phase C hides those fields in the
+// Studio, phase E deletes them once a fresh count shows no data uses them. The
+// gate's job until then is to keep the list from growing.
+//
+// The one stored appearance value the Academy keeps on purpose (decision 1):
+// sectionPricingTiers.surface ("rates" on Home, "ledger" on Pricing), which
+// picks a self-contained variant of the block, not a colour.
+const LEGACY_BACKGROUND_TYPES = [
+  'sectionAccordion',
+  'sectionCardGrid',
+  'sectionCtaBand',
+  'sectionDynamicList',
+  'sectionFaqList',
+  'sectionFeatureCards',
+  'sectionGallery',
+  'sectionImageText',
+  'sectionKeyDates',
+  'sectionLogos',
+  'sectionMediaFeature',
+  'sectionMediaShowcase',
+  'sectionPricingTiers',
+  'sectionQuote',
+  'sectionResources',
+  'sectionRichText',
+  'sectionSteps',
+  'sectionStats',
+];
+const VARIANT_FIELD_ALLOWLIST: Record<string, string[]> = { sectionPricingTiers: ['surface'] };
+const COLOUR_FIELD_NAMES = [
+  'tone',
+  'surface',
+  'background',
+  'accent',
+  'bandColor',
+  'color',
+  'backgroundColor',
+  'bgColor',
+];
+
+test('rule 9: no NEW block takes a background control (the legacy list is frozen)', () => {
+  const withBg = [...BODIES].filter(([, body]) => body.includes('bgField(')).map(([n]) => n);
+  assert.deepEqual(withBg.sort(), [...LEGACY_BACKGROUND_TYPES].sort());
+});
+
+test('rule 9: no block declares a surface or colour field of its own, bar the allowlist', () => {
+  for (const [name, body] of BODIES) {
+    const allowed = VARIANT_FIELD_ALLOWLIST[name] ?? [];
+    for (const field of COLOUR_FIELD_NAMES) {
+      if (allowed.includes(field)) continue;
+      assert.ok(
+        !body.includes(`name: '${field}'`),
+        `${name} declares a '${field}' field; see the starter's rule 9 (the renderer owns the band)`,
+      );
+    }
+    // A colour PICKER is a colour field whatever it is called.
+    assert.ok(!/type:\s*'color'/.test(body), `${name} declares a colour picker`);
+  }
+});
+
+test('rule 9: a look only ever arrives through lookField(), never hand-written', () => {
+  for (const [name, body] of BODIES) {
+    assert.ok(!body.includes(`name: 'look'`), `${name} writes its own 'look' field`);
+  }
+});
+
+// =============================================================================
+// The surface handle in SectionRenderer.astro
 // =============================================================================
 // The handle is the only reason the swatch row can mount at all, and it is the
 // only markup this mission adds to a rendered page. Two promises are worth a
@@ -375,7 +448,7 @@ test('stega markers never reach the box', () => {
 // for section types that have a background to change.
 
 const SECTIONS_ASTRO = readFileSync(
-  fileURLToPath(new URL('../components/Sections.astro', import.meta.url)),
+  fileURLToPath(new URL('../components/SectionRenderer.astro', import.meta.url)),
   'utf8',
 );
 

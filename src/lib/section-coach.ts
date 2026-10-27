@@ -8,7 +8,7 @@
 // section still empty, and what should the editor add?", so the preview can
 // show a friendly dashed placeholder instead.
 //
-// PREVIEW ONLY, and provably so: the ONLY caller is src/components/Sections.astro,
+// PREVIEW ONLY, and provably so: the ONLY caller is src/components/SectionRenderer.astro,
 // and it calls this file only when `editDoc` is set. `editDoc` is passed by the
 // /preview routes and by nothing else, so the live static site never reaches
 // this code and its markup is byte-identical to what it was before. Do NOT wire

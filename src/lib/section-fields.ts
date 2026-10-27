@@ -289,7 +289,7 @@ export function overlayControlsForPath(path?: string | null): OverlayControl[] {
   // the section wrapper at all. The first version of this layer put the swatch
   // row there, and it never mounted.
   //
-  // The fix is to give the swatches a real field to hang on: Sections.astro
+  // The fix is to give the swatches a real field to hang on: SectionRenderer.astro
   // renders a small handle inside each background-carrying section in preview,
   // carrying `data-sanity` for `…[_key=="…"].background`. That is an object
   // FIELD, so the context builds. The bare-item case is deliberately NOT kept

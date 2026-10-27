@@ -93,7 +93,7 @@ function tokensOf(className: string | null | undefined): string[] {
 }
 
 /**
- * The <section> the handle belongs to. Sections.astro renders the handle as the
+ * The <section> the handle belongs to. SectionRenderer.astro renders the handle as the
  * last child of a plain relative wrapper whose other child is the band itself,
  * so the band is the wrapper's first <section>. Null when the shape is anything
  * else, which simply turns the optimistic recolour off.

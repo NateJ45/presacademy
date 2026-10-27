@@ -18,7 +18,7 @@
 // filters every /style-guide path), linked from nowhere.
 // =============================================================================
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Sections from '@/components/Sections.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 
 const EXAMPLE_COURSES = [
   { color: 'green', ornament: 'circle' },
@@ -102,7 +102,7 @@ const fixtures: any[] = [
   <h1 class="sr-only">Example sections</h1>
   {fixtures.map((f) => (
     <div data-thumb={f._type}>
-      <Sections
+      <SectionRenderer
         sections={[f]}
         fetcher={f._type === 'sectionCourseRail' ? exampleFetcher : undefined}
       />

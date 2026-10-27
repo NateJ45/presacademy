@@ -220,6 +220,14 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
+- **Re-founding on the starter, phases A2 to E** (2026-10-27). Phase A (the renderer
+  layer, cadence, anchors switch, layout slots, rule-9 gate) is done with no visible
+  change; see `docs/agent/page-architecture.md`, "The starter's foundations". Next: A2
+  turns on the accent budget and named anchors (visible on purpose), B brings the
+  starter's builder kit with Academy templates and patterns, C hides the older blocks
+  the starter's replace and their background controls, D the visual cards, E deletes
+  what nothing reads (the `bgField()` controls only after a fresh data count shows 0).
+
 - **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
   The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the
   builder block library (steps rail, hub, contact card), business facts (office hours, term-break

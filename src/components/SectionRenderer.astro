@@ -1,7 +1,21 @@
 ---
+// Foundation, edit with care
 // Page-builder renderer. Maps each flexibleSections block (_type) to its
 // on-brand component. Unknown types are skipped. Used by the generic `page`
 // type at /[slug] and any page that adds a flexibleSections[] field.
+//
+// THE STARTER'S FOUNDATIONS (refoundation phase A, 2026-10-27). This file was
+// Sections.astro; it now carries the starter's SectionRenderer layer on top of
+// the Academy's own block MAP, so the Academy can take the starter's blocks
+// later (phase B) without a second renderer:
+//   - the cadence (src/lib/sectionCadence.ts) classifies every row first. All
+//     of the Academy's blocks are SELF-CONTAINED there (they paint their own
+//     band), so it assigns no surface and draws no divider between them today;
+//   - named anchors (src/lib/section-anchors.ts, starter card 158) sit behind
+//     the `anchors` prop. 'numbered' (the default for now) changes nothing,
+//     because the Academy's blocks already carry their own ids.
+// Everything below the frontmatter renders exactly what Sections.astro did, so
+// the live HTML is unchanged; scripts/page-parity.mjs holds that line.
 //
 // Shell-aware blocks (the newer, tone-adaptive ones) render their inner content
 // only and are wrapped in <SectionShell> so a single editor control sets their
@@ -14,6 +28,8 @@ import { sectionCoach } from '@/lib/section-coach';
 import { backgroundApplies } from '@/lib/section-fields';
 import type { SurfaceValue } from '@/lib/surfaces';
 import { expandSyncedSections } from '@/lib/authoring';
+import { classifySections } from '@/lib/sectionCadence';
+import { sectionAnchors, sectionHeadingText } from '@/lib/section-anchors';
 import RichTextBlock from '@/components/blocks/RichTextBlock.astro';
 import ImageTextBlock from '@/components/blocks/ImageTextBlock.astro';
 import CardGridBlock from '@/components/blocks/CardGridBlock.astro';
@@ -92,8 +108,26 @@ interface Props {
    * that line.
    */
   editDoc?: EditDoc;
+  /** Prefix for the cadence's numbered ids, so two renderers on a page do not collide. */
+  idPrefix?: string;
+  /**
+   * 'numbered' (the default for now): every block keeps the id it draws itself
+   * (an editor-set `headingId`, or the block's built-in one), exactly as before.
+   * 'named': a section whose block draws its heading WITHOUT an id takes one
+   * made from the heading, so /about/#our-story links to it (starter card 158).
+   * Ids a block already draws are never renamed, so no published link breaks.
+   */
+  anchors?: 'named' | 'numbered';
 }
-const { sections = [], fallbackEmail, fallbackPhone, fetcher, editDoc } = Astro.props;
+const {
+  sections = [],
+  fallbackEmail,
+  fallbackPhone,
+  fetcher,
+  editDoc,
+  idPrefix = 'section',
+  anchors = 'numbered',
+} = Astro.props;
 
 const MAP: Record<string, any> = {
   sectionRichText: RichTextBlock,
@@ -165,9 +199,63 @@ const DEFAULT_TONE: Record<string, SurfaceValue> = {
   sectionQuote: 'chapel',
   sectionCtaBand: 'chapel',
 };
+
+// ---------------------------------------------------------------------------
+// The starter's foundation layer (refoundation phase A, 2026-10-27)
+// ---------------------------------------------------------------------------
+// Synced sections (the authoring kit, PORTS.md card 109) are swapped for the
+// sections their saved copy holds BEFORE the cadence runs, so a synced band
+// takes its place in the rhythm like any typed-in band. Each expanded section
+// carries `_editKey`, the synced block's own key, so the preview's controls
+// act on the block that is really in the page.
+const classified = classifySections<{ _type: string }>(
+  expandSyncedSections(sections ?? []),
+  idPrefix,
+);
+
+// Named anchors (starter card 158), adapted: the Academy's blocks already draw
+// their own ids (an editor-set `headingId`, or a built-in one such as
+// 'contents' or 'next-issue'). Those are published anchors and never move. Only
+// a block that would draw its heading with NO id takes a name from its heading,
+// through the `headingId` field every Academy block already reads.
+const OWN_ANCHOR: Record<string, string> = {
+  sectionCourseFinder: 'finder',
+  sectionCourseRail: 'course-rail',
+  sectionEventGrid: 'upcoming-heading',
+  sectionFacultyRail: 'faculty-rail',
+  sectionForPastors: 'for-pastors',
+  sectionNextIssue: 'next-issue',
+  sectionRuledList: 'recurring-heading',
+  sectionTermContents: 'contents',
+  sectionTestimonialRail: 'testimonial-rail',
+};
+// Ids the page chrome around the renderer draws (the closing band, the back cover).
+const CHROME_IDS = ['final-cta', 'bc-colophon', 'bc-issue', 'bc-index'];
+const ownAnchor = (b: any): string | undefined =>
+  (typeof b?.headingId === 'string' && b.headingId.trim()) || OWN_ANCHOR[b?._type];
+const named =
+  anchors === 'named'
+    ? sectionAnchors(
+        classified.map(({ block, headingId }) => ({
+          // A block that draws its own id takes no name; its id is reserved below.
+          heading: ownAnchor(block) ? undefined : sectionHeadingText(block),
+          fallback: headingId,
+        })),
+        {
+          reserved: [
+            ...CHROME_IDS,
+            ...classified.map(({ block }) => ownAnchor(block)).filter((id): id is string => !!id),
+          ],
+        },
+      )
+    : null;
+const rows = classified.map((row, i) => {
+  if (!named || ownAnchor(row.block) || !sectionHeadingText(row.block)) return row;
+  return { ...row, block: { ...row.block, headingId: named[i] } };
+});
 ---
 
-{expandSyncedSections(sections ?? []).map((block: any) => {
+{rows.map(({ block }: { block: any }) => {
   // Synced sections (the authoring kit, PORTS.md card 109) were swapped above
   // for the sections their saved copy holds; each carries `_editKey`, the
   // synced block's own key, so the preview's controls act on the block that

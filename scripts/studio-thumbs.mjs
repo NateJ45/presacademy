@@ -9,7 +9,7 @@
 // Adapted from the WCP site's script of the same name. ONE THING IS DIFFERENT,
 // and it is the whole difference: WCP's renderer stamps `data-stype="<type>"`
 // on every section, so its script finds a section by CSS selector. This repo's
-// renderer stamps nothing (src/components/Sections.astro adds a `data-sanity`
+// renderer stamps nothing (src/components/SectionRenderer.astro adds a `data-sanity`
 // wrapper in PREVIEW only, and scripts/page-parity.mjs holds the live HTML to
 // byte-identical, so adding an attribute for a screenshotting script is not on
 // the table). So this script locates sections by POSITION instead:

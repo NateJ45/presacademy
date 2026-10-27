@@ -34,7 +34,7 @@ import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 import { isStudioPreview } from '@/lib/preview-auth';
 import PreviewLayout from '@/layouts/PreviewLayout.astro';
 import Hero from '@/components/Hero.astro';
-import Sections from '@/components/Sections.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import HomeHero from '@/components/home/HomeHero.astro';
 import SingletonPage from '@/components/SingletonPage.astro';
@@ -326,7 +326,7 @@ const sharedUntil = share
 // ---------------------------------------------------------------------------
 // In-canvas section controls (2026-08-27)
 // ---------------------------------------------------------------------------
-// The doc + array field each rendered section belongs to. Sections.astro turns
+// The doc + array field each rendered section belongs to. SectionRenderer.astro turns
 // this into one `data-sanity` attribute per section, which is what lets the
 // Presentation overlay outline a section and offer insert / duplicate / remove
 // / drag-to-reorder right in the preview instead of only in the Structure
@@ -439,7 +439,7 @@ const previewImageHero = Boolean(converted && singletonType && IMAGE_HERO_TYPES.
       </p>
     </div>
   )}
-  {generic && <Sections sections={builderSections} editDoc={editDoc} />}
+  {generic && <SectionRenderer sections={builderSections} editDoc={editDoc} />}
   {hasFinalCta && (
     <FinalCta
       eyebrow={doc!.finalCtaEyebrow}

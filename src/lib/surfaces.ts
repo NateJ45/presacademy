@@ -28,6 +28,14 @@
 
 export type SurfaceValue = 'default' | 'warm' | 'card' | 'chapel' | 'chapelDeep' | 'ink';
 
+/**
+ * The surfaces the starter's page-builder cadence (src/lib/sectionCadence.ts)
+ * can hand a CONTENT block. Refoundation phase A (2026-10-27): the Academy's
+ * own blocks are all self-contained, so the cadence hands them nothing and no
+ * block reads these yet; they arrive with the starter's builder kit (phase B).
+ */
+export type CadenceSurface = 'background' | 'muted' | 'feature';
+
 export interface SurfacePair {
   value: SurfaceValue;
   /** Editor-facing label (Studio radio + swatch caption). */

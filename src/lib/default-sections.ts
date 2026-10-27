@@ -36,7 +36,7 @@
  * `flexibleSections`: `_type` plus that block's fields, and a stable `_key` so
  * the entries match what the seed scripts write (idempotent re-runs).
  */
-// `any[]` matches the shape Sections.astro already takes (Sanity blocks are
+// `any[]` matches the shape SectionRenderer.astro already takes (Sanity blocks are
 // heterogeneous and only the renderer's per-_type branch knows their fields).
 export const DEFAULT_SECTIONS: Record<string, any[]> = {
   // Populated page by page as the conversion proceeds. See the header comment.
