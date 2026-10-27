@@ -36,6 +36,9 @@ import { buildIndex, issueSummary, orderShelf } from '@/lib/chrome';
 import { COVER_COLORS, coverStyle, resolveCover } from '@/lib/cover';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { telHref } from '@/lib/phone';
+import { issueLine } from '@/lib/term-issue';
+import { withTrailingSlash } from '@/lib/href';
+import ActionBar from '@/components/ActionBar.astro';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -106,6 +109,15 @@ const leadCover = lead
   : { color: 'green' as const, ornament: 'circle' as const };
 const summary = issueSummary(chrome.courseCount, chrome.term?.startDate);
 const headerCta = settings.headerCta;
+
+// The phone action bar (starter card 191): the masthead's phone issue line and the header button,
+// docked once the page heading scrolls away. Not on the page the button opens (the preview's
+// /preview prefix is dropped first, so the draft preview behaves the same).
+const herePath = withTrailingSlash(Astro.url.pathname.replace(/^\/preview(?=\/|$)/, '') || '/');
+const barHref = headerCta.show ? headerCta.href : '';
+const showActionBar =
+  !!barHref && !!headerCta.label && withTrailingSlash(barHref.split('#')[0]) !== herePath;
+const barLine = issueLine(chrome.term, new Date().toISOString().slice(0, 10))?.short ?? '';
 
 const currentYear = new Date().getFullYear();
 // Designer credit: always shown; editable in Site Settings.
@@ -287,4 +299,6 @@ const creditUrl = siteSettings?.footerCreditUrl ?? 'https://www.nixoncreativestu
       )}
     </div>
   </div>
+
+  {showActionBar && <ActionBar text={barLine} label={headerCta.label} href={barHref} />}
 </footer>

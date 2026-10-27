@@ -54,6 +54,11 @@ local build has content (`discoverDetailRoutes` in `tests/helpers.ts`).
   is the site's own page before JavaScript runs: the school's name as the title,
   its icon, the branded splash on a non-white ground in light and dark, no
   sideways scroll. The signed-in Studio is not covered (it needs a login).
+- **`tests/page-weight.spec.ts`** (PORTABLE, starter card 197) — every route
+  stays inside its weight budget: HTML, inline CSS, scripts, images, the LCP
+  picture, preloaded fonts and JSON-LD types. The numbers are this site's own,
+  in `tests/page-weight.config.json` (the only file edited here; measured
+  2026-10-27 plus about 25%). It imports `tests/fixtures.ts` (PORTABLE, card 75).
 - **`tests/reflow.spec.ts`** — WCAG 1.4.10: no horizontal overflow at a
   320px viewport, then a second sweep resizing through 1440/1024/768 without
   reload. Measured on `document.scrollingElement.scrollWidth` (+1px rounding

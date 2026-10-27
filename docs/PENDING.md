@@ -220,6 +220,16 @@ the Westminster Standards and the Book of Confessions."`
 
 ## Open — code/content work queued
 
+- **Starter cards 188 to 197 that need foundations this site lacks** (2026-10-27, Auburn port run).
+  The layout slots (`site-layout.ts`, so `hero: board` and `layout.motion`), the photo hero, the
+  builder block library (steps rail, hub, contact card), business facts (office hours, term-break
+  closures), client notes, the main pages as page builders and the documents library all build on
+  starter pieces this repo never took after it left the starter (2026-08-25). Taking them means
+  adopting `SectionRenderer`, `sections.ts` and `site-layout.ts` first: a planned piece of work,
+  Nathan's call. Office facts also wait on real values (the seed is placeholder). The SVG path
+  compactor (card 197) waits on a starter fix: its test fails here on a `-0` coordinate in
+  `public/studio-art/cover-shelf-phone.svg`.
+
 - **Check the Studio tours and the new Quick update jobs signed in** (2026-10-19, studio-complete
   Phase B). Tours, the extra jobs, six clips and the pictures are wired (`docs/agent/studio-plan.md`,
   `docs/agent/studio-videos.md`) and were checked against the harness with invented sample data, not

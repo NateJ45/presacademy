@@ -1,0 +1,150 @@
+---
+// Safe to edit by hand
+// The phone action bar (starter PORTS.md card 191, adapted for the Academy, 2026-10-27).
+//
+// A slim bar docked to the bottom of a phone screen: the next term's short issue line on the
+// left ("Spring 2027 · first class 26 Jan", the same words the masthead shows on a phone) and the
+// header's own button on the right (Site settings > Header button; "Enroll" style). The masthead
+// stays in the page flow, so on a long course page its button scrolls away; this brings the one
+// step a phone visitor came for back into reach. Nothing new to fill in: it reads the term and the
+// header button the site already has, and draws nothing when the header button is off, or on the
+// page that button opens.
+//
+// The starter's version is chosen per page in Site settings (src/lib/wayfinding.ts); this site has
+// one clear action on every page, so it skips that layer. Behaviour kept from the starter:
+//   - Phones only (below 768px). Appears once the page's h1 (or a [data-action-bar-anchor] inside
+//     <main>) has scrolled up out of view; hides while the footer is on screen.
+//   - Respects the safe-area inset; while it shows, html gets data-action-bar-on and
+//     --action-bar-h, so scroll-padding keeps focused fields clear and BackToTop rides above it.
+//   - Rendered inside <footer>, so it sits in the contentinfo landmark. The button is 44px tall.
+
+interface Props {
+  /** The short line; empty draws the button alone. */
+  text?: string;
+  label: string;
+  href: string;
+}
+const { text, label, href } = Astro.props;
+---
+
+<div class="action-bar" data-action-bar hidden>
+  {text && <p class="action-bar__text">{text}</p>}
+  {/* With no term line (no term scheduled yet) the button takes the whole bar. */}
+  <a class:list={['action-bar__button mast-btn', !text && 'mast-btn--block']} href={href}>
+    {label}
+  </a>
+</div>
+
+<script>
+  // Two IntersectionObservers, no scroll listener; re-run after every View Transitions navigation.
+  let observers: IntersectionObserver[] = [];
+  let resize: ResizeObserver | null = null;
+  function initActionBar() {
+    observers.forEach((o) => o.disconnect());
+    observers = [];
+    resize?.disconnect();
+    const root = document.documentElement;
+    root.removeAttribute('data-action-bar-on');
+    const bar = document.querySelector<HTMLElement>('[data-action-bar]');
+    const anchor =
+      document.querySelector<HTMLElement>('main [data-action-bar-anchor]') ??
+      document.querySelector<HTMLElement>('main h1');
+    const footer = document.querySelector<HTMLElement>('footer.back-cover');
+    if (!bar || !anchor || !('IntersectionObserver' in window)) return;
+    let pastAnchor = false;
+    let footerIn = false;
+    const sync = () => {
+      const show = pastAnchor && !footerIn;
+      bar.hidden = !show;
+      root.toggleAttribute('data-action-bar-on', show);
+      if (show) root.style.setProperty('--action-bar-h', `${bar.offsetHeight}px`);
+    };
+    // The root runs far below the screen, so the only change reported is the anchor crossing the
+    // top edge (a long swipe past it still counts).
+    const a = new IntersectionObserver(
+      ([e]) => {
+        pastAnchor = !e.isIntersecting && e.boundingClientRect.top < 0;
+        sync();
+      },
+      { rootMargin: '0px 0px 100000px 0px' },
+    );
+    a.observe(anchor);
+    observers.push(a);
+    if (footer) {
+      const f = new IntersectionObserver(([e]) => {
+        footerIn = e.isIntersecting;
+        sync();
+      });
+      f.observe(footer);
+      observers.push(f);
+    }
+    if ('ResizeObserver' in window) {
+      resize = new ResizeObserver(() => {
+        if (!bar.hidden) root.style.setProperty('--action-bar-h', `${bar.offsetHeight}px`);
+      });
+      resize.observe(bar);
+    }
+  }
+  initActionBar();
+  document.addEventListener('astro:page-load', initActionBar);
+</script>
+
+<style>
+  .action-bar {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .action-bar:not([hidden]) {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 45;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+      /* The masthead's ruled strip, turned over: a 2px rule in the ink colour. */
+      border-top: 2px solid var(--foreground);
+      background: var(--background);
+      color: var(--foreground);
+      box-shadow: 0 -12px 30px -24px rgb(0 0 0 / 0.45);
+    }
+    .action-bar__text {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      overflow-wrap: anywhere;
+    }
+    .action-bar__button {
+      flex: none;
+      max-width: 100%;
+      margin-left: auto;
+    }
+    .action-bar__button:focus-visible {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px;
+    }
+    /* While the bar shows: a focused element is never hidden under it, and BackToTop
+       (fixed bottom-6) rides above it. */
+    :global(html[data-action-bar-on]) {
+      scroll-padding-bottom: calc(var(--action-bar-h, 4.5rem) + 12px);
+    }
+    :global(html[data-action-bar-on] .fixed.bottom-6) {
+      translate: 0 calc(-1 * var(--action-bar-h, 4.5rem));
+    }
+  }
+  @media (max-width: 359px) {
+    .action-bar__button {
+      padding-inline: 14px;
+    }
+  }
+  @media print {
+    .action-bar {
+      display: none !important;
+    }
+  }
+</style>
