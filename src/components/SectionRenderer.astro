@@ -33,7 +33,12 @@
 // render their own section background and are passed through unwrapped.
 import SectionShell from '@/components/SectionShell.astro';
 import SectionCoach from '@/components/SectionCoach.astro';
-import { sectionEditAttr, sectionFieldEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import {
+  SECTION_DRAG_FLOW,
+  sectionEditAttr,
+  sectionFieldEditAttr,
+  type EditDoc,
+} from '@/lib/preview-edit-attr';
 import { sectionCoach } from '@/lib/section-coach';
 import { backgroundApplies } from '@/lib/section-fields';
 import type { SurfaceValue } from '@/lib/surfaces';
@@ -400,7 +405,7 @@ const ctaVariant = primaryBudget(rows, ({ block }: { block: any }) => {
         ? sectionFieldEditAttr(editDoc, block._key, 'background')
         : undefined;
     return editAttr ? (
-      <div data-sanity={editAttr} style="position:relative">
+      <div data-sanity={editAttr} style="position:relative" {...SECTION_DRAG_FLOW}>
         {rendered}
         {handleAttr && (
           <div
