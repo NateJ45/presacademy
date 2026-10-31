@@ -18,7 +18,7 @@ Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. 
 
 Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-and-config.md`. The must-knows:
 
-- **Astro**, TypeScript strict, `output: 'static'`. Node 22.12+.
+- **Astro**, TypeScript strict, `output: 'static'`. Node 22.23.4 (pinned in `.nvmrc`, which every workflow reads; starter card 209).
 - **Sanity v6** is the CMS. The Studio lives IN THIS PACKAGE (folded in from the old nested `studio/` package 2026-08-26): schemas in `src/sanity/schemaTypes/`, desk in `src/sanity/structure.ts`, config at the repo-root `sanity.config.ts`, CLI config in `sanity.cli.ts`. It is **embedded at `/studio`** via `@sanity/astro` and rebuilds with every deploy. The old hosted `presbyterian-academy.sanity.studio` is retired (a hosted Studio drifts stale), and there is deliberately no `studioHost`/`deployment` in `sanity.cli.ts` so a stray `sanity deploy` cannot recreate it.
 - **Tailwind 4 via `@tailwindcss/vite`.** There is no `tailwind.config.mjs`. Brand tokens live in `@theme` blocks in `src/styles/globals.css`.
 - **React 19 islands** for interactivity; Astro components for everything static.
