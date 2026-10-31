@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-30: CI reads Node from `.nvmrc` (starter card 209)._ Every `actions/setup-node` step asked for `node-version: 22` and took whatever 22.x the runner image had cached, and Astro 7.4.4 refuses anything below 22.23.4. A repo-root `.nvmrc` now pins 22.23.4, every workflow reads it with `node-version-file: .nvmrc`, and `engines.node` rises to match. `docs/agent/studio-kit.md` is resynced with the starter in the same change (card 210's Inbox section), so `sync-check` reads SAME.
+
 _2026-10-28: the photo hero keeps the script accent word (starter card 203, no live page changes)._ `Hero.astro` passes the opener's script accent to `PhotoHeroAcademy`, which draws it in the script face, white over the same shade, under the same contrast unit test (it now reads every `.ph-accent` rule). No live page uses the photo style.
 
 _2026-10-27: Re-founding on the starter, phase E (cleanup, no visible change)._ The unread `FaqAccordion.tsx` island was deleted; `Sections.astro` was already gone (phase A), and `SectionShell.astro` / `surfaces.ts` stay because the kept blocks read them. Hidden block types stay registered. `sync-check` reports 0 drift against the live starter, and the `scripts/.parity` baseline was re-captured from a current `main` build. `CLAUDE.md` gained rules 23 (no colour field on a block) and 24 (layout is a config axis).

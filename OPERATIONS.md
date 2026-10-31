@@ -330,6 +330,7 @@ The contact form and the express-interest form (both built in Studio under Conte
 2. It **stores** the submission in the D1 database `presacademy-contact`, table `contact_submissions`.
 3. Only then does it **email** it through the `EMAIL` binding (Cloudflare Email Routing on presbyterianacademy.org, from `CONTACT_FROM` to the verified destination in `CONTACT_TO`; both are Worker secrets and the address is never written in this repo). The email's Reply-To is the visitor.
 4. It records the outcome on the row: `notified = 1`, or `notified = 0` with the reason in `notify_error`.
+5. In the background it reports a short preview (name, subject, the message's start; never the email or a phone number) to the studio dashboard Inbox through the `SITE_DATA` binding (starter card 210, `src/lib/site-inbox.ts`). A failure there never touches the visitor.
 
 A visitor gets "Thank you" whenever the row was stored, even if the email failed. So **a 200 response proves nothing; the `notified` column does.**
 
