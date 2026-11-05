@@ -15,7 +15,7 @@
 
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createClient } from '@sanity/client';
 import { renderOg, renderCourseOg } from './lib/render-og.mjs';
 import { snapshotClientOptions } from './snapshot.mjs';
@@ -110,6 +110,7 @@ const SINGLETONS = [
   { type: 'faqPage', slug: 'faq', defaultTitle: 'Questions, answered' },
   { type: 'contactPage', slug: 'contact', defaultTitle: 'Get in touch' },
   { type: 'privacyPage', slug: 'privacy', defaultTitle: 'Privacy policy' },
+  { type: 'accessibilityPage', slug: 'accessibility', defaultTitle: 'Accessibility' },
 ];
 
 for (const page of SINGLETONS) {
@@ -225,5 +226,15 @@ for (const col of COLLECTIONS) {
     if (tagline) await render(`${col.prefix}-${d.slug}`, tagline);
   }
 }
+
+// The list BaseLayout reads, so a page with no card of its own takes
+// og-default.png instead of naming a file that was never made. It lists what is
+// on disk, not what this run drew, so a run that cannot draw (no Pango, no read
+// token) still counts the committed PNGs.
+const cards = readdirSync(outDir)
+  .filter((f) => f.endsWith('.png'))
+  .map((f) => f.slice(0, -4))
+  .sort();
+writeFileSync(resolve(root, 'src/data/ogPages.json'), `${JSON.stringify(cards, null, 2)}\n`);
 
 console.log(`\nDone. ${count} OG images written to ${outDir}`);
