@@ -9,6 +9,7 @@
 //   - Skip-to-main link, Header, <main id="main">, Footer
 //   - BackToTop React island
 
+import OG_PAGES from '@/data/ogPages.json';
 import { ClientRouter } from 'astro:transitions';
 import { site } from '@/data/site';
 import { urlFor } from '@/lib/sanity';
@@ -68,11 +69,14 @@ const canonical = new URL(Astro.url.pathname, site.url).toString();
 
 // Per-page OG image: convention is /og/<route-slug>.png generated at build time.
 // `/` → /og/home.png, `/contact/` → /og/contact.png, `/portfolio/foo` → /og/portfolio-foo.png.
-// Falls back to og-default.png if the slug-specific file isn't there.
+// Falls back to og-default.png when the route has no card: src/data/ogPages.json
+// is written beside the PNGs by `npm run og:pages`. Until 2026-11-05 this never
+// checked, so the 404 and the style guide named files that did not exist and
+// shared with no picture.
 function ogPathForRoute(pathname: string): string {
   const trimmed = pathname.replace(/^\/|\/$/g, '');
-  if (!trimmed) return '/og/home.png';
-  return `/og/${trimmed.replace(/\//g, '-')}.png`;
+  const slug = trimmed ? trimmed.replace(/\//g, '-') : 'home';
+  return OG_PAGES.includes(slug) ? `/og/${slug}.png` : '/og-default.png';
 }
 
 // Resolve a raw Sanity image object to a 1200x630 OG URL through the image

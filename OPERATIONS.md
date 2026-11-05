@@ -239,6 +239,7 @@ The items below apply to any project built on this starter. Replace the angle-br
 - [ ] `src/data/site.ts` — set real `name`, `domain`, `url`, `storageKeyPrefix`, `themeStorageKey`, `brandColors`
 - [ ] `src/styles/globals.css` — replace placeholder palette tokens and font imports with the project's brand
 - [ ] Regenerate `public/og-default.png` via `npm run og` after updating brand inputs in `scripts/generate-og-default.mjs`
+- [ ] Per-page share cards: `npm run og:pages` draws `public/og/*.png` and writes `src/data/ogPages.json`, the list BaseLayout checks. A route with no card takes `og-default.png`. A new page singleton that should have its own card needs a row in `SINGLETONS` in `scripts/generate-og-pages.mjs`.
 - [ ] Replace `public/favicon.svg` with the project's favicon
 
 **Wire Sanity:**
