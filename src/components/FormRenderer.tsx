@@ -35,6 +35,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Embed from './Embed';
 import { sendContactSubmission } from '@/lib/contact-transport';
+import { track } from '@/lib/track';
 import {
   mapFormToContact,
   validateFormValues,
@@ -328,6 +329,8 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
         widgetIdRef.current = undefined;
       }
       setStatus('success');
+      // The send went through (card 217): the form's internal name, never what was typed.
+      track('generate_lead', { form_name: (form.title || 'form').slice(0, 60) });
       return;
     }
 
@@ -376,6 +379,7 @@ export default function FormRenderer({ form, fallbackEmail }: Props) {
 
       <form
         ref={formRef}
+        data-track-form={form.title || 'form'}
         onSubmit={onSubmit}
         noValidate
         className="mt-m"

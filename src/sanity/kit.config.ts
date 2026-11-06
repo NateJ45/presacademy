@@ -22,6 +22,7 @@ import { genericRules } from '../lib/studio-checkup';
 import { guides, GUIDE_CATEGORIES, GUIDE_FOR_FIELD, GUIDES_FOR_TYPE, SITE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
+import { boardConfig } from '../config/board';
 import { AddDocumentIcon } from '@sanity/icons/AddDocument';
 import { BellIcon } from '@sanity/icons/Bell';
 import { CalendarIcon } from '@sanity/icons/Calendar';
@@ -104,6 +105,11 @@ export const kitConfig: KitConfig = {
   // being an administrator.
   staff: [],
 
+  // The Report tool's parts and words (card 218).
+  board: boardConfig,
+
+  // The Report is left out of staffTools on purpose: only administrators see it
+  // until the Academy's people are shown it (add 'report' here then).
   staffTools: [
     'home',
     'quick-update',
@@ -116,6 +122,7 @@ export const kitConfig: KitConfig = {
   ],
   toolOrder: [
     'home',
+    'report',
     'quick-update',
     'structure',
     'presentation',
@@ -762,6 +769,10 @@ export const kitConfig: KitConfig = {
     // "not set up yet" until the Worker has CF_ANALYTICS_TOKEN and the two
     // vars (OPERATIONS.md, "Visitor numbers").
     visitors: true,
+    // The Report (card 218). ON in code, not by a build variable: this site deploys through
+    // Cloudflare Workers Builds, which only has the variables set in that dashboard, and
+    // there is no deploy.yml to pass PUBLIC_BOARD_REPORT. Turning it off is a one-line commit.
+    report: true,
     navbarStatus: true,
     helpPanel: true,
     // Card 125's "Earlier versions" reads the nightly backups through

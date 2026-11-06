@@ -442,7 +442,7 @@ function privacyDoc(email) {
     _id: 'privacyPage',
     heroEyebrow: 'Transparency first.',
     heroHeadline: 'Privacy Policy',
-    lastUpdated: '2026-06-01',
+    lastUpdated: '2026-11-06',
     body: [
       para(
         `This is the privacy policy for ${SITE_NAME}. The goal here is to be straightforward about what information we collect and why.`,
@@ -464,13 +464,15 @@ function privacyDoc(email) {
       // wording Nathan approved. The seed cannot read PUBLIC_GA_ID (it is not in
       // .env), so it states the live truth; if GA4 is ever turned off, change this
       // copy, the stored privacyPage and the fallback together (vault gotcha
-      // turning-analytics-on-falsifies-stored-privacy-copy).
+      // turning-analytics-on-falsifies-stored-privacy-copy). The last sentence of the
+      // Cookies paragraph is eventsSentence(eventsConfig) from src/lib/event-kinds.ts
+      // (card 217); src/lib/events-map.test.ts fails when the two drift.
       heading("What doesn't happen"),
       bullet('Your information is never sold.'),
       bullet('There is no ad targeting on this site.'),
       heading('Cookies and how visits are measured'),
       para(
-        'We use Google Analytics to understand which pages are visited. It sets cookies and collects usage information such as pages viewed, device type and approximate location. It does not tell us who you are.',
+        'We use Google Analytics to understand which pages are visited. It sets cookies and collects usage information such as pages viewed, device type and approximate location. It does not tell us who you are. It also records what visitors do on the site: the link to book an intro call, video links, map and directions links, email and phone links (the kind of link only, never the address), whether a form is seen, used or sent (never what is typed into it), pages that could not be found and errors in the site’s own scripts.',
       ),
       heading('Unsubscribing from the newsletter'),
       para(
@@ -481,7 +483,7 @@ function privacyDoc(email) {
         `If you have questions about how your information is handled, or want your data removed, reach out at ${email}. You'll hear back within a few business days.`,
       ),
       para(
-        'This policy was last reviewed in June 2026 and will be updated if anything meaningful changes about how this site handles your data.',
+        'This policy was last reviewed in November 2026 and will be updated if anything meaningful changes about how this site handles your data.',
       ),
     ],
   };
