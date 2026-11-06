@@ -61,14 +61,14 @@ export const boardConfig: BoardConfig = {
   timeZone: 'America/New_York',
   // Visits, pages and Google's numbers begin on October 4, 2026, the first day either has data.
   // Every event is new with the shared event layer.
+  // `all` is the first day Google has anything, because the page, channel and place lists
+  // read it. Each click event is new, so each has its own day.
   since: {
-    all: EVENTS_SINCE,
-    visitors: '2026-10-04',
-    visits: '2026-10-04',
-    pageViews: '2026-10-04',
-    newVisitors: '2026-10-04',
-    searchClicks: '2026-10-04',
-    searchAppearances: '2026-10-04',
+    all: '2026-10-04',
+    'event:generate_lead': EVENTS_SINCE,
+    'event:booking_click': EVENTS_SINCE,
+    'event:contact_click': EVENTS_SINCE,
+    'event:form_view': EVENTS_SINCE,
   },
   gaps: [],
 
