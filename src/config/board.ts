@@ -76,7 +76,7 @@ export const boardConfig: BoardConfig = {
     tiles: [
       { measure: 'visitors', label: 'Visitors', explain: VISITORS },
       { measure: 'event:generate_lead', label: 'Enquiries sent', explain: ENQUIRY },
-      { measure: 'event:booking_click', label: 'Intro call clicks', explain: BOOKING },
+      { measure: 'event:contact_click', label: 'Email and phone clicks', explain: CONTACT },
       { measure: 'searchClicks', label: 'Clicks from Google', explain: GOOGLE },
     ],
     charts: [
