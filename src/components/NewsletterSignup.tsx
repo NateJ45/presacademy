@@ -28,6 +28,7 @@
 
 import { useRef, useState, type FormEvent } from 'react';
 import { subscribeEmail } from '@/lib/subscribe';
+import { track } from '@/lib/track';
 
 export interface NewsletterConfig {
   /** Set by siteSettings.newsletter.enabled in Sanity. When false, render null. */
@@ -112,6 +113,8 @@ export default function NewsletterSignup({
 
     if (result.ok) {
       setStatus('success');
+      // Confirmed by the provider (card 217). Not the honeypot path above, which fakes success.
+      track('generate_lead', { form_name: 'newsletter' });
     } else {
       setStatus('error');
       setErrorMsg(result.message);
@@ -146,6 +149,7 @@ export default function NewsletterSignup({
       )}
 
       <form
+        data-track-form="newsletter"
         onSubmit={onSubmit}
         noValidate
         className={band ? 'issue-signup__form' : 'mt-m space-y-s'}
