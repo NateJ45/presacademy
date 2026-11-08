@@ -34,10 +34,10 @@ local build has content (`discoverDetailRoutes` in `tests/helpers.ts`).
   carrying the school name (BaseLayout appends the brand suffix to every
   page, and `site.name` is imported so the rebrand script keeps the
   assertion true).
-- **`tests/a11y.spec.ts`** — axe-core's **default** rule set on every route,
-  zero violations. Deliberately NOT narrowed to `.withTags([...])`: the
-  default set includes the best-practice rules Lighthouse also scores on,
-  plus the one machine-checkable WCAG 2.2 AA rule (`target-size`).
+- **`tests/a11y.spec.ts`** — axe-core tagged WCAG 2.0, 2.1 and 2.2 A/AA plus
+  `best-practice` on every route, zero violations. The tags matter: a plain
+  `analyze()` skips `target-size` (SC 2.5.8), the one machine-checkable
+  WCAG 2.2 AA rule. `best-practice` keeps the rules Lighthouse also scores on.
 - **`tests/a11y-dark.spec.ts`** — the same sweep with dark mode forced, plus
   a focus pass on `/contact` and `/get-started`: every visible form field and
   main-content control is focused and must show a visible indicator (outline
