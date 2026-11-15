@@ -1,3 +1,7 @@
+<a href="https://nixoncreativestudio.com/work/presbyterian-academy/"><img src="https://raw.githubusercontent.com/NateJ45/NateJ45/main/assets/cards/presacademy.png" alt="The Presbyterian Academy, case study by Nixon Creative Studio" width="100%"></a>
+
+<p align="center"><a href="https://nixoncreativestudio.com/work/presbyterian-academy/">Read the case study</a> · <a href="https://presbyterianacademy.org">Visit presbyterianacademy.org</a></p>
+
 # The Presbyterian Academy
 
 A statically built, CMS-driven school website: Astro, Sanity and Cloudflare Workers, with an embedded Studio, a gated CI pipeline and a tested design system.
