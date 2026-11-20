@@ -27,3 +27,20 @@ Good site copy for a service business follows five patterns. Full rationale and 
 5. **Be specific.** Concrete details beat generic descriptors.
 
 Banned vocabulary: "transformative," "curated experience," "investment in your space," "elevated living," "tailored solutions."
+
+## Communication style (moved from CLAUDE.md)
+
+## Communication style
+
+These apply to everything written: code comments, PR descriptions, commit messages, and copy on the site itself.
+
+- Warm, conversational tone. Not stiff or corporate.
+- Step-by-step structure for any process or how-to.
+- No em-dashes in public-facing site copy (see gotcha #3).
+- No AI-tell phrases: delve, navigate (as a verb), leverage, robust, seamless, meticulous, tapestry, realm, landscape, testament to, ever-evolving, crucial, pivotal.
+- No AI-tell sentence patterns: "It's not just X, it's Y," "Not only... but also," "It's important to note that," "When it comes to," "In the realm of," "That said" as a transition.
+- Don't open replies with filler like "Certainly!" or close with "I hope this helps!" End on the actual content.
+- Avoid three-item lists where the third item is filler. Two items is fine if two is the truth.
+- Use bold for genuine emphasis or list labels only. Default to prose unless content is genuinely a list.
+
+Site copy voice and banned vocabulary: `.claude/rules/site-copy-voice.md` (also `docs/brand/voice.md`).

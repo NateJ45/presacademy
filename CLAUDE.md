@@ -8,11 +8,7 @@ Always-loaded reference for the `ncs-presacademy` codebase. File-specific guidan
 
 **Read `docs/PENDING.md` early in a session.** It is the live registry of open loops: queued work, known gaps, and waiting-on-a-human items. If you finish or discover one, update it in the same commit.
 
-Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. Project slash commands (in `.claude/commands/`): `/sanity-audit` (ground truth on the dataset: counts, gaps, drafts; run it before debugging any "content looks wrong" report), `/rebuild` (trigger the production rebuild that makes published Sanity content live), `/visual-verify` (the both-themes-both-viewports screenshot loop). The design system summary for visual work is `design.md` at the repo root.
-
-**Current state, in brief.** Astro 7 + Sanity Studio v6; the Sanity packages are PINNED to exact versions (never bump one alone; see gotcha #18). The theme **defaults to LIGHT**. **The school was founded in 2026: never highlight a founding year or imply a long history or large enrollment.** The Sanity dataset still runs on placeholder CC0 photography. Full state and history: `docs/claude/project-state.md`. **The site was re-founded on the starter (2026-10-27, phases A to E, PRs #146 to #155).** Blocks draw through `src/components/SectionRenderer.astro`, which runs the starter's cadence (`src/lib/sectionCadence.ts`; every Academy block is self-contained), named anchors, the accent budget (one filled pill per page body) and the layout slots (`brand/brand.config.json` `layout`, `src/data/layout.ts` written by hand). The starter's builder kit (seventeen blocks, `src/sanity/schemaTypes/builderSections.ts`, `src/components/builder-blocks/`) sits beside the Academy's own blocks; the six it replaces and every block's `background` panel are hidden from the Studio, but their types stay registered so stored data still renders. Cards in: 188 (the one scale, `hero: board` off), 189 (photo hero, inner pages only), 192 (`layout.motion: fade`; the Academy's own entrance effects are at rest), 195 (client notes, OFF), 196 (office facts, empty until filled). Not taken: 194 (the Academy keeps its own form), documents and video blocks. Detail: `docs/agent/page-architecture.md`, "The starter's foundations"; open loops in `docs/PENDING.md`.
-
-**The Studio is the Academy's admin** (starter cards 106 to 120, adopted 2026-10-18): the Studio kit (`src/sanity/kit/`, PORTABLE; Home, Quick update, Site Guide, Checkup, Move to Trash, the tour, the status line) and the workflow tools (`src/sanity/workflow/`, PORTABLE; Messages, Share a preview, table views), dressed in the school's brand (green chrome, Fraunces, the Term Issue art from `npm run gen:studio-art`: course-cover icons, the masthead's fanned covers as the mark, a shelf of issues over the spine strip, "Academy" in brass italic; files in `public/studio-art/`), on the site's own `/studio/` page. The school-specific pieces: `src/sanity/kit.config.ts`, `src/sanity/schoolCheckup.ts`, `src/lib/quick-updates.ts`, the **New term** tool (`src/sanity/components/SetupWizard.tsx`), `src/sanity/tables.config.ts`, `src/sanity/brandIconArt.tsx`, `src/sanity/studioEdges.config.ts` and `brand/brand.config.json` (`studio` keys). Staff build their own pages with the authoring kit (card 109): 12 page templates in four groups and the course and event starters (`src/sanity/templates.ts`), 11 seasonal saved sections (`src/sanity/sectionPatterns.ts`, seeded by `scripts/seed-section-patterns.mjs`), "Insert a saved section" as a copy or SYNCED (`syncedSection`, resolved in `SECTION_MEMBERS` and expanded in `SectionRenderer.astro`), and page warnings (`pageRules` in `kit.config.ts`); template words start `Example:` and `src/lib/templates.test.ts` checks them. Who edits, their weekly, monthly and term jobs, and the Studio surface for each: `docs/agent/studio-plan.md` (keep it in step with Quick update and the guides; the tours, welcome and What's new are data in `src/sanity/studio-tours.ts`; the clips are in `src/sanity/guides/videos.ts`, made from `tools/tutorial-videos/` and sample data in `tools/studio-media/`, see `docs/agent/studio-videos.md`). Everything is in `docs/agent/studio-kit.md`; the one-time switches (Visitors, Messages, preview links, the change note) are in `OPERATIONS.md`, "The Studio kit".
+Companion tactical runbook: `OPERATIONS.md`. Test-suite map: `docs/TESTING.md`. Design system summary: `design.md`. Slash commands in `.claude/commands/`: `/sanity-audit`, `/rebuild`, `/visual-verify`. Current state, the Studio admin note and the slash command descriptions: `docs/claude/project-state.md`.
 
 ## Stack essentials
 
@@ -23,9 +19,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 - **Tailwind 4 via `@tailwindcss/vite`.** There is no `tailwind.config.mjs`. Brand tokens live in `@theme` blocks in `src/styles/globals.css`.
 - **React 19 islands** for interactivity; Astro components for everything static.
 - **Cloudflare Workers** for hosting, not Pages (Pages is in maintenance mode). Deploy with `wrangler deploy`.
-- **Forms post to the site's own Worker endpoint** `/api/contact/` (starter card 45, since 2026-10-13): each submission is stored in the D1 database `presacademy-contact` first, then emailed to the Academy through Cloudflare Email Routing, spam-checked by **Cloudflare Turnstile** (how to read submissions: `OPERATIONS.md`, "Form submissions"). Plus **Calendly** intro calls, **Cloudflare Web Analytics** (cookieless, no banner), and **Google Analytics 4**, live since 2026-10-04 (`PUBLIC_GA_ID` = `G-1S5Z7MGZ9J`, GA4 property 557366198); it sets `_ga` cookies (see the next bullet).
-- **Analytics = `<Analytics />`** (`src/components/Analytics.astro`, PORTABLE, rendered once by `BaseLayout`; starter PORTS.md cards 54 and 58). GA4 renders only when `PUBLIC_GA_ID` is a valid `G-` id, and its runtime snippet fires only on the production hostname (`site` in `astro.config.mjs`), never on localhost or previews. The Cloudflare beacon renders only with `PUBLIC_CF_ANALYTICS_TOKEN`. `PUBLIC_GA_ID` is a BUILD variable in Cloudflare Workers Builds (a runtime variable does nothing, the value is inlined at build). If GA4 is ever turned off or changed, update the stored Privacy Policy in Studio and `scripts/seed-editability.mjs` too (the built-in fallback text switches itself; the Sanity body and the seed do not). The CSP already allows Google's origins.
-- **GA4 events and the Report** (starter cards 217 and 218, 2026-11-06). `<SiteEvents />` follows `<Analytics />` in `BaseLayout`; the site's map is `src/config/events.ts` (the Calendly intro link is `booking_click`; outbound, download, search and article events are off). Forms call `track('generate_lead', { form_name })` only when a send is confirmed (`FormRenderer.tsx`, `NewsletterSignup.tsx`). The privacy page's events sentence is derived from the map (`LegalBodyBlock.astro` fallback); the stored Privacy Policy in Studio and `scripts/seed-editability.mjs` carry a copy that `src/lib/events-map.test.ts` checks against the map. The Report is `src/config/board.ts`, switched on in `kit.config.ts` (`features.report: true`, no build variable, because Cloudflare Workers Builds is the deploy and there is no `deploy.yml`) and kept out of `staffTools`, so only administrators see it.
+- **More stack notes** (forms and D1, Analytics, GA4 events and the Report): `docs/agent/stack-and-config.md`.
 - **`sanityFetch(query, params, fallback)`** in `src/lib/sanity.ts` is the single chokepoint for all Sanity reads. When `PUBLIC_SANITY_PROJECT_ID` is absent or set to the placeholder value, it returns the fallback without any network call, so `npm run build` succeeds with no Sanity project configured; pages render empty-state content.
 
 ## Commands
@@ -39,8 +33,7 @@ Full stack notes and the `astro.config.mjs` landmines are in `docs/agent/stack-a
 
 ## Branch, CI and deploy
 
-- Git workflow: `main` is the only branch (staging abandoned 2026-10-03). Work on short-lived branches, open a PR to `main`, CI must be green (required checks `build` and `test`, now aggregator jobs over parallel `static` / `site` / sharded `e2e` with weighted blocks, `PWTEST_SHARD_WEIGHTS` in `ci.yml`, re-cut when tests are added in bulk, see `docs/agent/ci-cd-and-ops.md`; Lighthouse is scheduled and path-filtered, not required), merge = production deploy (Cloudflare watches `main`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
-- CI never reads live content (starter card 138, adopted 2026-10-20): `ci.yml` and `lighthouse.yml` run the build through `node scripts/snapshot.mjs run --`. This site builds with no Sanity project id, so there is no snapshot file and the wrapper just runs the build; `live-watch.yml` is a non-blocking daily check of the real site, off until the `SITE_URL` repo variable is set and its schedule is uncommented.
+- Git workflow: `main` is the only branch and a merge is the production deploy. Required checks `build` and `test`. CI never reads live content (`scripts/snapshot.mjs`). Detail: `docs/agent/ci-cd-and-ops.md`, `docs/agent/deployment.md`, `OPERATIONS.md`.
 - The PUBLIC site is statically built; a Sanity edit reaches visitors only after a rebuild (gotcha #7).
 
 ## Never-break rules (numbered gotchas)
@@ -65,13 +58,7 @@ Each entry carries the date it bit (or was decided) and the symptom, so future s
 
 ## Keep the docs in sync
 
-A change is not done until the documentation that describes the changed behavior is updated **in the same commit**:
-
-1. The affected files under `docs/` (and `README.md` / this file / `OPERATIONS.md` when the architecture or commands shift).
-2. The in-Studio editor guides (`src/sanity/guides/content.ts`, shown in the Site Guide tool) when the change touches anything a faculty editor does in Studio.
-3. `docs/PENDING.md` when the change closes, opens, or discovers an open loop.
-
-Stale docs in this repo have already shipped real bugs (the 2026-06-14 stale-types incident traced to a doc claiming typegen ran in the build when it did not). Doc drift is a defect, not a chore.
+A change is not done until the docs that describe it are updated in the same commit: files under `docs/` (and README, this file, OPERATIONS), the in-Studio guides (`src/sanity/guides/content.ts`) when an editor-facing step changes, and `docs/PENDING.md` for open loops. Detail: `docs/claude/project-state.md`.
 
 ## Code conventions and Working with Claude
 
@@ -81,41 +68,11 @@ Shared by every site repo in the family, so they live in one PORTABLE file impor
 
 ## Communication style
 
-These apply to everything written: code comments, PR descriptions, commit messages, and copy on the site itself.
-
-- Warm, conversational tone. Not stiff or corporate.
-- Step-by-step structure for any process or how-to.
-- No em-dashes in public-facing site copy (see gotcha #3).
-- No AI-tell phrases: delve, navigate (as a verb), leverage, robust, seamless, meticulous, tapestry, realm, landscape, testament to, ever-evolving, crucial, pivotal.
-- No AI-tell sentence patterns: "It's not just X, it's Y," "Not only... but also," "It's important to note that," "When it comes to," "In the realm of," "That said" as a transition.
-- Don't open replies with filler like "Certainly!" or close with "I hope this helps!" End on the actual content.
-- Avoid three-item lists where the third item is filler. Two items is fine if two is the truth.
-- Use bold for genuine emphasis or list labels only. Default to prose unless content is genuinely a list.
-
-Site copy voice and banned vocabulary: `.claude/rules/site-copy-voice.md` (also `docs/brand/voice.md`).
+Warm, conversational, step-by-step, no em-dashes in public-facing site copy (gotcha #3), no AI-tell phrases or filler openers. Full lists: `docs/claude/communication-style.md`, `.claude/rules/site-copy-voice.md`.
 
 ## Docs map
 
-Path-scoped rules (load automatically when you touch matching files):
-
-- `.claude/rules/live-preview.md`: the `/preview/**` SSR draft preview, stega, SSE proxy, in-canvas controls.
-- `.claude/rules/build-and-deps.md`: gotchas #8, #11 to #18, #22 (adapter, workerd, wrangler pin, Sanity version pins, deploy config, never regenerate the lockfile).
-- `.claude/rules/sanity-and-scripts.md`: gotcha #19, build pipeline, seeds and standalone scripts.
-- `.claude/rules/pages-and-routes.md`: routes table, page-builder conversion, pinned code regions.
-- `.claude/rules/ui-and-verification.md`: gotchas #9 and #21, the both-themes-both-viewports verification loop.
-- `.claude/rules/site-copy-voice.md`: voice for live-site copy.
-- `.claude/rules/portable-files.md`: PORTABLE-marked files and the shared-file sync system.
-
-Tracked Claude setup: `.claude/settings.json` (PORTABLE, deny rules for `git reset --hard` and force pushes; never edit here) and `docs/claude/family-conventions.md` (PORTABLE, imported above). `.claude/settings.local.json` stays git-ignored for personal allow rules.
-
-Read on demand:
-
-- `docs/claude/family-conventions.md`: PORTABLE, imported above; the code conventions and working-with-Claude text shared by every site repo.
-- `docs/claude/project-state.md`: current state, stack-pin history, brand direction. Read for background.
-- `docs/claude/file-ownership.md`: safe-to-edit vs foundation file lists. Read before touching foundation files.
-- `docs/claude/topic-index.md`: index of every `docs/agent/*` deep dive, research and checklists. Read when a task touches those areas.
-- `docs/agent/studio-kit.md`: the Studio kit (PORTABLE, from the starter): Home, Site Guide, Checkup, Trash, the look, the edges, Messages, preview links.
-- `docs/PENDING.md` (open loops), `docs/TESTING.md`, `OPERATIONS.md`, `design.md`, `PRODUCT.md`, `docs/agent/changelog.md` (change history).
+Path-scoped rules are in `.claude/rules/` (live-preview, build-and-deps, sanity-and-scripts, pages-and-routes, ui-and-verification, site-copy-voice, portable-files). Read on demand: `docs/claude/project-state.md`, `docs/claude/file-ownership.md`, `docs/claude/topic-index.md` (full map with one line per file), `docs/agent/studio-kit.md`, `docs/PENDING.md`, `docs/TESTING.md`, `OPERATIONS.md`, `design.md`, `PRODUCT.md`, `docs/agent/changelog.md`.
 
 ## Vault (business context)
 
