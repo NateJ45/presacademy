@@ -8,16 +8,16 @@ import { getFeaturedCourses, getUpcomingEvents, getFaculty, getTestimonials } fr
 // so every published list is unchanged. The choice is layout only: it does not
 // touch `count`, which is still what decides how many items are fetched.
 import { columnsClass } from '@/lib/layout-variants';
+import { formatDate, LONG_DATE } from '@/lib/format-date';
+import { site } from '@/data/site';
 
 const { block } = Astro.props as { block: any };
 const count = Math.min(12, Math.max(1, Number(block?.count ?? 3)));
 const source = block?.source ?? 'featuredCourses';
 const colClass = columnsClass('sectionDynamicList', block?.columns);
 
-const fmt = (d: string) =>
-  d
-    ? new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : '';
+// Event starts are datetimes: the day is the Academy's own day (card 98).
+const fmt = (d: string) => formatDate(d, LONG_DATE, site.timeZone);
 
 type Item = {
   title: string;

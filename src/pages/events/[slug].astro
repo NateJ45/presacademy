@@ -55,7 +55,7 @@ function whenLabel(ev: any): string {
       opts.hour = 'numeric';
       opts.minute = '2-digit';
     }
-    return new Date(ev.start).toLocaleString('en-US', opts);
+    return new Date(ev.start).toLocaleString('en-US', { ...opts, timeZone: site.timeZone });
   }
   return '';
 }

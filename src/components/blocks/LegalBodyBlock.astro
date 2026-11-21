@@ -18,9 +18,9 @@
 //   2. The built-in statements below link to /contact when no email address is
 //      set. An <a> with empty text is an axe link-name violation, and the
 //      credential-less CI build renders exactly that state.
-//   3. The date formatter is deliberately the same local-timezone
-//      toLocaleDateString the pages used. Changing it moves the rendered date
-//      by a day and breaks page parity.
+//   3. The date goes through formatDate (UTC unless told otherwise), which is
+//      what CI always rendered, so page parity holds. The old bare
+//      toLocaleDateString used the build machine's zone (starter card 98).
 //
 // The built-in statements are the no-content fallback: they render only when
 // the body is empty AND `fallbackStatement` names one. On the live site the
@@ -29,6 +29,7 @@
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { site } from '@/data/site';
 import { telHref } from '@/lib/phone';
+import { formatDate as formatDay } from '@/lib/format-date';
 import { hasGa } from '@/lib/analytics-config';
 import { eventsConfig } from '@/config/events';
 import { eventsSentence } from '@/lib/event-kinds';
@@ -43,14 +44,8 @@ interface Props {
 
 const { block, fallbackEmail, fallbackPhone } = Astro.props as Props;
 
-// Format the date from Sanity, or render no date line at all.
-function formatDate(d?: string): string {
-  if (!d) return '';
-  const date = new Date(d);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-const formatted = formatDate(block?.lastUpdated);
+// Format the date from Sanity, or render no date line at all ('' when unset).
+const formatted = formatDay(block?.lastUpdated);
 // One text node, so the rendered HTML matches the pre-conversion pages exactly.
 const dateLine = formatted ? `${block?.dateLabel ?? 'Last updated'}: ${formatted}` : '';
 

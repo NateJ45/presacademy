@@ -16,15 +16,19 @@
 //   - the key-dates block formats a range.
 // Merging them would change rendered dates on live pages, which the parity
 // harness treats as drift and a reader would notice.
+import { formatDate } from '@/lib/format-date';
+import { site } from '@/data/site';
+
+// Event starts are datetimes: the label shows the Academy's own day, so an
+// evening event does not land on the next day (starter card 98).
 export function whenLabel(ev: any): string {
   if (ev?.scheduleLabel) return ev.scheduleLabel;
   if (ev?.start) {
-    return new Date(ev.start).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatDate(
+      ev.start,
+      { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
+      site.timeZone,
+    );
   }
   return '';
 }
