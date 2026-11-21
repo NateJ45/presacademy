@@ -36,6 +36,7 @@
 import CourseCover from '@/components/CourseCover.astro';
 import { getStartHereCourses, getFeaturedCourses } from '@/lib/queries';
 import { splitTermTitle, heroCourses } from '@/lib/term-issue';
+import { formatDate, LONG_DATE } from '@/lib/format-date';
 
 interface Props {
   /* The homePage singleton (or its draft). */
@@ -54,15 +55,10 @@ const heroSubhead =
   page?.heroSubhead ??
   'Reformed formation for the people who actually lead the church: elders, teachers, small-group hosts, and the lifelong curious. In person, in cohorts, at a pace that fits a working life.';
 
-// Timezone-safe: a bare "2026-09-08" parses as UTC midnight and renders as the
-// day before in every US timezone, so the T00:00:00 suffix pins it to local.
+// Timezone-safe: formatDate keeps the calendar day of a bare "2026-09-08" on
+// any build machine (starter card 98).
 function fmtDate(d?: string): string {
-  if (!d) return '';
-  return new Date(`${d}T00:00:00`).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDate(d, LONG_DATE);
 }
 const cityLine = settings?.addressLocality ?? 'West Chester, Ohio';
 

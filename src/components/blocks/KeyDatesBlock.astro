@@ -3,18 +3,13 @@
 // provides the background. A ruled "ledger" list of dated items (date on the
 // left, label + detail on the right), sorted ascending by date. Tone-adaptive:
 // all text inherits the SectionShell color via text-current.
+import { formatDate, SHORT_DATE } from '@/lib/format-date';
+
 const { block } = Astro.props as { block: any };
 
-// Format a YYYY-MM-DD date string as "Mar 3, 2026". Anchored at local midnight so
-// the day never slips across a timezone boundary.
-const fmt = (d?: string) =>
-  d
-    ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '';
+// Format a YYYY-MM-DD date string as "Mar 3, 2026". formatDate keeps the
+// calendar day on any build machine (starter card 98).
+const fmt = (d?: string) => formatDate(d, SHORT_DATE);
 
 const items = (block?.items ?? [])
   .filter((it: any) => it?.date && it?.label)
