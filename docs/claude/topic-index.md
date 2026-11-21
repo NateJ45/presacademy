@@ -35,3 +35,26 @@ Read these on demand. They are NOT auto-loaded; open with the Read tool when a t
 | Launch-gate checklist                                                              | `docs/bootstrap/setup-checklist.md`                                                |
 | Research (peer audits, lay-school IA patterns, the 2026-06 brand-direction debate) | `docs/research/`                                                                   |
 | Placeholder media licensing                                                        | `src/assets/placeholders/MANIFEST.md`                                              |
+
+## Docs map (moved from CLAUDE.md)
+
+Path-scoped rules (load automatically when you touch matching files):
+
+- `.claude/rules/live-preview.md`: the `/preview/**` SSR draft preview, stega, SSE proxy, in-canvas controls.
+- `.claude/rules/build-and-deps.md`: gotchas #8, #11 to #18, #22 (adapter, workerd, wrangler pin, Sanity version pins, deploy config, never regenerate the lockfile).
+- `.claude/rules/sanity-and-scripts.md`: gotcha #19, build pipeline, seeds and standalone scripts.
+- `.claude/rules/pages-and-routes.md`: routes table, page-builder conversion, pinned code regions.
+- `.claude/rules/ui-and-verification.md`: gotchas #9 and #21, the both-themes-both-viewports verification loop.
+- `.claude/rules/site-copy-voice.md`: voice for live-site copy.
+- `.claude/rules/portable-files.md`: PORTABLE-marked files and the shared-file sync system.
+
+Tracked Claude setup: `.claude/settings.json` (PORTABLE, deny rules for `git reset --hard` and force pushes; never edit here) and `docs/claude/family-conventions.md` (PORTABLE, imported above). `.claude/settings.local.json` stays git-ignored for personal allow rules.
+
+Read on demand:
+
+- `docs/claude/family-conventions.md`: PORTABLE, imported above; the code conventions and working-with-Claude text shared by every site repo.
+- `docs/claude/project-state.md`: current state, stack-pin history, brand direction. Read for background.
+- `docs/claude/file-ownership.md`: safe-to-edit vs foundation file lists. Read before touching foundation files.
+- `docs/claude/topic-index.md`: index of every `docs/agent/*` deep dive, research and checklists. Read when a task touches those areas.
+- `docs/agent/studio-kit.md`: the Studio kit (PORTABLE, from the starter): Home, Site Guide, Checkup, Trash, the look, the edges, Messages, preview links.
+- `docs/PENDING.md` (open loops), `docs/TESTING.md`, `OPERATIONS.md`, `design.md`, `PRODUCT.md`, `docs/agent/changelog.md` (change history).
